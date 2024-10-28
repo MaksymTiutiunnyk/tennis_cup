@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:tennis_cup/model/arena.dart';
+import 'package:tennis_cup/model/match.dart';
+import 'package:tennis_cup/model/player.dart';
 import 'package:tennis_cup/widgets/live_stream_match.dart';
 
 class LiveStreamMatches extends StatelessWidget {
@@ -14,10 +17,30 @@ class LiveStreamMatches extends StatelessWidget {
           Expanded(
             child: ListView(
               scrollDirection: Axis.horizontal,
-              children: const [
-                LiveStreamMatch(),
-              ],
               shrinkWrap: true,
+              children: [
+                LiveStreamMatch(
+                  match: Match(
+                    bluePlayer: Player(name: 'Andrii', surname: 'Kurtenko'),
+                    redPlayer: Player(name: 'Vitalii', surname: 'Mukhin'),
+                    arena: Arena(title: 'Africa'),
+                  ),
+                ),
+                LiveStreamMatch(
+                  match: Match(
+                    bluePlayer: Player(name: 'Andrii', surname: 'Kurtenko'),
+                    redPlayer: Player(name: 'Vitalii', surname: 'Mukhin'),
+                    arena: Arena(title: 'Africa'),
+                  ),
+                ),
+                LiveStreamMatch(
+                  match: Match(
+                    bluePlayer: Player(name: 'Andrii', surname: 'Kurtenko'),
+                    redPlayer: Player(name: 'Vitalii', surname: 'Mukhin'),
+                    arena: Arena(title: 'Africa'),
+                  ),
+                ),
+              ],
             ),
           ),
         ],

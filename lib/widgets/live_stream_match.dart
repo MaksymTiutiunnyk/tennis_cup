@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:tennis_cup/model/match.dart';
 
 class LiveStreamMatch extends StatelessWidget {
-  const LiveStreamMatch({super.key});
+  const LiveStreamMatch({super.key, required this.match});
+
+  final Match match;
 
   @override
   Widget build(BuildContext context) {
@@ -14,14 +17,16 @@ class LiveStreamMatch extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Row(
+          Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Row(
                 children: [
                   Icon(Icons.circle, color: Colors.red, size: 8),
                   SizedBox(width: 8),
-                  Text("Arena: Africa", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                  Text("Arena: ${match.arena.title}",
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                 ],
               ),
               Row(
@@ -34,12 +39,18 @@ class LiveStreamMatch extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 4),
-          const Text("2023-12-31. Men. Evening (Finished)", style: TextStyle(color: Colors.grey)),
-
+          const Text("2023-12-31. Men. Evening (Finished)",
+              style: TextStyle(color: Colors.grey)),
           const SizedBox(height: 16),
-          buildPlayerRow("assets/kurtenko_andrii.png", "Kurtenko Andrii", 3),
+          buildPlayerRow(
+              "assets/kurtenko_andrii.png",
+              "${match.bluePlayer.surname} ${match.bluePlayer.name}",
+              match.blueScore),
           const SizedBox(height: 8),
-          buildPlayerRow("assets/mukhin_vitalii.png", "Mukhin Vitalii", 0),
+          buildPlayerRow(
+              "assets/mukhin_vitalii.png",
+              "${match.redPlayer.surname} ${match.redPlayer.name}",
+              match.redScore),
         ],
       ),
     );
@@ -59,7 +70,8 @@ class LiveStreamMatch extends StatelessWidget {
             Text(name, style: const TextStyle(fontSize: 16)),
           ],
         ),
-        Text(score.toString(), style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+        Text(score.toString(),
+            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
       ],
     );
   }
