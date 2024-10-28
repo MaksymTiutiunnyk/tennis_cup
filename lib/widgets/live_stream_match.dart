@@ -36,7 +36,6 @@ class LiveStreamMatch extends StatelessWidget {
           const SizedBox(height: 4),
           const Text("2023-12-31. Men. Evening (Finished)", style: TextStyle(color: Colors.grey)),
 
-          // Player Information
           const SizedBox(height: 16),
           buildPlayerRow("assets/kurtenko_andrii.png", "Kurtenko Andrii", 3),
           const SizedBox(height: 8),
