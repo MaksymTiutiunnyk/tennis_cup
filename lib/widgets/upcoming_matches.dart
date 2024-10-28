@@ -45,24 +45,24 @@ class UpcomingMatches extends StatelessWidget {
         children: [
           Text(
             match['date']!,
-            style: TextStyle(color: Colors.grey),
+            style: const TextStyle(color: Colors.grey),
           ),
           Row(
             children: [
               Icon(Icons.circle, color: statusColor, size: 10),
-              SizedBox(width: 8),
+              const SizedBox(width: 8),
               Text(
                 match['location']!,
-                style: TextStyle(fontWeight: FontWeight.bold),
+                style: const TextStyle(fontWeight: FontWeight.bold),
               ),
             ],
           ),
-          SizedBox(height: 4),
+          const SizedBox(height: 4),
           Text(
             match['match']!,
-            style: TextStyle(fontSize: 16),
+            style: const TextStyle(fontSize: 16),
           ),
-          Divider(),
+          const Divider(),
         ],
       ),
     );

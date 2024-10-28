@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tennis_cup/widgets/live_stream_match.dart';
 import 'package:tennis_cup/widgets/upcoming_matches.dart';
+import 'package:tennis_cup/widgets/winner.dart';
 
 void main() {
   runApp(const TennisCup());
@@ -41,18 +42,15 @@ class _HomeState extends State<Home> {
           style: const TextStyle(color: Colors.white),
         ),
       ),
-      body: Center(
+      body: const Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            const Text('Tennis Cup live stream'),
-            const LiveStreamMatch(),
-            const Text('Upcoming matches'),
-            const UpcomingMatches(),
-            Container(
-              height: 200,
-              color: Colors.blue,
-            ),
+            Text('Tennis Cup live stream'),
+            LiveStreamMatch(),
+            Text('Upcoming matches'),
+            UpcomingMatches(),
+            Text('Winners'),
+            Winner(),
           ],
         ),
       ),
