@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-import 'package:tennis_cup/widgets/live_stream_match.dart';
+import 'package:tennis_cup/widgets/live_stream_matches.dart';
 import 'package:tennis_cup/widgets/upcoming_matches.dart';
 import 'package:tennis_cup/widgets/winner.dart';
 
 class Home extends StatefulWidget {
-  const Home({super.key}) : title = 'Tennis Cup Home Page';
+  const Home({super.key});
 
-  final String title;
+  final String title = 'Tennis Cup Home Page';
 
   @override
   State<Home> createState() => _HomeState();
@@ -24,21 +24,22 @@ class _HomeState extends State<Home> {
           style: const TextStyle(color: Colors.white),
         ),
       ),
-      body: const Center(
-        child: Column(
-          children: [
-            Text('Tennis Cup live stream'),
-            LiveStreamMatch(),
-            Text('Upcoming matches'),
-            UpcomingMatches(),
-            Text('Winners'),
-            Winner(),
-          ],
-        ),
+      body: const Column(
+        children: [
+          LiveStreamMatches(),
+          Text('Upcoming matches'),
+          UpcomingMatches(),
+          Text('Winners'),
+          Winner(),
+        ],
       ),
       bottomNavigationBar: BottomNavigationBar(
+        showUnselectedLabels: false,
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.home),
+              label: 'Home',
+              backgroundColor: Colors.amber),
           BottomNavigationBarItem(
               icon: Icon(Icons.schedule), label: 'Schedule'),
           BottomNavigationBarItem(icon: Icon(Icons.people), label: 'Ranking'),

@@ -22,7 +22,7 @@ class Winner extends StatelessWidget {
               ),
               const SizedBox(height: 12),
               const Text(
-                'Kurtneko Andrii',
+                'Kurtenko Andrii',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 12),
