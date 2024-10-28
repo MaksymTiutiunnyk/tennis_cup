@@ -23,21 +23,21 @@ class LiveStreamMatches extends StatelessWidget {
                   match: Match(
                     bluePlayer: Player(name: 'Andrii', surname: 'Kurtenko'),
                     redPlayer: Player(name: 'Vitalii', surname: 'Mukhin'),
-                    arena: Arena(title: 'Africa'),
+                    arena: Arena(title: 'Africa', color: Colors.black),
                   ),
                 ),
                 LiveStreamMatch(
                   match: Match(
                     bluePlayer: Player(name: 'Andrii', surname: 'Kurtenko'),
                     redPlayer: Player(name: 'Vitalii', surname: 'Mukhin'),
-                    arena: Arena(title: 'Africa'),
+                    arena: Arena(title: 'Africa', color: Colors.black),
                   ),
                 ),
                 LiveStreamMatch(
                   match: Match(
                     bluePlayer: Player(name: 'Andrii', surname: 'Kurtenko'),
                     redPlayer: Player(name: 'Vitalii', surname: 'Mukhin'),
-                    arena: Arena(title: 'Africa'),
+                    arena: Arena(title: 'Africa', color: Colors.black),
                   ),
                 ),
               ],
