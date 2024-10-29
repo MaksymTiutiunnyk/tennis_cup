@@ -9,6 +9,7 @@ class LiveStreamMatch extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 8),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.blue.withOpacity(0.1),
@@ -19,14 +20,17 @@ class LiveStreamMatch extends StatelessWidget {
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisSize: MainAxisSize.max,
             children: [
               Row(
                 children: [
                   Icon(Icons.circle, color: match.arena.color, size: 8),
                   const SizedBox(width: 8),
-                  Text("Arena: ${match.arena.title}",
-                      style:
-                          const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                  Text(
+                    "Arena: ${match.arena.title}",
+                    style: const TextStyle(
+                        fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
                 ],
               ),
               const Row(
@@ -39,7 +43,7 @@ class LiveStreamMatch extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 4),
-          const Text("2023-12-31. Men. Evening (Finished)",
+          const Text("2023-12-31. Men. Evening",
               style: TextStyle(color: Colors.grey)),
           const SizedBox(height: 16),
           buildPlayerRow(
@@ -70,8 +74,10 @@ class LiveStreamMatch extends StatelessWidget {
             Text(name, style: const TextStyle(fontSize: 16)),
           ],
         ),
-        Text(score.toString(),
-            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+        Text(
+          score.toString(),
+          style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+        ),
       ],
     );
   }

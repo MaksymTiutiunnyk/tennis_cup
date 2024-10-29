@@ -55,10 +55,12 @@ class LiveStreamMatches extends StatelessWidget {
             ),
           ),
           Expanded(
-            child: ListView(
-              scrollDirection: Axis.horizontal,
-              shrinkWrap: true,
-              children: [...matches],
+            child: PageView.builder(
+              controller: PageController(viewportFraction: 0.85),
+              itemCount: matches.length,
+              itemBuilder: (context, index) {
+                return matches[index];
+              },
             ),
           ),
         ],
