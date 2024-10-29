@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:tennis_cup/model/player.dart';
 
 class Winner extends StatelessWidget {
-  const Winner({super.key});
+  final Player player;
+  const Winner({super.key, required this.player});
 
   @override
   Widget build(BuildContext context) {

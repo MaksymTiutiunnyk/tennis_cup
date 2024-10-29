@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:tennis_cup/widgets/live_stream_matches.dart';
 import 'package:tennis_cup/widgets/upcoming_matches.dart';
-import 'package:tennis_cup/widgets/winner.dart';
+import 'package:tennis_cup/widgets/winners.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -29,8 +29,7 @@ class _HomeState extends State<Home> {
           LiveStreamMatches(),
           Text('Upcoming matches'),
           UpcomingMatches(),
-          Text('Winners'),
-          Winner(),
+          Winners(),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
