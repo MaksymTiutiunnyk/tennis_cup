@@ -35,9 +35,25 @@ class LiveStreamMatches extends StatelessWidget {
   Widget build(BuildContext context) {
     return Expanded(
       child: Column(
-        mainAxisSize: MainAxisSize.min,
         children: [
-          const Text('Tennis Cup live stream'),
+          const Padding(
+            padding: EdgeInsets.all(16.0),
+            child: Row(
+              textBaseline: TextBaseline.alphabetic,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Icon(
+                  Icons.live_tv,
+                  color: Color.fromARGB(255, 1, 1, 98),
+                ),
+                SizedBox(width: 8),
+                Text(
+                  'Tennis Cup: live stream',
+                  style: TextStyle(fontSize: 18),
+                ),
+              ],
+            ),
+          ),
           Expanded(
             child: ListView(
               scrollDirection: Axis.horizontal,

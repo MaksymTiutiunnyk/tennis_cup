@@ -7,6 +7,7 @@ class Match {
   int blueScore;
   int redScore;
   final Arena arena;
+  DateTime? dateTime;
 
-  Match({required this.bluePlayer, required this.redPlayer, this.blueScore = 0, this.redScore = 0, required this.arena});
+  Match({required this.bluePlayer, required this.redPlayer, this.blueScore = 0, this.redScore = 0, required this.arena, this.dateTime});
 }

@@ -27,7 +27,6 @@ class _HomeState extends State<Home> {
       body: const Column(
         children: [
           LiveStreamMatches(),
-          Text('Upcoming matches'),
           UpcomingMatches(),
           Winners(),
         ],
