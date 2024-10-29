@@ -14,7 +14,7 @@ class Winner extends StatelessWidget {
         ),
         elevation: 4,
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(8.0),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -22,12 +22,12 @@ class Winner extends StatelessWidget {
                 radius: 40,
                 backgroundImage: AssetImage('assets/andrii_kurtenko.png'),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 8),
               const Text(
                 'Kurtenko Andrii',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 8),
               const Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -40,15 +40,22 @@ class Winner extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 4),
-              Text(
-                'Mexico',
-                style: TextStyle(fontSize: 16, color: Colors.grey[600]),
-              ),
-              const Divider(thickness: 1, height: 32),
-              Text(
-                '2024-10-28',
-                style: TextStyle(fontSize: 16, color: Colors.grey[600]),
-              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Mexico',
+                      style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+                    ),
+                    Text(
+                      '2024-10-28',
+                      style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+                    ),
+                  ],
+                ),
+              )
             ],
           ),
         ),

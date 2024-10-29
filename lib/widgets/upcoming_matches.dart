@@ -5,25 +5,25 @@ import 'package:tennis_cup/model/match.dart';
 import 'package:tennis_cup/widgets/upcoming_match.dart';
 
 final List<Match> matches = [
-    Match(
-      bluePlayer: Player(name: 'Vasyl', surname: 'Smyk'),
-      redPlayer: Player(name: 'Andrii', surname: 'Kurtenko'),
-      arena: Arena(title: 'America', color: Colors.black),
-      dateTime: DateTime(2024, 10, 28, 11, 35),
-    ),
-    Match(
-      bluePlayer: Player(name: 'Volodymyr', surname: 'Ivasiv'),
-      redPlayer: Player(name: 'Mykola', surname: 'Slozka'),
-      arena: Arena(title: 'Beijing', color: Colors.purple),
-      dateTime: DateTime(2024, 10, 28, 11, 35),
-    ),
-    Match(
-      bluePlayer: Player(name: 'Olena', surname: 'Telezhynska'),
-      redPlayer: Player(name: 'Svitlana', surname: 'Yureneva'),
-      arena: Arena(title: 'Australia', color: Colors.green),
-      dateTime: DateTime(2024, 10, 28, 11, 50),
-    ),
-  ];
+  Match(
+    bluePlayer: Player(name: 'Vasyl', surname: 'Smyk'),
+    redPlayer: Player(name: 'Andrii', surname: 'Kurtenko'),
+    arena: Arena(title: 'America', color: Colors.black),
+    dateTime: DateTime(2024, 10, 28, 11, 35),
+  ),
+  Match(
+    bluePlayer: Player(name: 'Volodymyr', surname: 'Ivasiv'),
+    redPlayer: Player(name: 'Mykola', surname: 'Slozka'),
+    arena: Arena(title: 'Beijing', color: Colors.purple),
+    dateTime: DateTime(2024, 10, 28, 11, 35),
+  ),
+  Match(
+    bluePlayer: Player(name: 'Olena', surname: 'Telezhynska'),
+    redPlayer: Player(name: 'Svitlana', surname: 'Yureneva'),
+    arena: Arena(title: 'Australia', color: Colors.green),
+    dateTime: DateTime(2024, 10, 28, 11, 50),
+  ),
+];
 
 class UpcomingMatches extends StatelessWidget {
   const UpcomingMatches({super.key});
@@ -51,6 +51,7 @@ class UpcomingMatches extends StatelessWidget {
           ),
           Expanded(
             child: ListView.builder(
+              padding: const EdgeInsets.all(0),
               itemCount: matches.length,
               itemBuilder: (context, index) {
                 return UpcomingMatch(match: matches[index]);
