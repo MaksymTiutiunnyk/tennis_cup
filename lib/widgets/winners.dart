@@ -9,8 +9,25 @@ class Winners extends StatelessWidget {
   Widget build(BuildContext context) {
     return Expanded(
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Winners'),
+          const Divider(),
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
+              children: [
+                Icon(Icons.star, color: Colors.red),
+                SizedBox(width: 8),
+                Text(
+                  'Winners',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                ),
+              ],
+            ),
+          ),
           Expanded(
             child: PageView.builder(
               controller: PageController(viewportFraction: 0.85),
