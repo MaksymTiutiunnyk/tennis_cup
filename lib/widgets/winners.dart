@@ -12,14 +12,12 @@ class Winners extends StatelessWidget {
         children: [
           const Text('Winners'),
           Expanded(
-            child: ListView(
+            child: PageView.builder(
+              controller: PageController(viewportFraction: 0.85),
               scrollDirection: Axis.horizontal,
-              shrinkWrap: true,
-              children: [
-                Winner(player: Player(name: 'Andrii', surname: 'Kurtenko')),
-                Winner(player: Player(name: 'Andrii', surname: 'Kurtenko')),
-                Winner(player: Player(name: 'Andrii', surname: 'Kurtenko')),
-              ],
+              itemBuilder: (context, index) => Winner(
+                player: Player(name: 'Andrii', surname: 'Kurtenko'),
+              ),
             ),
           ),
         ],
