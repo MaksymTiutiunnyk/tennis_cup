@@ -11,7 +11,7 @@ class UpcomingMatch extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Divider(),
+          const Divider(height: 1),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Text(
@@ -40,7 +40,6 @@ class UpcomingMatch extends StatelessWidget {
               style: const TextStyle(fontSize: 16),
             ),
           ),
-          const Divider(),
         ],
       ),
     );
