@@ -39,8 +39,7 @@ class LiveStreamMatches extends StatelessWidget {
           const Padding(
             padding: EdgeInsets.all(16.0),
             child: Row(
-              textBaseline: TextBaseline.alphabetic,
-              crossAxisAlignment: CrossAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Icon(
                   Icons.live_tv,

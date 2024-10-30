@@ -36,6 +36,7 @@ class UpcomingMatches extends StatelessWidget {
           const Padding(
             padding: EdgeInsets.all(16),
             child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Icon(
                   Icons.calendar_today,
