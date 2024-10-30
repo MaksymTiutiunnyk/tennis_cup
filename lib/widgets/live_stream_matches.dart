@@ -48,7 +48,7 @@ class LiveStreamMatches extends StatelessWidget {
                 ),
                 SizedBox(width: 8),
                 Text(
-                  'Tennis Cup: live stream',
+                  'Tennis Cup: Live stream',
                   style: TextStyle(fontSize: 18),
                 ),
               ],

@@ -43,7 +43,7 @@ class UpcomingMatches extends StatelessWidget {
                 ),
                 SizedBox(width: 8),
                 Text(
-                  'Tennis Cup: upcoming matches',
+                  'Tennis Cup: Upcoming matches',
                   style: TextStyle(fontSize: 18),
                 ),
               ],

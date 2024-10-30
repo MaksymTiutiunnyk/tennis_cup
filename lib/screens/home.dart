@@ -7,7 +7,7 @@ import 'package:tennis_cup/widgets/winners.dart';
 class Home extends StatefulWidget {
   const Home({super.key});
 
-  final String title = 'Tennis Cup Home Page';
+  final String title = 'Tennis Cup: Home page';
 
   @override
   State<Home> createState() => _HomeState();

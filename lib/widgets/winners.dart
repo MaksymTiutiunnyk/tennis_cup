@@ -19,7 +19,7 @@ class Winners extends StatelessWidget {
                 Icon(Icons.star, color: Colors.red),
                 SizedBox(width: 8),
                 Text(
-                  'Winners',
+                  'Tennis Cup: Winners',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
