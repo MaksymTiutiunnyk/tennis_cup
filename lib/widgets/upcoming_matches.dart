@@ -32,6 +32,7 @@ class UpcomingMatches extends StatelessWidget {
   Widget build(BuildContext context) {
     return Expanded(
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           const Padding(
             padding: EdgeInsets.all(16),

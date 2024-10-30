@@ -7,41 +7,39 @@ class UpcomingMatch extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Divider(height: 1),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Text(
-              match.dateTime.toString(),
-              style: const TextStyle(color: Colors.grey),
-            ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Divider(height: 1),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Text(
+            match.dateTime.toString(),
+            style: const TextStyle(color: Colors.grey),
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Row(
-              children: [
-                Icon(Icons.circle, color: match.arena.color, size: 10),
-                const SizedBox(width: 8),
-                Text(
-                  match.arena.title,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
-              ],
-            ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Row(
+            children: [
+              Icon(Icons.circle, color: match.arena.color, size: 10),
+              const SizedBox(width: 8),
+              Text(
+                match.arena.title,
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ],
           ),
-          const SizedBox(height: 4),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Text(
-              '${match.bluePlayer.surname} ${match.bluePlayer.name} - ${match.redPlayer.surname} ${match.redPlayer.name}',
-              style: const TextStyle(fontSize: 16),
-            ),
+        ),
+        const SizedBox(height: 4),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Text(
+            '${match.bluePlayer.surname} ${match.bluePlayer.name} - ${match.redPlayer.surname} ${match.redPlayer.name}',
+            style: const TextStyle(fontSize: 16),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
