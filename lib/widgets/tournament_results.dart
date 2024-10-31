@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tennis_cup/model/tournament.dart';
+import 'package:tennis_cup/model/match.dart';
 
 class TournamentResults extends StatefulWidget {
   final Tournament tournament;
@@ -36,31 +37,43 @@ class _TournamentResults extends State<TournamentResults> {
               const DataColumn(label: Text('Points')),
               const DataColumn(label: Text('Position')),
             ],
-            rows: [
-              _buildDataRow('Volynets Oleh',
-                  ['.', '2:3', '3:2', '0:3', '0:3', '3:1', '7', '4']),
-              _buildDataRow('Varlamov Oleh 🥉',
-                  ['3:2', '.', '3:0', '2:3', '1:3', '0:3', '7', '3']),
-              _buildDataRow('Skorobahatyi Yevhen',
-                  ['2:3', '0:3', '.', '2:3', '3:1', '3:0', '7', '5']),
-              _buildDataRow('Lobanov Arsenii 🥈',
-                  ['3:0', '3:2', '3:2', '.', '2:3', '1:3', '8', '2']),
-              _buildDataRow('Habrelyan Daniil 🥇',
-                  ['3:0', '3:1', '3:1', '3:2', '.', '3:1', '9', '1']),
-              _buildDataRow('Tiutiunnyk Maksym',
-                  ['1:3', '3:0', '3:0', '1:3', '1:3', '.', '7', '6']),
-            ],
+            rows: widget.tournament.players.map((player) {
+              int points = 0;
+
+              List<DataCell> cells = [
+                DataCell(Text('${player.surname} ${player.name}')),
+                ...widget.tournament.players.map((opponent) {
+                  if (player == opponent) {
+                    return const DataCell(Text('•'));
+                  } else {
+                    Match match = widget.tournament.matches!.firstWhere(
+                      (m) =>
+                          (m.bluePlayer == player && m.redPlayer == opponent) ||
+                          (m.bluePlayer == opponent && m.redPlayer == player),
+                    );
+
+                    ++points;
+                    if ((match.bluePlayer == player &&
+                            match.blueScore > match.redScore) ||
+                        (match.redPlayer == player &&
+                            match.redScore > match.blueScore)) {
+                      ++points;
+                    }
+
+                    return DataCell(
+                      Text(
+                          '${match.bluePlayer == player ? match.blueScore : match.redScore} : ${match.bluePlayer == player ? match.redScore : match.blueScore}'),
+                    );
+                  }
+                }),
+                DataCell(Text(points.toString())),
+                const DataCell(Text(''))
+              ];
+
+              return DataRow(cells: cells);
+            }).toList(),
           ),
         ),
-      ],
-    );
-  }
-
-  DataRow _buildDataRow(String name, List<String> results) {
-    return DataRow(
-      cells: [
-        DataCell(Text(name)),
-        ...results.map((result) => DataCell(Center(child: Text(result)))),
       ],
     );
   }
