@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:tennis_cup/model/arena.dart';
+import 'package:intl/intl.dart';
+
+DateFormat formatter = DateFormat('yyyy-MM-dd');
 
 class Schedule extends StatefulWidget {
   const Schedule({super.key});
@@ -56,7 +59,8 @@ class _ScheduleState extends State<Schedule> {
                         ),
                       ),
                       SizedBox(width: 8),
-                      Text('Arena: ${arena.title}\n${selectedDate.toString()}'),
+                      Text(
+                          'Arena: ${arena.title}\n${formatter.format(selectedDate)}'),
                     ],
                   ),
                   Row(
