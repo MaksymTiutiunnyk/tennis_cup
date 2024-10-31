@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tennis_cup/model/match.dart';
 import 'package:intl/intl.dart';
 
-DateFormat formatter = DateFormat('yyyy-MM-dd hh:mm');
+DateFormat formatter = DateFormat('yyyy-MM-dd HH:mm');
 
 class UpcomingMatch extends StatelessWidget {
   final Match match;

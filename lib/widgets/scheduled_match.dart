@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:tennis_cup/model/match.dart';
+
+DateFormat formatter = DateFormat('HH:mm');
 
 class ScheduledMatch extends StatefulWidget {
   final Match match;
@@ -23,7 +26,7 @@ class _ScheduledMatch extends State<ScheduledMatch> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(widget.match.getFormattedTime()),
+                  Text(formatter.format(widget.match.dateTime)),
                   IconButton(
                       onPressed: () {},
                       icon: const Icon(Icons.co_present_rounded)),

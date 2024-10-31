@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:tennis_cup/model/tournament.dart';
 import 'package:tennis_cup/model/match.dart';
 
