@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:tennis_cup/model/match.dart';
+import 'package:intl/intl.dart';
+
+DateFormat formatter = DateFormat('yyyy-MM-dd');
 
 class LiveStreamMatch extends StatelessWidget {
   const LiveStreamMatch({super.key, required this.match});
@@ -24,7 +27,8 @@ class LiveStreamMatch extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  Icon(Icons.circle, color: match.tournament.arena.color, size: 8),
+                  Icon(Icons.circle,
+                      color: match.tournament.arena.color, size: 8),
                   const SizedBox(width: 8),
                   Text(
                     "Arena: ${match.tournament.arena.title}",
@@ -33,7 +37,7 @@ class LiveStreamMatch extends StatelessWidget {
                   ),
                 ],
               ),
-              const Row(
+              const Column(
                 children: [
                   Icon(Icons.video_library, color: Colors.red),
                   SizedBox(width: 8),
@@ -43,42 +47,48 @@ class LiveStreamMatch extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 4),
-          const Text("2023-12-31. Men. Evening",
-              style: TextStyle(color: Colors.grey)),
+          Text(
+            '${formatter.format(match.dateTime)} Men, ${match.tournament.time.name}',
+            style: const TextStyle(color: Colors.grey),
+          ),
           const SizedBox(height: 16),
           buildPlayerRow(
-              "assets/kurtenko_andrii.png",
-              "${match.bluePlayer.surname} ${match.bluePlayer.name}",
-              match.blueScore),
+            "assets/kurtenko_andrii.png",
+            "${match.bluePlayer.surname} ${match.bluePlayer.name}",
+            match.blueScore,
+          ),
           const SizedBox(height: 8),
           buildPlayerRow(
-              "assets/mukhin_vitalii.png",
-              "${match.redPlayer.surname} ${match.redPlayer.name}",
-              match.redScore),
+            "assets/mukhin_vitalii.png",
+            "${match.redPlayer.surname} ${match.redPlayer.name}",
+            match.redScore,
+          ),
         ],
       ),
     );
   }
 
   Widget buildPlayerRow(String imagePath, String name, int score) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Row(
-          children: [
-            CircleAvatar(
-              radius: 20,
-              backgroundImage: AssetImage(imagePath),
-            ),
-            const SizedBox(width: 8),
-            Text(name, style: const TextStyle(fontSize: 16)),
-          ],
-        ),
-        Text(
-          score.toString(),
-          style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-        ),
-      ],
+    return Expanded(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            children: [
+              CircleAvatar(
+                radius: 20,
+                backgroundImage: AssetImage(imagePath),
+              ),
+              const SizedBox(width: 8),
+              Text(name, style: const TextStyle(fontSize: 16)),
+            ],
+          ),
+          Text(
+            score.toString(),
+            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          ),
+        ],
+      ),
     );
   }
 }
