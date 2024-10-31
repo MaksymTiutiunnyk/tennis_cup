@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:tennis_cup/screens/home.dart';
 import 'package:tennis_cup/screens/tabs.dart';
 
 void main() {
