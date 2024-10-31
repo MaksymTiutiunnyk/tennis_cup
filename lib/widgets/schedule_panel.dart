@@ -38,54 +38,52 @@ class _SchedulePanelState extends State<SchedulePanel> {
     return Container(
       color: const Color.fromARGB(255, 215, 215, 215),
       padding: const EdgeInsets.all(16),
-      child: Expanded(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 4.0),
-                  child: CircleAvatar(
-                    radius: 6,
-                    backgroundColor: tournament.arena.color,
-                  ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(top: 4.0),
+                child: CircleAvatar(
+                  radius: 6,
+                  backgroundColor: tournament.arena.color,
                 ),
-                const SizedBox(width: 8),
-                Text('Arena: ${tournament.arena.title}\n${tournament.title}'),
-              ],
-            ),
-            Row(
-              children: [
-                IconButton(
-                  onPressed: pickDate,
-                  icon: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      const Icon(Icons.calendar_today),
-                      Positioned(
-                        top: 6,
-                        child: Text(
-                          '${selectedDate.day}',
-                          style: const TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                            color: Color.fromARGB(255, 4, 30, 75),
-                          ),
+              ),
+              const SizedBox(width: 8),
+              Text('Arena: ${tournament.arena.title}\n${tournament.title}'),
+            ],
+          ),
+          Row(
+            children: [
+              IconButton(
+                onPressed: pickDate,
+                icon: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    const Icon(Icons.calendar_today),
+                    Positioned(
+                      top: 6,
+                      child: Text(
+                        '${selectedDate.day}',
+                        style: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                          color: Color.fromARGB(255, 4, 30, 75),
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-                IconButton(
-                  onPressed: () {},
-                  icon: const Icon(Icons.filter_alt),
-                )
-              ],
-            ),
-          ],
-        ),
+              ),
+              IconButton(
+                onPressed: () {},
+                icon: const Icon(Icons.filter_alt),
+              )
+            ],
+          ),
+        ],
       ),
     );
   }

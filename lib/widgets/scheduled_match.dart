@@ -21,23 +21,25 @@ class _ScheduledMatch extends State<ScheduledMatch> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text('time'),
+              Text(widget.match.getFormattedTime()),
               IconButton(
                   onPressed: () {}, icon: const Icon(Icons.co_present_rounded)),
             ],
           ),
-          const Row(
+          Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('name1'),
-              Text('score1'),
+              Text(widget.match.bluePlayer.surname +
+                  widget.match.bluePlayer.name),
+              Text(widget.match.blueScore.toString()),
             ],
           ),
-          const Row(
+          Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('name2'),
-              Text('score2'),
+              Text(
+                  widget.match.redPlayer.surname + widget.match.redPlayer.name),
+              Text(widget.match.redScore.toString()),
             ],
           ),
           const Divider(height: 1),
