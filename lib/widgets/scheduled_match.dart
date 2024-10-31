@@ -14,37 +14,42 @@ class ScheduledMatch extends StatefulWidget {
 class _ScheduledMatch extends State<ScheduledMatch> {
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: Column(
             children: [
-              Text(widget.match.getFormattedTime()),
-              IconButton(
-                  onPressed: () {}, icon: const Icon(Icons.co_present_rounded)),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(widget.match.getFormattedTime()),
+                  IconButton(
+                      onPressed: () {},
+                      icon: const Icon(Icons.co_present_rounded)),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                      '${widget.match.bluePlayer.surname} ${widget.match.bluePlayer.name}'),
+                  Text(widget.match.blueScore.toString()),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                      '${widget.match.redPlayer.surname} ${widget.match.redPlayer.name}'),
+                  Text(widget.match.redScore.toString()),
+                ],
+              ),
             ],
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(widget.match.bluePlayer.surname +
-                  widget.match.bluePlayer.name),
-              Text(widget.match.blueScore.toString()),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                  widget.match.redPlayer.surname + widget.match.redPlayer.name),
-              Text(widget.match.redScore.toString()),
-            ],
-          ),
-          const Divider(height: 1),
-        ],
-      ),
+        ),
+        const Divider(height: 2),
+      ],
     );
   }
 }
