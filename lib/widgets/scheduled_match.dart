@@ -28,8 +28,10 @@ class _ScheduledMatch extends State<ScheduledMatch> {
                 children: [
                   Text(formatter.format(widget.match.dateTime)),
                   IconButton(
-                      onPressed: () {},
-                      icon: const Icon(Icons.co_present_rounded)),
+                    onPressed: () {},
+                    icon: const Icon(Icons.co_present_rounded),
+                    visualDensity: VisualDensity.compact,
+                  ),
                 ],
               ),
               Row(
@@ -37,7 +39,10 @@ class _ScheduledMatch extends State<ScheduledMatch> {
                 children: [
                   Text(
                       '${widget.match.bluePlayer.surname} ${widget.match.bluePlayer.name}'),
-                  Text(widget.match.blueScore.toString()),
+                  Padding(
+                    padding: const EdgeInsets.only(right: 16.0),
+                    child: Text(widget.match.blueScore.toString()),
+                  ),
                 ],
               ),
               Row(
@@ -45,7 +50,10 @@ class _ScheduledMatch extends State<ScheduledMatch> {
                 children: [
                   Text(
                       '${widget.match.redPlayer.surname} ${widget.match.redPlayer.name}'),
-                  Text(widget.match.redScore.toString()),
+                  Padding(
+                    padding: const EdgeInsets.only(right: 16.0),
+                    child: Text(widget.match.redScore.toString()),
+                  ),
                 ],
               ),
             ],
