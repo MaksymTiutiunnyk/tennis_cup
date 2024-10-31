@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tennis_cup/widgets/schedule_panel.dart';
 import 'package:tennis_cup/widgets/scheduled_matches.dart';
+import 'package:tennis_cup/widgets/tournament_results.dart';
 
 class Schedule extends StatelessWidget {
   const Schedule({super.key});
@@ -12,6 +13,7 @@ class Schedule extends StatelessWidget {
         children: [
           SchedulePanel(),
           ScheduledMatches(),
+          TournamentResults(),
         ],
       ),
     );
