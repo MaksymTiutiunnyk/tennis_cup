@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:tennis_cup/model/tournament.dart';
 import 'package:tennis_cup/model/match.dart';
 
@@ -30,10 +31,18 @@ class _TournamentResults extends State<TournamentResults> {
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: DataTable(
+            border: TableBorder.all(),
             columns: [
               const DataColumn(label: Text('Name')),
               for (int i = 1; i <= widget.tournament.players.length; ++i)
-                DataColumn(label: Text(i.toString())),
+                DataColumn(
+                  label: Expanded(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [Text(i.toString())],
+                    ),
+                  ),
+                ),
               const DataColumn(label: Text('Points')),
               const DataColumn(label: Text('Position')),
             ],
@@ -44,7 +53,12 @@ class _TournamentResults extends State<TournamentResults> {
                 DataCell(Text('${player.surname} ${player.name}')),
                 ...widget.tournament.players.map((opponent) {
                   if (player == opponent) {
-                    return const DataCell(Text('•'));
+                    return const DataCell(
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [Text('•')],
+                      ),
+                    );
                   } else {
                     Match match = widget.tournament.matches!.firstWhere(
                       (m) =>
@@ -61,13 +75,28 @@ class _TournamentResults extends State<TournamentResults> {
                     }
 
                     return DataCell(
-                      Text(
-                          '${match.bluePlayer == player ? match.blueScore : match.redScore} : ${match.bluePlayer == player ? match.redScore : match.blueScore}'),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                              '${match.bluePlayer == player ? match.blueScore : match.redScore} : ${match.bluePlayer == player ? match.redScore : match.blueScore}'),
+                        ],
+                      ),
                     );
                   }
                 }),
-                DataCell(Text(points.toString())),
-                const DataCell(Text(''))
+                DataCell(
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [Text(points.toString())],
+                  ),
+                ),
+                const DataCell(
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [Text('0')],
+                  ),
+                )
               ];
 
               return DataRow(cells: cells);
