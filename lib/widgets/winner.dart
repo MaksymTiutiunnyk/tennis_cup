@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:tennis_cup/model/player.dart';
+import 'package:tennis_cup/model/tournament.dart';
+import 'package:intl/intl.dart';
+
+DateFormat formatter = DateFormat('yyyy-MM-dd');
 
 class Winner extends StatelessWidget {
-  final Player player;
-  const Winner({super.key, required this.player});
+  final Tournament tournament;
+  const Winner({super.key, required this.tournament});
 
   @override
   Widget build(BuildContext context) {
@@ -28,14 +31,15 @@ class Winner extends StatelessWidget {
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
-              const Row(
+              Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.emoji_events, color: Colors.orange, size: 24),
-                  SizedBox(width: 8),
+                  const Icon(Icons.emoji_events,
+                      color: Colors.orange, size: 24),
+                  const SizedBox(width: 8),
                   Text(
-                    'Men. Night1',
-                    style: TextStyle(fontSize: 16),
+                    'Men, ${tournament.time.name}',
+                    style: const TextStyle(fontSize: 16),
                   ),
                 ],
               ),
@@ -46,16 +50,16 @@ class Winner extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Mexico',
+                      tournament.arena.title,
                       style: TextStyle(fontSize: 16, color: Colors.grey[600]),
                     ),
                     Text(
-                      '2024-10-28',
+                      formatter.format(tournament.date),
                       style: TextStyle(fontSize: 16, color: Colors.grey[600]),
                     ),
                   ],
                 ),
-              )
+              ),
             ],
           ),
         ),

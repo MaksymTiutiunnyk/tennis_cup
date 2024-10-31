@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tennis_cup/model/player.dart';
+import 'package:tennis_cup/data/tournaments.dart';
 import 'package:tennis_cup/widgets/winner.dart';
 
 class Winners extends StatelessWidget {
@@ -33,7 +33,7 @@ class Winners extends StatelessWidget {
               controller: PageController(viewportFraction: 0.85),
               scrollDirection: Axis.horizontal,
               itemBuilder: (context, index) => Winner(
-                player: Player(name: 'Andrii', surname: 'Kurtenko'),
+                tournament: tournaments[0],
               ),
             ),
           ),
