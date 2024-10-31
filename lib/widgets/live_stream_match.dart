@@ -24,10 +24,10 @@ class LiveStreamMatch extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  Icon(Icons.circle, color: match.arena.color, size: 8),
+                  Icon(Icons.circle, color: match.tournament.arena.color, size: 8),
                   const SizedBox(width: 8),
                   Text(
-                    "Arena: ${match.arena.title}",
+                    "Arena: ${match.tournament.arena.title}",
                     style: const TextStyle(
                         fontSize: 16, fontWeight: FontWeight.bold),
                   ),

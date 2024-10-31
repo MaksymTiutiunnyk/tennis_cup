@@ -25,10 +25,10 @@ class UpcomingMatch extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Row(
             children: [
-              Icon(Icons.circle, color: match.arena.color, size: 10),
+              Icon(Icons.circle, color: match.tournament.arena.color, size: 10),
               const SizedBox(width: 8),
               Text(
-                match.arena.title,
+                match.tournament.arena.title,
                 style: const TextStyle(fontWeight: FontWeight.bold),
               ),
             ],

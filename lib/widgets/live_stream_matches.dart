@@ -1,32 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:tennis_cup/model/arena.dart';
-import 'package:tennis_cup/model/match.dart';
-import 'package:tennis_cup/model/player.dart';
 import 'package:tennis_cup/widgets/live_stream_match.dart';
 
-List<LiveStreamMatch> matches = [
-  LiveStreamMatch(
-    match: Match(
-      bluePlayer: Player(name: 'Andrii', surname: 'Kurtenko'),
-      redPlayer: Player(name: 'Vitalii', surname: 'Mukhin'),
-      arena: Arena(title: 'Africa', color: Colors.black),
-    ),
-  ),
-  LiveStreamMatch(
-    match: Match(
-      bluePlayer: Player(name: 'Andrii', surname: 'Kurtenko'),
-      redPlayer: Player(name: 'Vitalii', surname: 'Mukhin'),
-      arena: Arena(title: 'Africa', color: Colors.black),
-    ),
-  ),
-  LiveStreamMatch(
-    match: Match(
-      bluePlayer: Player(name: 'Andrii', surname: 'Kurtenko'),
-      redPlayer: Player(name: 'Vitalii', surname: 'Mukhin'),
-      arena: Arena(title: 'Africa', color: Colors.black),
-    ),
-  ),
-];
+import '../data/matches.dart';
 
 class LiveStreamMatches extends StatelessWidget {
   const LiveStreamMatches({super.key});
@@ -56,9 +31,9 @@ class LiveStreamMatches extends StatelessWidget {
           Expanded(
             child: PageView.builder(
               controller: PageController(viewportFraction: 0.85),
-              itemCount: matches.length,
+              itemCount: 5,
               itemBuilder: (context, index) {
-                return matches[index];
+                return LiveStreamMatch(match: matches[index]);
               },
             ),
           ),

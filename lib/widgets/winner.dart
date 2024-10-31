@@ -20,7 +20,7 @@ class Winner extends StatelessWidget {
             children: [
               const CircleAvatar(
                 radius: 40,
-                backgroundImage: AssetImage('assets/andrii_kurtenko.png'),
+                backgroundImage: AssetImage('assets/kurtenko_andrii.png'),
               ),
               const SizedBox(height: 8),
               const Text(

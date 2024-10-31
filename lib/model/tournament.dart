@@ -1,8 +1,14 @@
+import 'package:tennis_cup/model/arena.dart';
 import 'package:tennis_cup/model/player.dart';
 
-class Tournament {
-  List<Player> players;
-  List<Match> matches;
+enum Time { morning, evening, night, midnight}
 
-  Tournament({required this.players, required this.matches});
+class Tournament {
+  final List<Player> players;
+  List<Match>? matches;
+  final DateTime date;
+  final Arena arena;
+  final Time time;
+
+  Tournament({required this.players, required this.date, required this.arena, required this.time});
 }
