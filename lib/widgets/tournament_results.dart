@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:tennis_cup/model/tournament.dart';
 
 class TournamentResults extends StatefulWidget {
-  const TournamentResults({super.key});
+  final Tournament tournament;
+  const TournamentResults(this.tournament, {super.key});
 
   @override
   State<TournamentResults> createState() {
@@ -19,6 +21,7 @@ class _TournamentResults extends State<TournamentResults> {
           child: Row(
             children: [
               Icon(Icons.table_chart_outlined),
+              SizedBox(width: 8),
               Text('Tournament results')
             ],
           ),
@@ -26,16 +29,12 @@ class _TournamentResults extends State<TournamentResults> {
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: DataTable(
-            columns: const [
-              DataColumn(label: Text('Name')),
-              DataColumn(label: Text('1')),
-              DataColumn(label: Text('2')),
-              DataColumn(label: Text('3')),
-              DataColumn(label: Text('4')),
-              DataColumn(label: Text('5')),
-              DataColumn(label: Text('6')),
-              DataColumn(label: Text('Points')),
-              DataColumn(label: Text('Position')),
+            columns: [
+              const DataColumn(label: Text('Name')),
+              for (int i = 1; i <= widget.tournament.players.length; ++i)
+                DataColumn(label: Text(i.toString())),
+              const DataColumn(label: Text('Points')),
+              const DataColumn(label: Text('Position')),
             ],
             rows: [
               _buildDataRow('Volynets Oleh',
@@ -52,7 +51,7 @@ class _TournamentResults extends State<TournamentResults> {
                   ['1:3', '3:0', '3:0', '1:3', '1:3', '.', '7', '6']),
             ],
           ),
-        )
+        ),
       ],
     );
   }
@@ -61,9 +60,7 @@ class _TournamentResults extends State<TournamentResults> {
     return DataRow(
       cells: [
         DataCell(Text(name)),
-        ...results
-            .map((result) => DataCell(Center(child: Text(result))))
-            .toList(),
+        ...results.map((result) => DataCell(Center(child: Text(result)))),
       ],
     );
   }

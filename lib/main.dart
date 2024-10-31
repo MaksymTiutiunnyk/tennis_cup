@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:tennis_cup/data/matches.dart';
+import 'package:tennis_cup/data/tournaments.dart';
 import 'package:tennis_cup/screens/tabs.dart';
 
 void main() {
@@ -10,6 +12,8 @@ class TennisCup extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    tournaments[0].matches = matches.take(15).toList(); // костиль
+
     return MaterialApp(
       title: 'Tennis Cup',
       theme: ThemeData(

@@ -1,6 +1,7 @@
 import 'package:tennis_cup/model/arena.dart';
 import 'package:tennis_cup/model/player.dart';
 import 'package:intl/intl.dart';
+import 'package:tennis_cup/model/match.dart';
 
 DateFormat formatter = DateFormat('yyyy-MM-dd');
 
