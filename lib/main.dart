@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tennis_cup/screens/home.dart';
+import 'package:tennis_cup/screens/tabs.dart';
 
 void main() {
   runApp(const TennisCup());
@@ -15,7 +16,7 @@ class TennisCup extends StatelessWidget {
       theme: ThemeData(
         useMaterial3: true,
       ),
-      home: const Home(),
+      home: const Tabs(),
     );
   }
 }
