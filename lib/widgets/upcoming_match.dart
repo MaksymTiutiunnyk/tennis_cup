@@ -17,7 +17,7 @@ class UpcomingMatch extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Text(
-            formatter.format(match.dateTime!),
+            formatter.format(match.dateTime),
             style: const TextStyle(color: Colors.grey),
           ),
         ),
