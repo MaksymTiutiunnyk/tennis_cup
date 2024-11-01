@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:tennis_cup/main.dart';
 import 'package:tennis_cup/model/match.dart';
 import 'package:intl/intl.dart';
@@ -67,25 +68,28 @@ class LiveStreamMatch extends StatelessWidget {
               ],
             ),
           ),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            decoration: BoxDecoration(color: kcolorScheme.onPrimaryContainer),
-            child: Column(
-              children: [
-                buildPlayerRow(
-                  context,
-                  "assets/kurtenko_andrii.png",
-                  '${match.bluePlayer.surname} ${match.bluePlayer.name}',
-                  match.blueScore,
-                ),
-                const SizedBox(height: 8),
-                buildPlayerRow(
-                  context,
-                  "assets/mukhin_vitalii.png",
-                  '${match.redPlayer.surname} ${match.redPlayer.name}',
-                  match.redScore,
-                ),
-              ],
+          Expanded(
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              decoration: BoxDecoration(color: kcolorScheme.onPrimaryContainer),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  buildPlayerRow(
+                    context,
+                    "assets/kurtenko_andrii.png",
+                    '${match.bluePlayer.surname} ${match.bluePlayer.name}',
+                    match.blueScore,
+                  ),
+                  const SizedBox(height: 8),
+                  buildPlayerRow(
+                    context,
+                    "assets/mukhin_vitalii.png",
+                    '${match.redPlayer.surname} ${match.redPlayer.name}',
+                    match.redScore,
+                  ),
+                ],
+              ),
             ),
           ),
         ],
