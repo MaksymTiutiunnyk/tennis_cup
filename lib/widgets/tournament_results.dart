@@ -17,16 +17,16 @@ class _TournamentResults extends State<TournamentResults> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const Padding(
-          padding: EdgeInsets.fromLTRB(8, 16.0, 0, 0),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(8, 16.0, 0, 0),
           child: Row(
             children: [
-              Icon(Icons.table_chart_outlined),
-              SizedBox(width: 8),
+              const Icon(Icons.table_chart_outlined),
+              const SizedBox(width: 8),
               Text(
                 'Tournament results',
-                style: TextStyle(fontSize: 18),
-              )
+                style: Theme.of(context).textTheme.bodyLarge,
+              ),
             ],
           ),
         ),
@@ -35,13 +35,10 @@ class _TournamentResults extends State<TournamentResults> {
           child: DataTable(
             border: TableBorder.all(width: 0.1),
             columns: [
-              const DataColumn(
+              DataColumn(
                 label: Text(
                   'Name',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Color.fromARGB(255, 98, 98, 98),
-                  ),
+                  style: Theme.of(context).textTheme.labelMedium,
                 ),
               ),
               for (int i = 1; i <= widget.tournament.players.length; ++i)
@@ -52,31 +49,22 @@ class _TournamentResults extends State<TournamentResults> {
                       children: [
                         Text(
                           i.toString(),
-                          style: const TextStyle(
-                            fontSize: 16,
-                            color: Color.fromARGB(255, 98, 98, 98),
-                          ),
-                        )
+                          style: Theme.of(context).textTheme.labelMedium,
+                        ),
                       ],
                     ),
                   ),
                 ),
-              const DataColumn(
+              DataColumn(
                 label: Text(
                   'Points',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Color.fromARGB(255, 98, 98, 98),
-                  ),
+                  style: Theme.of(context).textTheme.labelMedium,
                 ),
               ),
-              const DataColumn(
+              DataColumn(
                 label: Text(
                   'Position',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Color.fromARGB(255, 98, 98, 98),
-                  ),
+                  style: Theme.of(context).textTheme.labelMedium,
                 ),
               ),
             ],
@@ -87,7 +75,7 @@ class _TournamentResults extends State<TournamentResults> {
                 DataCell(
                   Text(
                     '${player.surname} ${player.name}',
-                    style: const TextStyle(fontSize: 16),
+                    style: Theme.of(context).textTheme.labelLarge,
                   ),
                 ),
                 ...widget.tournament.players.map((opponent) {
@@ -125,7 +113,7 @@ class _TournamentResults extends State<TournamentResults> {
                         children: [
                           Text(
                             '${match.bluePlayer == player ? match.blueScore : match.redScore} : ${match.bluePlayer == player ? match.redScore : match.blueScore}',
-                            style: const TextStyle(fontSize: 16),
+                            style: Theme.of(context).textTheme.labelLarge,
                           ),
                         ],
                       ),
@@ -138,18 +126,18 @@ class _TournamentResults extends State<TournamentResults> {
                     children: [
                       Text(
                         points.toString(),
-                        style: const TextStyle(fontSize: 16),
+                        style: Theme.of(context).textTheme.labelLarge,
                       ),
                     ],
                   ),
                 ),
-                const DataCell(
+                DataCell(
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
                         '0',
-                        style: TextStyle(fontSize: 16),
+                        style: Theme.of(context).textTheme.labelLarge,
                       ),
                     ],
                   ),

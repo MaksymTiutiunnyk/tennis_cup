@@ -32,6 +32,20 @@ class TennisCup extends StatelessWidget {
           style: const ButtonStyle()
               .copyWith(visualDensity: VisualDensity.compact),
         ),
+        textTheme: ThemeData().textTheme.copyWith(
+              bodyLarge: const TextStyle(fontSize: 18, color: Colors.black),
+              bodyMedium: const TextStyle(fontSize: 16, color: Colors.black),
+              bodySmall: const TextStyle(fontSize: 14, color: Colors.grey),
+              labelMedium: const TextStyle(
+                fontSize: 16,
+                color: Color.fromARGB(255, 98, 98, 98),
+              ),
+              labelLarge: const TextStyle(
+                fontSize: 16,
+                color: Colors.black,
+                fontWeight: FontWeight.normal,
+              ),
+            ),
         bottomNavigationBarTheme: const BottomNavigationBarThemeData().copyWith(
           type: BottomNavigationBarType.fixed,
           backgroundColor: kcolorScheme.onSecondary,

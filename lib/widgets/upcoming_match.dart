@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tennis_cup/model/match.dart';
 import 'package:intl/intl.dart';
 
-DateFormat formatter = DateFormat('yyyy-MM-dd HH:mm');
+DateFormat formatter = DateFormat('yyyy-MM-dd, HH:mm');
 
 class UpcomingMatch extends StatelessWidget {
   final Match match;
@@ -20,14 +20,17 @@ class UpcomingMatch extends StatelessWidget {
             children: [
               Text(
                 formatter.format(match.dateTime),
-                style: const TextStyle(color: Colors.grey),
+                style: Theme.of(context).textTheme.bodySmall,
               ),
               const SizedBox(width: 8),
-              Icon(Icons.circle, color: match.tournament.arena.color, size: 10),
+              Icon(Icons.circle, color: match.tournament.arena.color, size: 8),
               const SizedBox(width: 8),
               Text(
                 match.tournament.arena.title,
-                style: const TextStyle(fontWeight: FontWeight.bold),
+                style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                    ),
               ),
             ],
           ),
@@ -36,7 +39,7 @@ class UpcomingMatch extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(16, 0, 0, 8),
           child: Text(
             '${match.bluePlayer.surname} ${match.bluePlayer.name} - ${match.redPlayer.surname} ${match.redPlayer.name}',
-            style: const TextStyle(fontSize: 16),
+            style: Theme.of(context).textTheme.bodyMedium,
           ),
         ),
       ],

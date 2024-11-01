@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:tennis_cup/main.dart';
 import 'package:tennis_cup/model/match.dart';
 import 'package:intl/intl.dart';
@@ -16,9 +15,9 @@ class LiveStreamMatch extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 8),
       decoration: BoxDecoration(
-          border: Border.all(color: kcolorScheme.onPrimaryContainer)),
+        border: Border.all(color: kcolorScheme.onPrimaryContainer),
+      ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
             padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
@@ -40,24 +39,27 @@ class LiveStreamMatch extends StatelessWidget {
                             const SizedBox(width: 8),
                             Text(
                               'Arena: ${match.tournament.arena.title}',
-                              style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
+                              style: Theme.of(context).textTheme.bodyMedium,
                             ),
                           ],
                         ),
                         Text(
                           '${formatter.format(match.dateTime)} Men, ${match.tournament.time.name}',
-                          style: const TextStyle(color: Colors.grey),
+                          style: Theme.of(context).textTheme.bodySmall,
                         ),
                       ],
                     ),
-                    const Column(
+                    Column(
                       children: [
-                        Icon(Icons.video_library, color: Colors.red),
-                        SizedBox(width: 8),
-                        Text("38'", style: TextStyle(color: Colors.red)),
+                        const Icon(Icons.video_library, color: Colors.red),
+                        const SizedBox(width: 8),
+                        Text(
+                          "38'",
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodySmall!
+                              .copyWith(color: Colors.red),
+                        ),
                       ],
                     ),
                   ],
@@ -65,25 +67,25 @@ class LiveStreamMatch extends StatelessWidget {
               ],
             ),
           ),
-          Expanded(
-            child: Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(color: kcolorScheme.onPrimaryContainer),
-              child: Column(
-                children: [
-                  buildPlayerRow(
-                    "assets/kurtenko_andrii.png",
-                    '${match.bluePlayer.surname} ${match.bluePlayer.name}',
-                    match.blueScore,
-                  ),
-                  const SizedBox(height: 8),
-                  buildPlayerRow(
-                    "assets/mukhin_vitalii.png",
-                    '${match.redPlayer.surname} ${match.redPlayer.name}',
-                    match.redScore,
-                  ),
-                ],
-              ),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            decoration: BoxDecoration(color: kcolorScheme.onPrimaryContainer),
+            child: Column(
+              children: [
+                buildPlayerRow(
+                  context,
+                  "assets/kurtenko_andrii.png",
+                  '${match.bluePlayer.surname} ${match.bluePlayer.name}',
+                  match.blueScore,
+                ),
+                const SizedBox(height: 8),
+                buildPlayerRow(
+                  context,
+                  "assets/mukhin_vitalii.png",
+                  '${match.redPlayer.surname} ${match.redPlayer.name}',
+                  match.redScore,
+                ),
+              ],
             ),
           ),
         ],
@@ -91,7 +93,8 @@ class LiveStreamMatch extends StatelessWidget {
     );
   }
 
-  Widget buildPlayerRow(String imagePath, String name, int score) {
+  Widget buildPlayerRow(
+      BuildContext context, String imagePath, String name, int score) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -104,10 +107,10 @@ class LiveStreamMatch extends StatelessWidget {
             const SizedBox(width: 8),
             Text(
               name,
-              style: const TextStyle(
-                fontSize: 16,
-                color: Colors.white,
-              ),
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyMedium!
+                  .copyWith(color: Colors.white),
             ),
           ],
         ),

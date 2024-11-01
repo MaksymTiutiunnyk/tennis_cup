@@ -26,7 +26,10 @@ class _ScheduledMatch extends State<ScheduledMatch> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(formatter.format(widget.match.dateTime)),
+                  Text(
+                    formatter.format(widget.match.dateTime),
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
                   IconButton(
                     onPressed: () {},
                     icon: const Icon(Icons.people),
@@ -38,16 +41,16 @@ class _ScheduledMatch extends State<ScheduledMatch> {
                 children: [
                   Text(
                     '${widget.match.bluePlayer.surname} ${widget.match.bluePlayer.name}',
-                    style: const TextStyle(fontSize: 16),
+                    style: Theme.of(context).textTheme.bodyMedium,
                   ),
                   Padding(
                     padding: const EdgeInsets.only(right: 16.0),
                     child: Text(
                       widget.match.blueScore.toString(),
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyMedium!
+                          .copyWith(fontWeight: FontWeight.bold),
                     ),
                   ),
                 ],
@@ -56,17 +59,16 @@ class _ScheduledMatch extends State<ScheduledMatch> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    '${widget.match.redPlayer.surname} ${widget.match.redPlayer.name}',
-                    style: const TextStyle(fontSize: 16),
-                  ),
+                      '${widget.match.redPlayer.surname} ${widget.match.redPlayer.name}',
+                      style: Theme.of(context).textTheme.bodyMedium),
                   Padding(
                     padding: const EdgeInsets.only(right: 16.0),
                     child: Text(
                       widget.match.redScore.toString(),
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyMedium!
+                          .copyWith(fontWeight: FontWeight.bold),
                     ),
                   ),
                 ],

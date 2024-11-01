@@ -24,9 +24,9 @@ class Winner extends StatelessWidget {
             backgroundImage: AssetImage('assets/kurtenko_andrii.png'),
           ),
           const SizedBox(height: 8),
-          const Text(
+          Text(
             'Kurtenko Andrii',
-            style: TextStyle(fontSize: 20),
+            style: Theme.of(context).textTheme.bodyLarge,
           ),
           const SizedBox(height: 8),
           Row(
@@ -36,7 +36,7 @@ class Winner extends StatelessWidget {
               const SizedBox(width: 8),
               Text(
                 'Men, ${tournament.time.name}',
-                style: const TextStyle(fontSize: 16),
+                style: Theme.of(context).textTheme.bodyMedium,
               ),
             ],
           ),
@@ -48,11 +48,11 @@ class Winner extends StatelessWidget {
               children: [
                 Text(
                   tournament.arena.title,
-                  style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: Colors.grey),
                 ),
                 Text(
                   formatter.format(tournament.date),
-                  style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: Colors.grey),
                 ),
               ],
             ),

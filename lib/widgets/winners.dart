@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:tennis_cup/data/tournaments.dart';
-import 'package:tennis_cup/main.dart';
 import 'package:tennis_cup/widgets/winner.dart';
 
 class Winners extends StatelessWidget {
@@ -11,22 +10,23 @@ class Winners extends StatelessWidget {
     return Expanded(
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 8),
-        decoration: BoxDecoration(color: kcolorScheme.onPrimaryContainer),
+        decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.onPrimaryContainer),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Row(
                 children: [
-                  Icon(Icons.star, color: Colors.red),
-                  SizedBox(width: 8),
+                  const Icon(Icons.star, color: Colors.red),
+                  const SizedBox(width: 8),
                   Text(
                     'Tennis Cup: Winners',
-                    style: TextStyle(
-                      fontSize: 18,
-                      color: Colors.white,
-                    ),
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyLarge!
+                        .copyWith(color: Colors.white),
                   ),
                 ],
               ),

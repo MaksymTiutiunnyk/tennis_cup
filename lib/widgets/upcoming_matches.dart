@@ -11,16 +11,16 @@ class UpcomingMatches extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Padding(
-            padding: EdgeInsets.all(16),
+          Padding(
+            padding: const EdgeInsets.all(16),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(Icons.calendar_today),
-                SizedBox(width: 8),
+                const Icon(Icons.calendar_today),
+                const SizedBox(width: 8),
                 Text(
                   'Tennis Cup: Upcoming matches',
-                  style: TextStyle(fontSize: 18),
+                  style: Theme.of(context).textTheme.bodyLarge,
                 ),
               ],
             ),

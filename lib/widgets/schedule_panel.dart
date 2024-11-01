@@ -52,7 +52,10 @@ class _SchedulePanelState extends State<SchedulePanel> {
                 ),
               ),
               const SizedBox(width: 8),
-              Text('Arena: ${tournament.arena.title}\n${tournament.title}'),
+              Text(
+                'Arena: ${tournament.arena.title}\n${tournament.title}',
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
             ],
           ),
           Row(
