@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tennis_cup/data/tournaments.dart';
 import 'package:tennis_cup/model/tournament.dart';
+import 'package:tennis_cup/widgets/schedule_filters.dart';
 
 class SchedulePanel extends StatefulWidget {
   const SchedulePanel({super.key});
@@ -31,6 +32,13 @@ class _SchedulePanelState extends State<SchedulePanel> {
     setState(() {
       selectedDate = pickedDate;
     });
+  }
+
+  void showFilters() {
+    showModalBottomSheet(
+      context: context,
+      builder: (ctx) => const ScheduleFilters(),
+    );
   }
 
   @override
@@ -81,7 +89,7 @@ class _SchedulePanelState extends State<SchedulePanel> {
                 ),
               ),
               IconButton(
-                onPressed: () {},
+                onPressed: showFilters,
                 icon: const Icon(Icons.filter_list),
               )
             ],
