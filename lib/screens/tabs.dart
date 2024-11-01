@@ -44,23 +44,13 @@ class _Tabs extends State<Tabs> {
         pageTitle = 'Tennis Cup: Home page';
     }
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 0, 29, 53),
-        title: Text(
-          pageTitle,
-          style: const TextStyle(color: Colors.white),
-        ),
-      ),
+      appBar: AppBar(title: Text(pageTitle)),
       body: activePage,
       bottomNavigationBar: BottomNavigationBar(
         onTap: onSelectPage,
         currentIndex: selectedPageIndex,
-        showUnselectedLabels: false,
         items: const [
-          BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              label: 'Home',
-              backgroundColor: Colors.amber),
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
           BottomNavigationBarItem(
               icon: Icon(Icons.schedule), label: 'Schedule'),
           BottomNavigationBarItem(icon: Icon(Icons.people), label: 'Ranking'),

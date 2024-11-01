@@ -29,8 +29,7 @@ class _ScheduledMatch extends State<ScheduledMatch> {
                   Text(formatter.format(widget.match.dateTime)),
                   IconButton(
                     onPressed: () {},
-                    icon: const Icon(Icons.co_present_rounded),
-                    visualDensity: VisualDensity.compact,
+                    icon: const Icon(Icons.people),
                   ),
                 ],
               ),
@@ -38,10 +37,18 @@ class _ScheduledMatch extends State<ScheduledMatch> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                      '${widget.match.bluePlayer.surname} ${widget.match.bluePlayer.name}'),
+                    '${widget.match.bluePlayer.surname} ${widget.match.bluePlayer.name}',
+                    style: const TextStyle(fontSize: 16),
+                  ),
                   Padding(
                     padding: const EdgeInsets.only(right: 16.0),
-                    child: Text(widget.match.blueScore.toString()),
+                    child: Text(
+                      widget.match.blueScore.toString(),
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -49,10 +56,18 @@ class _ScheduledMatch extends State<ScheduledMatch> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                      '${widget.match.redPlayer.surname} ${widget.match.redPlayer.name}'),
+                    '${widget.match.redPlayer.surname} ${widget.match.redPlayer.name}',
+                    style: const TextStyle(fontSize: 16),
+                  ),
                   Padding(
                     padding: const EdgeInsets.only(right: 16.0),
-                    child: Text(widget.match.redScore.toString()),
+                    child: Text(
+                      widget.match.redScore.toString(),
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
                 ],
               ),

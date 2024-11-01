@@ -16,10 +16,7 @@ class LiveStreamMatches extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(
-                  Icons.live_tv,
-                  color: Color.fromARGB(255, 1, 1, 98),
-                ),
+                Icon(Icons.live_tv),
                 SizedBox(width: 8),
                 Text(
                   'Tennis Cup: Live stream',
@@ -30,7 +27,7 @@ class LiveStreamMatches extends StatelessWidget {
           ),
           Expanded(
             child: PageView.builder(
-              controller: PageController(viewportFraction: 0.85),
+              controller: PageController(viewportFraction: 0.90),
               itemCount: 5,
               itemBuilder: (context, index) {
                 return LiveStreamMatch(match: matches[index]);

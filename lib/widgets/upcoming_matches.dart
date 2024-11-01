@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:tennis_cup/widgets/upcoming_match.dart';
 import 'package:tennis_cup/data/matches.dart';
 
-
 class UpcomingMatches extends StatelessWidget {
   const UpcomingMatches({super.key});
 
@@ -17,10 +16,7 @@ class UpcomingMatches extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(
-                  Icons.calendar_today,
-                  color: Color.fromARGB(255, 1, 1, 98),
-                ),
+                Icon(Icons.calendar_today),
                 SizedBox(width: 8),
                 Text(
                   'Tennis Cup: Upcoming matches',

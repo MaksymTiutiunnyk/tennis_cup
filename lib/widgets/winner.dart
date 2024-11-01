@@ -10,59 +10,54 @@ class Winner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Card(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
-        elevation: 4,
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
+    return Container(
+      margin: const EdgeInsets.all(8),
+      padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8),
+        color: Colors.white,
+      ),
+      child: Column(
+        children: [
+          const CircleAvatar(
+            radius: 40,
+            backgroundImage: AssetImage('assets/kurtenko_andrii.png'),
+          ),
+          const SizedBox(height: 8),
+          const Text(
+            'Kurtenko Andrii',
+            style: TextStyle(fontSize: 20),
+          ),
+          const SizedBox(height: 8),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const CircleAvatar(
-                radius: 40,
-                backgroundImage: AssetImage('assets/kurtenko_andrii.png'),
-              ),
-              const SizedBox(height: 8),
-              const Text(
-                'Kurtenko Andrii',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 8),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Icons.emoji_events,
-                      color: Colors.orange, size: 24),
-                  const SizedBox(width: 8),
-                  Text(
-                    'Men, ${tournament.time.name}',
-                    style: const TextStyle(fontSize: 16),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 4),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      tournament.arena.title,
-                      style: TextStyle(fontSize: 16, color: Colors.grey[600]),
-                    ),
-                    Text(
-                      formatter.format(tournament.date),
-                      style: TextStyle(fontSize: 16, color: Colors.grey[600]),
-                    ),
-                  ],
-                ),
+              const Icon(Icons.emoji_events, color: Colors.orange, size: 24),
+              const SizedBox(width: 8),
+              Text(
+                'Men, ${tournament.time.name}',
+                style: const TextStyle(fontSize: 16),
               ),
             ],
           ),
-        ),
+          const SizedBox(height: 4),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  tournament.arena.title,
+                  style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+                ),
+                Text(
+                  formatter.format(tournament.date),
+                  style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

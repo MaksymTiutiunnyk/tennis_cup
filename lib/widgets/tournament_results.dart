@@ -23,39 +23,85 @@ class _TournamentResults extends State<TournamentResults> {
             children: [
               Icon(Icons.table_chart_outlined),
               SizedBox(width: 8),
-              Text('Tournament results')
+              Text(
+                'Tournament results',
+                style: TextStyle(fontSize: 18),
+              )
             ],
           ),
         ),
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: DataTable(
-            border: TableBorder.all(),
+            border: TableBorder.all(width: 0.1),
             columns: [
-              const DataColumn(label: Text('Name')),
+              const DataColumn(
+                label: Text(
+                  'Name',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Color.fromARGB(255, 98, 98, 98),
+                  ),
+                ),
+              ),
               for (int i = 1; i <= widget.tournament.players.length; ++i)
                 DataColumn(
                   label: Expanded(
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: [Text(i.toString())],
+                      children: [
+                        Text(
+                          i.toString(),
+                          style: const TextStyle(
+                            fontSize: 16,
+                            color: Color.fromARGB(255, 98, 98, 98),
+                          ),
+                        )
+                      ],
                     ),
                   ),
                 ),
-              const DataColumn(label: Text('Points')),
-              const DataColumn(label: Text('Position')),
+              const DataColumn(
+                label: Text(
+                  'Points',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Color.fromARGB(255, 98, 98, 98),
+                  ),
+                ),
+              ),
+              const DataColumn(
+                label: Text(
+                  'Position',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Color.fromARGB(255, 98, 98, 98),
+                  ),
+                ),
+              ),
             ],
             rows: widget.tournament.players.map((player) {
               int points = 0;
 
               List<DataCell> cells = [
-                DataCell(Text('${player.surname} ${player.name}')),
+                DataCell(
+                  Text(
+                    '${player.surname} ${player.name}',
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                ),
                 ...widget.tournament.players.map((opponent) {
                   if (player == opponent) {
                     return const DataCell(
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
-                        children: [Text('•')],
+                        children: [
+                          Icon(
+                            Icons.circle,
+                            color: Colors.blueGrey,
+                            size: 10,
+                          ),
+                        ],
                       ),
                     );
                   } else {
@@ -78,7 +124,9 @@ class _TournamentResults extends State<TournamentResults> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                              '${match.bluePlayer == player ? match.blueScore : match.redScore} : ${match.bluePlayer == player ? match.redScore : match.blueScore}'),
+                            '${match.bluePlayer == player ? match.blueScore : match.redScore} : ${match.bluePlayer == player ? match.redScore : match.blueScore}',
+                            style: const TextStyle(fontSize: 16),
+                          ),
                         ],
                       ),
                     );
@@ -87,13 +135,23 @@ class _TournamentResults extends State<TournamentResults> {
                 DataCell(
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: [Text(points.toString())],
+                    children: [
+                      Text(
+                        points.toString(),
+                        style: const TextStyle(fontSize: 16),
+                      ),
+                    ],
                   ),
                 ),
                 const DataCell(
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: [Text('0')],
+                    children: [
+                      Text(
+                        '0',
+                        style: TextStyle(fontSize: 16),
+                      ),
+                    ],
                   ),
                 )
               ];

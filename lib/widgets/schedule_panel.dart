@@ -36,7 +36,7 @@ class _SchedulePanelState extends State<SchedulePanel> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: const Color.fromARGB(255, 215, 215, 215),
+      color: const Color.fromARGB(255, 237, 235, 235),
       padding: const EdgeInsets.all(16),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -47,7 +47,7 @@ class _SchedulePanelState extends State<SchedulePanel> {
               Padding(
                 padding: const EdgeInsets.only(top: 4.0),
                 child: CircleAvatar(
-                  radius: 6,
+                  radius: 5,
                   backgroundColor: tournament.arena.color,
                 ),
               ),
@@ -70,7 +70,7 @@ class _SchedulePanelState extends State<SchedulePanel> {
                         style: const TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
-                          color: Color.fromARGB(255, 4, 30, 75),
+                          color: Colors.red,
                         ),
                       ),
                     ),
@@ -79,7 +79,7 @@ class _SchedulePanelState extends State<SchedulePanel> {
               ),
               IconButton(
                 onPressed: () {},
-                icon: const Icon(Icons.filter_alt),
+                icon: const Icon(Icons.filter_list),
               )
             ],
           ),
