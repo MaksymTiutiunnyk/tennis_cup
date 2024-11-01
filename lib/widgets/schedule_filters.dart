@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:tennis_cup/data/arenas.dart';
 import 'package:tennis_cup/model/arena.dart';
 import 'package:tennis_cup/model/tournament.dart';
@@ -12,7 +11,7 @@ class ScheduleFilters extends StatefulWidget {
 }
 
 class _ScheduleFiltersState extends State<ScheduleFilters> {
-  Time? _time = Time.morning;
+  Time? _time = Time.Morning;
   Arena? _arena = arenas[0];
 
   @override
@@ -20,7 +19,7 @@ class _ScheduleFiltersState extends State<ScheduleFilters> {
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.fromLTRB(16, 48, 16, 16),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -75,6 +74,7 @@ class _ScheduleFiltersState extends State<ScheduleFilters> {
         ),
         const Divider(height: 1),
         Expanded(
+          flex: 2,
           child: Padding(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
             child: ListView(

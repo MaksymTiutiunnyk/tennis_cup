@@ -37,6 +37,7 @@ class _SchedulePanelState extends State<SchedulePanel> {
   void showFilters() {
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
       builder: (ctx) => const ScheduleFilters(),
     );
   }

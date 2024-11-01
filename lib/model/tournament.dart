@@ -5,7 +5,8 @@ import 'package:tennis_cup/model/match.dart';
 
 DateFormat formatter = DateFormat('yyyy-MM-dd');
 
-enum Time { morning, evening, night, midnight }
+// ignore: constant_identifier_names
+enum Time { Morning, Evening, Day, Midnight, Night }
 
 class Tournament {
   final List<Player> players;
