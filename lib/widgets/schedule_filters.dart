@@ -19,7 +19,7 @@ class _ScheduleFiltersState extends State<ScheduleFilters> {
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.fromLTRB(16, 48, 16, 16),
+          padding: const EdgeInsets.all(16),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
