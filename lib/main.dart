@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:tennis_cup/data/matches.dart';
 import 'package:tennis_cup/data/tournaments.dart';
 import 'package:tennis_cup/screens/tabs.dart';
@@ -8,7 +9,11 @@ ColorScheme kcolorScheme = ColorScheme.fromSeed(
 );
 
 void main() {
-  runApp(const TennisCup());
+  WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
+      .then((fn) {
+    runApp(const TennisCup());
+  });
 }
 
 class TennisCup extends StatelessWidget {
