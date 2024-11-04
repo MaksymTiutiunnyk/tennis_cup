@@ -6,12 +6,12 @@ class RankingPlayer extends StatefulWidget {
   const RankingPlayer({super.key, required this.player});
 
   @override
-  State<StatefulWidget> createState() {
-    return _RankingPlayer();
+  State<RankingPlayer> createState() {
+    return _RankingPlayerState();
   }
 }
 
-class _RankingPlayer extends State<RankingPlayer> {
+class _RankingPlayerState extends State<RankingPlayer> {
   @override
   Widget build(BuildContext context) {
     return Card(

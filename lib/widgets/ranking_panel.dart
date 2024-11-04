@@ -1,7 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:tennis_cup/widgets/ranking_filters.dart';
 
 class RankingPanel extends StatelessWidget {
   const RankingPanel({super.key});
+
+  void showFilters(BuildContext context) {
+    showModalBottomSheet(
+      useSafeArea: true,
+      isScrollControlled: true,
+      context: context,
+      builder: (ctx) => const RankingFilters(),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +37,9 @@ class RankingPanel extends StatelessWidget {
                 icon: const Icon(Icons.search),
               ),
               IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  showFilters(context);
+                },
                 icon: const Icon(Icons.filter_list),
               ),
             ],
