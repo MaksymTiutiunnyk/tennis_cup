@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tennis_cup/screens/home.dart';
+import 'package:tennis_cup/screens/ranking.dart';
 import 'package:tennis_cup/screens/schedule.dart';
 
 class Tabs extends StatefulWidget {
@@ -34,7 +35,7 @@ class _Tabs extends State<Tabs> {
         pageTitle = 'Tennis Cup: Schedule';
         break;
       case 2:
-        activePage = const Home();
+        activePage = const Ranking();
         pageTitle = 'Tennis Cup: Ranking';
       case 3:
         activePage = const Home();
