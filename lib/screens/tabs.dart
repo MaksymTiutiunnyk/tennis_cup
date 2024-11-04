@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tennis_cup/screens/home.dart';
+import 'package:tennis_cup/screens/news.dart';
 import 'package:tennis_cup/screens/ranking.dart';
 import 'package:tennis_cup/screens/schedule.dart';
 
@@ -38,7 +39,7 @@ class _Tabs extends State<Tabs> {
         activePage = const Ranking();
         pageTitle = 'Tennis Cup: Ranking';
       case 3:
-        activePage = const Home();
+        activePage = const News();
         pageTitle = 'Tennis Cup: News';
       default:
         activePage = const Home();
