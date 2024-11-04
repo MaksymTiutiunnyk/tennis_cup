@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tennis_cup/widgets/ranking_filters.dart';
+import 'package:tennis_cup/widgets/ranking_search.dart';
 
 class RankingPanel extends StatelessWidget {
   const RankingPanel({super.key});
@@ -10,6 +11,15 @@ class RankingPanel extends StatelessWidget {
       isScrollControlled: true,
       context: context,
       builder: (ctx) => const RankingFilters(),
+    );
+  }
+
+  void showSearchField(BuildContext context) {
+    showModalBottomSheet(
+      useSafeArea: true,
+      isScrollControlled: true,
+      context: context,
+      builder: (ctx) => const RankingSearch(),
     );
   }
 
@@ -33,7 +43,9 @@ class RankingPanel extends StatelessWidget {
           Row(
             children: [
               IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  showSearchField(context);
+                },
                 icon: const Icon(Icons.search),
               ),
               IconButton(
@@ -43,7 +55,7 @@ class RankingPanel extends StatelessWidget {
                 icon: const Icon(Icons.filter_list),
               ),
             ],
-          )
+          ),
         ],
       ),
     );
