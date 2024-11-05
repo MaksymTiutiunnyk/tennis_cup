@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:tennis_cup/model/player.dart';
 import 'package:tennis_cup/screens/players_comparison.dart';
 import 'package:tennis_cup/widgets/player_search.dart';
+import 'package:tennis_cup/widgets/player_widgets/player_info.dart';
+import 'package:tennis_cup/widgets/player_widgets/player_tournaments.dart';
 
 class PlayerDetails extends StatelessWidget {
   final Player player;
@@ -28,142 +30,68 @@ class PlayerDetails extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
-      body: SingleChildScrollView(
-        child: Column(
+      appBar: AppBar(
+        leadingWidth: 35,
+        title: const Text("Tennis Cup: Player's statistics"),
+      ),
+      body: 
+      // SingleChildScrollView(
+      //   child: 
+        Stack(
+          alignment: Alignment.center,
           children: [
-            const CircleAvatar(
-              radius: 50,
-              backgroundImage: AssetImage('assets/kurtenko_andrii.png'),
+            Column(
+              children: [
+                PlayerInfo(player),
+                Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 8),
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      showSearchField(context);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: const Padding(
+                      padding: EdgeInsets.all(18.0),
+                      child: Text('Participant to compare'),
+                    ),
+                  ),
+                ),
+                const PlayerTournaments(),
+              ],
             ),
-            Text(player.fullName),
-            Padding(
-              padding: const EdgeInsets.all(8),
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Rank Tennis Cup:',
-                        style: Theme.of(context).textTheme.bodySmall,
-                      ),
-                      Text(
-                        (35.6).toString(),
-                        style: Theme.of(context).textTheme.bodySmall,
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 4),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Rank UTTF:',
-                        style: Theme.of(context).textTheme.bodySmall,
-                      ),
-                      Text(
-                        (35.6).toString(),
-                        style: Theme.of(context).textTheme.bodySmall,
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 4),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Tournaments:',
-                        style: Theme.of(context).textTheme.bodySmall,
-                      ),
-                      Text(
-                        1.toString(),
-                        style: Theme.of(context).textTheme.bodySmall,
-                      ),
-                    ],
-                  ),
-                  const Divider(height: 12),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'City, Country:',
-                        style: Theme.of(context).textTheme.bodySmall,
-                      ),
-                      Text(
-                        'Kyiv, Ukraine',
-                        style: Theme.of(context).textTheme.bodySmall,
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 4),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Year of birth:',
-                        style: Theme.of(context).textTheme.bodySmall,
-                      ),
-                      Text(
-                        1995.toString(),
-                        style: Theme.of(context).textTheme.bodySmall,
-                      ),
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Wins:',
-                        style: Theme.of(context).textTheme.bodySmall,
-                      ),
-                      Text(
-                        300.toString(),
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodySmall!
-                            .copyWith(color: Colors.green),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Loses:',
-                        style: Theme.of(context).textTheme.bodySmall,
-                      ),
-                      Text(
-                        231.toString(),
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodySmall!
-                            .copyWith(color: Colors.red),
-                      ),
-                    ],
-                  ),
-                ],
+            Positioned(
+              top: 367,
+              child: Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Theme.of(context)
+                          .colorScheme
+                          .shadow
+                          .withOpacity(0.25),
+                      spreadRadius: 1,
+                      blurRadius: 5,
+                      offset: const Offset(0, 0),
+                    ),
+                  ],
+                ),
+                child: CircleAvatar(
+                  radius: 25,
+                  backgroundColor:
+                      Theme.of(context).colorScheme.secondaryContainer,
+                  child: const Text('VS'),
+                ),
               ),
             ),
-            const CircleAvatar(
-              radius: 30,
-              child: Text('VS'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                showSearchField(context);
-              },
-              child: const Text('Participant to compare'),
-            ),
-            const Row(
-              children: [
-                Icon(Icons.emoji_events),
-                Text('Tournaments'),
-              ],
-            )
           ],
         ),
-      ),
+      // ),
     );
   }
 }
