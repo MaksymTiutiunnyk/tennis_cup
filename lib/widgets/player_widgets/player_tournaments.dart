@@ -8,22 +8,28 @@ class PlayerTournaments extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
+    return Flexible(
+      fit: FlexFit.loose,
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          const Row(
-            children: [
-              Icon(Icons.emoji_events),
-              Text('Tournaments'),
-            ],
+          const Padding(
+            padding: EdgeInsets.fromLTRB(8.0, 16, 8, 8),
+            child: Row(
+              children: [
+                Icon(Icons.emoji_events),
+                SizedBox(width: 8),
+                Text('Tournaments'),
+              ],
+            ),
           ),
-          Container(
-            height: 300,
-            child: ListView.builder(
-              itemCount: tournaments.length,
-              itemBuilder: (context, index) {
-                return PlayerTournament(tournaments[index]);
-              },
+          Flexible(
+            fit: FlexFit.loose,
+            child: Column(
+              children: [
+                for (Tournament tournament in tournaments)
+                  PlayerTournament(tournament)
+              ],
             ),
           ),
         ],

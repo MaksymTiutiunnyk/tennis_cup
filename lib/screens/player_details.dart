@@ -35,12 +35,13 @@ class PlayerDetails extends StatelessWidget {
         title: const Text("Tennis Cup: Player's statistics"),
       ),
       body: 
-      // SingleChildScrollView(
-      //   child: 
+      SingleChildScrollView(
+        child: 
         Stack(
           alignment: Alignment.center,
           children: [
             Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
                 PlayerInfo(player),
                 Container(
@@ -91,7 +92,7 @@ class PlayerDetails extends StatelessWidget {
             ),
           ],
         ),
-      // ),
+      ),
     );
   }
 }

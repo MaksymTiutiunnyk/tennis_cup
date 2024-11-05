@@ -14,8 +14,7 @@ class PlayerInfo extends StatelessWidget {
           const SizedBox(height: 8),
           const CircleAvatar(
             radius: 60,
-            backgroundImage: NetworkImage(
-                'https://tabletennis.setkacup.com/api/Image/setka/280x280/Mi8yMy8yMzA5L2ltYWdlLmpwZw==.jpeg'),
+            backgroundImage: AssetImage('assets/kurtenko_andrii.png'),
           ),
           const SizedBox(height: 8),
           Text(
