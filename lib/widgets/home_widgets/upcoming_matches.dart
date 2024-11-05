@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:tennis_cup/widgets/live_stream_match.dart';
+import 'package:tennis_cup/widgets/home_widgets/upcoming_match.dart';
+import 'package:tennis_cup/data/matches.dart';
 
-import '../data/matches.dart';
-
-class LiveStreamMatches extends StatelessWidget {
-  const LiveStreamMatches({super.key});
+class UpcomingMatches extends StatelessWidget {
+  const UpcomingMatches({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -13,26 +12,25 @@ class LiveStreamMatches extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(16),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Icon(Icons.live_tv),
+                const Icon(Icons.calendar_today),
                 const SizedBox(width: 8),
                 Text(
-                  'Tennis Cup: Live stream',
+                  'Tennis Cup: Upcoming matches',
                   style: Theme.of(context).textTheme.bodyLarge,
                 ),
               ],
             ),
           ),
           Expanded(
-            child: PageView.builder(
-              scrollDirection: Axis.horizontal,
-              controller: PageController(viewportFraction: 0.90),
-              itemCount: 5,
+            child: ListView.builder(
+              padding: const EdgeInsets.all(0),
+              itemCount: 6,
               itemBuilder: (context, index) {
-                return LiveStreamMatch(match: matches[index]);
+                return UpcomingMatch(match: matches[index]);
               },
             ),
           ),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tennis_cup/data/tournaments.dart';
 import 'package:tennis_cup/model/tournament.dart';
-import 'package:tennis_cup/widgets/schedule_filters.dart';
+import 'package:tennis_cup/widgets/schedule_widgets/schedule_filters.dart';
 
 class SchedulePanel extends StatefulWidget {
   const SchedulePanel({super.key});

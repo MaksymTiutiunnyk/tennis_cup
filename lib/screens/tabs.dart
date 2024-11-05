@@ -9,11 +9,11 @@ class Tabs extends StatefulWidget {
 
   @override
   State<Tabs> createState() {
-    return _Tabs();
+    return _TabsState();
   }
 }
 
-class _Tabs extends State<Tabs> {
+class _TabsState extends State<Tabs> {
   int selectedPageIndex = 0;
   Widget activePage = const Home();
   String pageTitle = 'Tennis Cup: Home page';

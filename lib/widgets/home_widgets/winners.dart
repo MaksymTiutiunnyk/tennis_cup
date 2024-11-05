@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tennis_cup/data/tournaments.dart';
-import 'package:tennis_cup/widgets/winner.dart';
+import 'package:tennis_cup/widgets/home_widgets/winner.dart';
 
 class Winners extends StatelessWidget {
   const Winners({super.key});

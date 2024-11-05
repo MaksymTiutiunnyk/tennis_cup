@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:tennis_cup/widgets/all_news.dart';
-import 'package:tennis_cup/widgets/interesting_news.dart';
+import 'package:tennis_cup/widgets/news_widgets/all_news.dart';
+import 'package:tennis_cup/widgets/news_widgets/interesting_news.dart';
 
 class News extends StatefulWidget {
   const News({super.key});

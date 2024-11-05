@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:tennis_cup/data/tournaments.dart';
-import 'package:tennis_cup/widgets/schedule_panel.dart';
-import 'package:tennis_cup/widgets/scheduled_matches.dart';
-import 'package:tennis_cup/widgets/tournament_results.dart';
+import 'package:tennis_cup/widgets/schedule_widgets/schedule_panel.dart';
+import 'package:tennis_cup/widgets/schedule_widgets/scheduled_matches.dart';
+import 'package:tennis_cup/widgets/schedule_widgets/tournament_results.dart';
 
 class Schedule extends StatelessWidget {
   const Schedule({super.key});

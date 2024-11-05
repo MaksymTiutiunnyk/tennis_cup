@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tennis_cup/data/players.dart';
-import 'package:tennis_cup/widgets/ranking_panel.dart';
-import 'package:tennis_cup/widgets/ranking_player.dart';
+import 'package:tennis_cup/widgets/ranking_widgets/ranking_panel.dart';
+import 'package:tennis_cup/widgets/ranking_widgets/ranking_player.dart';
 
 class Ranking extends StatefulWidget {
   const Ranking({super.key});

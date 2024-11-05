@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tennis_cup/data/news.dart';
-import 'package:tennis_cup/widgets/single_interesting_news.dart';
+import 'package:tennis_cup/widgets/news_widgets/single_interesting_news.dart';
 
 class InterestingNews extends StatefulWidget {
   const InterestingNews({super.key});
@@ -23,6 +23,7 @@ class _InterestingNewsState extends State<InterestingNews> {
           if (news[index].isInteresting) {
             return SingleInterestingNews(news: news[index]);
           }
+          return null;
         },
       ),
     );

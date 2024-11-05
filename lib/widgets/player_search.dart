@@ -2,16 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:tennis_cup/data/players.dart';
 import 'package:tennis_cup/model/player.dart';
 
-class RankingSearch extends StatefulWidget {
-  const RankingSearch({super.key});
+class PlayerSearch extends StatefulWidget {
+  const PlayerSearch({super.key});
 
   @override
-  State<RankingSearch> createState() {
+  State<PlayerSearch> createState() {
     return _RankingSearch();
   }
 }
 
-class _RankingSearch extends State<RankingSearch> {
+class _RankingSearch extends State<PlayerSearch> {
   List<Player> searchResults = [];
 
   final TextEditingController searchController = TextEditingController();

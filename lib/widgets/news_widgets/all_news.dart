@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:tennis_cup/data/news.dart';
-import 'package:tennis_cup/widgets/single_news.dart';
+import 'package:tennis_cup/widgets/news_widgets/single_news.dart';
 
 DateFormat formatter = DateFormat('MMMM yyyy');
 

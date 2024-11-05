@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:tennis_cup/widgets/ranking_filters.dart';
-import 'package:tennis_cup/widgets/ranking_search.dart';
+import 'package:tennis_cup/widgets/ranking_widgets/ranking_filters.dart';
+import 'package:tennis_cup/widgets/player_search.dart';
 
 class RankingPanel extends StatelessWidget {
   const RankingPanel({super.key});
@@ -19,7 +19,7 @@ class RankingPanel extends StatelessWidget {
       useSafeArea: true,
       isScrollControlled: true,
       context: context,
-      builder: (ctx) => const RankingSearch(),
+      builder: (ctx) => const PlayerSearch(),
     );
   }
 
