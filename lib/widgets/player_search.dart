@@ -3,7 +3,8 @@ import 'package:tennis_cup/data/players.dart';
 import 'package:tennis_cup/model/player.dart';
 
 class PlayerSearch extends StatefulWidget {
-  const PlayerSearch({super.key});
+  final void Function(BuildContext context, Player player) onSelectPlayer;
+  const PlayerSearch({super.key, required this.onSelectPlayer});
 
   @override
   State<PlayerSearch> createState() {
@@ -69,8 +70,13 @@ class _RankingSearch extends State<PlayerSearch> {
           child: ListView.builder(
             itemCount: searchResults.length,
             itemBuilder: (context, index) {
-              return ListTile(
-                title: Text(searchResults[index].fullName),
+              return InkWell(
+                onTap: () {
+                  widget.onSelectPlayer(context, searchResults[index]);
+                },
+                child: ListTile(
+                  title: Text(searchResults[index].fullName),
+                ),
               );
             },
           ),

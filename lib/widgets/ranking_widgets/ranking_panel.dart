@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:tennis_cup/model/player.dart';
+import 'package:tennis_cup/screens/player_details.dart';
 import 'package:tennis_cup/widgets/ranking_widgets/ranking_filters.dart';
 import 'package:tennis_cup/widgets/player_search.dart';
 
@@ -14,12 +16,18 @@ class RankingPanel extends StatelessWidget {
     );
   }
 
+  void showPlayerDetails(BuildContext context, Player player) {
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (context) => PlayerDetails(player: player),
+    ));
+  }
+
   void showSearchField(BuildContext context) {
     showModalBottomSheet(
       useSafeArea: true,
       isScrollControlled: true,
       context: context,
-      builder: (ctx) => const PlayerSearch(),
+      builder: (ctx) => PlayerSearch(onSelectPlayer: showPlayerDetails),
     );
   }
 
