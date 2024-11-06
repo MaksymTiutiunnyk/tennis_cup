@@ -3,18 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tennis_cup/model/player.dart';
 import 'package:tennis_cup/providers/ranking_filters_provider.dart';
 
-class RankingFilters extends ConsumerStatefulWidget {
+class RankingFilters extends ConsumerWidget {
   const RankingFilters({super.key});
 
   @override
-  ConsumerState<RankingFilters> createState() {
-    return _RankingFiltersState();
-  }
-}
-
-class _RankingFiltersState extends ConsumerState<RankingFilters> {
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     Sex selectedSex = ref.watch(rankingFiltersProvider);
 
     return Column(
