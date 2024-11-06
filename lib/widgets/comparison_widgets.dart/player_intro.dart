@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tennis_cup/custom_icons_icons.dart';
 import 'package:tennis_cup/model/player.dart';
 
 class PlayerIntro extends StatefulWidget {
@@ -36,18 +37,38 @@ class _PlayerIntroState extends State<PlayerIntro> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  Icon(
+                    CustomIcons.medal,
+                    size: 16,
+                    color: Colors.yellow.shade600,
+                  ),
+                  const SizedBox(width: 4),
                   Text(30.toString()),
                 ],
               ),
+              const SizedBox(height: 4),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  const Icon(
+                    CustomIcons.medal,
+                    size: 16,
+                    color: Colors.grey,
+                  ),
+                  const SizedBox(width: 4),
                   Text(20.toString()),
                 ],
               ),
+              const SizedBox(height: 4),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  Icon(
+                    CustomIcons.medal,
+                    size: 16,
+                    color: Colors.yellow.shade900,
+                  ),
+                  const SizedBox(width: 4),
                   Text(17.toString()),
                 ],
               ),

@@ -15,42 +15,42 @@ class PlayersStatistics extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           PlayersStatistic(
-            label: 'Tennis Cup Rank',
+            label: 'Tennis Cup Rank:',
             player1: (30.3).toString(),
             player2: (34.7).toString(),
           ),
           PlayersStatistic(
-            label: 'UTTF Rank',
+            label: 'UTTF Rank:',
             player1: (30.3).toString(),
             player2: (34.7).toString(),
           ),
           const PlayersStatistic(
-            label: 'City, Country',
+            label: 'City, Country:',
             player1: 'Kyiv, Ukraine',
             player2: 'Kyiv, Ukraine',
           ),
           PlayersStatistic(
-            label: 'Year of birth',
+            label: 'Year of birth:',
             player1: 1995.toString(),
             player2: 1995.toString(),
           ),
           PlayersStatistic(
-            label: 'Tournaments',
+            label: 'Tournaments:',
             player1: 106.toString(),
             player2: 253.toString(),
           ),
           PlayersStatistic(
-            label: 'Matches',
+            label: 'Matches:',
             player1: 531.toString(),
             player2: 1263.toString(),
           ),
           PlayersStatistic(
-            label: 'Wins',
+            label: 'Wins:',
             player1: 300.toString(),
             player2: 642.toString(),
           ),
           PlayersStatistic(
-            label: 'Loses',
+            label: 'Loses:',
             player1: 231.toString(),
             player2: 621.toString(),
           ),
