@@ -17,6 +17,7 @@ class RankingPanel extends StatelessWidget {
   }
 
   void showPlayerDetails(BuildContext context, Player player) {
+    Navigator.of(context).pop();
     Navigator.of(context).push(MaterialPageRoute(
       builder: (context) => PlayerDetails(player: player),
     ));

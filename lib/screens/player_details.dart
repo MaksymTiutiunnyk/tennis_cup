@@ -10,6 +10,7 @@ class PlayerDetails extends StatelessWidget {
   const PlayerDetails({super.key, required this.player});
 
   void comparePlayers(BuildContext context, Player player) {
+    Navigator.of(context).pop();
     Navigator.of(context).push(MaterialPageRoute(
       builder: (context) => PlayersComparison(
         player1: this.player,
@@ -34,10 +35,8 @@ class PlayerDetails extends StatelessWidget {
         leadingWidth: 35,
         title: const Text("Tennis Cup: Player's statistics"),
       ),
-      body: 
-      SingleChildScrollView(
-        child: 
-        Stack(
+      body: SingleChildScrollView(
+        child: Stack(
           alignment: Alignment.center,
           children: [
             Column(
