@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:tennis_cup/data/players.dart';
 import 'package:tennis_cup/model/player.dart';
 import 'package:tennis_cup/providers/ranking_filters_provider.dart';
 import 'package:tennis_cup/widgets/ranking_widgets/ranking_panel.dart';
@@ -11,14 +10,7 @@ class Ranking extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    Sex sexToInclude = ref.watch(rankingFiltersProvider);
-    List<Player> filteredPlayers;
-    if (sexToInclude == Sex.All) {
-      filteredPlayers = players;
-    } else {
-      filteredPlayers =
-          players.where((player) => player.sex == sexToInclude).toList();
-    }
+    final List<Player> filteredPlayers = ref.watch(filteredPlayersProvider);
 
     return Scaffold(
       body: Column(
