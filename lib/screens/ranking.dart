@@ -1,29 +1,34 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tennis_cup/data/players.dart';
+import 'package:tennis_cup/model/player.dart';
+import 'package:tennis_cup/providers/ranking_filters_provider.dart';
 import 'package:tennis_cup/widgets/ranking_widgets/ranking_panel.dart';
 import 'package:tennis_cup/widgets/ranking_widgets/ranking_player.dart';
 
-class Ranking extends StatefulWidget {
+class Ranking extends ConsumerWidget {
   const Ranking({super.key});
 
   @override
-  State<StatefulWidget> createState() {
-    return _Ranking();
-  }
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    Sex sexToInclude = ref.watch(rankingFiltersProvider);
+    List<Player> filteredPlayers;
+    if (sexToInclude == Sex.All) {
+      filteredPlayers = players;
+    } else {
+      filteredPlayers =
+          players.where((player) => player.sex == sexToInclude).toList();
+    }
 
-class _Ranking extends State<Ranking> {
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
         children: [
           const RankingPanel(),
           Expanded(
             child: ListView.builder(
-              itemCount: players.length,
+              itemCount: filteredPlayers.length,
               itemBuilder: (ctx, index) => RankingPlayer(
-                player: players[index],
+                player: filteredPlayers[index],
               ),
             ),
           ),

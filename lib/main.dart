@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tennis_cup/data/matches.dart';
 import 'package:tennis_cup/data/tournaments.dart';
 import 'package:tennis_cup/screens/tabs.dart';
@@ -12,7 +13,7 @@ void main() {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((fn) {
-    runApp(const TennisCup());
+    runApp(const ProviderScope(child: TennisCup()));
   });
 }
 

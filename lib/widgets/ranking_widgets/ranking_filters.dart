@@ -1,20 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tennis_cup/model/player.dart';
+import 'package:tennis_cup/providers/ranking_filters_provider.dart';
 
-class RankingFilters extends StatefulWidget {
+class RankingFilters extends ConsumerStatefulWidget {
   const RankingFilters({super.key});
 
   @override
-  State<RankingFilters> createState() {
+  ConsumerState<RankingFilters> createState() {
     return _RankingFiltersState();
   }
 }
 
-class _RankingFiltersState extends State<RankingFilters> {
-  Sex? _sex = Sex.All;
-
+class _RankingFiltersState extends ConsumerState<RankingFilters> {
   @override
   Widget build(BuildContext context) {
+    Sex selectedSex = ref.watch(rankingFiltersProvider);
+
     return Column(
       children: [
         Padding(
@@ -58,11 +60,11 @@ class _RankingFiltersState extends State<RankingFilters> {
                       Text(sex.name),
                       Radio<Sex>(
                         value: sex,
-                        groupValue: _sex,
+                        groupValue: selectedSex,
                         onChanged: (value) {
-                          setState(() {
-                            _sex = value;
-                          });
+                          ref
+                              .read(rankingFiltersProvider.notifier)
+                              .selectSex(value!);
                         },
                       ),
                     ],
