@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tennis_cup/model/news.dart';
 import 'package:intl/intl.dart';
+import 'package:transparent_image/transparent_image.dart';
 
 DateFormat formatter = DateFormat('yyyy-MM-dd');
 
@@ -23,11 +24,14 @@ class SingleInterestingNews extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Center(
-            child: Image.network(
-                width: double.infinity,
-                height: 200,
-                fit: BoxFit.cover,
-                'https://tabletennis.setkacup.com/api/Image/news/1024x597/aHR0cHM6Ly9iZXRlci1zdHJhcGktaW1hZ2VzLXByb2QuczMuZXUtY2VudHJhbC0xLmFtYXpvbmF3cy5jb20vZGVhZl90ZW5uaXNfc2l0ZV9jMTcwMGY1OWZhLnBuZw=='),
+            child: FadeInImage(
+              placeholder: MemoryImage(kTransparentImage),
+              image: const NetworkImage(
+                  'https://tabletennis.setkacup.com/api/Image/news/1024x597/aHR0cHM6Ly9iZXRlci1zdHJhcGktaW1hZ2VzLXByb2QuczMuZXUtY2VudHJhbC0xLmFtYXpvbmF3cy5jb20vZGVhZl90ZW5uaXNfc2l0ZV9jMTcwMGY1OWZhLnBuZw=='),
+              width: double.infinity,
+              height: 200,
+              fit: BoxFit.cover,
+            ),
           ),
           Padding(
             padding: const EdgeInsets.fromLTRB(8, 12, 8, 4),
