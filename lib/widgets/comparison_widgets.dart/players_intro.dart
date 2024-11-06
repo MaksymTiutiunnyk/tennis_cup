@@ -8,11 +8,36 @@ class PlayersIntro extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    return Stack(
+      alignment: Alignment.center,
       children: [
-        PlayerIntro(player1),
-        PlayerIntro(player2),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            PlayerIntro(player1),
+            PlayerIntro(player2),
+          ],
+        ),
+        Positioned(
+          child: Container(
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: Theme.of(context).colorScheme.shadow.withOpacity(0.25),
+                  spreadRadius: 1,
+                  blurRadius: 5,
+                  offset: const Offset(0, 0),
+                ),
+              ],
+            ),
+            child: CircleAvatar(
+              radius: 20,
+              backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
+              child: const Text('VS'),
+            ),
+          ),
+        )
       ],
     );
   }

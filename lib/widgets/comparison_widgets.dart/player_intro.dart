@@ -24,7 +24,8 @@ class _PlayerIntroState extends State<PlayerIntro> {
               const SizedBox(height: 8),
               const CircleAvatar(
                 radius: 50,
-                backgroundImage: AssetImage('assets/kurtenko_andrii.png'),
+                backgroundImage: NetworkImage(
+                    'https://tabletennis.setkacup.com/api/Image/setka/480x480/Mi8yMy8yMzA5L2ltYWdlLmpwZw==.jpeg'),
               ),
               const SizedBox(height: 8),
               Text(
