@@ -10,8 +10,7 @@ class PlayerDetails extends StatelessWidget {
   const PlayerDetails({super.key, required this.player});
 
   void comparePlayers(BuildContext context, Player player) {
-    Navigator.of(context).pop();
-    Navigator.of(context).push(MaterialPageRoute(
+    Navigator.of(context).pushReplacement(MaterialPageRoute(
       builder: (context) => PlayersComparison(
         player1: this.player,
         player2: player,
