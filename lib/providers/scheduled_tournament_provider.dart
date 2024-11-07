@@ -6,18 +6,17 @@ import 'package:tennis_cup/providers/arena_filter_provider.dart';
 import 'package:tennis_cup/providers/schedule_date_provider.dart';
 import 'package:tennis_cup/providers/time_filter_provider.dart';
 
-final scheduledTournamentProvider = Provider<Tournament>((ref) {
+final scheduledTournamentProvider = Provider<List<Tournament>>((ref) {
   final DateTime tournamentDate = ref.watch(scheduleDateProvider);
   final Arena tournamentArena = ref.watch(arenaFilterProvider);
   final Time tournamentTime = ref.watch(timeFilterProvider);
 
-  Tournament filteredTournament = tournaments
+  List<Tournament> filteredTournaments = tournaments
       .where((tournament) =>
           tournament.date == tournamentDate &&
           tournament.time == tournamentTime &&
           tournament.arena == tournamentArena)
-      .toList()
-      .first;
+      .toList();
 
-  return filteredTournament;
+  return filteredTournaments;
 });

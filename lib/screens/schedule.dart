@@ -16,8 +16,20 @@ class Schedule extends ConsumerWidget {
       body: Column(
         children: [
           SchedulePanel(),
-          const ScheduledMatches(),
-          TournamentResults(scheduledTournament),
+          if (scheduledTournament.isEmpty)
+            const Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Center(
+                    child: Text('Tournament is not found'),
+                  ),
+                ],
+              ),
+            ),
+          if (scheduledTournament.isNotEmpty) const ScheduledMatches(),
+          if (scheduledTournament.isNotEmpty)
+            TournamentResults(scheduledTournament.first),
         ],
       ),
     );
