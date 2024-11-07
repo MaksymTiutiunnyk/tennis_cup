@@ -2,16 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:tennis_cup/widgets/news_widgets/all_news.dart';
 import 'package:tennis_cup/widgets/news_widgets/interesting_news.dart';
 
-class News extends StatefulWidget {
+class News extends StatelessWidget {
   const News({super.key});
 
-  @override
-  State<News> createState() {
-    return _NewsState();
-  }
-}
-
-class _NewsState extends State<News> {
   @override
   Widget build(BuildContext context) {
     return const Column(

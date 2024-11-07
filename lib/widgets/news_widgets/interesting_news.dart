@@ -2,16 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:tennis_cup/data/news.dart';
 import 'package:tennis_cup/widgets/news_widgets/single_interesting_news.dart';
 
-class InterestingNews extends StatefulWidget {
+class InterestingNews extends StatelessWidget {
   const InterestingNews({super.key});
 
-  @override
-  State<InterestingNews> createState() {
-    return _InterestingNewsState();
-  }
-}
-
-class _InterestingNewsState extends State<InterestingNews> {
   @override
   Widget build(BuildContext context) {
     return Expanded(

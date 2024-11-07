@@ -3,17 +3,10 @@ import 'package:tennis_cup/model/tournament.dart';
 import 'package:tennis_cup/model/match.dart';
 import 'package:tennis_cup/screens/player_details.dart';
 
-class TournamentResults extends StatefulWidget {
+class TournamentResults extends StatelessWidget {
   final Tournament tournament;
   const TournamentResults(this.tournament, {super.key});
 
-  @override
-  State<TournamentResults> createState() {
-    return _TournamentResults();
-  }
-}
-
-class _TournamentResults extends State<TournamentResults> {
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -42,7 +35,7 @@ class _TournamentResults extends State<TournamentResults> {
                   style: Theme.of(context).textTheme.labelMedium,
                 ),
               ),
-              for (int i = 1; i <= widget.tournament.players.length; ++i)
+              for (int i = 1; i <= tournament.players.length; ++i)
                 DataColumn(
                   label: Expanded(
                     child: Row(
@@ -69,7 +62,7 @@ class _TournamentResults extends State<TournamentResults> {
                 ),
               ),
             ],
-            rows: widget.tournament.players.map((player) {
+            rows: tournament.players.map((player) {
               int points = 0;
 
               List<DataCell> cells = [
@@ -85,7 +78,7 @@ class _TournamentResults extends State<TournamentResults> {
                     ),
                   ),
                 ),
-                ...widget.tournament.players.map((opponent) {
+                ...tournament.players.map((opponent) {
                   if (player == opponent) {
                     return const DataCell(
                       Row(
@@ -100,7 +93,7 @@ class _TournamentResults extends State<TournamentResults> {
                       ),
                     );
                   } else {
-                    Match match = widget.tournament.matches!.firstWhere(
+                    Match match = tournament.matches!.firstWhere(
                       (m) =>
                           (m.bluePlayer == player && m.redPlayer == opponent) ||
                           (m.bluePlayer == opponent && m.redPlayer == player),

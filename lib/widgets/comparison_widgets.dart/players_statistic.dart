@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class PlayersStatistic extends StatefulWidget {
+class PlayersStatistic extends StatelessWidget {
   final String label;
   final String player1, player2;
   const PlayersStatistic({
@@ -11,13 +11,6 @@ class PlayersStatistic extends StatefulWidget {
   });
 
   @override
-  State<PlayersStatistic> createState() {
-    return _PlayersStatisticState();
-  }
-}
-
-class _PlayersStatisticState extends State<PlayersStatistic> {
-  @override
   Widget build(BuildContext context) {
     return Flexible(
       fit: FlexFit.loose,
@@ -25,7 +18,7 @@ class _PlayersStatisticState extends State<PlayersStatistic> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            widget.label,
+            label,
             style: Theme.of(context).textTheme.bodySmall,
           ),
           Row(
@@ -37,7 +30,7 @@ class _PlayersStatisticState extends State<PlayersStatistic> {
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Text(
-                      widget.player1,
+                      player1,
                       style: Theme.of(context).textTheme.bodyMedium,
                       textAlign: TextAlign.center,
                     ),
@@ -51,7 +44,7 @@ class _PlayersStatisticState extends State<PlayersStatistic> {
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Text(
-                      widget.player2,
+                      player2,
                       style: Theme.of(context).textTheme.bodyMedium,
                       textAlign: TextAlign.center,
                     ),

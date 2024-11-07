@@ -15,7 +15,7 @@ class Schedule extends ConsumerWidget {
     return Scaffold(
       body: Column(
         children: [
-          SchedulePanel(),
+          const SchedulePanel(),
           if (scheduledTournament.isEmpty)
             const Expanded(
               child: Column(

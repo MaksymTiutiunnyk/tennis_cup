@@ -4,16 +4,8 @@ import 'package:tennis_cup/widgets/home_widgets/live_stream_matches.dart';
 import 'package:tennis_cup/widgets/home_widgets/upcoming_matches.dart';
 import 'package:tennis_cup/widgets/home_widgets/winners.dart';
 
-class Home extends StatefulWidget {
+class Home extends StatelessWidget {
   const Home({super.key});
-
-  final String title = 'Tennis Cup: Home page';
-
-  @override
-  State<Home> createState() => _HomeState();
-}
-
-class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
