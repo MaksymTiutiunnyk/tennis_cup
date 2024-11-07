@@ -1,23 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:tennis_cup/data/news.dart';
+import 'package:tennis_cup/model/news.dart';
+import 'package:tennis_cup/providers/news_period_provider.dart';
+import 'package:tennis_cup/providers/news_provider.dart';
 import 'package:tennis_cup/widgets/news_widgets/single_news.dart';
 
 DateFormat formatter = DateFormat('MMMM yyyy');
 
-class AllNews extends StatefulWidget {
+class AllNews extends ConsumerWidget {
   const AllNews({super.key});
 
   @override
-  State<AllNews> createState() {
-    return _AllNewsState();
-  }
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    DateTime period = ref.watch(newsPeriodProvider);
+    List<News> filteredNews = ref.watch(newsProvider);
+    String formattedPeriod = formatter.format(period);
 
-class _AllNewsState extends State<AllNews> {
-  String period = formatter.format(DateTime.now());
-  @override
-  Widget build(BuildContext context) {
     return Expanded(
       child: Column(
         children: [
@@ -33,21 +32,35 @@ class _AllNewsState extends State<AllNews> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 IconButton(
-                  onPressed: () {},
+                  onPressed: period.year == 2018 && period.month == 1
+                      ? null
+                      : () {
+                          ref.read(newsPeriodProvider.notifier).selectPeriod(
+                              DateTime(
+                                  period.year, period.month - 1, period.day));
+                        },
                   icon: const Icon(Icons.arrow_back_ios),
                 ),
-                Text(period),
+                Text(formattedPeriod),
                 IconButton(
-                    onPressed: () {},
-                    icon: const Icon(Icons.arrow_forward_ios)),
+                  onPressed: period.year == DateTime.now().year &&
+                          period.month == DateTime.now().month
+                      ? null
+                      : () {
+                          ref.read(newsPeriodProvider.notifier).selectPeriod(
+                              DateTime(
+                                  period.year, period.month + 1, period.day));
+                        },
+                  icon: const Icon(Icons.arrow_forward_ios),
+                ),
               ],
             ),
           ),
           Expanded(
             child: ListView.builder(
-              itemCount: news.length,
+              itemCount: filteredNews.length,
               itemBuilder: (ctx, index) {
-                return SingleNews(news: news[index]);
+                return SingleNews(news: filteredNews[index]);
               },
             ),
           ),
