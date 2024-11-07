@@ -2,7 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tennis_cup/model/tournament.dart';
 
 class TimeFilterNotifier extends StateNotifier<Time> {
-  TimeFilterNotifier() : super(Time.Morning);
+  TimeFilterNotifier() : super(Time.Evening);
 
   void selectTime(Time time) {
     state = time;

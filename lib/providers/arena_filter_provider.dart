@@ -3,7 +3,7 @@ import 'package:tennis_cup/data/arenas.dart';
 import 'package:tennis_cup/model/arena.dart';
 
 class ArenaFilterNotifier extends StateNotifier<Arena> {
-  ArenaFilterNotifier() : super(arenas[0]);
+  ArenaFilterNotifier() : super(arenas[1]);
 
   void selectArena(Arena arena) {
     state = arena;

@@ -8,7 +8,7 @@ class RankingFilters extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    Sex selectedSex = ref.watch(rankingFiltersProvider);
+    Sex selectedSex = ref.watch(sexFilterProvider);
 
     return Column(
       children: [
@@ -56,7 +56,7 @@ class RankingFilters extends ConsumerWidget {
                         groupValue: selectedSex,
                         onChanged: (value) {
                           ref
-                              .read(rankingFiltersProvider.notifier)
+                              .read(sexFilterProvider.notifier)
                               .selectSex(value!);
                         },
                       ),
