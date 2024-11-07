@@ -1,40 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:tennis_cup/data/tournaments.dart';
 import 'package:tennis_cup/model/tournament.dart';
+import 'package:tennis_cup/widgets/schedule_widgets/schedule_date_picker.dart';
 import 'package:tennis_cup/widgets/schedule_widgets/schedule_filters.dart';
 
-class SchedulePanel extends StatefulWidget {
-  const SchedulePanel({super.key});
+class SchedulePanel extends StatelessWidget {
+  SchedulePanel({super.key});
 
-  @override
-  State<SchedulePanel> createState() {
-    return _SchedulePanelState();
-  }
-}
+  final Tournament tournament = tournaments[0];
 
-class _SchedulePanelState extends State<SchedulePanel> {
-  Tournament tournament = tournaments[0];
-  DateTime selectedDate = DateTime.now();
-
-  void pickDate() async {
-    DateTime? pickedDate = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2018, 1, 1),
-      lastDate: DateTime(
-          DateTime.now().year, DateTime.now().month, DateTime.now().day + 1),
-    );
-
-    if (pickedDate == null) {
-      return;
-    }
-
-    setState(() {
-      selectedDate = pickedDate;
-    });
-  }
-
-  void showFilters() {
+  void showFilters(BuildContext context) {
     showModalBottomSheet(
       useSafeArea: true,
       context: context,
@@ -70,28 +45,11 @@ class _SchedulePanelState extends State<SchedulePanel> {
           ),
           Row(
             children: [
+              const ScheduleDatePicker(),
               IconButton(
-                onPressed: pickDate,
-                icon: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    const Icon(Icons.calendar_today),
-                    Positioned(
-                      top: 6,
-                      child: Text(
-                        '${selectedDate.day}',
-                        style: const TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.red,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              IconButton(
-                onPressed: showFilters,
+                onPressed: () {
+                  showFilters(context);
+                },
                 icon: const Icon(Icons.filter_list),
               )
             ],

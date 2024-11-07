@@ -12,7 +12,7 @@ class Schedule extends StatelessWidget {
     return Scaffold(
       body: Column(
         children: [
-          const SchedulePanel(),
+          SchedulePanel(),
           const ScheduledMatches(),
           TournamentResults(tournaments[0]),
         ],
