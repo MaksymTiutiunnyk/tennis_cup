@@ -1,31 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tennis_cup/providers/tab_index_provider.dart';
 import 'package:tennis_cup/screens/home.dart';
 import 'package:tennis_cup/screens/news.dart';
 import 'package:tennis_cup/screens/ranking.dart';
 import 'package:tennis_cup/screens/schedule.dart';
 
-class Tabs extends StatefulWidget {
+class Tabs extends ConsumerWidget {
   const Tabs({super.key});
 
   @override
-  State<Tabs> createState() {
-    return _TabsState();
-  }
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    int selectedPageIndex = ref.watch(tabIndexProvider);
+    Widget activePage;
+    String pageTitle;
 
-class _TabsState extends State<Tabs> {
-  int selectedPageIndex = 0;
-  Widget activePage = const Home();
-  String pageTitle = 'Tennis Cup: Home page';
-
-  void onSelectPage(int index) {
-    setState(() {
-      selectedPageIndex = index;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
     switch (selectedPageIndex) {
       case 0:
         activePage = const Home();
@@ -49,7 +38,9 @@ class _TabsState extends State<Tabs> {
       appBar: AppBar(title: Text(pageTitle)),
       body: activePage,
       bottomNavigationBar: BottomNavigationBar(
-        onTap: onSelectPage,
+        onTap: (index) {
+          ref.read(tabIndexProvider.notifier).selectTab(index);
+        },
         currentIndex: selectedPageIndex,
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
