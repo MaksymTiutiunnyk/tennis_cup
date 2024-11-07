@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:tennis_cup/data/tournaments.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
+import 'package:tennis_cup/model/arena.dart';
 import 'package:tennis_cup/model/tournament.dart';
+import 'package:tennis_cup/providers/arena_filter_provider.dart';
+import 'package:tennis_cup/providers/schedule_date_provider.dart';
+import 'package:tennis_cup/providers/time_filter_provider.dart';
 import 'package:tennis_cup/widgets/schedule_widgets/schedule_date_picker.dart';
 import 'package:tennis_cup/widgets/schedule_widgets/schedule_filters.dart';
 
-class SchedulePanel extends StatelessWidget {
-  SchedulePanel({super.key});
+DateFormat formatter = DateFormat('yyyy-MM-dd');
 
-  final Tournament tournament = tournaments[0];
+class SchedulePanel extends ConsumerWidget {
+  const SchedulePanel({super.key});
 
   void showFilters(BuildContext context) {
     showModalBottomSheet(
@@ -19,7 +24,11 @@ class SchedulePanel extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final DateTime tournamentDate = ref.watch(scheduleDateProvider);
+    final Arena tournamentArena = ref.watch(arenaFilterProvider);
+    final Time tournamentTime = ref.watch(timeFilterProvider);
+
     return Container(
       color: const Color.fromARGB(255, 237, 235, 235),
       padding: const EdgeInsets.all(16),
@@ -33,13 +42,22 @@ class SchedulePanel extends StatelessWidget {
                 padding: const EdgeInsets.only(top: 4.0),
                 child: CircleAvatar(
                   radius: 5,
-                  backgroundColor: tournament.arena.color,
+                  backgroundColor: tournamentArena.color,
                 ),
               ),
               const SizedBox(width: 8),
-              Text(
-                'Arena: ${tournament.arena.title}\n${tournament.title}',
-                style: Theme.of(context).textTheme.bodyMedium,
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Arena: ${tournamentArena.title}',
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                  Text(
+                    '${formatter.format(tournamentDate)} ${tournamentTime.name}',
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                ],
               ),
             ],
           ),
