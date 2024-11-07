@@ -183,24 +183,4 @@ final List<Match> matches = [
       40,
     ),
   ),
-
-
-  // Match(
-  //   bluePlayer: players[6],
-  //   redPlayer: players[7],
-  //   tournament: arenas[4],
-  //   dateTime: DateTime(2024, 10, 28, 11, 35),
-  // ),
-  // Match(
-  //   bluePlayer: Player(name: 'Volodymyr', surname: 'Ivasiv'),
-  //   redPlayer: Player(name: 'Mykola', surname: 'Slozka'),
-  //   arena: Arena(title: 'Beijing', color: Colors.purple),
-  //   dateTime: DateTime(2024, 10, 28, 11, 35),
-  // ),
-  // Match(
-  //   bluePlayer: Player(name: 'Olena', surname: 'Telezhynska'),
-  //   redPlayer: Player(name: 'Svitlana', surname: 'Yureneva'),
-  //   arena: Arena(title: 'Australia', color: Colors.green),
-  //   dateTime: DateTime(2024, 10, 28, 11, 50),
-  // ),
 ];
