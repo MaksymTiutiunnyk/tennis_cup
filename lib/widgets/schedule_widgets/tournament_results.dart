@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tennis_cup/model/tournament.dart';
 import 'package:tennis_cup/model/match.dart';
+import 'package:tennis_cup/screens/player_details.dart';
 
 class TournamentResults extends StatefulWidget {
   final Tournament tournament;
@@ -73,9 +74,15 @@ class _TournamentResults extends State<TournamentResults> {
 
               List<DataCell> cells = [
                 DataCell(
-                  Text(
-                    '${player.surname} ${player.name}',
-                    style: Theme.of(context).textTheme.labelLarge,
+                  InkWell(
+                    onTap: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (ctx) => PlayerDetails(player: player)));
+                    },
+                    child: Text(
+                      player.fullName,
+                      style: Theme.of(context).textTheme.labelLarge,
+                    ),
                   ),
                 ),
                 ...widget.tournament.players.map((opponent) {
