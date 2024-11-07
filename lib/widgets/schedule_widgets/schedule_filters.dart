@@ -1,21 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tennis_cup/data/arenas.dart';
 import 'package:tennis_cup/model/arena.dart';
 import 'package:tennis_cup/model/tournament.dart';
+import 'package:tennis_cup/providers/arena_filter_provider.dart';
+import 'package:tennis_cup/providers/time_filter_provider.dart';
 
-class ScheduleFilters extends StatefulWidget {
+class ScheduleFilters extends ConsumerWidget {
   const ScheduleFilters({super.key});
 
   @override
-  State<ScheduleFilters> createState() => _ScheduleFiltersState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    Time selectedTime = ref.watch(timeFilterProvider);
+    Arena selectedArena = ref.watch(arenaFilterProvider);
 
-class _ScheduleFiltersState extends State<ScheduleFilters> {
-  Time? _time = Time.Morning;
-  Arena? _arena = arenas[0];
-
-  @override
-  Widget build(BuildContext context) {
     return Column(
       children: [
         Padding(
@@ -59,11 +57,11 @@ class _ScheduleFiltersState extends State<ScheduleFilters> {
                       Text(time.name),
                       Radio<Time>(
                         value: time,
-                        groupValue: _time,
+                        groupValue: selectedTime,
                         onChanged: (value) {
-                          setState(() {
-                            _time = value;
-                          });
+                          ref
+                              .read(timeFilterProvider.notifier)
+                              .selectTime(value!);
                         },
                       ),
                     ],
@@ -96,11 +94,11 @@ class _ScheduleFiltersState extends State<ScheduleFilters> {
                       ),
                       Radio<Arena>(
                         value: arena,
-                        groupValue: _arena,
+                        groupValue: selectedArena,
                         onChanged: (value) {
-                          setState(() {
-                            _arena = value;
-                          });
+                          ref
+                              .read(arenaFilterProvider.notifier)
+                              .selectArena(value!);
                         },
                       ),
                     ],

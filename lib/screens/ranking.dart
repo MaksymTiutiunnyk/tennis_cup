@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tennis_cup/model/player.dart';
-import 'package:tennis_cup/providers/ranking_filters_provider.dart';
+import 'package:tennis_cup/providers/sex_filter_provider.dart';
 import 'package:tennis_cup/widgets/ranking_widgets/ranking_panel.dart';
 import 'package:tennis_cup/widgets/ranking_widgets/ranking_player.dart';
 
