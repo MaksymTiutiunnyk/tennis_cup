@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "75283063752",
+    "project_id": "tennis-cup-55341",
+    "storage_bucket": "tennis-cup-55341.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:75283063752:android:180a6a53c9a24bd78d56fd",
+        "android_client_info": {
+          "package_name": "com.example.tennis_cup"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBCsiniEx1IYkkqCkWj4IHlXQhF7Z6UB0w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

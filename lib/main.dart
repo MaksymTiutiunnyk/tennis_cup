@@ -5,12 +5,18 @@ import 'package:tennis_cup/data/matches.dart';
 import 'package:tennis_cup/data/tournaments.dart';
 import 'package:tennis_cup/screens/tabs.dart';
 
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+
 ColorScheme kcolorScheme = ColorScheme.fromSeed(
   seedColor: const Color.fromARGB(255, 4, 5, 100),
 );
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((fn) {
     runApp(const ProviderScope(child: TennisCup()));
