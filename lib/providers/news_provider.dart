@@ -1,16 +1,27 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:tennis_cup/data/news.dart';
 import 'package:tennis_cup/model/news.dart';
 import 'package:tennis_cup/providers/news_period_provider.dart';
 
-final newsProvider = Provider<List<News>>((ref) {
+final newsProvider = FutureProvider<List<News>>((ref) async {
   DateTime period = ref.watch(newsPeriodProvider);
 
-  List<News> filteredNews = news
-      .where((element) =>
-          element.date.year == period.year &&
-          element.date.month == period.month)
-      .toList();
+  final newsCollection = FirebaseFirestore.instance.collection('news');
 
-  return filteredNews;
+  QuerySnapshot querySnapshot = await newsCollection
+      .where('date', isGreaterThanOrEqualTo: DateTime(period.year, period.month, 1))
+      .where('date', isLessThan: DateTime(period.year, period.month + 1, 1))
+      .get();
+
+  List<News> newsList = querySnapshot.docs.map((doc) {
+    final data = doc.data() as Map<String, dynamic>;
+    return News(
+      title: data['title'] == "" ? 'Attention!' : data['title'],
+      text: data['text'],
+      date: (data['date'] as Timestamp).toDate(),
+      imageUrl: data['imageUrl']
+    );
+  }).toList();
+
+  return newsList;
 });

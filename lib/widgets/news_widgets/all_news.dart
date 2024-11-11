@@ -14,8 +14,9 @@ class AllNews extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     DateTime period = ref.watch(newsPeriodProvider);
-    List<News> filteredNews = ref.watch(newsProvider);
     String formattedPeriod = formatter.format(period);
+
+    final AsyncValue<List<News>> newsList = ref.watch(newsProvider);
 
     return Expanded(
       child: Column(
@@ -57,11 +58,17 @@ class AllNews extends ConsumerWidget {
             ),
           ),
           Expanded(
-            child: ListView.builder(
-              itemCount: filteredNews.length,
-              itemBuilder: (ctx, index) {
-                return SingleNews(news: filteredNews[index]);
+            child: newsList.when(
+              data: (newsList) {
+                return ListView.builder(
+                  itemCount: newsList.length,
+                  itemBuilder: (ctx, index) {
+                    return SingleNews(news: newsList[index]);
+                  },
+                );
               },
+              loading: () => const Center(child: CircularProgressIndicator()),
+              error: (error, stack) => Center(child: Text('Error: $error')),
             ),
           ),
         ],

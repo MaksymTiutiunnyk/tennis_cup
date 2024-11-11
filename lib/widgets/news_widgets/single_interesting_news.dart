@@ -26,8 +26,7 @@ class SingleInterestingNews extends StatelessWidget {
           Center(
             child: FadeInImage(
               placeholder: MemoryImage(kTransparentImage),
-              image: const NetworkImage(
-                  'https://tabletennis.setkacup.com/api/Image/news/1024x597/aHR0cHM6Ly9iZXRlci1zdHJhcGktaW1hZ2VzLXByb2QuczMuZXUtY2VudHJhbC0xLmFtYXpvbmF3cy5jb20vZGVhZl90ZW5uaXNfc2l0ZV9jMTcwMGY1OWZhLnBuZw=='),
+              image: NetworkImage(news.imageUrl),
               width: double.infinity,
               height: 200,
               fit: BoxFit.cover,
