@@ -60,6 +60,11 @@ class AllNews extends ConsumerWidget {
           Expanded(
             child: newsList.when(
               data: (newsList) {
+                if (newsList.isEmpty) {
+                  return const Center(
+                    child: Text('No news found'),
+                  );
+                }
                 return ListView.builder(
                   itemCount: newsList.length,
                   itemBuilder: (ctx, index) {
