@@ -3,12 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tennis_cup/main.dart';
 import 'package:tennis_cup/model/match.dart';
 import 'package:intl/intl.dart';
-import 'package:tennis_cup/model/player.dart';
 import 'package:tennis_cup/providers/arena_filter_provider.dart';
 import 'package:tennis_cup/providers/schedule_date_provider.dart';
 import 'package:tennis_cup/providers/tab_index_provider.dart';
 import 'package:tennis_cup/providers/time_filter_provider.dart';
-import 'package:tennis_cup/screens/player_details.dart';
+import 'package:tennis_cup/widgets/home_widgets/live_stream_match_player.dart';
 
 DateFormat formatter = DateFormat('yyyy-MM-dd');
 
@@ -95,64 +94,17 @@ class LiveStreamMatch extends ConsumerWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  buildPlayerRow(
-                    context,
-                    "assets/kurtenko_andrii.png",
-                    match.bluePlayer,
-                    match.blueScore,
+                  LiveStreamMatchPlayer(
+                    player: match.bluePlayer,
+                    score: match.blueScore,
                   ),
                   const SizedBox(height: 8),
-                  buildPlayerRow(
-                    context,
-                    "assets/mukhin_vitalii.png",
-                    match.redPlayer,
-                    match.redScore,
+                  LiveStreamMatchPlayer(
+                    player: match.redPlayer,
+                    score: match.redScore,
                   ),
                 ],
               ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget buildPlayerRow(
-    BuildContext context,
-    String imagePath,
-    Player player,
-    int score,
-  ) {
-    return InkWell(
-      onTap: () {
-        Navigator.of(context).push(
-            MaterialPageRoute(builder: (ctx) => PlayerDetails(player: player)));
-      },
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
-            children: [
-              CircleAvatar(
-                radius: 20,
-                backgroundImage: AssetImage(imagePath),
-              ),
-              const SizedBox(width: 8),
-              Text(
-                player.fullName,
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyMedium!
-                    .copyWith(color: Colors.white),
-              ),
-            ],
-          ),
-          Text(
-            score.toString(),
-            style: const TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
             ),
           ),
         ],
