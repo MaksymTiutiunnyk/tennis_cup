@@ -52,20 +52,10 @@ class Winner extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    tournament.arena.title,
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyMedium!
-                        .copyWith(color: Colors.grey),
-                  ),
-                  Text(
-                    formatter.format(tournament.date),
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyMedium!
-                        .copyWith(color: Colors.grey),
-                  ),
+                  Text(tournament.arena.title,
+                      style: Theme.of(context).textTheme.bodySmall!),
+                  Text(formatter.format(tournament.date),
+                      style: Theme.of(context).textTheme.bodySmall!),
                 ],
               ),
             ),

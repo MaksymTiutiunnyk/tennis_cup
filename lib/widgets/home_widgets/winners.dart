@@ -7,42 +7,42 @@ class Winners extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 8),
-        decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.onPrimaryContainer),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Row(
-                children: [
-                  const Icon(Icons.star, color: Colors.red),
-                  const SizedBox(width: 8),
-                  Text(
-                    'Tennis Cup: Winners',
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyLarge!
-                        .copyWith(color: Colors.white),
-                  ),
-                ],
-              ),
-            ),
-            Expanded(
-              child: PageView.builder(
-                controller: PageController(viewportFraction: 0.90),
-                scrollDirection: Axis.horizontal,
-                itemCount: 5,
-                itemBuilder: (context, index) => Winner(
-                  tournament: tournaments[0],
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.onPrimaryContainer),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
+              children: [
+                const Icon(Icons.star, color: Colors.red),
+                const SizedBox(width: 8),
+                Text(
+                  'Tennis Cup: Winners',
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyLarge!
+                      .copyWith(color: Colors.white),
                 ),
+              ],
+            ),
+          ),
+          SizedBox(
+            height: 195,
+            child: PageView.builder(
+              controller: PageController(viewportFraction: 0.90),
+              scrollDirection: Axis.horizontal,
+              itemCount: 5,
+              itemBuilder: (context, index) => Winner(
+                tournament: tournaments[0],
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
