@@ -1,4 +1,3 @@
-import 'package:tennis_cup/data/players.dart';
 import 'package:tennis_cup/data/tournaments.dart';
 import 'package:tennis_cup/model/match.dart';
 

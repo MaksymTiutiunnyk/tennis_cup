@@ -1,5 +1,4 @@
 import 'package:tennis_cup/model/tournament.dart';
-import 'package:tennis_cup/data/players.dart';
 import 'package:tennis_cup/data/arenas.dart';
 
 final List<Tournament> tournaments = [

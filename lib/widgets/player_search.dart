@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:tennis_cup/data/players.dart';
 import 'package:tennis_cup/model/player.dart';
 
 class PlayerSearch extends StatefulWidget {

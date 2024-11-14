@@ -9,10 +9,8 @@ class PlayerRepository {
     DocumentSnapshot? startAfter,
     Sex? sexFilter,
   }) async {
-    Query query = _firestore
-        .collection('players')
-        .orderBy('rank_tennis')
-        .limit(limit);
+    Query query =
+        _firestore.collection('players').orderBy('rank_tennis').limit(limit);
 
     if (sexFilter != null && sexFilter != Sex.All) {
       query = query.where('sex', isEqualTo: sexFilter.toString());
@@ -26,16 +24,29 @@ class PlayerRepository {
     final players = querySnapshot.docs.map((doc) {
       final data = doc.data() as Map<String, dynamic>;
       return Player(
+        id: data['id'],
+        bronze: data['bronze'],
+        gold: data['gold'],
         name: data['name'],
         surname: data['surname'],
-        sex: Sex.values.firstWhere((e) => e.name == data['sex']),
-        // Map other fields like rank_tennis if needed
+        imageUrl: data['imageUrl'],
+        loses: data['loses'],
+        matches: data['matches'],
+        place: data['place'],
+        rankTennis: data['rank_tennis'],
+        rankUTTF: data['rank_uttf'],
+        silver: data['silver'],
+        tournaments: data['tournaments'],
+        wins: data['wins'],
+        year: data['year'],
+        sex: Sex.values.firstWhere((value) => value.name == data['sex']),
       );
     }).toList();
 
     return {
       'players': players,
-      'lastDocument': querySnapshot.docs.isNotEmpty ? querySnapshot.docs.last : null,
+      'lastDocument':
+          querySnapshot.docs.isNotEmpty ? querySnapshot.docs.last : null,
     };
   }
 }
