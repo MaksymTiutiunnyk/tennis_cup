@@ -22,10 +22,9 @@ class PlayerIntro extends StatelessWidget {
             child: Column(
               children: [
                 const SizedBox(height: 8),
-                const CircleAvatar(
+                CircleAvatar(
                   radius: 50,
-                  backgroundImage: NetworkImage(
-                      'https://tabletennis.setkacup.com/api/Image/setka/480x480/Mi8yMy8yMzA5L2ltYWdlLmpwZw==.jpeg'),
+                  backgroundImage: NetworkImage(player.imageUrl),
                 ),
                 const SizedBox(height: 8),
                 Text(
@@ -42,7 +41,7 @@ class PlayerIntro extends StatelessWidget {
                       color: Colors.yellow.shade600,
                     ),
                     const SizedBox(width: 4),
-                    Text(30.toString()),
+                    Text(player.gold.toString()),
                   ],
                 ),
                 const SizedBox(height: 4),
@@ -55,7 +54,7 @@ class PlayerIntro extends StatelessWidget {
                       color: Colors.grey,
                     ),
                     const SizedBox(width: 4),
-                    Text(20.toString()),
+                    Text(player.silver.toString()),
                   ],
                 ),
                 const SizedBox(height: 4),
@@ -68,7 +67,7 @@ class PlayerIntro extends StatelessWidget {
                       color: Colors.yellow.shade900,
                     ),
                     const SizedBox(width: 4),
-                    Text(17.toString()),
+                    Text(player.bronze.toString()),
                   ],
                 ),
               ],

@@ -1,4 +1,7 @@
-// ignore: constant_identifier_names
+// ignore_for_file: constant_identifier_names
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 enum Sex { All, Men, Women }
 
 class Player {
@@ -15,8 +18,8 @@ class Player {
   final int gold;
   final int silver;
   final int bronze;
-  final int rankTennis;
-  final int rankUTTF;
+  final double rankTennis;
+  final double rankUTTF;
   final String imageUrl;
 
   Player(
@@ -36,6 +39,29 @@ class Player {
       required this.name,
       required this.surname,
       required this.sex});
+
+  factory Player.fromFirestore(DocumentSnapshot doc) {
+    final data = doc.data() as Map<String, dynamic>;
+
+    return Player(
+      id: doc.id,
+      bronze: data['bronze'],
+      gold: data['gold'],
+      name: data['name'],
+      surname: data['surname'],
+      imageUrl: data['imageUrl'],
+      loses: data['loses'],
+      matches: data['matches'],
+      place: data['place'],
+      rankTennis: data['rank_tennis'],
+      rankUTTF: data['rank_uttf'],
+      silver: data['silver'],
+      tournaments: data['tournaments'],
+      wins: data['wins'],
+      year: data['year'],
+      sex: Sex.values.firstWhere((value) => value.name == data['sex']),
+    );
+  }
 
   String get fullName {
     return '$surname $name';

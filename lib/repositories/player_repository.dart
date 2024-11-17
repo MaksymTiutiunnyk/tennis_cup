@@ -10,10 +10,10 @@ class PlayerRepository {
     Sex? sexFilter,
   }) async {
     Query query =
-        _firestore.collection('players').orderBy('rank_tennis').limit(limit);
+        _firestore.collection('players').orderBy('rank_tennis', descending: true).limit(limit);
 
     if (sexFilter != null && sexFilter != Sex.All) {
-      query = query.where('sex', isEqualTo: sexFilter.toString());
+      query = query.where('sex', isEqualTo: sexFilter.name);
     }
 
     if (startAfter != null) {
@@ -22,25 +22,7 @@ class PlayerRepository {
 
     final querySnapshot = await query.get();
     final players = querySnapshot.docs.map((doc) {
-      final data = doc.data() as Map<String, dynamic>;
-      return Player(
-        id: data['id'],
-        bronze: data['bronze'],
-        gold: data['gold'],
-        name: data['name'],
-        surname: data['surname'],
-        imageUrl: data['imageUrl'],
-        loses: data['loses'],
-        matches: data['matches'],
-        place: data['place'],
-        rankTennis: data['rank_tennis'],
-        rankUTTF: data['rank_uttf'],
-        silver: data['silver'],
-        tournaments: data['tournaments'],
-        wins: data['wins'],
-        year: data['year'],
-        sex: Sex.values.firstWhere((value) => value.name == data['sex']),
-      );
+      return Player.fromFirestore(doc);
     }).toList();
 
     return {

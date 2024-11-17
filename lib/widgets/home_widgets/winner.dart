@@ -25,9 +25,9 @@ class Winner extends StatelessWidget {
         ),
         child: Column(
           children: [
-            const CircleAvatar(
+            CircleAvatar(
               radius: 40,
-              backgroundImage: AssetImage('assets/kurtenko_andrii.png'),
+              backgroundImage: NetworkImage(tournament.players[0].imageUrl),
             ),
             const SizedBox(height: 8),
             Text(
@@ -41,7 +41,7 @@ class Winner extends StatelessWidget {
                 const Icon(Icons.emoji_events, color: Colors.orange, size: 24),
                 const SizedBox(width: 8),
                 Text(
-                  'Men, ${tournament.time.name}',
+                  '${tournament.players[0].sex.name}, ${tournament.time.name}',
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),
               ],

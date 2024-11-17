@@ -20,9 +20,9 @@ class RankingPlayer extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  const CircleAvatar(
+                  CircleAvatar(
                     radius: 20,
-                    backgroundImage: AssetImage('assets/kurtenko_andrii.png'),
+                    backgroundImage: NetworkImage(player.imageUrl),
                   ),
                   const SizedBox(width: 8),
                   Text(
@@ -40,7 +40,7 @@ class RankingPlayer extends StatelessWidget {
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                   Text(
-                    (35.6).toString(),
+                    player.rankTennis.toString(),
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                 ],
@@ -54,7 +54,7 @@ class RankingPlayer extends StatelessWidget {
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                   Text(
-                    (35.6).toString(),
+                    player.rankUTTF.toString(),
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                 ],
@@ -68,7 +68,7 @@ class RankingPlayer extends StatelessWidget {
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                   Text(
-                    (1).toString(),
+                    player.tournaments.toString(),
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                 ],
@@ -82,7 +82,7 @@ class RankingPlayer extends StatelessWidget {
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                   Text(
-                    'Kyiv, Ukraine',
+                    player.place,
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                 ],
@@ -96,7 +96,7 @@ class RankingPlayer extends StatelessWidget {
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                   Text(
-                    1995.toString(),
+                    player.year.toString(),
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                 ],

@@ -63,7 +63,7 @@ class LiveStreamMatch extends ConsumerWidget {
                             ],
                           ),
                           Text(
-                            '${formatter.format(match.dateTime)} Men, ${match.tournament.time.name}',
+                            '${formatter.format(match.dateTime)} ${match.tournament.players[0].sex.name}, ${match.tournament.time.name}',
                             style: Theme.of(context).textTheme.bodySmall,
                           ),
                         ],

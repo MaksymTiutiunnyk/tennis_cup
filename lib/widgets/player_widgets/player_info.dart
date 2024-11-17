@@ -12,10 +12,9 @@ class PlayerInfo extends StatelessWidget {
       child: Column(
         children: [
           const SizedBox(height: 8),
-          const CircleAvatar(
+          CircleAvatar(
             radius: 60,
-            backgroundImage: NetworkImage(
-                'https://tabletennis.setkacup.com/api/Image/setka/480x480/Mi8yMy8yMzA5L2ltYWdlLmpwZw==.jpeg'),
+            backgroundImage: NetworkImage(player.imageUrl),
           ),
           const SizedBox(height: 8),
           Text(
@@ -34,7 +33,7 @@ class PlayerInfo extends StatelessWidget {
                       style: Theme.of(context).textTheme.bodySmall,
                     ),
                     Text(
-                      (35.6).toString(),
+                      player.rankTennis.toString(),
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
                   ],
@@ -48,7 +47,7 @@ class PlayerInfo extends StatelessWidget {
                       style: Theme.of(context).textTheme.bodySmall,
                     ),
                     Text(
-                      (35.6).toString(),
+                      player.rankUTTF.toString(),
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
                   ],
@@ -62,7 +61,7 @@ class PlayerInfo extends StatelessWidget {
                       style: Theme.of(context).textTheme.bodySmall,
                     ),
                     Text(
-                      1.toString(),
+                      player.tournaments.toString(),
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
                   ],
@@ -76,7 +75,7 @@ class PlayerInfo extends StatelessWidget {
                       style: Theme.of(context).textTheme.bodySmall,
                     ),
                     Text(
-                      'Kyiv, Ukraine',
+                      player.place,
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
                   ],
@@ -90,7 +89,7 @@ class PlayerInfo extends StatelessWidget {
                       style: Theme.of(context).textTheme.bodySmall,
                     ),
                     Text(
-                      1995.toString(),
+                      player.year.toString(),
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
                   ],
@@ -104,7 +103,7 @@ class PlayerInfo extends StatelessWidget {
                       style: Theme.of(context).textTheme.bodySmall,
                     ),
                     Text(
-                      300.toString(),
+                      player.wins.toString(),
                       style: Theme.of(context)
                           .textTheme
                           .bodyMedium!
@@ -121,7 +120,7 @@ class PlayerInfo extends StatelessWidget {
                       style: Theme.of(context).textTheme.bodySmall,
                     ),
                     Text(
-                      231.toString(),
+                      player.loses.toString(),
                       style: Theme.of(context)
                           .textTheme
                           .bodyMedium!

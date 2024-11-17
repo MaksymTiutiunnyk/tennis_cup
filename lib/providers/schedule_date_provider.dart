@@ -10,8 +10,8 @@ class ScheduleDateNotifier extends StateNotifier<DateTime> {
   ScheduleDateNotifier()
       : super(DateTime(
           2024,
-          10,
-          30,
+          11,
+          09,
         ));
 
   void selectDate(DateTime date) {

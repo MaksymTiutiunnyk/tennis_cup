@@ -55,14 +55,15 @@ class PlayersMatch extends ConsumerWidget {
               ),
               const SizedBox(height: 8),
               Text(
-                '0 : 3',
+                '${match.blueScore} : ${match.redScore}',
                 style: Theme.of(context)
                     .textTheme
                     .bodyLarge!
                     .copyWith(fontWeight: FontWeight.w600),
               ),
               Text(
-                '(7-11, 2-11, 9-11)',
+                '${match.blueSetScores}, ${match.redSetScores}',
+                // '(${match.blueSetScores[0]} : ${match.redSetScores[0]}, ${match.blueSetScores[1]} : ${match.redSetScores[1]}, ${match.blueSetScores[2]} : ${match.redSetScores[2]}, ${match.blueSetScores[3]} : ${match.redSetScores[3]}, ${match.blueSetScores[4]} : ${match.redSetScores[4]}',
                 style: Theme.of(context).textTheme.bodySmall,
               ),
             ],
