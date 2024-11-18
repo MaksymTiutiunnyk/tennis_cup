@@ -1,73 +1,48 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:tennis_cup/model/tournament.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tennis_cup/providers/player_tournaments_provider.dart';
 import 'package:tennis_cup/widgets/player_widgets/player_tournament.dart';
 
-class PlayerTournaments extends StatefulWidget {
+class PlayerTournaments extends ConsumerStatefulWidget {
   final String playerId;
 
   const PlayerTournaments({super.key, required this.playerId});
 
   @override
-  State createState() => _PlayerTournamentsState();
+  ConsumerState createState() => _PlayerTournamentsState();
 }
 
-class _PlayerTournamentsState extends State<PlayerTournaments> {
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final List<Tournament> _tournaments = [];
-  DocumentSnapshot? _lastDocument;
-  bool _isLoading = false;
-  bool _hasMore = true;
+class _PlayerTournamentsState extends ConsumerState<PlayerTournaments> {
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
-    _fetchTournaments();
+    _scrollController.addListener(_onScroll);
+    ref
+        .read(playerTournamentsProvider.notifier)
+        .fetchTournaments(playerId: widget.playerId);
   }
 
-  Future<void> _fetchTournaments() async {
-    if (_isLoading || !_hasMore) return;
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
 
-    setState(() {
-      _isLoading = true;
-    });
-
-    Query query = _firestore
-        .collection('tournaments')
-        .where('players', arrayContains: widget.playerId)
-        .orderBy('date')
-        .limit(10);
-
-    if (_lastDocument != null) {
-      query = query.startAfterDocument(_lastDocument!);
+  void _onScroll() {
+    if (_scrollController.position.atEdge &&
+        _scrollController.position.pixels != 0) {
+      ref
+          .read(playerTournamentsProvider.notifier)
+          .fetchTournaments(playerId: widget.playerId);
     }
-
-    final querySnapshot = await query.get();
-
-    if (querySnapshot.docs.isNotEmpty) {
-      _lastDocument = querySnapshot.docs.last;
-
-      // Fetch tournament objects by awaiting the futures
-      final fetchedTournaments = await Future.wait(
-          querySnapshot.docs.map((doc) => Tournament.fromFirestore(doc)));
-
-      setState(() {
-        _tournaments.addAll(fetchedTournaments);
-        _hasMore = querySnapshot.docs.length == 10;
-      });
-    } else {
-      setState(() {
-        _hasMore = false;
-      });
-    }
-
-    setState(() {
-      _isLoading = false;
-    });
   }
 
   @override
   Widget build(BuildContext context) {
+    final playerTournaments = ref.watch(playerTournamentsProvider);
+
     return Flexible(
       fit: FlexFit.loose,
       child: Column(
@@ -85,36 +60,19 @@ class _PlayerTournamentsState extends State<PlayerTournaments> {
           ),
           Flexible(
             fit: FlexFit.loose,
-            child: ListView.builder(
-              shrinkWrap: true,
-              itemCount: _tournaments.length + 1,
-              itemBuilder: (context, index) {
-                if (index == _tournaments.length) {
-                  return _hasMore
-                      ? const Center(
-                          child: Padding(
-                            padding: EdgeInsets.all(8.0),
-                            child: CircularProgressIndicator(),
-                          ),
-                        )
-                      : const Center(
-                          child: Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Text('No more tournaments'),
-                        ));
-                }
-                return PlayerTournament(_tournaments[index]);
-              },
-              physics: const ClampingScrollPhysics(),
-            ),
+            child: playerTournaments.isEmpty
+                ? const Center(child: CircularProgressIndicator())
+                : ListView.builder(
+                    shrinkWrap: true,
+                    controller: _scrollController,
+                    itemCount: playerTournaments.length,
+                    itemBuilder: (ctx, index) => PlayerTournament(
+                      playerTournaments[index],
+                    ),
+                  ),
           ),
         ],
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
   }
 }
