@@ -12,7 +12,7 @@ class PlayerNotifier extends StateNotifier<List<Player>> {
 
   PlayerNotifier(this.sexFilter) : super([]);
 
-  Future<void> fetchPlayers({int limit = 10}) async {
+  Future<void> fetchPlayers({int limit = 5}) async {
     if (_isLoading || !_hasMore) return;
 
     _isLoading = true;

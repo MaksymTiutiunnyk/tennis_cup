@@ -42,13 +42,15 @@ class _RankingState extends ConsumerState<Ranking> {
         children: [
           const RankingPanel(),
           Expanded(
-            child: ListView.builder(
-              controller: _scrollController,
-              itemCount: players.length,
-              itemBuilder: (ctx, index) => RankingPlayer(
-                player: players[index],
-              ),
-            ),
+            child: players.isEmpty
+                ? const Center(child: CircularProgressIndicator())
+                : ListView.builder(
+                    controller: _scrollController,
+                    itemCount: players.length,
+                    itemBuilder: (ctx, index) => RankingPlayer(
+                      player: players[index],
+                    ),
+                  ),
           ),
         ],
       ),
