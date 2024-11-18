@@ -5,19 +5,18 @@ import 'package:tennis_cup/repositories/player_repository.dart';
 import 'package:tennis_cup/model/player.dart';
 
 class PlayerNotifier extends StateNotifier<List<Player>> {
-  final PlayerRepository _repository;
   final Sex sexFilter;
   DocumentSnapshot? _lastDocument;
   bool _hasMore = true;
   bool _isLoading = false;
 
-  PlayerNotifier(this._repository, this.sexFilter) : super([]);
+  PlayerNotifier(this.sexFilter) : super([]);
 
   Future<void> fetchPlayers({int limit = 10}) async {
     if (_isLoading || !_hasMore) return;
 
     _isLoading = true;
-    final result = await _repository.fetchPlayers(
+    final result = await PlayerRepository.fetchPlayers(
       limit: limit,
       startAfter: _lastDocument,
       sexFilter: sexFilter,
@@ -35,10 +34,10 @@ class PlayerNotifier extends StateNotifier<List<Player>> {
   }
 }
 
-final playerRepositoryProvider = Provider((ref) => PlayerRepository());
-
-final playerNotifierProvider = StateNotifierProvider<PlayerNotifier, List<Player>>((ref) {
-  final repository = ref.watch(playerRepositoryProvider);
+final playerProvider = StateNotifierProvider<PlayerNotifier, List<Player>>((ref) {
   final sexFilter = ref.watch(sexFilterProvider);
-  return PlayerNotifier(repository, sexFilter);
+  
+  final notifier = PlayerNotifier(sexFilter);
+  notifier.fetchPlayers();
+  return notifier;
 });

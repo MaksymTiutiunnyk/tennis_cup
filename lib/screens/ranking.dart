@@ -18,7 +18,6 @@ class _RankingState extends ConsumerState<Ranking> {
   void initState() {
     super.initState();
     _scrollController.addListener(_onScroll);
-    ref.read(playerNotifierProvider.notifier).fetchPlayers(); // Initial fetch
   }
 
   @override
@@ -30,13 +29,13 @@ class _RankingState extends ConsumerState<Ranking> {
   void _onScroll() {
     if (_scrollController.position.atEdge &&
         _scrollController.position.pixels != 0) {
-      ref.read(playerNotifierProvider.notifier).fetchPlayers();
+      ref.read(playerProvider.notifier).fetchPlayers();
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final players = ref.watch(playerNotifierProvider);
+    final players = ref.watch(playerProvider);
 
     return Scaffold(
       body: Column(

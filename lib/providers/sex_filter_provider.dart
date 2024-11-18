@@ -11,17 +11,3 @@ class SexFilterNotifier extends StateNotifier<Sex> {
 
 final sexFilterProvider =
     StateNotifierProvider<SexFilterNotifier, Sex>((ref) => SexFilterNotifier());
-
-// final filteredPlayersProvider = Provider<List<Player>>((ref) {
-//   Sex sexToInclude = ref.watch(sexFilterProvider);
-//   List<Player> filteredPlayers;
-
-//   if (sexToInclude == Sex.All) {
-//     filteredPlayers = players;
-//   } else {
-//     filteredPlayers =
-//         players.where((player) => player.sex == sexToInclude).toList();
-//   }
-
-//   return filteredPlayers;
-// });
