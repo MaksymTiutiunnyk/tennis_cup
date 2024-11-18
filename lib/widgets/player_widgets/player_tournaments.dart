@@ -62,7 +62,7 @@ class _PlayerTournamentsState extends ConsumerState<PlayerTournaments> {
           Flexible(
             fit: FlexFit.loose,
             child: playerTournaments.isEmpty
-                ? const Center(child: CircularProgressIndicator())
+                ? const CircularProgressIndicator()
                 : ListView.builder(
                     shrinkWrap: true,
                     controller: _scrollController,

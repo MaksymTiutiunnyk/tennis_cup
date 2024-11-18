@@ -55,34 +55,34 @@ class _UpcomingMatchesState extends State<UpcomingMatches> {
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: FutureBuilder<List<Match>>(
-        future: _upcomingMatchesFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-            final matches = snapshot.data!;
-            return Column(
-              mainAxisSize: MainAxisSize.min,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Icon(Icons.calendar_today),
-                      const SizedBox(width: 8),
-                      Text(
-                        'Tennis Cup: Upcoming matches',
-                        style: Theme.of(context).textTheme.bodyLarge,
-                      ),
-                    ],
-                  ),
+                const Icon(Icons.calendar_today),
+                const SizedBox(width: 8),
+                Text(
+                  'Tennis Cup: Upcoming matches',
+                  style: Theme.of(context).textTheme.bodyLarge,
                 ),
-                Expanded(
-                  child: ListView.builder(
+              ],
+            ),
+          ),
+          Expanded(
+            child: FutureBuilder<List<Match>>(
+              future: _upcomingMatchesFuture,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+                  final matches = snapshot.data!;
+                  return ListView.builder(
                     padding: const EdgeInsets.all(0),
                     itemCount: matches.length,
                     itemBuilder: (context, index) {
@@ -91,16 +91,16 @@ class _UpcomingMatchesState extends State<UpcomingMatches> {
                         tournament: _tournament!,
                       );
                     },
-                  ),
-                ),
-              ],
-            );
-          } else {
-            return const Center(
-              child: Text('No upcoming matches available.'),
-            );
-          }
-        },
+                  );
+                } else {
+                  return const Center(
+                    child: Text('No upcoming matches available.'),
+                  );
+                }
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
