@@ -60,6 +60,7 @@ class Tournament {
         .collection('tournaments')
         .doc(doc.id)
         .collection('matches')
+        .orderBy('dateTime')
         .get();
 
     tournament.matches = await Future.wait(matchesSnapshot.docs
