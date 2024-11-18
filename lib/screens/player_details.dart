@@ -60,7 +60,7 @@ class PlayerDetails extends StatelessWidget {
                     ),
                   ),
                 ),
-                PlayerTournaments(playerId: player.id),
+                PlayerTournaments(player: player),
               ],
             ),
             Positioned(

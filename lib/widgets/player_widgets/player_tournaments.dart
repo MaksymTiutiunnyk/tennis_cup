@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tennis_cup/model/player.dart';
 import 'package:tennis_cup/providers/player_tournaments_provider.dart';
 import 'package:tennis_cup/widgets/player_widgets/player_tournament.dart';
 
 class PlayerTournaments extends ConsumerStatefulWidget {
-  final String playerId;
+  final Player player;
 
-  const PlayerTournaments({super.key, required this.playerId});
+  const PlayerTournaments({super.key, required this.player});
 
   @override
   ConsumerState createState() => _PlayerTournamentsState();
@@ -21,7 +22,7 @@ class _PlayerTournamentsState extends ConsumerState<PlayerTournaments> {
     _scrollController.addListener(_onScroll);
     ref
         .read(playerTournamentsProvider.notifier)
-        .fetchTournaments(playerId: widget.playerId);
+        .fetchTournaments(playerId: widget.player.id);
   }
 
   @override
@@ -35,7 +36,7 @@ class _PlayerTournamentsState extends ConsumerState<PlayerTournaments> {
         _scrollController.position.pixels != 0) {
       ref
           .read(playerTournamentsProvider.notifier)
-          .fetchTournaments(playerId: widget.playerId);
+          .fetchTournaments(playerId: widget.player.id);
     }
   }
 
