@@ -30,9 +30,9 @@ class Schedule extends ConsumerWidget {
                   ],
                 ),
               ),
-            if (scheduledTournament.isNotEmpty)  
-              const ScheduledMatches(),
-            if (scheduledTournament.isNotEmpty)  
+            if (scheduledTournament.isNotEmpty)
+              ScheduledMatches(tournament: scheduledTournament.first),
+            if (scheduledTournament.isNotEmpty)
               TournamentResults(scheduledTournament.first),
           ],
         ),
