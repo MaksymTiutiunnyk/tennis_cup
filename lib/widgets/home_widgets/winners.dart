@@ -1,14 +1,16 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tennis_cup/model/tournament.dart';
+import 'package:tennis_cup/providers/winners_tournaments_provider.dart';
 import 'package:tennis_cup/widgets/home_widgets/winner.dart';
 
-class Winners extends StatelessWidget {
+class Winners extends ConsumerWidget {
   const Winners({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    FirebaseFirestore db = FirebaseFirestore.instance;
+  Widget build(BuildContext context, WidgetRef ref) {
+    final AsyncValue<List<Tournament>> asyncValue =
+        ref.watch(winnersTournamentsProvider);
 
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 8),
@@ -36,32 +38,20 @@ class Winners extends StatelessWidget {
           ),
           SizedBox(
             height: 195,
-            child: FutureBuilder(
-              future: db.collection('tournaments').get(),
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  return PageView.builder(
-                    controller: PageController(viewportFraction: 0.90),
-                    scrollDirection: Axis.horizontal,
-                    itemCount: snapshot.data!.size,
-                    itemBuilder: (context, index) => FutureBuilder(
-                      future:
-                          Tournament.fromFirestore(snapshot.data!.docs[index]),
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData) {
-                          return Winner(tournament: snapshot.data!);
-                        }
-                        return const Center(
-                          child: CircularProgressIndicator(),
-                        );
-                      },
-                    ),
-                  );
-                }
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              },
+            child: asyncValue.when(
+              data: (tournaments) => PageView.builder(
+                controller: PageController(viewportFraction: 0.90),
+                scrollDirection: Axis.horizontal,
+                itemCount: tournaments.length,
+                itemBuilder: (context, index) =>
+                    Winner(tournament: tournaments[index]),
+              ),
+              loading: () => const Center(
+                child: CircularProgressIndicator(),
+              ),
+              error: (error, stackTrace) => Center(
+                child: Text('error $error'),
+              ),
             ),
           ),
         ],

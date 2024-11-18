@@ -1,59 +1,17 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tennis_cup/model/tournament.dart';
+import 'package:tennis_cup/providers/live_stream_and_upcoming_matches_tournaments_provider.dart';
 import 'package:tennis_cup/widgets/home_widgets/upcoming_match.dart';
-import 'package:tennis_cup/model/match.dart';
 
-class UpcomingMatches extends StatefulWidget {
+class UpcomingMatches extends ConsumerWidget {
   const UpcomingMatches({super.key});
 
   @override
-  State<UpcomingMatches> createState() => _UpcomingMatchesState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final AsyncValue<List<Tournament>> asyncValue =
+        ref.watch(liveStreamAndUpcomingMatchesTournamentsProvider);
 
-class _UpcomingMatchesState extends State<UpcomingMatches> {
-  Future<List<Match>>? _upcomingMatchesFuture;
-  Tournament? _tournament;
-
-  @override
-  void initState() {
-    super.initState();
-    _upcomingMatchesFuture = _fetchMatches();
-  }
-
-  Future<List<Match>> _fetchMatches() async {
-    try {
-      final FirebaseFirestore db = FirebaseFirestore.instance;
-
-      final tournamentDoc =
-          await db.collection('tournaments').doc('zFY3TKcYjiuX2ggO4VMe').get();
-      _tournament = await Tournament.fromFirestore(tournamentDoc);
-
-      if (!tournamentDoc.exists) {
-        throw Exception('Tournament not found.');
-      }
-
-      final matchesQuery = await db
-          .collection('tournaments')
-          .doc('zFY3TKcYjiuX2ggO4VMe')
-          .collection('matches')
-          .get();
-
-      final List<Match> mappedMatches = [];
-      for (var matchDoc in matchesQuery.docs) {
-        final match = await Match.fromFirestore(matchDoc);
-        mappedMatches.add(match);
-      }
-
-      return mappedMatches;
-    } catch (e) {
-      debugPrint('Error fetching matches: $e');
-      return [];
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
     return Expanded(
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -73,31 +31,25 @@ class _UpcomingMatchesState extends State<UpcomingMatches> {
             ),
           ),
           Expanded(
-            child: FutureBuilder<List<Match>>(
-              future: _upcomingMatchesFuture,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                } else if (snapshot.hasError) {
-                  return Center(child: Text('Error: ${snapshot.error}'));
-                } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-                  final matches = snapshot.data!;
-                  return ListView.builder(
-                    padding: const EdgeInsets.all(0),
-                    itemCount: matches.length,
-                    itemBuilder: (context, index) {
-                      return UpcomingMatch(
-                        match: matches[index],
-                        tournament: _tournament!,
-                      );
-                    },
-                  );
-                } else {
-                  return const Center(
-                    child: Text('No upcoming matches available.'),
-                  );
-                }
+            child: asyncValue.when(
+              data: (tournaments) {
+                return ListView.builder(
+                  padding: const EdgeInsets.all(0),
+                  itemCount: tournaments.first.matches!.length,
+                  itemBuilder: (context, index) {
+                    return UpcomingMatch(
+                      match: tournaments.first.matches![index],
+                      tournament: tournaments.first,
+                    );
+                  },
+                );
               },
+              error: (error, stackTrace) => Center(
+                child: Text('error $error'),
+              ),
+              loading: () => const Center(
+                child: CircularProgressIndicator(),
+              ),
             ),
           ),
         ],

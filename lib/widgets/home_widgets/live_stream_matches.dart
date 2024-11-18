@@ -1,59 +1,17 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:tennis_cup/model/match.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tennis_cup/model/tournament.dart';
+import 'package:tennis_cup/providers/live_stream_and_upcoming_matches_tournaments_provider.dart';
 import 'package:tennis_cup/widgets/home_widgets/live_stream_match.dart';
 
-class LiveStreamMatches extends StatefulWidget {
+class LiveStreamMatches extends ConsumerWidget {
   const LiveStreamMatches({super.key});
 
   @override
-  State<LiveStreamMatches> createState() => _LiveStreamMatchesState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final AsyncValue<List<Tournament>> asyncValue =
+        ref.watch(liveStreamAndUpcomingMatchesTournamentsProvider);
 
-class _LiveStreamMatchesState extends State<LiveStreamMatches> {
-  Future<List<Match>>? _liveStreamMatchesFuture;
-  Tournament? _tournament;
-
-  @override
-  void initState() {
-    super.initState();
-    _liveStreamMatchesFuture = _fetchMatches();
-  }
-
-  Future<List<Match>> _fetchMatches() async {
-    try {
-      final FirebaseFirestore db = FirebaseFirestore.instance;
-
-      final tournamentDoc =
-          await db.collection('tournaments').doc('zFY3TKcYjiuX2ggO4VMe').get();
-      _tournament = await Tournament.fromFirestore(tournamentDoc);
-
-      if (!tournamentDoc.exists) {
-        throw Exception('Tournament not found.');
-      }
-
-      final matchesQuery = await db
-          .collection('tournaments')
-          .doc('zFY3TKcYjiuX2ggO4VMe')
-          .collection('matches')
-          .get();
-
-      final List<Match> mappedMatches = [];
-      for (var matchDoc in matchesQuery.docs) {
-        final match = await Match.fromFirestore(matchDoc);
-        mappedMatches.add(match);
-      }
-
-      return mappedMatches;
-    } catch (e) {
-      debugPrint('Error fetching matches: $e');
-      return [];
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -73,32 +31,26 @@ class _LiveStreamMatchesState extends State<LiveStreamMatches> {
         ),
         SizedBox(
           height: 170,
-          child: FutureBuilder<List<Match>>(
-            future: _liveStreamMatchesFuture,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
-              } else if (snapshot.hasError) {
-                return Center(child: Text('Error: ${snapshot.error}'));
-              } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-                final matches = snapshot.data!;
-                return PageView.builder(
-                  scrollDirection: Axis.horizontal,
-                  controller: PageController(viewportFraction: 0.90),
-                  itemCount: matches.length,
-                  itemBuilder: (context, index) {
-                    return LiveStreamMatch(
-                      match: matches[index],
-                      tournament: _tournament!,
-                    );
-                  },
-                );
-              } else {
-                return const Center(
-                  child: Text('No live stream matches available.'),
-                );
-              }
+          child: asyncValue.when(
+            data: (tournaments) {
+              return PageView.builder(
+                scrollDirection: Axis.horizontal,
+                controller: PageController(viewportFraction: 0.90),
+                itemCount: tournaments.first.matches!.length,
+                itemBuilder: (context, index) {
+                  return LiveStreamMatch(
+                    match: tournaments.first.matches![index],
+                    tournament: tournaments.first,
+                  );
+                },
+              );
             },
+            error: (error, stackTrace) => Center(
+              child: Text('error $error'),
+            ),
+            loading: () => const Center(
+              child: CircularProgressIndicator(),
+            ),
           ),
         ),
       ],

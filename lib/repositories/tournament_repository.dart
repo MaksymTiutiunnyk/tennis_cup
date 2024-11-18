@@ -3,13 +3,15 @@ import 'package:tennis_cup/model/arena.dart';
 import 'package:tennis_cup/model/tournament.dart';
 
 class TournamentRepository {
+  static final CollectionReference tournamentsCollection =
+      FirebaseFirestore.instance.collection('tournaments');
+
   static Future<Map<String, dynamic>> fetchPlayerTournaments({
     required String playerId,
     required int limit,
     DocumentSnapshot? startAfter,
   }) async {
-    Query query = FirebaseFirestore.instance
-        .collection('tournaments')
+    Query query = tournamentsCollection
         .where('players', arrayContains: playerId)
         .orderBy('date', descending: true)
         .limit(limit);
@@ -34,9 +36,6 @@ class TournamentRepository {
       {required DateTime tournamentDate,
       required Arena tournamentArena,
       required Time tournamentTime}) async {
-    final tournamentsCollection =
-        FirebaseFirestore.instance.collection('tournaments');
-
     final Timestamp startOfDay = Timestamp.fromDate(DateTime(
       tournamentDate.year,
       tournamentDate.month,
@@ -61,9 +60,28 @@ class TournamentRepository {
         .where('arena', isEqualTo: tournamentArena.title)
         .get();
 
-    List<Tournament> filteredTournaments = await Future.wait(
+    List<Tournament> mappedTournaments = await Future.wait(
         querySnapshot.docs.map((doc) async => Tournament.fromFirestore(doc)));
 
-    return filteredTournaments;
+    return mappedTournaments;
+  }
+
+  static Future<List<Tournament>> fetchWinnersTournaments() async {
+    final QuerySnapshot querySnapshot = await tournamentsCollection.get();
+
+    List<Tournament> mappedTournaments = await Future.wait(
+        querySnapshot.docs.map((doc) async => Tournament.fromFirestore(doc)));
+
+    return mappedTournaments;
+  }
+
+  static Future<List<Tournament>>
+      fetchLiveStreamAndUpcomingMatchesTournaments() async {
+    final QuerySnapshot querySnapshot = await tournamentsCollection.get();
+
+    List<Tournament> mappedTournaments = await Future.wait(
+        querySnapshot.docs.map((doc) async => Tournament.fromFirestore(doc)));
+
+    return mappedTournaments;
   }
 }
