@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:tennis_cup/providers/player_provider.dart';
+import 'package:tennis_cup/providers/ranking_players_provider.dart';
 import 'package:tennis_cup/widgets/ranking_widgets/ranking_panel.dart';
 import 'package:tennis_cup/widgets/ranking_widgets/ranking_player.dart';
 
@@ -29,13 +29,13 @@ class _RankingState extends ConsumerState<Ranking> {
   void _onScroll() {
     if (_scrollController.position.atEdge &&
         _scrollController.position.pixels != 0) {
-      ref.read(playerProvider.notifier).fetchPlayers();
+      ref.read(rankingPlayersProvider.notifier).fetchPlayers();
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final players = ref.watch(playerProvider);
+    final players = ref.watch(rankingPlayersProvider);
 
     return Scaffold(
       body: Column(

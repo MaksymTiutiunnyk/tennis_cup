@@ -38,7 +38,7 @@ class Schedule extends ConsumerWidget {
         ),
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, stack) {
-          return Center(child: Text(stack.toString()));
+          return Center(child: Text('error $error'));
         },
       ),
     );
