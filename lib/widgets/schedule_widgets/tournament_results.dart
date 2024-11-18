@@ -95,14 +95,14 @@ class TournamentResults extends StatelessWidget {
                   } else {
                     Match match = tournament.matches!.firstWhere(
                       (m) =>
-                          (m.bluePlayer == player && m.redPlayer == opponent) ||
-                          (m.bluePlayer == opponent && m.redPlayer == player),
+                          (m.bluePlayer.fullName == player.fullName && m.redPlayer.fullName == opponent.fullName) ||
+                          (m.bluePlayer.fullName == opponent.fullName && m.redPlayer.fullName == player.fullName),
                     );
 
                     ++points;
-                    if ((match.bluePlayer == player &&
+                    if ((match.bluePlayer.fullName == player.fullName &&
                             match.blueScore > match.redScore) ||
-                        (match.redPlayer == player &&
+                        (match.redPlayer.fullName == player.fullName &&
                             match.redScore > match.blueScore)) {
                       ++points;
                     }
@@ -112,7 +112,7 @@ class TournamentResults extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            '${match.bluePlayer == player ? match.blueScore : match.redScore} : ${match.bluePlayer == player ? match.redScore : match.blueScore}',
+                            '${match.bluePlayer.fullName == player.fullName ? match.blueScore : match.redScore} : ${match.bluePlayer.fullName == player.fullName ? match.redScore : match.blueScore}',
                             style: Theme.of(context).textTheme.labelLarge,
                           ),
                         ],

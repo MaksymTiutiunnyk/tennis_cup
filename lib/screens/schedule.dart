@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tennis_cup/model/tournament.dart';
 import 'package:tennis_cup/providers/scheduled_tournament_provider.dart';
 import 'package:tennis_cup/widgets/schedule_widgets/schedule_panel.dart';
 import 'package:tennis_cup/widgets/schedule_widgets/scheduled_matches.dart';
@@ -10,27 +11,35 @@ class Schedule extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final scheduledTournament = ref.watch(scheduledTournamentProvider);
+    final AsyncValue<List<Tournament>> scheduledTournament =
+        ref.watch(scheduledTournamentProvider);
 
     return Scaffold(
-      body: Column(
-        children: [
-          const SchedulePanel(),
-          if (scheduledTournament.isEmpty)
-            const Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Center(
-                    child: Text('Tournament is not found'),
-                  ),
-                ],
+      body: scheduledTournament.when(
+        data: (scheduledTournament) => Column(
+          children: [
+            const SchedulePanel(),
+            if (scheduledTournament.isEmpty)
+              const Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Center(
+                      child: Text('Tournament is not found'),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          if (scheduledTournament.isNotEmpty) const ScheduledMatches(),
-          if (scheduledTournament.isNotEmpty)
-            TournamentResults(scheduledTournament.first),
-        ],
+            if (scheduledTournament.isNotEmpty)  
+              const ScheduledMatches(),
+            if (scheduledTournament.isNotEmpty)  
+              TournamentResults(scheduledTournament.first),
+          ],
+        ),
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (error, stack) {
+          return Center(child: Text(stack.toString()));
+        },
       ),
     );
   }

@@ -1,5 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:tennis_cup/data/tournaments.dart';
+import 'package:tennis_cup/model/tournament.dart';
 import 'package:tennis_cup/widgets/home_widgets/winner.dart';
 
 class Winners extends StatelessWidget {
@@ -7,6 +8,8 @@ class Winners extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    FirebaseFirestore db = FirebaseFirestore.instance;
+
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 8),
       decoration: BoxDecoration(
@@ -33,13 +36,32 @@ class Winners extends StatelessWidget {
           ),
           SizedBox(
             height: 195,
-            child: PageView.builder(
-              controller: PageController(viewportFraction: 0.90),
-              scrollDirection: Axis.horizontal,
-              itemCount: 5,
-              itemBuilder: (context, index) => Winner(
-                tournament: tournaments[0],
-              ),
+            child: FutureBuilder(
+              future: db.collection('tournaments').get(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return PageView.builder(
+                    controller: PageController(viewportFraction: 0.90),
+                    scrollDirection: Axis.horizontal,
+                    itemCount: snapshot.data!.size,
+                    itemBuilder: (context, index) => FutureBuilder(
+                      future:
+                          Tournament.fromFirestore(snapshot.data!.docs[index]),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          return Winner(tournament: snapshot.data!);
+                        }
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      },
+                    ),
+                  );
+                }
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              },
             ),
           ),
         ],

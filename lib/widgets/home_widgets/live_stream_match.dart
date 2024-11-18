@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tennis_cup/main.dart';
 import 'package:tennis_cup/model/match.dart';
 import 'package:intl/intl.dart';
+import 'package:tennis_cup/model/tournament.dart';
 import 'package:tennis_cup/providers/arena_filter_provider.dart';
 import 'package:tennis_cup/providers/schedule_date_provider.dart';
 import 'package:tennis_cup/providers/tab_index_provider.dart';
@@ -13,8 +14,9 @@ DateFormat formatter = DateFormat('yyyy-MM-dd');
 
 class LiveStreamMatch extends ConsumerWidget {
   final Match match;
+  final Tournament tournament;
 
-  const LiveStreamMatch({super.key, required this.match});
+  const LiveStreamMatch({super.key, required this.match, required this.tournament});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -38,13 +40,13 @@ class LiveStreamMatch extends ConsumerWidget {
                       onTap: () {
                         ref
                             .read(scheduleDateProvider.notifier)
-                            .selectDate(match.tournament.date);
+                            .selectDate(tournament.date);
                         ref
                             .read(timeFilterProvider.notifier)
-                            .selectTime(match.tournament.time);
+                            .selectTime(tournament.time);
                         ref
                             .read(arenaFilterProvider.notifier)
-                            .selectArena(match.tournament.arena);
+                            .selectArena(tournament.arena);
                         ref.read(tabIndexProvider.notifier).selectTab(1);
                       },
                       child: Column(
@@ -54,16 +56,16 @@ class LiveStreamMatch extends ConsumerWidget {
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
                               Icon(Icons.circle,
-                                  color: match.tournament.arena.color, size: 8),
+                                  color: tournament.arena.color, size: 8),
                               const SizedBox(width: 8),
                               Text(
-                                'Arena: ${match.tournament.arena.title}',
+                                'Arena: ${tournament.arena.title}',
                                 style: Theme.of(context).textTheme.bodyMedium,
                               ),
                             ],
                           ),
                           Text(
-                            '${formatter.format(match.dateTime)} ${match.tournament.players[0].sex.name}, ${match.tournament.time.name}',
+                            '${formatter.format(match.dateTime)} ${tournament.players[0].sex.name}, ${tournament.time.name}',
                             style: Theme.of(context).textTheme.bodySmall,
                           ),
                         ],

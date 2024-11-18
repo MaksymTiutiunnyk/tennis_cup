@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tennis_cup/model/player.dart';
 import 'package:tennis_cup/model/match.dart';
 import 'package:intl/intl.dart';
+import 'package:tennis_cup/model/tournament.dart';
 import 'package:tennis_cup/providers/arena_filter_provider.dart';
 import 'package:tennis_cup/providers/schedule_date_provider.dart';
 import 'package:tennis_cup/providers/tab_index_provider.dart';
@@ -14,11 +15,14 @@ DateFormat formatter = DateFormat('yyyy-MM-dd, HH:mm');
 class PlayersMatch extends ConsumerWidget {
   final Player player1, player2;
   final Match match;
-  const PlayersMatch(
-      {super.key,
-      required this.player1,
-      required this.player2,
-      required this.match});
+  final Tournament tournament;
+  const PlayersMatch({
+    super.key,
+    required this.player1,
+    required this.player2,
+    required this.match,
+    required this.tournament,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -26,11 +30,11 @@ class PlayersMatch extends ConsumerWidget {
       onTap: () {
         ref
             .read(scheduleDateProvider.notifier)
-            .selectDate(match.tournament.date);
-        ref.read(timeFilterProvider.notifier).selectTime(match.tournament.time);
+            .selectDate(tournament.date);
+        ref.read(timeFilterProvider.notifier).selectTime(tournament.time);
         ref
             .read(arenaFilterProvider.notifier)
-            .selectArena(match.tournament.arena);
+            .selectArena(tournament.arena);
         ref.read(tabIndexProvider.notifier).selectTab(1);
 
         Navigator.of(context)
@@ -50,7 +54,7 @@ class PlayersMatch extends ConsumerWidget {
                 children: [
                   const Icon(Icons.emoji_events),
                   const SizedBox(width: 8),
-                  Text(match.tournament.title),
+                  Text(tournament.title),
                 ],
               ),
               const SizedBox(height: 8),

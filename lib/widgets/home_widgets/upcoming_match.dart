@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tennis_cup/model/match.dart';
 import 'package:intl/intl.dart';
+import 'package:tennis_cup/model/tournament.dart';
 import 'package:tennis_cup/providers/arena_filter_provider.dart';
 import 'package:tennis_cup/providers/schedule_date_provider.dart';
 import 'package:tennis_cup/providers/tab_index_provider.dart';
@@ -11,7 +12,8 @@ DateFormat formatter = DateFormat('yyyy-MM-dd, HH:mm');
 
 class UpcomingMatch extends ConsumerWidget {
   final Match match;
-  const UpcomingMatch({super.key, required this.match});
+  final Tournament tournament;
+  const UpcomingMatch({super.key, required this.match, required this.tournament});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -19,11 +21,11 @@ class UpcomingMatch extends ConsumerWidget {
       onTap: () {
         ref
             .read(scheduleDateProvider.notifier)
-            .selectDate(match.tournament.date);
-        ref.read(timeFilterProvider.notifier).selectTime(match.tournament.time);
+            .selectDate(tournament.date);
+        ref.read(timeFilterProvider.notifier).selectTime(tournament.time);
         ref
             .read(arenaFilterProvider.notifier)
-            .selectArena(match.tournament.arena);
+            .selectArena(tournament.arena);
         ref.read(tabIndexProvider.notifier).selectTab(1);
       },
       child: Column(
@@ -40,10 +42,10 @@ class UpcomingMatch extends ConsumerWidget {
                 ),
                 const SizedBox(width: 8),
                 Icon(Icons.circle,
-                    color: match.tournament.arena.color, size: 8),
+                    color: tournament.arena.color, size: 8),
                 const SizedBox(width: 8),
                 Text(
-                  match.tournament.arena.title,
+                  tournament.arena.title,
                   style: Theme.of(context).textTheme.bodySmall!.copyWith(
                         color: Colors.black,
                         fontWeight: FontWeight.bold,
