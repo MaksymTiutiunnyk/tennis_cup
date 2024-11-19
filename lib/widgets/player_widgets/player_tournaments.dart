@@ -44,6 +44,23 @@ class _PlayerTournamentsState extends ConsumerState<PlayerTournaments> {
   Widget build(BuildContext context) {
     final playerTournaments = ref.watch(playerTournamentsProvider);
 
+    Widget content = ListView.builder(
+      shrinkWrap: true,
+      controller: _scrollController,
+      itemCount: playerTournaments['tournaments'].length,
+      itemBuilder: (ctx, index) => PlayerTournament(
+        playerTournaments['tournaments'][index],
+      ),
+    );
+    if (playerTournaments['isLoading'] &&
+        playerTournaments['tournaments'].length == 0) {
+      content = const CircularProgressIndicator();
+    }
+    if (!playerTournaments['isLoading'] &&
+        playerTournaments['tournaments'].length == 0) {
+      content = const Center(child: Text('No tournaments found'));
+    }
+
     return Flexible(
       fit: FlexFit.loose,
       child: Column(
@@ -61,16 +78,7 @@ class _PlayerTournamentsState extends ConsumerState<PlayerTournaments> {
           ),
           Flexible(
             fit: FlexFit.loose,
-            child: playerTournaments.isEmpty
-                ? const CircularProgressIndicator()
-                : ListView.builder(
-                    shrinkWrap: true,
-                    controller: _scrollController,
-                    itemCount: playerTournaments.length,
-                    itemBuilder: (ctx, index) => PlayerTournament(
-                      playerTournaments[index],
-                    ),
-                  ),
+            child: content,
           ),
         ],
       ),

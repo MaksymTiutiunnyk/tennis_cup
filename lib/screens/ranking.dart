@@ -36,20 +36,18 @@ class _RankingState extends ConsumerState<Ranking> {
   @override
   Widget build(BuildContext context) {
     final players = ref.watch(rankingPlayersProvider);
-    
-    Widget content = const Center(child: CircularProgressIndicator());
+
+    Widget content = ListView.builder(
+      controller: _scrollController,
+      itemCount: players['players'].length,
+      itemBuilder: (ctx, index) =>
+          RankingPlayer(player: players['players'][index]),
+    );
+    if (players['isLoading'] && players['players'].length == 0) {
+      content = const Center(child: CircularProgressIndicator());
+    }
     if (!players['isLoading'] && players['players'].length == 0) {
-      content = const Center(
-        child: Text('No players found'),
-      );
-    } else {
-      content = ListView.builder(
-        controller: _scrollController,
-        itemCount: players['players'].length,
-        itemBuilder: (ctx, index) => RankingPlayer(
-          player: players['players'][index],
-        ),
-      );
+      content = const Center(child: Text('No players found'));
     }
 
     return Scaffold(
