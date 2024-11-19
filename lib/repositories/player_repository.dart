@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:tennis_cup/model/player.dart';
 
 class PlayerRepository {
-  static Future<Map<String, dynamic>> fetchPlayers({
+  static Future<Map<String, dynamic>> fetchRankingPlayers({
     required int limit,
     DocumentSnapshot? startAfter,
     Sex? sexFilter,
