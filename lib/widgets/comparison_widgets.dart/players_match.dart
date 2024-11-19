@@ -28,13 +28,9 @@ class PlayersMatch extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return InkWell(
       onTap: () {
-        ref
-            .read(scheduleDateProvider.notifier)
-            .selectDate(tournament.date);
+        ref.read(scheduleDateProvider.notifier).selectDate(tournament.date);
         ref.read(timeFilterProvider.notifier).selectTime(tournament.time);
-        ref
-            .read(arenaFilterProvider.notifier)
-            .selectArena(tournament.arena);
+        ref.read(arenaFilterProvider.notifier).selectArena(tournament.arena);
         ref.read(tabIndexProvider.notifier).selectTab(1);
 
         Navigator.of(context)
@@ -66,8 +62,7 @@ class PlayersMatch extends ConsumerWidget {
                     .copyWith(fontWeight: FontWeight.w600),
               ),
               Text(
-                '${match.blueSetScores}, ${match.redSetScores}',
-                // '(${match.blueSetScores[0]} : ${match.redSetScores[0]}, ${match.blueSetScores[1]} : ${match.redSetScores[1]}, ${match.blueSetScores[2]} : ${match.redSetScores[2]}, ${match.blueSetScores[3]} : ${match.redSetScores[3]}, ${match.blueSetScores[4]} : ${match.redSetScores[4]}',
+                '(${match.blueSetScores[0]}-${match.redSetScores[0]}, ${match.blueSetScores[1]}-${match.redSetScores[1]}, ${match.blueSetScores[2]}-${match.redSetScores[2]}, ${match.blueSetScores[3]}-${match.redSetScores[3]}, ${match.blueSetScores[4]}-${match.redSetScores[4]}',
                 style: Theme.of(context).textTheme.bodySmall,
               ),
             ],

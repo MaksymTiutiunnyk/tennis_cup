@@ -66,7 +66,7 @@ class PlayerTournament extends ConsumerWidget {
               const SizedBox(height: 4),
               buildDataRow(context, 'Loses:', 0.toString()),
               const SizedBox(height: 4),
-              buildDataRow(context, 'Sets ratio:', '15:0'),
+              buildDataRow(context, 'Sets ratio:', '15 : 0'),
               const SizedBox(height: 4),
               buildDataRow(context, 'Points:', 10.toString()),
             ],

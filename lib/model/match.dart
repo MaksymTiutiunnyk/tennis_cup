@@ -6,8 +6,8 @@ class Match {
   final Player redPlayer;
   int blueScore = 0;
   int redScore = 0;
-  final List<int> blueSetScores = [];
-  final List<int> redSetScores = [];
+  final List<int> blueSetScores;
+  final List<int> redSetScores;
   final String tournamentId;
   final DateTime dateTime;
 
@@ -15,7 +15,9 @@ class Match {
       {required this.bluePlayer,
       required this.redPlayer,
       required this.tournamentId,
-      required this.dateTime});
+      required this.dateTime,
+      required this.blueSetScores,
+      required this.redSetScores});
 
   static Future<Match> fromFirestore(DocumentSnapshot matchDoc) async {
     final data = matchDoc.data() as Map<String, dynamic>;
@@ -38,7 +40,12 @@ class Match {
       bluePlayer: Player.fromFirestore(bluePlayerDoc),
       redPlayer: Player.fromFirestore(redPlayerDoc),
       dateTime: dateTime,
-      tournamentId: data['tournamentId']
+      tournamentId: data['tournamentId'],
+      blueSetScores: (data['blueSetScores'] as List<dynamic>)
+          .map((e) => e as int)
+          .toList(),
+      redSetScores:
+          (data['redSetScores'] as List<dynamic>).map((e) => e as int).toList(),
     );
   }
 }
