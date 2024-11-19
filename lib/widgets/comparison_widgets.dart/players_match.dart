@@ -62,7 +62,7 @@ class PlayersMatch extends ConsumerWidget {
                     .copyWith(fontWeight: FontWeight.w600),
               ),
               Text(
-                '(${match.blueSetScores[0]}-${match.redSetScores[0]}, ${match.blueSetScores[1]}-${match.redSetScores[1]}, ${match.blueSetScores[2]}-${match.redSetScores[2]}, ${match.blueSetScores[3]}-${match.redSetScores[3]}, ${match.blueSetScores[4]}-${match.redSetScores[4]}',
+                '(${match.blueSetScores[0]}-${match.redSetScores[0]}, ${match.blueSetScores[1]}-${match.redSetScores[1]}, ${match.blueSetScores[2]}-${match.redSetScores[2]}, ${match.blueSetScores[3]}-${match.redSetScores[3]}, ${match.blueSetScores[4]}-${match.redSetScores[4]})',
                 style: Theme.of(context).textTheme.bodySmall,
               ),
             ],

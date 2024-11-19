@@ -66,8 +66,23 @@ class _PlayersMatchesState extends ConsumerState<PlayersMatches> {
   Widget build(BuildContext context) {
     final playersTournaments = ref.watch(playersTournamentsProvider);
     final playersMatches = [];
-    for (Tournament tournament in playersTournaments) {
+    for (Tournament tournament in playersTournaments['tournaments']) {
       playersMatches.addAll(getPlayersMatches(tournament));
+    }
+    
+    Widget content = ListView.builder(
+      shrinkWrap: true,
+      controller: _scrollController,
+      itemCount: playersMatches.length,
+      itemBuilder: (context, index) => playersMatches[index],
+    );
+    if (!playersTournaments['isLoading'] &&
+        playersTournaments['tournaments'].length == 0) {
+      content = const Center(child: Text('No matches found'));
+    }
+    if (playersTournaments['isLoading'] &&
+        playersTournaments['tournaments'].length == 0) {
+      content = const Center(child: CircularProgressIndicator());
     }
 
     return Column(
@@ -90,14 +105,7 @@ class _PlayersMatchesState extends ConsumerState<PlayersMatches> {
         ),
         Flexible(
           fit: FlexFit.loose,
-          child: playersTournaments.isEmpty
-              ? const Center(child: CircularProgressIndicator())
-              : ListView.builder(
-                  shrinkWrap: true,
-                  controller: _scrollController,
-                  itemCount: playersMatches.length,
-                  itemBuilder: (context, index) => playersMatches[index],
-                ),
+          child: content,
         ),
       ],
     );
