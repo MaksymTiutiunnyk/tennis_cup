@@ -84,4 +84,36 @@ class TournamentRepository {
 
     return mappedTournaments;
   }
+
+  static Future<Map<String, dynamic>> fetchPlayersTournaments({
+    required String player1Id,
+    required String player2Id,
+    required int limit,
+    DocumentSnapshot? startAfter,
+  }) async {
+    Query query = tournamentsCollection
+        .where('players', arrayContains: player1Id)
+        .orderBy('date', descending: true)
+        .limit(limit);
+
+    if (startAfter != null) {
+      query = query.startAfterDocument(startAfter);
+    }
+
+    final querySnapshot = await query.get();
+
+    final tournaments = <Tournament>[];
+    for (final doc in querySnapshot.docs) {
+      final tournament = await Tournament.fromFirestore(doc);
+      if (tournament.players.any((player) => player.id == player2Id)) {
+        tournaments.add(tournament);
+      }
+    }
+
+    return {
+      'tournaments': tournaments,
+      'lastDocument':
+          querySnapshot.docs.isNotEmpty ? querySnapshot.docs.last : null,
+    };
+  }
 }
