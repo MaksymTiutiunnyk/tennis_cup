@@ -14,7 +14,8 @@ class PlayerInfo extends StatelessWidget {
           const SizedBox(height: 8),
           CircleAvatar(
             radius: 60,
-            backgroundImage: NetworkImage(player.imageUrl),
+            backgroundImage:
+                player.imageUrl != '' ? NetworkImage(player.imageUrl) : null,
           ),
           const SizedBox(height: 8),
           Text(

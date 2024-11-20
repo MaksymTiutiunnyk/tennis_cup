@@ -22,7 +22,9 @@ class RankingPlayer extends StatelessWidget {
                 children: [
                   CircleAvatar(
                     radius: 20,
-                    backgroundImage: NetworkImage(player.imageUrl),
+                    backgroundImage: player.imageUrl != ''
+                        ? NetworkImage(player.imageUrl)
+                        : null,
                   ),
                   const SizedBox(width: 8),
                   Text(
