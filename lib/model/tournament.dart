@@ -11,6 +11,7 @@ DateFormat formatter = DateFormat('yyyy-MM-dd');
 enum Time { Morning, Evening, Day, Midnight, Night }
 
 class Tournament {
+  final String tournamentId;
   final List<Player> players;
   List<Match>? matches;
   final DateTime date;
@@ -21,7 +22,8 @@ class Tournament {
   final List<int> places;
 
   Tournament(
-      {required this.players,
+      {required this.tournamentId,
+      required this.players,
       required this.date,
       required this.arena,
       required this.time,
@@ -48,6 +50,7 @@ class Tournament {
     }
 
     final tournament = Tournament(
+      tournamentId: doc.id,
       date: (data['date'] as Timestamp).toDate(),
       players: players,
       arena: arenas.firstWhere((arena) => arena.title == data['arena']),

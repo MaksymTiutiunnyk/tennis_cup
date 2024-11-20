@@ -85,6 +85,13 @@ class TournamentRepository {
     return mappedTournaments;
   }
 
+  static Stream<void> watchMatchChanges(List<String> tournamentIds) {
+    return FirebaseFirestore.instance
+        .collectionGroup('matches') 
+        .where('tournamentId', whereIn: tournamentIds)
+        .snapshots();
+  }
+
   static Future<Map<String, dynamic>> fetchPlayersTournaments({
     required String player1Id,
     required String player2Id,
