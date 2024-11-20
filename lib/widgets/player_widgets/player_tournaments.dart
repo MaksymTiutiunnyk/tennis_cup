@@ -20,9 +20,12 @@ class _PlayerTournamentsState extends ConsumerState<PlayerTournaments> {
   void initState() {
     super.initState();
     _scrollController.addListener(_onScroll);
-    ref
-        .read(playerTournamentsProvider.notifier)
-        .fetchTournaments(playerId: widget.player.id);
+
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      ref
+          .read(playerTournamentsProvider.notifier)
+          .fetchTournaments(playerId: widget.player.id);
+    });
   }
 
   @override

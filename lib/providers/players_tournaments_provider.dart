@@ -8,7 +8,7 @@ class PlayersTournamentsNotifier extends StateNotifier<Map<String, dynamic>> {
   bool _hasMore = true;
   bool _isLoading = false;
 
-  PlayersTournamentsNotifier() : super({'tournaments': [], 'isLoading': true});
+  PlayersTournamentsNotifier() : super({'tournaments': [], 'isLoading': false});
 
   Future<void> fetchTournaments(
       {int limit = 5,
@@ -17,9 +17,8 @@ class PlayersTournamentsNotifier extends StateNotifier<Map<String, dynamic>> {
     if (_isLoading || !_hasMore) return;
 
     _isLoading = true;
-    if (!state['isLoading']) {
-      state = {'tournaments': state['tournaments'], 'isLoading': _isLoading};
-    }
+    state = {'tournaments': state['tournaments'], 'isLoading': _isLoading};
+
     final result = await TournamentRepository.fetchPlayersTournaments(
       player1Id: player1Id,
       player2Id: player2Id,

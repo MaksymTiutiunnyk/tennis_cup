@@ -44,8 +44,11 @@ class _PlayersMatchesState extends ConsumerState<PlayersMatches> {
   void initState() {
     super.initState();
     _scrollController.addListener(_onScroll);
-    ref.read(playersTournamentsProvider.notifier).fetchTournaments(
-        player1Id: widget.player1.id, player2Id: widget.player2.id);
+
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      ref.read(playersTournamentsProvider.notifier).fetchTournaments(
+          player1Id: widget.player1.id, player2Id: widget.player2.id);
+    });
   }
 
   @override
@@ -69,7 +72,7 @@ class _PlayersMatchesState extends ConsumerState<PlayersMatches> {
     for (Tournament tournament in playersTournaments['tournaments']) {
       playersMatches.addAll(getPlayersMatches(tournament));
     }
-    
+
     Widget content = ListView.builder(
       shrinkWrap: true,
       controller: _scrollController,
