@@ -16,7 +16,7 @@ class PlayerDetails extends StatelessWidget {
     ref.read(playersTournamentsProvider.notifier).reset();
     await ref
         .read(playersTournamentsProvider.notifier)
-        .fetchTournaments(player1Id: this.player.id, player2Id: player.id);
+        .fetchTournaments(player1Id: this.player.playerId, player2Id: player.playerId);
 
     if (!context.mounted) {
       return;

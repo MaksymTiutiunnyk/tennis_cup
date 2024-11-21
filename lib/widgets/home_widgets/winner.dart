@@ -26,7 +26,7 @@ class Winner extends ConsumerWidget {
         ref.read(playerTournamentsProvider.notifier).reset();
         await ref
             .read(playerTournamentsProvider.notifier)
-            .fetchTournaments(playerId: winner.id);
+            .fetchTournaments(playerId: winner.playerId);
         if (!context.mounted) {
           return;
         }

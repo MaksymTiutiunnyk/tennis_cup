@@ -5,7 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 enum Sex { All, Men, Women }
 
 class Player {
-  final String id;
+  final String playerId;
   final String name;
   final String surname;
   final Sex sex;
@@ -23,7 +23,7 @@ class Player {
   final String imageUrl;
 
   Player(
-      {required this.id,
+      {required this.playerId,
       required this.year,
       required this.tournaments,
       required this.matches,
@@ -44,7 +44,7 @@ class Player {
     final data = doc.data() as Map<String, dynamic>;
 
     return Player(
-      id: doc.id,
+      playerId: doc.id,
       bronze: data['bronze'],
       gold: data['gold'],
       name: data['name'],
@@ -71,9 +71,9 @@ class Player {
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
     if (other is! Player) return false;
-    return id == other.id && fullName == other.fullName;
+    return playerId == other.playerId && fullName == other.fullName;
   }
 
   @override
-  int get hashCode => Object.hash(id, fullName);
+  int get hashCode => Object.hash(playerId, fullName);
 }

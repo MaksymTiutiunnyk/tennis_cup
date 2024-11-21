@@ -33,7 +33,7 @@ class _PlayerTournamentsState extends ConsumerState<PlayerTournaments> {
         _scrollController.position.pixels != 0) {
       ref
           .read(playerTournamentsProvider.notifier)
-          .fetchTournaments(playerId: widget.player.id);
+          .fetchTournaments(playerId: widget.player.playerId);
     }
   }
 

@@ -23,12 +23,11 @@ class RankingPanel extends StatelessWidget {
     ref.read(playerTournamentsProvider.notifier).reset();
     await ref
         .read(playerTournamentsProvider.notifier)
-        .fetchTournaments(playerId: player.id);
+        .fetchTournaments(playerId: player.playerId);
+
     if (!context.mounted) {
       return;
     }
-    Navigator.of(context).push(
-        MaterialPageRoute(builder: (ctx) => PlayerDetails(player: player)));
 
     Navigator.of(context).pushReplacement(MaterialPageRoute(
       builder: (context) => PlayerDetails(player: player),
@@ -56,7 +55,7 @@ class RankingPanel extends StatelessWidget {
               const Icon(Icons.people_rounded),
               const SizedBox(width: 8),
               Text(
-                'Ranking of Tennis Cup players',
+                'Rating of players',
                 style: Theme.of(context).textTheme.bodyLarge,
               ),
             ],

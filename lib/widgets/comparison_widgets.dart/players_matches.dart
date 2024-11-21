@@ -22,10 +22,10 @@ class _PlayersMatchesState extends ConsumerState<PlayersMatches> {
     final List<PlayersMatch> playersMatches = [];
 
     for (Match match in tournament.matches!) {
-      if ((match.bluePlayer.id == widget.player1.id ||
-              match.redPlayer.id == widget.player1.id) &&
-          (match.bluePlayer.id == widget.player2.id ||
-              match.redPlayer.id == widget.player2.id)) {
+      if ((match.bluePlayer.playerId == widget.player1.playerId ||
+              match.redPlayer.playerId == widget.player1.playerId) &&
+          (match.bluePlayer.playerId == widget.player2.playerId ||
+              match.redPlayer.playerId == widget.player2.playerId)) {
         playersMatches.add(PlayersMatch(
           player1: widget.player1,
           player2: widget.player2,
@@ -56,7 +56,7 @@ class _PlayersMatchesState extends ConsumerState<PlayersMatches> {
     if (_scrollController.position.atEdge &&
         _scrollController.position.pixels != 0) {
       ref.read(playersTournamentsProvider.notifier).fetchTournaments(
-          player1Id: widget.player1.id, player2Id: widget.player2.id);
+          player1Id: widget.player1.playerId, player2Id: widget.player2.playerId);
     }
   }
 

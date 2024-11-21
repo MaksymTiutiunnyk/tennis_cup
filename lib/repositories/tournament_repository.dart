@@ -112,7 +112,7 @@ class TournamentRepository {
     final tournaments = <Tournament>[];
     for (final doc in querySnapshot.docs) {
       final tournament = await Tournament.fromFirestore(doc);
-      if (tournament.players.any((player) => player.id == player2Id)) {
+      if (tournament.players.any((player) => player.playerId == player2Id)) {
         tournaments.add(tournament);
       }
     }

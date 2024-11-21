@@ -18,7 +18,7 @@ class LiveStreamMatchPlayer extends ConsumerWidget {
         ref.read(playerTournamentsProvider.notifier).reset();
         await ref
             .read(playerTournamentsProvider.notifier)
-            .fetchTournaments(playerId: player.id);
+            .fetchTournaments(playerId: player.playerId);
         if (!context.mounted) {
           return;
         }

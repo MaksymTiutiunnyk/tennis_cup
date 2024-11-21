@@ -34,8 +34,8 @@ class ScheduledMatch extends ConsumerWidget {
                       await ref
                           .read(playersTournamentsProvider.notifier)
                           .fetchTournaments(
-                            player1Id: match.bluePlayer.id,
-                            player2Id: match.redPlayer.id,
+                            player1Id: match.bluePlayer.playerId,
+                            player2Id: match.redPlayer.playerId,
                           );
                       if (!context.mounted) {
                         return;
@@ -61,7 +61,7 @@ class ScheduledMatch extends ConsumerWidget {
                       ref.read(playerTournamentsProvider.notifier).reset();
                       await ref
                           .read(playerTournamentsProvider.notifier)
-                          .fetchTournaments(playerId: match.bluePlayer.id);
+                          .fetchTournaments(playerId: match.bluePlayer.playerId);
                       if (!context.mounted) {
                         return;
                       }
@@ -94,7 +94,7 @@ class ScheduledMatch extends ConsumerWidget {
                       ref.read(playerTournamentsProvider.notifier).reset();
                       await ref
                           .read(playerTournamentsProvider.notifier)
-                          .fetchTournaments(playerId: match.redPlayer.id);
+                          .fetchTournaments(playerId: match.redPlayer.playerId);
                       if (!context.mounted) {
                         return;
                       }
