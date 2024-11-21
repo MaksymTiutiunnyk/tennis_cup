@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tennis_cup/model/player.dart';
 import 'package:tennis_cup/model/tournament.dart';
 import 'package:intl/intl.dart';
 import 'package:tennis_cup/screens/player_details.dart';
@@ -9,12 +10,19 @@ class Winner extends StatelessWidget {
   final Tournament tournament;
   const Winner({super.key, required this.tournament});
 
+  Player _defineWinner() {
+    return tournament
+        .players[tournament.places.indexWhere((place) => place == 1)];
+  }
+
   @override
   Widget build(BuildContext context) {
+    final winner = _defineWinner();
+
     return InkWell(
       onTap: () {
-        Navigator.of(context).push(MaterialPageRoute(
-            builder: (ctx) => PlayerDetails(player: tournament.players[0])));
+        Navigator.of(context).push(
+            MaterialPageRoute(builder: (ctx) => PlayerDetails(player: winner)));
       },
       child: Container(
         margin: const EdgeInsets.all(8),
@@ -27,13 +35,12 @@ class Winner extends StatelessWidget {
           children: [
             CircleAvatar(
               radius: 40,
-              backgroundImage: tournament.players[0].imageUrl != ''
-                  ? NetworkImage(tournament.players[0].imageUrl)
-                  : null,
+              backgroundImage:
+                  winner.imageUrl != '' ? NetworkImage(winner.imageUrl) : null,
             ),
             const SizedBox(height: 8),
             Text(
-              tournament.players[0].fullName,
+              winner.fullName,
               style: Theme.of(context).textTheme.bodyLarge,
             ),
             const SizedBox(height: 8),
@@ -43,7 +50,7 @@ class Winner extends StatelessWidget {
                 const Icon(Icons.emoji_events, color: Colors.orange, size: 24),
                 const SizedBox(width: 8),
                 Text(
-                  '${tournament.players[0].sex.name}, ${tournament.time.name}',
+                  '${winner.sex.name}, ${tournament.time.name}',
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),
               ],

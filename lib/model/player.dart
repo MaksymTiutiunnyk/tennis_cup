@@ -66,4 +66,14 @@ class Player {
   String get fullName {
     return '$surname $name';
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! Player) return false;
+    return id == other.id && fullName == other.fullName;
+  }
+
+  @override
+  int get hashCode => Object.hash(id, fullName);
 }

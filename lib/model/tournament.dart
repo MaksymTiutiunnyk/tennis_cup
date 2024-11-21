@@ -72,4 +72,26 @@ class Tournament {
 
     return tournament;
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! Tournament) return false;
+    return tournamentId == other.tournamentId &&
+        title == other.title &&
+        _listEquals(players, other.players) &&
+        _listEquals(matches!, other.matches!);
+  }
+
+  @override
+  int get hashCode => Object.hash(
+      tournamentId, title, Object.hashAll(players), Object.hashAll(matches!));
+
+  bool _listEquals<T>(List<T> list1, List<T> list2) {
+    if (list1.length != list2.length) return false;
+    for (int i = 0; i < list1.length; i++) {
+      if (list1[i] != list2[i]) return false;
+    }
+    return true;
+  }
 }

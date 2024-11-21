@@ -55,4 +55,18 @@ class Match {
       redScore: data['redScore'],
     );
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! Match) return false;
+    return matchId == other.matchId &&
+        bluePlayer == other.bluePlayer &&
+        redPlayer == other.redPlayer &&
+        blueScore == other.blueScore &&
+        redScore == other.redScore;
+  }
+
+  @override
+  int get hashCode => Object.hash(matchId, bluePlayer, redPlayer, blueScore, redScore);
 }

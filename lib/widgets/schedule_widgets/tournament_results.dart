@@ -63,7 +63,9 @@ class TournamentResults extends StatelessWidget {
               ),
             ],
             rows: tournament.players.map((player) {
-              int points = 0;
+              int playerIndex = tournament.players.indexOf(player);
+              int points = tournament.points[playerIndex];
+              int position = tournament.places[playerIndex];
 
               List<DataCell> cells = [
                 DataCell(
@@ -95,17 +97,11 @@ class TournamentResults extends StatelessWidget {
                   } else {
                     Match match = tournament.matches!.firstWhere(
                       (m) =>
-                          (m.bluePlayer.fullName == player.fullName && m.redPlayer.fullName == opponent.fullName) ||
-                          (m.bluePlayer.fullName == opponent.fullName && m.redPlayer.fullName == player.fullName),
+                          (m.bluePlayer.fullName == player.fullName &&
+                              m.redPlayer.fullName == opponent.fullName) ||
+                          (m.bluePlayer.fullName == opponent.fullName &&
+                              m.redPlayer.fullName == player.fullName),
                     );
-
-                    ++points;
-                    if ((match.bluePlayer.fullName == player.fullName &&
-                            match.blueScore > match.redScore) ||
-                        (match.redPlayer.fullName == player.fullName &&
-                            match.redScore > match.blueScore)) {
-                      ++points;
-                    }
 
                     return DataCell(
                       Row(
@@ -136,12 +132,12 @@ class TournamentResults extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        '0',
+                        position != 0 ? position.toString() : '',
                         style: Theme.of(context).textTheme.labelLarge,
                       ),
                     ],
                   ),
-                )
+                ),
               ];
 
               return DataRow(cells: cells);

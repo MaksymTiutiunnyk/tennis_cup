@@ -52,7 +52,8 @@ class _PlayerTournamentsState extends ConsumerState<PlayerTournaments> {
       controller: _scrollController,
       itemCount: playerTournaments['tournaments'].length,
       itemBuilder: (ctx, index) => PlayerTournament(
-        playerTournaments['tournaments'][index],
+        tournament: playerTournaments['tournaments'][index],
+        player: widget.player,
       ),
     );
     if (playerTournaments['isLoading'] &&

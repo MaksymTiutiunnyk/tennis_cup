@@ -18,7 +18,7 @@ class PlayersMatches extends ConsumerStatefulWidget {
 }
 
 class _PlayersMatchesState extends ConsumerState<PlayersMatches> {
-  List<PlayersMatch> getPlayersMatches(Tournament tournament) {
+  List<PlayersMatch> _getPlayersMatches(Tournament tournament) {
     final List<PlayersMatch> playersMatches = [];
 
     for (Match match in tournament.matches!) {
@@ -70,7 +70,7 @@ class _PlayersMatchesState extends ConsumerState<PlayersMatches> {
     final playersTournaments = ref.watch(playersTournamentsProvider);
     final playersMatches = [];
     for (Tournament tournament in playersTournaments['tournaments']) {
-      playersMatches.addAll(getPlayersMatches(tournament));
+      playersMatches.addAll(_getPlayersMatches(tournament));
     }
 
     Widget content = ListView.builder(

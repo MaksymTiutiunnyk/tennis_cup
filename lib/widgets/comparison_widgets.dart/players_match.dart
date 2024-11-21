@@ -16,6 +16,7 @@ class PlayersMatch extends ConsumerWidget {
   final Player player1, player2;
   final Match match;
   final Tournament tournament;
+
   const PlayersMatch({
     super.key,
     required this.player1,
@@ -26,6 +27,22 @@ class PlayersMatch extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final bool isPlayer1Blue = match.bluePlayer == player1;
+
+    final int player1Score = isPlayer1Blue ? match.blueScore : match.redScore;
+    final int player2Score = isPlayer1Blue ? match.redScore : match.blueScore;
+
+    final List<int> player1SetScores =
+        isPlayer1Blue ? match.blueSetScores : match.redSetScores;
+    final List<int> player2SetScores =
+        isPlayer1Blue ? match.redSetScores : match.blueSetScores;
+
+    final int setsPlayed = player1Score + player2Score;
+    final List<String> displayedSetScores = List.generate(
+      setsPlayed,
+      (index) => '${player1SetScores[index]}-${player2SetScores[index]}',
+    );
+
     return InkWell(
       onTap: () {
         ref.read(scheduleDateProvider.notifier).selectDate(tournament.date);
@@ -55,14 +72,14 @@ class PlayersMatch extends ConsumerWidget {
               ),
               const SizedBox(height: 8),
               Text(
-                '${match.blueScore} : ${match.redScore}',
+                '$player1Score : $player2Score',
                 style: Theme.of(context)
                     .textTheme
                     .bodyLarge!
                     .copyWith(fontWeight: FontWeight.w600),
               ),
               Text(
-                '(${match.blueSetScores[0]}-${match.redSetScores[0]}, ${match.blueSetScores[1]}-${match.redSetScores[1]}, ${match.blueSetScores[2]}-${match.redSetScores[2]}, ${match.blueSetScores[3]}-${match.redSetScores[3]}, ${match.blueSetScores[4]}-${match.redSetScores[4]})',
+                '(${displayedSetScores.join(', ')})',
                 style: Theme.of(context).textTheme.bodySmall,
               ),
             ],

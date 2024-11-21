@@ -3,9 +3,32 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tennis_cup/model/tournament.dart';
 import 'package:tennis_cup/providers/live_stream_and_upcoming_matches_tournaments_provider.dart';
 import 'package:tennis_cup/widgets/home_widgets/upcoming_match.dart';
+import 'package:tennis_cup/model/match.dart';
 
 class UpcomingMatches extends ConsumerWidget {
   const UpcomingMatches({super.key});
+
+  List<Match> _getMatchesToDisplay(List<Tournament> tournaments) {
+    final List<Match> matches = [];
+
+    for (final tournament in tournaments) {
+      Match? closestUpcomingMatch;
+      Duration closestDuration = const Duration(days: 365000);
+
+      for (final match in tournament.matches!) {
+        Duration difference = match.dateTime.difference(DateTime.now());
+        if (difference > Duration.zero && difference < closestDuration) {
+          closestDuration = difference;
+          closestUpcomingMatch = match;
+        }
+      }
+
+      if (closestUpcomingMatch != null) {
+        matches.add(closestUpcomingMatch);
+      }
+    }
+    return matches;
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -33,13 +56,19 @@ class UpcomingMatches extends ConsumerWidget {
           Expanded(
             child: asyncValue.when(
               data: (tournaments) {
+                final matches = _getMatchesToDisplay(tournaments);
+
+                if (matches.isEmpty) {
+                  return const Center(child: Text('No upcoming matches found'));
+                }
+
                 return ListView.builder(
                   padding: const EdgeInsets.all(0),
-                  itemCount: tournaments.first.matches!.length,
+                  itemCount: matches.length,
                   itemBuilder: (context, index) {
                     return UpcomingMatch(
-                      match: tournaments.first.matches![index],
-                      tournament: tournaments.first,
+                      match: matches[index],
+                      tournament: tournaments[index],
                     );
                   },
                 );
