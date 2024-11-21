@@ -20,12 +20,6 @@ class _PlayerTournamentsState extends ConsumerState<PlayerTournaments> {
   void initState() {
     super.initState();
     _scrollController.addListener(_onScroll);
-
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      ref
-          .read(playerTournamentsProvider.notifier)
-          .fetchTournaments(playerId: widget.player.id);
-    });
   }
 
   @override
@@ -47,24 +41,6 @@ class _PlayerTournamentsState extends ConsumerState<PlayerTournaments> {
   Widget build(BuildContext context) {
     final playerTournaments = ref.watch(playerTournamentsProvider);
 
-    Widget content = ListView.builder(
-      shrinkWrap: true,
-      controller: _scrollController,
-      itemCount: playerTournaments['tournaments'].length,
-      itemBuilder: (ctx, index) => PlayerTournament(
-        tournament: playerTournaments['tournaments'][index],
-        player: widget.player,
-      ),
-    );
-    if (playerTournaments['isLoading'] &&
-        playerTournaments['tournaments'].length == 0) {
-      content = const CircularProgressIndicator();
-    }
-    if (!playerTournaments['isLoading'] &&
-        playerTournaments['tournaments'].length == 0) {
-      content = const Center(child: Text('No tournaments found'));
-    }
-
     return Flexible(
       fit: FlexFit.loose,
       child: Column(
@@ -82,7 +58,26 @@ class _PlayerTournamentsState extends ConsumerState<PlayerTournaments> {
           ),
           Flexible(
             fit: FlexFit.loose,
-            child: content,
+            child: playerTournaments.when(
+              data: (playerTournaments) {
+                if (playerTournaments.isEmpty) {
+                  return const Center(child: Text('No tournaments found'));
+                }
+                return ListView.builder(
+                  shrinkWrap: true,
+                  controller: _scrollController,
+                  itemCount: playerTournaments.length,
+                  itemBuilder: (ctx, index) => PlayerTournament(
+                    tournament: playerTournaments[index],
+                    player: widget.player,
+                  ),
+                );
+              },
+              error: (error, stackTrace) => const Center(
+                child: Text('Unexpected error'),
+              ),
+              loading: () => const CircularProgressIndicator(),
+            ),
           ),
         ],
       ),

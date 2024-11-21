@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tennis_cup/model/player.dart';
 
-class PlayerSearch extends StatefulWidget {
-  final void Function(BuildContext context, Player player) onSelectPlayer;
+class PlayerSearch extends ConsumerStatefulWidget {
+  final Future<void> Function(BuildContext context, Player player, WidgetRef ref)
+      onSelectPlayer;
 
   const PlayerSearch({super.key, required this.onSelectPlayer});
 
   @override
-  State<PlayerSearch> createState() => _PlayerSearchState();
+  ConsumerState<PlayerSearch> createState() => _PlayerSearchState();
 }
 
-class _PlayerSearchState extends State<PlayerSearch> {
+class _PlayerSearchState extends ConsumerState<PlayerSearch> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   Future<List<Player>>? searchResults;
 
@@ -95,8 +97,8 @@ class _PlayerSearchState extends State<PlayerSearch> {
                 itemBuilder: (context, index) {
                   final player = snapshot.data![index];
                   return InkWell(
-                    onTap: () {
-                      widget.onSelectPlayer(context, player);
+                    onTap: () async {
+                      await widget.onSelectPlayer(context, player, ref);
                     },
                     child: ListTile(
                       title: Text(player.fullName),

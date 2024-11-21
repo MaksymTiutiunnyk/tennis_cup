@@ -44,11 +44,6 @@ class _PlayersMatchesState extends ConsumerState<PlayersMatches> {
   void initState() {
     super.initState();
     _scrollController.addListener(_onScroll);
-
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      ref.read(playersTournamentsProvider.notifier).fetchTournaments(
-          player1Id: widget.player1.id, player2Id: widget.player2.id);
-    });
   }
 
   @override
@@ -68,25 +63,6 @@ class _PlayersMatchesState extends ConsumerState<PlayersMatches> {
   @override
   Widget build(BuildContext context) {
     final playersTournaments = ref.watch(playersTournamentsProvider);
-    final playersMatches = [];
-    for (Tournament tournament in playersTournaments['tournaments']) {
-      playersMatches.addAll(_getPlayersMatches(tournament));
-    }
-
-    Widget content = ListView.builder(
-      shrinkWrap: true,
-      controller: _scrollController,
-      itemCount: playersMatches.length,
-      itemBuilder: (context, index) => playersMatches[index],
-    );
-    if (!playersTournaments['isLoading'] &&
-        playersTournaments['tournaments'].length == 0) {
-      content = const Center(child: Text('No matches found'));
-    }
-    if (playersTournaments['isLoading'] &&
-        playersTournaments['tournaments'].length == 0) {
-      content = const Center(child: CircularProgressIndicator());
-    }
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -108,7 +84,26 @@ class _PlayersMatchesState extends ConsumerState<PlayersMatches> {
         ),
         Flexible(
           fit: FlexFit.loose,
-          child: content,
+          child: playersTournaments.when(
+            data: (playersTournaments) {
+              final playersMatches = [];
+              for (Tournament tournament in playersTournaments) {
+                playersMatches.addAll(_getPlayersMatches(tournament));
+              }
+              if (playersMatches.isEmpty) {
+                return const Center(child: Text('No matches found'));
+              }
+              return ListView.builder(
+                shrinkWrap: true,
+                controller: _scrollController,
+                itemCount: playersMatches.length,
+                itemBuilder: (context, index) => playersMatches[index],
+              );
+            },
+            error: (error, stackTrace) =>
+                const Center(child: Text('Unexpacted error')),
+            loading: () => const Center(child: CircularProgressIndicator()),
+          ),
         ),
       ],
     );

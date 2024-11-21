@@ -1,17 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tennis_cup/custom_icons_icons.dart';
 import 'package:tennis_cup/model/player.dart';
+import 'package:tennis_cup/providers/player_tournaments_provider.dart';
 import 'package:tennis_cup/screens/player_details.dart';
 
-class PlayerIntro extends StatelessWidget {
+class PlayerIntro extends ConsumerWidget {
   final Player player;
   const PlayerIntro(this.player, {super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Expanded(
       child: InkWell(
-        onTap: () {
+        onTap: () async {
+          ref.read(playerTournamentsProvider.notifier).reset();
+          await ref
+              .read(playerTournamentsProvider.notifier)
+              .fetchTournaments(playerId: player.id);
+          if (!context.mounted) {
+            return;
+          }
           Navigator.of(context).push(MaterialPageRoute(
               builder: (ctx) => PlayerDetails(player: player)));
         },

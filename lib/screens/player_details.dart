@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tennis_cup/model/player.dart';
+import 'package:tennis_cup/providers/players_tournaments_provider.dart';
 import 'package:tennis_cup/screens/players_comparison.dart';
 import 'package:tennis_cup/widgets/player_search.dart';
 import 'package:tennis_cup/widgets/player_widgets/player_info.dart';
@@ -9,7 +11,17 @@ class PlayerDetails extends StatelessWidget {
   final Player player;
   const PlayerDetails({super.key, required this.player});
 
-  void comparePlayers(BuildContext context, Player player) {
+  Future<void> comparePlayers(
+      BuildContext context, Player player, WidgetRef ref) async {
+    ref.read(playersTournamentsProvider.notifier).reset();
+    await ref
+        .read(playersTournamentsProvider.notifier)
+        .fetchTournaments(player1Id: this.player.id, player2Id: player.id);
+
+    if (!context.mounted) {
+      return;
+    }
+
     Navigator.of(context).pushReplacement(MaterialPageRoute(
       builder: (context) => PlayersComparison(
         player1: this.player,

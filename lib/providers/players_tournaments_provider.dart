@@ -3,21 +3,25 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tennis_cup/model/tournament.dart';
 import 'package:tennis_cup/repositories/tournament_repository.dart';
 
-class PlayersTournamentsNotifier extends StateNotifier<Map<String, dynamic>> {
+class PlayersTournamentsNotifier
+    extends StateNotifier<AsyncValue<List<Tournament>>> {
   DocumentSnapshot? _lastDocument;
   bool _hasMore = true;
   bool _isLoading = false;
 
-  PlayersTournamentsNotifier() : super({'tournaments': [], 'isLoading': false});
+  PlayersTournamentsNotifier() : super(const AsyncValue.data([]));
 
-  Future<void> fetchTournaments(
-      {int limit = 5,
-      required String player1Id,
-      required String player2Id}) async {
+  Future<void> fetchTournaments({
+    int limit = 5,
+    required String player1Id,
+    required String player2Id,
+  }) async {
     if (_isLoading || !_hasMore) return;
 
+    final List<Tournament> existingTournaments = state.value!;
+
     _isLoading = true;
-    state = {'tournaments': state['tournaments'], 'isLoading': _isLoading};
+    state = const AsyncValue.loading();
 
     final result = await TournamentRepository.fetchPlayersTournaments(
       player1Id: player1Id,
@@ -29,19 +33,27 @@ class PlayersTournamentsNotifier extends StateNotifier<Map<String, dynamic>> {
     final newTournaments = result['tournaments'] as List<Tournament>;
     _lastDocument = result['lastDocument'] as DocumentSnapshot?;
 
-    if (newTournaments.isNotEmpty) {
-      state = {
-        'tournaments': [...state['tournaments'], ...newTournaments],
-        'isLoading': _isLoading
-      };
-    } else {
+    final List<Tournament> allTournaments = [
+      ...existingTournaments,
+      ...newTournaments
+    ];
+
+    if (newTournaments.isEmpty) {
       _hasMore = false;
     }
+
+    state = AsyncValue.data(allTournaments);
     _isLoading = false;
-    state = {'tournaments': state['tournaments'], 'isLoading': _isLoading};
+  }
+
+  void reset() {
+    state = const AsyncValue.data([]);
+    _lastDocument = null;
+    _hasMore = true;
+    _isLoading = false;
   }
 }
 
-final playersTournamentsProvider =
-    StateNotifierProvider<PlayersTournamentsNotifier, Map<String, dynamic>>(
-        (ref) => PlayersTournamentsNotifier());
+final playersTournamentsProvider = StateNotifierProvider<
+    PlayersTournamentsNotifier,
+    AsyncValue<List<Tournament>>>((ref) => PlayersTournamentsNotifier());

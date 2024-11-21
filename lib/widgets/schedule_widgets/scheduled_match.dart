@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:tennis_cup/model/match.dart';
+import 'package:tennis_cup/providers/player_tournaments_provider.dart';
+import 'package:tennis_cup/providers/players_tournaments_provider.dart';
 import 'package:tennis_cup/screens/player_details.dart';
 import 'package:tennis_cup/screens/players_comparison.dart';
 
 DateFormat formatter = DateFormat('HH:mm');
 
-class ScheduledMatch extends StatelessWidget {
+class ScheduledMatch extends ConsumerWidget {
   final Match match;
   const ScheduledMatch({super.key, required this.match});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Column(
       children: [
         Padding(
@@ -26,7 +29,17 @@ class ScheduledMatch extends StatelessWidget {
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                   IconButton(
-                    onPressed: () {
+                    onPressed: () async {
+                      ref.read(playersTournamentsProvider.notifier).reset();
+                      await ref
+                          .read(playersTournamentsProvider.notifier)
+                          .fetchTournaments(
+                            player1Id: match.bluePlayer.id,
+                            player2Id: match.redPlayer.id,
+                          );
+                      if (!context.mounted) {
+                        return;
+                      }
                       Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (ctx) => PlayersComparison(
@@ -44,7 +57,14 @@ class ScheduledMatch extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   InkWell(
-                    onTap: () {
+                    onTap: () async {
+                      ref.read(playerTournamentsProvider.notifier).reset();
+                      await ref
+                          .read(playerTournamentsProvider.notifier)
+                          .fetchTournaments(playerId: match.bluePlayer.id);
+                      if (!context.mounted) {
+                        return;
+                      }
                       Navigator.of(context).push(MaterialPageRoute(
                           builder: (ctx) =>
                               PlayerDetails(player: match.bluePlayer)));
@@ -70,7 +90,14 @@ class ScheduledMatch extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   InkWell(
-                    onTap: () {
+                    onTap: () async {
+                      ref.read(playerTournamentsProvider.notifier).reset();
+                      await ref
+                          .read(playerTournamentsProvider.notifier)
+                          .fetchTournaments(playerId: match.redPlayer.id);
+                      if (!context.mounted) {
+                        return;
+                      }
                       Navigator.of(context).push(MaterialPageRoute(
                           builder: (ctx) =>
                               PlayerDetails(player: match.redPlayer)));
