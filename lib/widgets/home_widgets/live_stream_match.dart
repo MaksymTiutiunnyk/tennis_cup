@@ -8,18 +8,44 @@ import 'package:tennis_cup/providers/arena_filter_provider.dart';
 import 'package:tennis_cup/providers/schedule_date_provider.dart';
 import 'package:tennis_cup/providers/tab_index_provider.dart';
 import 'package:tennis_cup/providers/time_filter_provider.dart';
+import 'package:tennis_cup/repositories/tournament_repository.dart';
 import 'package:tennis_cup/widgets/home_widgets/live_stream_match_player.dart';
 
 DateFormat formatter = DateFormat('yyyy-MM-dd');
 
+// ignore: must_be_immutable
 class LiveStreamMatch extends ConsumerWidget {
-  final Match match;
-  final Tournament tournament;
+  Match match;
+  Tournament tournament;
 
-  const LiveStreamMatch({super.key, required this.match, required this.tournament});
+  LiveStreamMatch({super.key, required this.match, required this.tournament});
+
+  void _updateTournamentAndMatch(Tournament tournament) {
+    this.tournament = tournament;
+    for (final match in tournament.matches!) {
+      if (match.matchId == this.match.matchId) {
+        this.match = match;
+        return;
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final liveStreamMatchTournamentProvider =
+        StreamProvider.autoDispose<Tournament>((ref) async* {
+      await for (final _
+          in TournamentRepository.watchMatchChanges(
+              tournament.tournamentId)) {
+        Tournament fetchedTournament =
+            await TournamentRepository.fetchTournament(
+                tournamentId: tournament.tournamentId);
+        _updateTournamentAndMatch(fetchedTournament);
+        yield fetchedTournament;
+      }
+    });
+    ref.watch(liveStreamMatchTournamentProvider);
+
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 8),
       decoration: BoxDecoration(

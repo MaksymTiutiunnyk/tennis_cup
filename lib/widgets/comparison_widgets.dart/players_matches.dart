@@ -18,8 +18,8 @@ class PlayersMatches extends ConsumerStatefulWidget {
 }
 
 class _PlayersMatchesState extends ConsumerState<PlayersMatches> {
-  StateNotifierProvider<PlayersTournamentsNotifier,
-      AsyncValue<List<Tournament>>>? playersTournamentsProvider;
+  late StateNotifierProvider<PlayersTournamentsNotifier,
+      AsyncValue<List<Tournament>>> _playersTournamentsProvider;
 
   List<PlayersMatch> _getPlayersMatches(Tournament tournament) {
     final List<PlayersMatch> playersMatches = [];
@@ -48,7 +48,7 @@ class _PlayersMatchesState extends ConsumerState<PlayersMatches> {
     super.initState();
     _scrollController.addListener(_onScroll);
 
-    playersTournamentsProvider = StateNotifierProvider<
+    _playersTournamentsProvider = StateNotifierProvider<
             PlayersTournamentsNotifier, AsyncValue<List<Tournament>>>(
         (ref) => PlayersTournamentsNotifier(
               player1: widget.player1,
@@ -56,7 +56,7 @@ class _PlayersMatchesState extends ConsumerState<PlayersMatches> {
             ));
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
-      await ref.read(playersTournamentsProvider!.notifier).fetchTournaments();
+      await ref.read(_playersTournamentsProvider.notifier).fetchTournaments();
     });
   }
 
@@ -69,13 +69,13 @@ class _PlayersMatchesState extends ConsumerState<PlayersMatches> {
   void _onScroll() {
     if (_scrollController.position.atEdge &&
         _scrollController.position.pixels != 0) {
-      ref.read(playersTournamentsProvider!.notifier).fetchTournaments();
+      ref.read(_playersTournamentsProvider.notifier).fetchTournaments();
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final playersTournaments = ref.watch(playersTournamentsProvider!);
+    final playersTournaments = ref.watch(_playersTournamentsProvider);
 
     return Column(
       mainAxisSize: MainAxisSize.min,

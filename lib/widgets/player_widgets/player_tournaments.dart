@@ -15,8 +15,8 @@ class PlayerTournaments extends ConsumerStatefulWidget {
 }
 
 class _PlayerTournamentsState extends ConsumerState<PlayerTournaments> {
-  StateNotifierProvider<PlayerTournamentsNotifier,
-      AsyncValue<List<Tournament>>>? playerTournamentsProvider;
+  late StateNotifierProvider<PlayerTournamentsNotifier,
+      AsyncValue<List<Tournament>>> _playerTournamentsProvider;
   final ScrollController _scrollController = ScrollController();
 
   @override
@@ -24,12 +24,12 @@ class _PlayerTournamentsState extends ConsumerState<PlayerTournaments> {
     super.initState();
     _scrollController.addListener(_onScroll);
 
-    playerTournamentsProvider = StateNotifierProvider<PlayerTournamentsNotifier,
+    _playerTournamentsProvider = StateNotifierProvider<PlayerTournamentsNotifier,
             AsyncValue<List<Tournament>>>(
         (ref) => PlayerTournamentsNotifier(widget.player));
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
-      await ref.read(playerTournamentsProvider!.notifier).fetchTournaments();
+      await ref.read(_playerTournamentsProvider.notifier).fetchTournaments();
     });
   }
 
@@ -42,13 +42,13 @@ class _PlayerTournamentsState extends ConsumerState<PlayerTournaments> {
   void _onScroll() {
     if (_scrollController.position.atEdge &&
         _scrollController.position.pixels != 0) {
-      ref.read(playerTournamentsProvider!.notifier).fetchTournaments();
+      ref.read(_playerTournamentsProvider.notifier).fetchTournaments();
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final playerTournaments = ref.watch(playerTournamentsProvider!);
+    final playerTournaments = ref.watch(_playerTournamentsProvider);
 
     return Flexible(
       fit: FlexFit.loose,

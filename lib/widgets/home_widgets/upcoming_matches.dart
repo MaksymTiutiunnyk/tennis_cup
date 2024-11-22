@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tennis_cup/model/tournament.dart';
-import 'package:tennis_cup/providers/live_stream_and_upcoming_matches_tournaments_provider.dart';
+import 'package:tennis_cup/providers/upcoming_matches_tournaments_provider.dart';
 import 'package:tennis_cup/widgets/home_widgets/upcoming_match.dart';
 import 'package:tennis_cup/model/match.dart';
 
@@ -33,7 +33,7 @@ class UpcomingMatches extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final AsyncValue<List<Tournament>> asyncValue =
-        ref.watch(liveStreamAndUpcomingMatchesTournamentsProvider);
+        ref.watch(upcomingMatchesTournamentsProvider);
 
     return Expanded(
       child: Column(

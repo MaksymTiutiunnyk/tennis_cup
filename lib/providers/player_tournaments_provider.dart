@@ -43,11 +43,4 @@ class PlayerTournamentsNotifier
     state = AsyncValue.data(allTournaments);
     _isLoading = false;
   }
-
-  void reset() {
-    state = const AsyncValue.data([]);
-    _lastDocument = null;
-    _hasMore = true;
-    _isLoading = false;
-  }
 }

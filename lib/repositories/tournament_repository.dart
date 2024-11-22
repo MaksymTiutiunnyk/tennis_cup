@@ -66,6 +66,24 @@ class TournamentRepository {
     return mappedTournaments;
   }
 
+  static Future<List<Tournament>> fetchLiveStreamMatchesTournaments() async {
+    final QuerySnapshot querySnapshot = await tournamentsCollection.get();
+
+    List<Tournament> mappedTournaments = await Future.wait(
+        querySnapshot.docs.map((doc) async => Tournament.fromFirestore(doc)));
+
+    return mappedTournaments;
+  }
+
+  static Future<List<Tournament>> fetchUpcomingMatchesTournaments() async {
+    final QuerySnapshot querySnapshot = await tournamentsCollection.get();
+
+    List<Tournament> mappedTournaments = await Future.wait(
+        querySnapshot.docs.map((doc) async => Tournament.fromFirestore(doc)));
+
+    return mappedTournaments;
+  }
+
   static Future<List<Tournament>> fetchWinnersTournaments() async {
     final QuerySnapshot querySnapshot = await tournamentsCollection.get();
 
@@ -75,24 +93,7 @@ class TournamentRepository {
     return mappedTournaments;
   }
 
-  static Future<List<Tournament>>
-      fetchLiveStreamAndUpcomingMatchesTournaments() async {
-    final QuerySnapshot querySnapshot = await tournamentsCollection.get();
-
-    List<Tournament> mappedTournaments = await Future.wait(
-        querySnapshot.docs.map((doc) async => Tournament.fromFirestore(doc)));
-
-    return mappedTournaments;
-  }
-
-  static Stream<void> watchMatchChanges(List<String> tournamentIds) {
-    return FirebaseFirestore.instance
-        .collectionGroup('matches')
-        .where('tournamentId', whereIn: tournamentIds)
-        .snapshots();
-  }
-
-  static Stream<void> watchMatchChangesSingleTournament(String tournamentId) {
+  static Stream<void> watchMatchChanges(String tournamentId) {
     return FirebaseFirestore.instance
         .collectionGroup('matches')
         .where('tournamentId', isEqualTo: tournamentId)
@@ -131,7 +132,7 @@ class TournamentRepository {
     };
   }
 
-  static Future<Tournament> fetchPlayersTournament({
+  static Future<Tournament> fetchTournament({
     required String tournamentId,
   }) async {
     DocumentSnapshot tournamentSnapshot =
