@@ -3,19 +3,22 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tennis_cup/model/tournament.dart';
 import 'package:tennis_cup/repositories/tournament_repository.dart';
 
-class PlayersTournamentsNotifier extends StreamNotifier<List<Tournament>> {
+class PlayersTournamentsNotifier
+    extends StateNotifier<AsyncValue<List<Tournament>>> {
+  DocumentSnapshot? _lastDocument;
+  bool _hasMore = true;
   bool _isLoading = false;
 
-  final String player1Id;
-  final String player2Id;
-
-  PlayersTournamentsNotifier(
-      {required this.player1Id, required this.player2Id});
+  PlayersTournamentsNotifier() : super(const AsyncValue.data([]));
 
   Future<void> fetchTournaments({
     int limit = 5,
+    required String player1Id,
+    required String player2Id,
   }) async {
-    if (_isLoading) return;
+    if (_isLoading || !_hasMore) return;
+
+    final List<Tournament> existingTournaments = state.value!;
 
     _isLoading = true;
     state = const AsyncValue.loading();
@@ -24,34 +27,33 @@ class PlayersTournamentsNotifier extends StreamNotifier<List<Tournament>> {
       player1Id: player1Id,
       player2Id: player2Id,
       limit: limit,
+      startAfter: _lastDocument,
     );
 
-    final tournaments = result['tournaments'] as List<Tournament>;
+    final newTournaments = result['tournaments'] as List<Tournament>;
+    _lastDocument = result['lastDocument'] as DocumentSnapshot?;
 
-    state = AsyncValue.data(tournaments);
+    final List<Tournament> allTournaments = [
+      ...existingTournaments,
+      ...newTournaments
+    ];
+
+    if (newTournaments.isEmpty) {
+      _hasMore = false;
+    }
+
+    state = AsyncValue.data(allTournaments);
     _isLoading = false;
   }
 
   void reset() {
     state = const AsyncValue.data([]);
+    _lastDocument = null;
+    _hasMore = true;
     _isLoading = false;
-  }
-
-  @override
-  Stream<List<Tournament>> build() async* {
-    await fetchTournaments();
-    yield state.value!;
-
-    final tournamentIds = state.value!.map((e) => e.tournamentId).toList();
-
-    await for (final _
-        in TournamentRepository.watchMatchChanges(tournamentIds)) {
-      await fetchTournaments();
-      yield state.value!;
-    }
   }
 }
 
-// final playersTournamentsProvider =
-//     StreamNotifierProvider<PlayersTournamentsNotifier, List<Tournament>>(
-//          () => PlayersTournamentsNotifier.new(player1Id: ));
+final playersTournamentsProvider = StateNotifierProvider<
+    PlayersTournamentsNotifier,
+    AsyncValue<List<Tournament>>>((ref) => PlayersTournamentsNotifier());

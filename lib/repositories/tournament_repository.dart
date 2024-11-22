@@ -87,8 +87,15 @@ class TournamentRepository {
 
   static Stream<void> watchMatchChanges(List<String> tournamentIds) {
     return FirebaseFirestore.instance
-        .collectionGroup('matches') 
+        .collectionGroup('matches')
         .where('tournamentId', whereIn: tournamentIds)
+        .snapshots();
+  }
+
+  static Stream<void> watchMatchChangesSingleTournament(String tournamentId) {
+    return FirebaseFirestore.instance
+        .collectionGroup('matches')
+        .where('tournamentId', isEqualTo: tournamentId)
         .snapshots();
   }
 
@@ -122,5 +129,14 @@ class TournamentRepository {
       'lastDocument':
           querySnapshot.docs.isNotEmpty ? querySnapshot.docs.last : null,
     };
+  }
+
+  static Future<Tournament> fetchPlayersTournament({
+    required String tournamentId,
+  }) async {
+    DocumentSnapshot tournamentSnapshot =
+        await tournamentsCollection.doc(tournamentId).get();
+
+    return await Tournament.fromFirestore(tournamentSnapshot);
   }
 }

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tennis_cup/model/player.dart';
-import 'package:tennis_cup/model/tournament.dart';
 import 'package:tennis_cup/providers/players_tournaments_provider.dart';
 import 'package:tennis_cup/screens/players_comparison.dart';
 import 'package:tennis_cup/widgets/player_search.dart';
@@ -14,11 +13,9 @@ class PlayerDetails extends StatelessWidget {
 
   Future<void> comparePlayers(
       BuildContext context, Player player, WidgetRef ref) async {
-    final playersTournamentsProvider =
-        StreamNotifierProvider<PlayersTournamentsNotifier, List<Tournament>>(
-            () => PlayersTournamentsNotifier(
-                player1Id: this.player.playerId, player2Id: player.playerId));
     ref.read(playersTournamentsProvider.notifier).reset();
+    ref.read(playersTournamentsProvider.notifier).fetchTournaments(
+        player1Id: this.player.playerId, player2Id: player.playerId);
 
     if (!context.mounted) {
       return;

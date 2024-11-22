@@ -8,16 +8,18 @@ import 'package:tennis_cup/providers/arena_filter_provider.dart';
 import 'package:tennis_cup/providers/schedule_date_provider.dart';
 import 'package:tennis_cup/providers/tab_index_provider.dart';
 import 'package:tennis_cup/providers/time_filter_provider.dart';
+import 'package:tennis_cup/repositories/tournament_repository.dart';
 import 'package:tennis_cup/screens/tabs.dart';
 
 DateFormat formatter = DateFormat('yyyy-MM-dd, HH:mm');
 
+// ignore: must_be_immutable
 class PlayersMatch extends ConsumerWidget {
   final Player player1, player2;
-  final Match match;
-  final Tournament tournament;
+  Match match;
+  Tournament tournament;
 
-  const PlayersMatch({
+  PlayersMatch({
     super.key,
     required this.player1,
     required this.player2,
@@ -25,8 +27,32 @@ class PlayersMatch extends ConsumerWidget {
     required this.tournament,
   });
 
+  void updateTournamentAndMatch(Tournament tournament) {
+    this.tournament = tournament;
+    for (final match in tournament.matches!) {
+      if (match.matchId == match.matchId) {
+        this.match = match;
+        return;
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final playersTournamentProvider =
+        StreamProvider.autoDispose<Tournament>((ref) async* {
+      await for (final _
+          in TournamentRepository.watchMatchChangesSingleTournament(
+              tournament.tournamentId)) {
+        Tournament fetchedTournament =
+            await TournamentRepository.fetchPlayersTournament(
+                tournamentId: tournament.tournamentId);
+        updateTournamentAndMatch(fetchedTournament);
+        yield fetchedTournament;
+      }
+    });
+    ref.watch(playersTournamentProvider);
+
     final bool isPlayer1Blue = match.bluePlayer == player1;
 
     final int player1Score = isPlayer1Blue ? match.blueScore : match.redScore;
@@ -37,7 +63,9 @@ class PlayersMatch extends ConsumerWidget {
     final List<int> player2SetScores =
         isPlayer1Blue ? match.redSetScores : match.blueSetScores;
 
-    final int setsPlayed = (player1Score + player2Score) == 5 ? 5 : player1Score + player2Score + 1;
+    final int setsPlayed = (player1Score + player2Score) == 5
+        ? 5
+        : player1Score + player2Score + 1;
     final List<String> displayedSetScores = List.generate(
       setsPlayed,
       (index) => '${player1SetScores[index]}-${player2SetScores[index]}',

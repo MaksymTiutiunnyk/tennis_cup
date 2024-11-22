@@ -29,27 +29,26 @@ class ScheduledMatch extends ConsumerWidget {
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                   IconButton(
-                    onPressed: () {},
-                    // () async {
-                    //   ref.read(playersTournamentsProvider.notifier).reset();
-                    //   await ref
-                    //       .read(playersTournamentsProvider.notifier)
-                    //       .fetchTournaments(
-                    //         player1Id: match.bluePlayer.playerId,
-                    //         player2Id: match.redPlayer.playerId,
-                    //       );
-                    //   if (!context.mounted) {
-                    //     return;
-                    //   }
-                    //   Navigator.of(context).push(
-                    //     MaterialPageRoute(
-                    //       builder: (ctx) => PlayersComparison(
-                    //         player1: match.bluePlayer,
-                    //         player2: match.redPlayer,
-                    //       ),
-                    //     ),
-                    //   );
-                    // },
+                    onPressed: () async {
+                      ref.read(playersTournamentsProvider.notifier).reset();
+                      await ref
+                          .read(playersTournamentsProvider.notifier)
+                          .fetchTournaments(
+                            player1Id: match.bluePlayer.playerId,
+                            player2Id: match.redPlayer.playerId,
+                          );
+                      if (!context.mounted) {
+                        return;
+                      }
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (ctx) => PlayersComparison(
+                            player1: match.bluePlayer,
+                            player2: match.redPlayer,
+                          ),
+                        ),
+                      );
+                    },
                     icon: const Icon(Icons.people),
                   ),
                 ],
