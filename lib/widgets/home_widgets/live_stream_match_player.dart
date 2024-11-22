@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tennis_cup/model/player.dart';
-import 'package:tennis_cup/providers/player_tournaments_provider.dart';
 import 'package:tennis_cup/screens/player_details.dart';
 
-class LiveStreamMatchPlayer extends ConsumerWidget {
+class LiveStreamMatchPlayer extends StatelessWidget {
   final Player player;
   final int score;
 
@@ -12,16 +10,9 @@ class LiveStreamMatchPlayer extends ConsumerWidget {
       {required this.player, required this.score, super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     return InkWell(
-      onTap: () async {
-        ref.read(playerTournamentsProvider.notifier).reset();
-        await ref
-            .read(playerTournamentsProvider.notifier)
-            .fetchTournaments(playerId: player.playerId);
-        if (!context.mounted) {
-          return;
-        }
+      onTap: () {
         Navigator.of(context).push(
             MaterialPageRoute(builder: (ctx) => PlayerDetails(player: player)));
       },

@@ -23,6 +23,10 @@ final scheduledTournamentProvider =
   final tournamentIds =
       tournaments.map((tournament) => tournament.tournamentId).toList();
 
+  if (tournamentIds.isEmpty) {
+    return;
+  }
+
   await for (final _ in TournamentRepository.watchMatchChanges(tournamentIds)) {
     tournaments = await TournamentRepository.fetchScheduledTournament(
         tournamentDate: tournamentDate,

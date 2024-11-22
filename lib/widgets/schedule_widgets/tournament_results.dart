@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tennis_cup/model/tournament.dart';
 import 'package:tennis_cup/model/match.dart';
-import 'package:tennis_cup/providers/player_tournaments_provider.dart';
 import 'package:tennis_cup/screens/player_details.dart';
 
-class TournamentResults extends ConsumerWidget {
+class TournamentResults extends StatelessWidget {
   final Tournament tournament;
   const TournamentResults(this.tournament, {super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     return Column(
       children: [
         Padding(
@@ -72,14 +70,7 @@ class TournamentResults extends ConsumerWidget {
               List<DataCell> cells = [
                 DataCell(
                   InkWell(
-                    onTap: () async {
-                      ref.read(playerTournamentsProvider.notifier).reset();
-                      await ref
-                          .read(playerTournamentsProvider.notifier)
-                          .fetchTournaments(playerId: player.playerId);
-                      if (!context.mounted) {
-                        return;
-                      }
+                    onTap: () {
                       Navigator.of(context).push(MaterialPageRoute(
                           builder: (ctx) => PlayerDetails(player: player)));
                     },

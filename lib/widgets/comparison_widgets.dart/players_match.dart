@@ -27,10 +27,10 @@ class PlayersMatch extends ConsumerWidget {
     required this.tournament,
   });
 
-  void updateTournamentAndMatch(Tournament tournament) {
+  void _updateTournamentAndMatch(Tournament tournament) {
     this.tournament = tournament;
     for (final match in tournament.matches!) {
-      if (match.matchId == match.matchId) {
+      if (match.matchId == this.match.matchId) {
         this.match = match;
         return;
       }
@@ -47,7 +47,7 @@ class PlayersMatch extends ConsumerWidget {
         Tournament fetchedTournament =
             await TournamentRepository.fetchPlayersTournament(
                 tournamentId: tournament.tournamentId);
-        updateTournamentAndMatch(fetchedTournament);
+        _updateTournamentAndMatch(fetchedTournament);
         yield fetchedTournament;
       }
     });
@@ -63,9 +63,10 @@ class PlayersMatch extends ConsumerWidget {
     final List<int> player2SetScores =
         isPlayer1Blue ? match.redSetScores : match.blueSetScores;
 
-    final int setsPlayed = (player1Score + player2Score) == 5
-        ? 5
-        : player1Score + player2Score + 1;
+    int setsPlayed = player1Score + player2Score;
+    if (player1Score != 3 && player2Score != 3) {
+      setsPlayed++;
+    }
     final List<String> displayedSetScores = List.generate(
       setsPlayed,
       (index) => '${player1SetScores[index]}-${player2SetScores[index]}',

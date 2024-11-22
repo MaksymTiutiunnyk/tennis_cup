@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tennis_cup/model/player.dart';
+import 'package:tennis_cup/model/tournament.dart';
 import 'package:tennis_cup/providers/player_tournaments_provider.dart';
 import 'package:tennis_cup/widgets/player_widgets/player_tournament.dart';
 
@@ -14,12 +15,22 @@ class PlayerTournaments extends ConsumerStatefulWidget {
 }
 
 class _PlayerTournamentsState extends ConsumerState<PlayerTournaments> {
+  StateNotifierProvider<PlayerTournamentsNotifier,
+      AsyncValue<List<Tournament>>>? playerTournamentsProvider;
   final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
     _scrollController.addListener(_onScroll);
+
+    playerTournamentsProvider = StateNotifierProvider<PlayerTournamentsNotifier,
+            AsyncValue<List<Tournament>>>(
+        (ref) => PlayerTournamentsNotifier(widget.player));
+
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
+      await ref.read(playerTournamentsProvider!.notifier).fetchTournaments();
+    });
   }
 
   @override
@@ -31,15 +42,13 @@ class _PlayerTournamentsState extends ConsumerState<PlayerTournaments> {
   void _onScroll() {
     if (_scrollController.position.atEdge &&
         _scrollController.position.pixels != 0) {
-      ref
-          .read(playerTournamentsProvider.notifier)
-          .fetchTournaments(playerId: widget.player.playerId);
+      ref.read(playerTournamentsProvider!.notifier).fetchTournaments();
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final playerTournaments = ref.watch(playerTournamentsProvider);
+    final playerTournaments = ref.watch(playerTournamentsProvider!);
 
     return Flexible(
       fit: FlexFit.loose,

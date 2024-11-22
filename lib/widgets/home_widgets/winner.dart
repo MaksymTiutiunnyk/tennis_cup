@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tennis_cup/model/player.dart';
 import 'package:tennis_cup/model/tournament.dart';
 import 'package:intl/intl.dart';
-import 'package:tennis_cup/providers/player_tournaments_provider.dart';
 import 'package:tennis_cup/screens/player_details.dart';
 
 DateFormat formatter = DateFormat('yyyy-MM-dd');
 
-class Winner extends ConsumerWidget {
+class Winner extends StatelessWidget {
   final Tournament tournament;
   const Winner({super.key, required this.tournament});
 
@@ -18,18 +16,11 @@ class Winner extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final winner = _defineWinner();
 
     return InkWell(
-      onTap: () async {
-        ref.read(playerTournamentsProvider.notifier).reset();
-        await ref
-            .read(playerTournamentsProvider.notifier)
-            .fetchTournaments(playerId: winner.playerId);
-        if (!context.mounted) {
-          return;
-        }
+      onTap: () {
         Navigator.of(context).push(
             MaterialPageRoute(builder: (ctx) => PlayerDetails(player: winner)));
       },

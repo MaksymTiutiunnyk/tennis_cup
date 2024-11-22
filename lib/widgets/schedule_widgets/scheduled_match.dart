@@ -1,20 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:tennis_cup/model/match.dart';
-import 'package:tennis_cup/providers/player_tournaments_provider.dart';
-import 'package:tennis_cup/providers/players_tournaments_provider.dart';
 import 'package:tennis_cup/screens/player_details.dart';
 import 'package:tennis_cup/screens/players_comparison.dart';
 
 DateFormat formatter = DateFormat('HH:mm');
 
-class ScheduledMatch extends ConsumerWidget {
+class ScheduledMatch extends StatelessWidget {
   final Match match;
   const ScheduledMatch({super.key, required this.match});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     return Column(
       children: [
         Padding(
@@ -29,17 +26,7 @@ class ScheduledMatch extends ConsumerWidget {
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                   IconButton(
-                    onPressed: () async {
-                      ref.read(playersTournamentsProvider.notifier).reset();
-                      await ref
-                          .read(playersTournamentsProvider.notifier)
-                          .fetchTournaments(
-                            player1Id: match.bluePlayer.playerId,
-                            player2Id: match.redPlayer.playerId,
-                          );
-                      if (!context.mounted) {
-                        return;
-                      }
+                    onPressed: () {
                       Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (ctx) => PlayersComparison(
@@ -57,15 +44,7 @@ class ScheduledMatch extends ConsumerWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   InkWell(
-                    onTap: () async {
-                      ref.read(playerTournamentsProvider.notifier).reset();
-                      await ref
-                          .read(playerTournamentsProvider.notifier)
-                          .fetchTournaments(
-                              playerId: match.bluePlayer.playerId);
-                      if (!context.mounted) {
-                        return;
-                      }
+                    onTap: () {
                       Navigator.of(context).push(MaterialPageRoute(
                           builder: (ctx) =>
                               PlayerDetails(player: match.bluePlayer)));
@@ -91,14 +70,7 @@ class ScheduledMatch extends ConsumerWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   InkWell(
-                    onTap: () async {
-                      ref.read(playerTournamentsProvider.notifier).reset();
-                      await ref
-                          .read(playerTournamentsProvider.notifier)
-                          .fetchTournaments(playerId: match.redPlayer.playerId);
-                      if (!context.mounted) {
-                        return;
-                      }
+                    onTap: () {
                       Navigator.of(context).push(MaterialPageRoute(
                           builder: (ctx) =>
                               PlayerDetails(player: match.redPlayer)));
