@@ -31,6 +31,7 @@ class PlayerIntro extends StatelessWidget {
                 const SizedBox(height: 8),
                 Text(
                   player.fullName,
+                  textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),
                 const SizedBox(height: 16),

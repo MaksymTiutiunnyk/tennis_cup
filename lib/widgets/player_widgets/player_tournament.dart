@@ -25,7 +25,7 @@ class PlayerTournament extends ConsumerWidget {
     int setsWon = 0;
     int setsLost = 0;
 
-    for (var match in tournament.matches!) {
+    for (final match in tournament.matches!) {
       if (match.bluePlayer == player) {
         setsWon += match.blueScore;
         setsLost += match.redScore;
@@ -36,6 +36,30 @@ class PlayerTournament extends ConsumerWidget {
     }
 
     return '$setsWon : $setsLost';
+  }
+
+  int _getWins() {
+    int wins = 0;
+    for (final match in tournament.matches!) {
+      if (match.bluePlayer == player && match.blueScore == 3) {
+        wins++;
+      } else if (match.redPlayer == player && match.redScore == 3) {
+        wins++;
+      }
+    }
+    return wins;
+  }
+
+  int _getLoses() {
+    int loses = 0;
+    for (final match in tournament.matches!) {
+      if (match.bluePlayer == player && match.redScore == 3) {
+        loses++;
+      } else if (match.redPlayer == player && match.blueScore == 3) {
+        loses++;
+      }
+    }
+    return loses;
   }
 
   Widget buildDataRow(BuildContext context, String leftPart, String rightPart) {
@@ -92,11 +116,9 @@ class PlayerTournament extends ConsumerWidget {
               buildDataRow(
                   context, 'Position:', tournament.places[index].toString()),
               const SizedBox(height: 4),
-              buildDataRow(
-                  context, 'Wins:', (tournament.points[index] - 5).toString()),
+              buildDataRow(context, 'Wins:', _getWins().toString()),
               const SizedBox(height: 4),
-              buildDataRow(context, 'Loses:',
-                  (10 - tournament.points[index]).toString()),
+              buildDataRow(context, 'Loses:', _getLoses().toString()),
               const SizedBox(height: 4),
               buildDataRow(context, 'Sets ratio:', _getSetsRatio()),
               const SizedBox(height: 4),

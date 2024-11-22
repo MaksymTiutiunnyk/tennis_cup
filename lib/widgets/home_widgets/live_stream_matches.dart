@@ -9,7 +9,7 @@ class LiveStreamMatches extends ConsumerWidget {
   const LiveStreamMatches({super.key});
 
   List<Match> _getMatchesToDisplay(List<Tournament> tournaments) {
-    final List<Match> matches = [];
+    final List<MapEntry<Match, Tournament>> matchesWithTournaments = [];
 
     for (final tournament in tournaments) {
       Match? closestMatch;
@@ -24,10 +24,18 @@ class LiveStreamMatches extends ConsumerWidget {
       }
 
       if (closestMatch != null) {
-        matches.add(closestMatch);
+        matchesWithTournaments.add(MapEntry(closestMatch, tournament));
       }
     }
-    return matches;
+
+    matchesWithTournaments
+        .sort((a, b) => a.key.dateTime.compareTo(b.key.dateTime));
+
+    tournaments
+      ..clear()
+      ..addAll(matchesWithTournaments.map((entry) => entry.value));
+
+    return matchesWithTournaments.map((entry) => entry.key).toList();
   }
 
   @override

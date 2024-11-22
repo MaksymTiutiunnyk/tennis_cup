@@ -67,7 +67,10 @@ class TournamentRepository {
   }
 
   static Future<List<Tournament>> fetchLiveStreamMatchesTournaments() async {
-    final QuerySnapshot querySnapshot = await tournamentsCollection.get();
+    final QuerySnapshot querySnapshot = await tournamentsCollection
+        .orderBy('date', descending: true)
+        .limit(10)
+        .get();
 
     List<Tournament> mappedTournaments = await Future.wait(
         querySnapshot.docs.map((doc) async => Tournament.fromFirestore(doc)));
@@ -76,7 +79,11 @@ class TournamentRepository {
   }
 
   static Future<List<Tournament>> fetchUpcomingMatchesTournaments() async {
-    final QuerySnapshot querySnapshot = await tournamentsCollection.get();
+    final QuerySnapshot querySnapshot = await tournamentsCollection
+        .where('isFinished', isNotEqualTo: true)
+        .orderBy('date', descending: true)
+        .limit(10)
+        .get();
 
     List<Tournament> mappedTournaments = await Future.wait(
         querySnapshot.docs.map((doc) async => Tournament.fromFirestore(doc)));
@@ -85,8 +92,11 @@ class TournamentRepository {
   }
 
   static Future<List<Tournament>> fetchWinnersTournaments() async {
-    final QuerySnapshot querySnapshot =
-        await tournamentsCollection.where('isFinished', isEqualTo: true).get();
+    final QuerySnapshot querySnapshot = await tournamentsCollection
+        .where('isFinished', isEqualTo: true)
+        .orderBy('date', descending: true)
+        .limit(10)
+        .get();
 
     List<Tournament> mappedTournaments = await Future.wait(
         querySnapshot.docs.map((doc) async => Tournament.fromFirestore(doc)));

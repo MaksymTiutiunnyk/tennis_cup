@@ -10,8 +10,7 @@ class ScheduleDatePicker extends ConsumerWidget {
       context: context,
       initialDate: DateTime.now(),
       firstDate: DateTime(2018, 1, 1),
-      lastDate: DateTime(
-          DateTime.now().year, DateTime.now().month, DateTime.now().day + 1),
+      lastDate: DateTime(2026, 1, 1),
     );
 
     if (pickedDate == null) {

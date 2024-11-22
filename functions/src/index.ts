@@ -78,11 +78,11 @@ exports.updateMatchCount = functions.firestore
     .document("tournaments/{tournamentId}/matches/{matchId}")
     .onCreate(async (snapshot, context) => {
         const matchData = snapshot.data();
-        const { bluePlayer, redPlayer } = matchData;
+        const { bluePlayerId, redPlayerId } = matchData;
 
         const batch = db.batch();
 
-        [bluePlayer, redPlayer].forEach((playerId) => {
+        [bluePlayerId, redPlayerId].forEach((playerId) => {
             const playerRef = db.collection("players").doc(playerId);
             batch.update(playerRef, {
                 matches: admin.firestore.FieldValue.increment(1),

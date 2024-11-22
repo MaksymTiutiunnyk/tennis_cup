@@ -9,7 +9,7 @@ class UpcomingMatches extends ConsumerWidget {
   const UpcomingMatches({super.key});
 
   List<Match> _getMatchesToDisplay(List<Tournament> tournaments) {
-    final List<Match> matches = [];
+    final List<MapEntry<Match, Tournament>> matchesWithTournaments = [];
 
     for (final tournament in tournaments) {
       Match? closestUpcomingMatch;
@@ -24,10 +24,18 @@ class UpcomingMatches extends ConsumerWidget {
       }
 
       if (closestUpcomingMatch != null) {
-        matches.add(closestUpcomingMatch);
+        matchesWithTournaments.add(MapEntry(closestUpcomingMatch, tournament));
       }
     }
-    return matches;
+
+    matchesWithTournaments
+        .sort((a, b) => a.key.dateTime.compareTo(b.key.dateTime));
+
+    tournaments
+      ..clear()
+      ..addAll(matchesWithTournaments.map((entry) => entry.value));
+
+    return matchesWithTournaments.map((entry) => entry.key).toList();
   }
 
   @override
