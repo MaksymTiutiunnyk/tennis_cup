@@ -58,6 +58,10 @@ class LiveStreamMatches extends ConsumerWidget {
             data: (tournaments) {
               final matches = _getMatchesToDisplay(tournaments);
 
+              if (matches.isEmpty) {
+                return const Center(child: Text('No matches found'));
+              }
+
               return PageView.builder(
                 scrollDirection: Axis.horizontal,
                 controller: PageController(viewportFraction: 0.90),

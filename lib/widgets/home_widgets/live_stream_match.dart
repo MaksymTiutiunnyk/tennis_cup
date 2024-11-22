@@ -35,8 +35,7 @@ class LiveStreamMatch extends ConsumerWidget {
     final liveStreamMatchTournamentProvider =
         StreamProvider.autoDispose<Tournament>((ref) async* {
       await for (final _
-          in TournamentRepository.watchMatchChanges(
-              tournament.tournamentId)) {
+          in TournamentRepository.watchMatchChanges(tournament.tournamentId)) {
         Tournament fetchedTournament =
             await TournamentRepository.fetchTournament(
                 tournamentId: tournament.tournamentId);
@@ -91,24 +90,11 @@ class LiveStreamMatch extends ConsumerWidget {
                             ],
                           ),
                           Text(
-                            '${formatter.format(match.dateTime)} ${tournament.players[0].sex.name}, ${tournament.time.name}',
+                            '${formatter.format(match.dateTime)} ${tournament.players[0].sex.name}, ${tournament.time.name} ${tournament.isFinished ? '(Finished)' : ''}',
                             style: Theme.of(context).textTheme.bodySmall,
                           ),
                         ],
                       ),
-                    ),
-                    Column(
-                      children: [
-                        const Icon(Icons.video_library, color: Colors.red),
-                        const SizedBox(width: 8),
-                        Text(
-                          "38'",
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodySmall!
-                              .copyWith(color: Colors.red),
-                        ),
-                      ],
                     ),
                   ],
                 ),

@@ -74,15 +74,18 @@ class PlayerTournament extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                formatter.format(tournament.date),
-                style: Theme.of(context).textTheme.bodySmall,
-              ),
               Row(
                 children: [
-                  const Icon(Icons.emoji_events),
+                  Icon(
+                    Icons.emoji_events,
+                    color: tournament.isFinished
+                        ? Colors.grey
+                        : Theme.of(context).colorScheme.onPrimaryContainer,
+                  ),
                   const SizedBox(width: 8),
-                  Text(tournament.title),
+                  Text(
+                    '${formatter.format(tournament.date)} ${tournament.players[0].sex.name}, ${tournament.time.name} ${tournament.arena.title}',
+                  ),
                 ],
               ),
               const SizedBox(height: 8),

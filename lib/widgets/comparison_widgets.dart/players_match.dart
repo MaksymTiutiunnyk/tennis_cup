@@ -11,7 +11,8 @@ import 'package:tennis_cup/providers/time_filter_provider.dart';
 import 'package:tennis_cup/repositories/tournament_repository.dart';
 import 'package:tennis_cup/screens/tabs.dart';
 
-DateFormat formatter = DateFormat('yyyy-MM-dd, HH:mm');
+DateFormat dateTimeFormatter = DateFormat('yyyy-MM-dd, HH:mm');
+DateFormat dateFormatter = DateFormat('yyyy-MM-dd');
 
 // ignore: must_be_immutable
 class PlayersMatch extends ConsumerWidget {
@@ -42,8 +43,7 @@ class PlayersMatch extends ConsumerWidget {
     final playersTournamentProvider =
         StreamProvider.autoDispose<Tournament>((ref) async* {
       await for (final _
-          in TournamentRepository.watchMatchChanges(
-              tournament.tournamentId)) {
+          in TournamentRepository.watchMatchChanges(tournament.tournamentId)) {
         Tournament fetchedTournament =
             await TournamentRepository.fetchTournament(
                 tournamentId: tournament.tournamentId);
@@ -89,14 +89,20 @@ class PlayersMatch extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                formatter.format(match.dateTime),
+                dateTimeFormatter.format(match.dateTime),
                 style: Theme.of(context).textTheme.bodySmall,
               ),
               Row(
                 children: [
-                  const Icon(Icons.emoji_events),
+                  Icon(
+                    Icons.emoji_events,
+                    color: tournament.isFinished
+                        ? Colors.grey
+                        : Theme.of(context).colorScheme.onPrimaryContainer,
+                  ),
                   const SizedBox(width: 8),
-                  Text(tournament.title),
+                  Text(
+                      '${dateFormatter.format(tournament.date)} ${tournament.players[0].sex.name} ${tournament.time.name} ${tournament.arena.title}'),
                 ],
               ),
               const SizedBox(height: 8),

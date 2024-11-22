@@ -39,13 +39,18 @@ class Winners extends ConsumerWidget {
           SizedBox(
             height: 195,
             child: asyncValue.when(
-              data: (tournaments) => PageView.builder(
-                controller: PageController(viewportFraction: 0.90),
-                scrollDirection: Axis.horizontal,
-                itemCount: tournaments.length,
-                itemBuilder: (context, index) =>
-                    Winner(tournament: tournaments[index]),
-              ),
+              data: (tournaments) {
+                if (tournaments.isEmpty) {
+                  return const Center(child: Text('No winners found'));
+                }
+                return PageView.builder(
+                  controller: PageController(viewportFraction: 0.90),
+                  scrollDirection: Axis.horizontal,
+                  itemCount: tournaments.length,
+                  itemBuilder: (context, index) =>
+                      Winner(tournament: tournaments[index]),
+                );
+              },
               loading: () => const Center(
                 child: CircularProgressIndicator(),
               ),

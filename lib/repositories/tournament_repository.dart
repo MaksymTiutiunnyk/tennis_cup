@@ -85,7 +85,8 @@ class TournamentRepository {
   }
 
   static Future<List<Tournament>> fetchWinnersTournaments() async {
-    final QuerySnapshot querySnapshot = await tournamentsCollection.get();
+    final QuerySnapshot querySnapshot =
+        await tournamentsCollection.where('isFinished', isEqualTo: true).get();
 
     List<Tournament> mappedTournaments = await Future.wait(
         querySnapshot.docs.map((doc) async => Tournament.fromFirestore(doc)));

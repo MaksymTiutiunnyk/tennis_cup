@@ -17,20 +17,20 @@ class Tournament {
   final DateTime date;
   final Arena arena;
   final Time time;
-  final String title;
   final List<int> points;
   final List<int> places;
+  bool isFinished;
 
-  Tournament(
-      {required this.tournamentId,
-      required this.players,
-      required this.date,
-      required this.arena,
-      required this.time,
-      required this.points,
-      required this.places})
-      : title =
-            '${formatter.format(date)} ${players[0].sex.name} ${time.name} ${arena.title}';
+  Tournament({
+    required this.tournamentId,
+    required this.players,
+    required this.date,
+    required this.arena,
+    required this.time,
+    required this.points,
+    required this.places,
+    this.isFinished = false,
+  });
 
   static Future<Tournament> fromFirestore(DocumentSnapshot doc) async {
     final data = doc.data() as Map<String, dynamic>;
@@ -57,6 +57,7 @@ class Tournament {
       places: List<int>.from(data['places']),
       points: List<int>.from(data['points']),
       time: Time.values.firstWhere((time) => time.name == data['time']),
+      isFinished: data['isFinished'],
     );
 
     final matchesSnapshot = await FirebaseFirestore.instance
@@ -78,14 +79,13 @@ class Tournament {
     if (identical(this, other)) return true;
     if (other is! Tournament) return false;
     return tournamentId == other.tournamentId &&
-        title == other.title &&
         _listEquals(players, other.players) &&
         _listEquals(matches!, other.matches!);
   }
 
   @override
   int get hashCode => Object.hash(
-      tournamentId, title, Object.hashAll(players), Object.hashAll(matches!));
+      tournamentId, Object.hashAll(players), Object.hashAll(matches!));
 
   bool _listEquals<T>(List<T> list1, List<T> list2) {
     if (list1.length != list2.length) return false;

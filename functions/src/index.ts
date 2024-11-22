@@ -250,6 +250,7 @@ exports.updatePlaces = functions.firestore
 
         await change.after.ref.update({
             places,
+            isFinished: true,
         });
     });
 
@@ -260,15 +261,7 @@ exports.updateMedals = functions.firestore
     .onUpdate(async (change, context) => {
         const after = change.after.data();
 
-        let allHasPlace = true;
-        for (let i = 0; i < after.places.length; i++) {
-            if (after.places[i] == 0) {
-                allHasPlace = false;
-                break;
-            }
-        }
-
-        if (!allHasPlace) return;
+        if (!after.isFinished) return;
 
         if (!after.places || !after.players) {
             console.error("Missing 'places' or 'players' field in tournament document.");
