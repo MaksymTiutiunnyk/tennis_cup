@@ -7,13 +7,27 @@ import 'package:tennis_cup/providers/time_filter_provider.dart';
 import 'package:tennis_cup/repositories/tournament_repository.dart';
 
 final scheduledTournamentProvider =
-    FutureProvider<List<Tournament>>((ref) async {
+    StreamProvider.autoDispose<List<Tournament>>((ref) async* {
   final DateTime tournamentDate = ref.watch(scheduleDateProvider);
   final Arena tournamentArena = ref.watch(arenaFilterProvider);
   final Time tournamentTime = ref.watch(timeFilterProvider);
 
-  return await TournamentRepository.fetchScheduledTournament(
-      tournamentDate: tournamentDate,
-      tournamentArena: tournamentArena,
-      tournamentTime: tournamentTime);
+  List<Tournament> tournaments =
+      await TournamentRepository.fetchScheduledTournament(
+          tournamentDate: tournamentDate,
+          tournamentArena: tournamentArena,
+          tournamentTime: tournamentTime);
+
+  yield tournaments;
+
+  final tournamentIds =
+      tournaments.map((tournament) => tournament.tournamentId).toList();
+
+  await for (final _ in TournamentRepository.watchMatchChanges(tournamentIds)) {
+    tournaments = await TournamentRepository.fetchScheduledTournament(
+        tournamentDate: tournamentDate,
+        tournamentArena: tournamentArena,
+        tournamentTime: tournamentTime);
+    yield tournaments;
+  }
 });

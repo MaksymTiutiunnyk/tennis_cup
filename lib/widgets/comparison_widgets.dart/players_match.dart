@@ -37,7 +37,7 @@ class PlayersMatch extends ConsumerWidget {
     final List<int> player2SetScores =
         isPlayer1Blue ? match.redSetScores : match.blueSetScores;
 
-    final int setsPlayed = player1Score + player2Score;
+    final int setsPlayed = (player1Score + player2Score) == 5 ? 5 : player1Score + player2Score + 1;
     final List<String> displayedSetScores = List.generate(
       setsPlayed,
       (index) => '${player1SetScores[index]}-${player2SetScores[index]}',

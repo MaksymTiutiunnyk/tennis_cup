@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod/src/async_notifier.dart';
 import 'package:tennis_cup/model/player.dart';
 import 'package:tennis_cup/model/match.dart';
 import 'package:tennis_cup/model/tournament.dart';
@@ -18,6 +19,9 @@ class PlayersMatches extends ConsumerStatefulWidget {
 }
 
 class _PlayersMatchesState extends ConsumerState<PlayersMatches> {
+  StreamNotifierProvider<PlayersTournamentsNotifier, List<Tournament>>?
+      playersTournamentsProvider;
+
   List<PlayersMatch> _getPlayersMatches(Tournament tournament) {
     final List<PlayersMatch> playersMatches = [];
 
@@ -44,6 +48,12 @@ class _PlayersMatchesState extends ConsumerState<PlayersMatches> {
   void initState() {
     super.initState();
     _scrollController.addListener(_onScroll);
+
+    playersTournamentsProvider =
+        StreamNotifierProvider<PlayersTournamentsNotifier, List<Tournament>>(
+            () => PlayersTournamentsNotifier(
+                player1Id: widget.player1.playerId,
+                player2Id: widget.player2.playerId));
   }
 
   @override
@@ -55,14 +65,13 @@ class _PlayersMatchesState extends ConsumerState<PlayersMatches> {
   void _onScroll() {
     if (_scrollController.position.atEdge &&
         _scrollController.position.pixels != 0) {
-      ref.read(playersTournamentsProvider.notifier).fetchTournaments(
-          player1Id: widget.player1.playerId, player2Id: widget.player2.playerId);
+      ref.read(playersTournamentsProvider!.notifier).fetchTournaments();
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final playersTournaments = ref.watch(playersTournamentsProvider);
+    final playersTournaments = ref.watch(playersTournamentsProvider!);
 
     return Column(
       mainAxisSize: MainAxisSize.min,
