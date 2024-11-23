@@ -11,12 +11,16 @@ class PlayersIntro extends StatelessWidget {
     return Stack(
       alignment: Alignment.center,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            PlayerIntro(player1),
-            PlayerIntro(player2),
-          ],
+        IntrinsicHeight(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            crossAxisAlignment:
+                CrossAxisAlignment.stretch,
+            children: [
+              PlayerIntro(player1),
+              PlayerIntro(player2),
+            ],
+          ),
         ),
         Positioned(
           child: Container(

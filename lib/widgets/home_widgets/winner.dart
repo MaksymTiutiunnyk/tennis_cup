@@ -29,7 +29,7 @@ class Winner extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8),
-          color: Colors.white,
+          color: Theme.of(context).colorScheme.primaryContainer,
         ),
         child: Column(
           children: [

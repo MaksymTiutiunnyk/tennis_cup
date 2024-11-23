@@ -10,6 +10,11 @@ ColorScheme kcolorScheme = ColorScheme.fromSeed(
   seedColor: const Color.fromARGB(255, 4, 5, 100),
 );
 
+ColorScheme kdarkColorScheme = ColorScheme.fromSeed(
+  seedColor: const Color.fromARGB(255, 4, 5, 100),
+  brightness: Brightness.dark,
+);
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
@@ -28,6 +33,33 @@ class TennisCup extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Tennis Cup',
+      darkTheme: ThemeData.dark().copyWith(
+        colorScheme: kdarkColorScheme,
+        iconTheme: const IconThemeData()
+            .copyWith(color: kdarkColorScheme.onPrimaryContainer),
+        iconButtonTheme: IconButtonThemeData(
+          style: const ButtonStyle()
+              .copyWith(visualDensity: VisualDensity.compact),
+        ),
+        textTheme: ThemeData().textTheme.copyWith(
+              bodyLarge: const TextStyle(fontSize: 18, color: Colors.white),
+              bodyMedium: const TextStyle(fontSize: 16, color: Colors.white),
+              bodySmall: const TextStyle(fontSize: 14, color: Colors.grey),
+              labelMedium: const TextStyle(
+                fontSize: 16,
+                color: Color.fromARGB(255, 98, 98, 98),
+              ),
+              labelLarge: const TextStyle(
+                fontSize: 16,
+                color: Colors.white,
+                fontWeight: FontWeight.normal,
+              ),
+            ),
+        bottomNavigationBarTheme: const BottomNavigationBarThemeData().copyWith(
+          type: BottomNavigationBarType.fixed,
+          backgroundColor: kdarkColorScheme.onSecondary,
+        ),
+      ),
       theme: ThemeData().copyWith(
         colorScheme: kcolorScheme,
         appBarTheme: const AppBarTheme().copyWith(

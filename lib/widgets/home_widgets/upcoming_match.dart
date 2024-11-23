@@ -13,19 +13,16 @@ DateFormat formatter = DateFormat('yyyy-MM-dd, HH:mm');
 class UpcomingMatch extends ConsumerWidget {
   final Match match;
   final Tournament tournament;
-  const UpcomingMatch({super.key, required this.match, required this.tournament});
+  const UpcomingMatch(
+      {super.key, required this.match, required this.tournament});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return InkWell(
       onTap: () {
-        ref
-            .read(scheduleDateProvider.notifier)
-            .selectDate(tournament.date);
+        ref.read(scheduleDateProvider.notifier).selectDate(tournament.date);
         ref.read(timeFilterProvider.notifier).selectTime(tournament.time);
-        ref
-            .read(arenaFilterProvider.notifier)
-            .selectArena(tournament.arena);
+        ref.read(arenaFilterProvider.notifier).selectArena(tournament.arena);
         ref.read(tabIndexProvider.notifier).selectTab(1);
       },
       child: Column(
@@ -41,15 +38,14 @@ class UpcomingMatch extends ConsumerWidget {
                   style: Theme.of(context).textTheme.bodySmall,
                 ),
                 const SizedBox(width: 8),
-                Icon(Icons.circle,
-                    color: tournament.arena.color, size: 8),
+                Icon(Icons.circle, color: tournament.arena.color, size: 8),
                 const SizedBox(width: 8),
                 Text(
                   tournament.arena.title,
-                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                      ),
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyLarge!
+                      .copyWith(fontSize: 13),
                 ),
               ],
             ),

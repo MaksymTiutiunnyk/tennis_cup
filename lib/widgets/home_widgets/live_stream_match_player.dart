@@ -30,20 +30,16 @@ class LiveStreamMatchPlayer extends StatelessWidget {
               const SizedBox(width: 8),
               Text(
                 player.fullName,
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyMedium!
-                    .copyWith(color: Colors.white),
+                style: Theme.of(context).textTheme.bodyMedium,
               ),
             ],
           ),
           Text(
             score.toString(),
-            style: const TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
+            style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
           ),
         ],
       ),

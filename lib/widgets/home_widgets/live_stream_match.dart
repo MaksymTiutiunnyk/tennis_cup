@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:tennis_cup/main.dart';
 import 'package:tennis_cup/model/match.dart';
 import 'package:intl/intl.dart';
 import 'package:tennis_cup/model/tournament.dart';
@@ -47,14 +46,12 @@ class LiveStreamMatch extends ConsumerWidget {
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 8),
-      decoration: BoxDecoration(
-        border: Border.all(color: kcolorScheme.onPrimaryContainer),
-      ),
       child: Column(
         children: [
           Container(
             padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-            decoration: const BoxDecoration(color: Colors.white),
+            decoration:
+                BoxDecoration(color: Theme.of(context).colorScheme.primaryContainer),
             child: Column(
               children: [
                 Row(
@@ -104,7 +101,8 @@ class LiveStreamMatch extends ConsumerWidget {
           Expanded(
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              decoration: BoxDecoration(color: kcolorScheme.onPrimaryContainer),
+              decoration:
+                  BoxDecoration(color: Theme.of(context).colorScheme.onInverseSurface),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [

@@ -30,7 +30,7 @@ class SchedulePanel extends ConsumerWidget {
     final Time tournamentTime = ref.watch(timeFilterProvider);
 
     return Container(
-      color: const Color.fromARGB(255, 237, 235, 235),
+      color: Theme.of(context).colorScheme.onInverseSurface,
       padding: const EdgeInsets.all(16),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,

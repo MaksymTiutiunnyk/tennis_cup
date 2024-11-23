@@ -36,10 +36,10 @@ class ScheduleDatePicker extends ConsumerWidget {
             top: 6,
             child: Text(
               '${selectedDate.day}',
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.bold,
-                color: Colors.red,
+                color: Theme.of(context).colorScheme.tertiary,
               ),
             ),
           ),

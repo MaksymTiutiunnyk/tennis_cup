@@ -17,10 +17,6 @@ class PlayerTournament extends ConsumerWidget {
   const PlayerTournament(
       {required this.player, required this.tournament, super.key});
 
-  int _definePlayerIndex() {
-    return tournament.players.indexOf(player);
-  }
-
   String _getSetsRatio() {
     int setsWon = 0;
     int setsLost = 0;
@@ -62,25 +58,9 @@ class PlayerTournament extends ConsumerWidget {
     return loses;
   }
 
-  Widget buildDataRow(BuildContext context, String leftPart, String rightPart) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          leftPart,
-          style: Theme.of(context).textTheme.bodySmall,
-        ),
-        Text(
-          rightPart,
-          style: Theme.of(context).textTheme.bodyMedium,
-        ),
-      ],
-    );
-  }
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    int index = _definePlayerIndex();
+    int index = tournament.players.indexOf(player);
 
     return InkWell(
       onTap: () {
@@ -113,17 +93,81 @@ class PlayerTournament extends ConsumerWidget {
                 ],
               ),
               const SizedBox(height: 8),
-              buildDataRow(
-                  context, 'Position:', tournament.places[index].toString()),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Position:',
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                  Text(
+                    tournament.places[index].toString(),
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                ],
+              ),
               const SizedBox(height: 4),
-              buildDataRow(context, 'Wins:', _getWins().toString()),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Wins:',
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                  Text(
+                    _getWins().toString(),
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyMedium!
+                        .copyWith(color: Colors.green),
+                  ),
+                ],
+              ),
               const SizedBox(height: 4),
-              buildDataRow(context, 'Loses:', _getLoses().toString()),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Loses:',
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                  Text(
+                    _getLoses().toString(),
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyMedium!
+                        .copyWith(color: Colors.red),
+                  ),
+                ],
+              ),
               const SizedBox(height: 4),
-              buildDataRow(context, 'Sets ratio:', _getSetsRatio()),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Sets ratio:',
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                  Text(
+                    _getSetsRatio().toString(),
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                ],
+              ),
               const SizedBox(height: 4),
-              buildDataRow(
-                  context, 'Points:', tournament.points[index].toString()),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Points:',
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                  Text(
+                    tournament.points[index].toString(),
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                ],
+              ),
             ],
           ),
         ),

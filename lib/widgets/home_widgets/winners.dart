@@ -12,10 +12,8 @@ class Winners extends ConsumerWidget {
     final AsyncValue<List<Tournament>> asyncValue =
         ref.watch(winnersTournamentsProvider);
 
-    return Container(
+    return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
-      decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.onPrimaryContainer),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -28,10 +26,7 @@ class Winners extends ConsumerWidget {
                 const SizedBox(width: 8),
                 Text(
                   'Tennis Cup: Winners',
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyLarge!
-                      .copyWith(color: Colors.white),
+                  style: Theme.of(context).textTheme.bodyLarge,
                 ),
               ],
             ),
