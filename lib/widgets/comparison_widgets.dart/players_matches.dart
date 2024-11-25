@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tennis_cup/model/player.dart';
 import 'package:tennis_cup/model/match.dart';
 import 'package:tennis_cup/model/tournament.dart';
-import 'package:tennis_cup/providers/players_tournaments_provider.dart';
+import 'package:tennis_cup/providers/players_tournaments_notifier.dart';
 import 'package:tennis_cup/widgets/comparison_widgets.dart/players_match.dart';
 
 class PlayersMatches extends ConsumerStatefulWidget {

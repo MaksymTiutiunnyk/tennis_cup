@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tennis_cup/model/player.dart';
 import 'package:tennis_cup/model/tournament.dart';
-import 'package:tennis_cup/providers/player_tournaments_provider.dart';
+import 'package:tennis_cup/providers/player_tournaments_notifier.dart';
 import 'package:tennis_cup/widgets/player_widgets/player_tournament.dart';
 
 class PlayerTournaments extends ConsumerStatefulWidget {

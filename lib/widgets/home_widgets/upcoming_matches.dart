@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tennis_cup/model/tournament.dart';
-import 'package:tennis_cup/providers/upcoming_matches_tournaments_provider.dart';
+import 'package:tennis_cup/repositories/tournament_repository.dart';
 import 'package:tennis_cup/widgets/home_widgets/upcoming_match.dart';
 import 'package:tennis_cup/model/match.dart';
 
-class UpcomingMatches extends ConsumerWidget {
+class UpcomingMatches extends StatelessWidget {
   const UpcomingMatches({super.key});
 
   List<Match> _getMatchesToDisplay(List<Tournament> tournaments) {
@@ -39,9 +38,9 @@ class UpcomingMatches extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final AsyncValue<List<Tournament>> asyncValue =
-        ref.watch(upcomingMatchesTournamentsProvider);
+  Widget build(BuildContext context) {
+    final upcomingMatchesTournaments =
+        TournamentRepository.fetchUpcomingMatchesTournaments();
 
     return Expanded(
       child: Column(
@@ -62,31 +61,31 @@ class UpcomingMatches extends ConsumerWidget {
             ),
           ),
           Expanded(
-            child: asyncValue.when(
-              data: (tournaments) {
-                final matches = _getMatchesToDisplay(tournaments);
-
-                if (matches.isEmpty) {
-                  return const Center(child: Text('No upcoming matches found'));
+            child: FutureBuilder(
+              future: upcomingMatchesTournaments,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
                 }
+                if (snapshot.hasData) {
+                  if (snapshot.data!.isEmpty) {
+                    return const Center(child: Text('No matches found'));
+                  }
+                  final tournaments = snapshot.data!;
+                  final matches = _getMatchesToDisplay(tournaments);
 
-                return ListView.builder(
-                  padding: const EdgeInsets.all(0),
-                  itemCount: matches.length,
-                  itemBuilder: (context, index) {
-                    return UpcomingMatch(
-                      match: matches[index],
-                      tournament: tournaments[index],
-                    );
-                  },
-                );
+                  return ListView.builder(
+                    itemCount: matches.length,
+                    itemBuilder: (context, index) {
+                      return UpcomingMatch(
+                        match: matches[index],
+                        tournament: tournaments[index],
+                      );
+                    },
+                  );
+                }
+                return const Center(child: Text('Oops, something went wrong'));
               },
-              error: (error, stackTrace) => Center(
-                child: Text('error $error'),
-              ),
-              loading: () => const Center(
-                child: CircularProgressIndicator(),
-              ),
             ),
           ),
         ],

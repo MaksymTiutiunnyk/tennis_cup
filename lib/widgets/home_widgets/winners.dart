@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:tennis_cup/model/tournament.dart';
-import 'package:tennis_cup/providers/winners_tournaments_provider.dart';
+import 'package:tennis_cup/repositories/tournament_repository.dart';
 import 'package:tennis_cup/widgets/home_widgets/winner.dart';
 
 class Winners extends ConsumerWidget {
@@ -9,8 +8,7 @@ class Winners extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final AsyncValue<List<Tournament>> asyncValue =
-        ref.watch(winnersTournamentsProvider);
+    final winnersTournaments = TournamentRepository.fetchWinnersTournaments();
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
@@ -33,25 +31,29 @@ class Winners extends ConsumerWidget {
           ),
           SizedBox(
             height: 195,
-            child: asyncValue.when(
-              data: (tournaments) {
-                if (tournaments.isEmpty) {
-                  return const Center(child: Text('No winners found'));
+            child: FutureBuilder(
+              future: winnersTournaments,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
                 }
-                return PageView.builder(
-                  controller: PageController(viewportFraction: 0.90),
-                  scrollDirection: Axis.horizontal,
-                  itemCount: tournaments.length,
-                  itemBuilder: (context, index) =>
-                      Winner(tournament: tournaments[index]),
-                );
+                if (snapshot.hasData) {
+                  if (snapshot.data!.isEmpty) {
+                    return const Center(child: Text('No winners found'));
+                  }
+                  return PageView.builder(
+                    scrollDirection: Axis.horizontal,
+                    controller: PageController(viewportFraction: 0.90),
+                    itemCount: snapshot.data!.length,
+                    itemBuilder: (context, index) {
+                      return Winner(
+                        tournament: snapshot.data![index],
+                      );
+                    },
+                  );
+                }
+                return const Center(child: Text('Oops, something went wrong'));
               },
-              loading: () => const Center(
-                child: CircularProgressIndicator(),
-              ),
-              error: (error, stackTrace) => Center(
-                child: Text('error $error'),
-              ),
             ),
           ),
         ],
