@@ -5,7 +5,8 @@ import 'package:tennis_cup/widgets/home_widgets/upcoming_match.dart';
 import 'package:tennis_cup/model/match.dart';
 
 class UpcomingMatches extends StatelessWidget {
-  const UpcomingMatches({super.key});
+  final bool isBetween;
+  const UpcomingMatches({super.key, this.isBetween = true});
 
   List<Match> _getMatchesToDisplay(List<Tournament> tournaments) {
     final List<MapEntry<Match, Tournament>> matchesWithTournaments = [];
@@ -42,7 +43,8 @@ class UpcomingMatches extends StatelessWidget {
     final upcomingMatchesTournaments =
         TournamentRepository.fetchUpcomingMatchesTournaments();
 
-    return Expanded(
+    return Flexible(
+      fit: FlexFit.loose,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -60,7 +62,8 @@ class UpcomingMatches extends StatelessWidget {
               ],
             ),
           ),
-          Expanded(
+          Flexible(
+            fit: FlexFit.loose,
             child: FutureBuilder(
               future: upcomingMatchesTournaments,
               builder: (context, snapshot) {
@@ -68,13 +71,17 @@ class UpcomingMatches extends StatelessWidget {
                   return const Center(child: CircularProgressIndicator());
                 }
                 if (snapshot.hasData) {
-                  if (snapshot.data!.isEmpty) {
-                    return const Center(child: Text('No matches found'));
-                  }
                   final tournaments = snapshot.data!;
                   final matches = _getMatchesToDisplay(tournaments);
 
+                  if (matches.isEmpty) {
+                    return const Center(child: Text('No matches found'));
+                  }
+
                   return ListView.builder(
+                    physics:
+                        isBetween ? null : const NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
                     itemCount: matches.length,
                     itemBuilder: (context, index) {
                       return UpcomingMatch(

@@ -8,14 +8,28 @@ class Home extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Column(
-        children: [
-          LiveStreamMatches(),
-          UpcomingMatches(),
-          Winners(),
-        ],
-      ),
-    );
+    return Scaffold(body: LayoutBuilder(
+      builder: (context, constraints) {
+        if (constraints.maxHeight >= 650) {
+          return const Column(
+            children: [
+              LiveStreamMatches(),
+              UpcomingMatches(),
+              Winners(),
+            ],
+          );
+        }
+        return const SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              LiveStreamMatches(),
+              Winners(),
+              UpcomingMatches(isBetween: false),
+            ],
+          ),
+        );
+      },
+    ));
   }
 }
