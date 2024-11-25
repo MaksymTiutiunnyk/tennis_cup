@@ -26,9 +26,17 @@ class PlayerIntro extends StatelessWidget {
                 const SizedBox(height: 8),
                 CircleAvatar(
                   radius: 50,
-                  backgroundImage: player.imageUrl != ''
-                      ? NetworkImage(player.imageUrl)
-                      : null,
+                  child: ClipOval(
+                    child: FadeInImage(
+                      placeholder:
+                          const AssetImage('assets/default_avatar.jpg'),
+                      image: player.imageUrl.isNotEmpty
+                          ? NetworkImage(player.imageUrl)
+                          : const AssetImage('assets/default_avatar.jpg')
+                              as ImageProvider,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
                 ),
                 const SizedBox(height: 8),
                 Text(

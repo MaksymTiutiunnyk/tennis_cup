@@ -23,9 +23,16 @@ class LiveStreamMatchPlayer extends StatelessWidget {
             children: [
               CircleAvatar(
                 radius: 20,
-                backgroundImage: player.imageUrl != ''
-                    ? NetworkImage(player.imageUrl)
-                    : null,
+                child: ClipOval(
+                  child: FadeInImage(
+                    placeholder: const AssetImage('assets/default_avatar.jpg'),
+                    image: player.imageUrl.isNotEmpty
+                        ? NetworkImage(player.imageUrl)
+                        : const AssetImage('assets/default_avatar.jpg')
+                            as ImageProvider,
+                    fit: BoxFit.cover,
+                  ),
+                ),
               ),
               const SizedBox(width: 8),
               Text(

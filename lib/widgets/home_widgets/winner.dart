@@ -35,8 +35,16 @@ class Winner extends StatelessWidget {
           children: [
             CircleAvatar(
               radius: 40,
-              backgroundImage:
-                  winner.imageUrl != '' ? NetworkImage(winner.imageUrl) : null,
+              child: ClipOval(
+                child: FadeInImage(
+                  placeholder: const AssetImage('assets/default_avatar.jpg'),
+                  image: winner.imageUrl.isNotEmpty
+                      ? NetworkImage(winner.imageUrl)
+                      : const AssetImage('assets/default_avatar.jpg')
+                          as ImageProvider,
+                  fit: BoxFit.cover,
+                ),
+              ),
             ),
             const SizedBox(height: 8),
             Text(
