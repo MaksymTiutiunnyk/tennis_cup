@@ -32,7 +32,7 @@ class _ConnectionMonitorState extends State<ConnectionMonitor> {
         isDismissible: false,
         enableDrag: false,
         isScrollControlled: true,
-        backgroundColor: Colors.red[400],
+        backgroundColor: Colors.red,
         builder: (context) {
           return PopScope(
             canPop: false,
@@ -48,8 +48,8 @@ class _ConnectionMonitorState extends State<ConnectionMonitor> {
                       'No Internet Connection',
                       style: Theme.of(context)
                           .textTheme
-                          .bodyLarge
-                          ?.copyWith(color: Colors.white),
+                          .bodyLarge!
+                          .copyWith(color: Colors.white),
                     ),
                   ],
                 ),

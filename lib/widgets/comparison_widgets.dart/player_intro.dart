@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:tennis_cup/custom_icons_icons.dart';
 import 'package:tennis_cup/model/player.dart';
 import 'package:tennis_cup/screens/player_details.dart';
@@ -27,14 +26,15 @@ class PlayerIntro extends StatelessWidget {
                 CircleAvatar(
                   radius: 50,
                   child: ClipOval(
-                    child: FadeInImage(
-                      placeholder:
-                          const AssetImage('assets/default_avatar.jpg'),
-                      image: player.imageUrl.isNotEmpty
-                          ? NetworkImage(player.imageUrl)
-                          : const AssetImage('assets/default_avatar.jpg')
-                              as ImageProvider,
+                    child: FadeInImage.assetNetwork(
+                      placeholder: 'assets/default_avatar.jpg',
+                      image: player.imageUrl,
                       fit: BoxFit.cover,
+                      imageErrorBuilder: (context, error, stackTrace) =>
+                          Image.asset(
+                        'assets/default_avatar.jpg',
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
                 ),

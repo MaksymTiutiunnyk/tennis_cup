@@ -36,13 +36,15 @@ class Winner extends StatelessWidget {
             CircleAvatar(
               radius: 40,
               child: ClipOval(
-                child: FadeInImage(
-                  placeholder: const AssetImage('assets/default_avatar.jpg'),
-                  image: winner.imageUrl.isNotEmpty
-                      ? NetworkImage(winner.imageUrl)
-                      : const AssetImage('assets/default_avatar.jpg')
-                          as ImageProvider,
+                child: FadeInImage.assetNetwork(
+                  placeholder: 'assets/default_avatar.jpg',
+                  image: winner.imageUrl,
                   fit: BoxFit.cover,
+                  imageErrorBuilder: (context, error, stackTrace) =>
+                      Image.asset(
+                    'assets/default_avatar.jpg',
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
             ),

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tennis_cup/model/news.dart';
 import 'package:intl/intl.dart';
-import 'package:transparent_image/transparent_image.dart';
 
 DateFormat formatter = DateFormat('yyyy-MM-dd');
 
@@ -29,12 +28,33 @@ class SingleInterestingNews extends StatelessWidget {
                 topLeft: Radius.circular(6),
                 topRight: Radius.circular(6),
               ),
-              child: FadeInImage(
-                placeholder: MemoryImage(kTransparentImage),
-                image: NetworkImage(news.imageUrl),
+              child: Image.network(
+                news.imageUrl,
                 width: double.infinity,
                 height: 200,
                 fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Image.asset(
+                    'assets/default_image.jpg',
+                    width: double.infinity,
+                    height: 200,
+                    fit: BoxFit.cover,
+                  );
+                },
+                loadingBuilder: (context, child, loadingProgress) {
+                  if (loadingProgress == null) {
+                    return child;
+                  }
+                  return SizedBox(
+                    height: 200,
+                    child: Center(
+                      child: CircularProgressIndicator(
+                        value: loadingProgress.cumulativeBytesLoaded /
+                            (loadingProgress.expectedTotalBytes ?? 1),
+                      ),
+                    ),
+                  );
+                },
               ),
             ),
           ),
