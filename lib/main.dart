@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tennis_cup/connection_monitor.dart';
 import 'package:tennis_cup/screens/tabs.dart';
 
 import 'package:firebase_core/firebase_core.dart';
@@ -91,7 +92,7 @@ class TennisCup extends StatelessWidget {
           backgroundColor: kcolorScheme.onSecondary,
         ),
       ),
-      home: const Tabs(),
+      home: const ConnectionMonitor(child: Tabs()),
     );
   }
 }
