@@ -14,7 +14,7 @@ DateFormat formatter = DateFormat('yyyy-MM-dd');
 class SchedulePanel extends ConsumerWidget {
   const SchedulePanel({super.key});
 
-  void showFilters(BuildContext context) {
+  void _showFilters(BuildContext context) {
     showModalBottomSheet(
       useSafeArea: true,
       context: context,
@@ -66,7 +66,7 @@ class SchedulePanel extends ConsumerWidget {
               const ScheduleDatePicker(),
               IconButton(
                 onPressed: () {
-                  showFilters(context);
+                  _showFilters(context);
                 },
                 icon: const Icon(Icons.filter_list),
               )

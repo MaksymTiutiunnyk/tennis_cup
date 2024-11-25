@@ -9,7 +9,7 @@ class PlayerDetails extends StatelessWidget {
   final Player player;
   const PlayerDetails({super.key, required this.player});
 
-  void comparePlayers(BuildContext context, Player player) {
+  void _comparePlayers(BuildContext context, Player player) {
     Navigator.of(context).pushReplacement(MaterialPageRoute(
       builder: (context) => PlayersComparison(
         player1: this.player,
@@ -18,12 +18,12 @@ class PlayerDetails extends StatelessWidget {
     ));
   }
 
-  void showSearchField(BuildContext context) {
+  void _showSearchField(BuildContext context) {
     showModalBottomSheet(
       useSafeArea: true,
       isScrollControlled: true,
       context: context,
-      builder: (ctx) => PlayerSearch(onSelectPlayer: comparePlayers),
+      builder: (ctx) => PlayerSearch(onSelectPlayer: _comparePlayers),
     );
   }
 
@@ -47,7 +47,7 @@ class PlayerDetails extends StatelessWidget {
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: () {
-                      showSearchField(context);
+                      _showSearchField(context);
                     },
                     style: ElevatedButton.styleFrom(
                       shape: RoundedRectangleBorder(

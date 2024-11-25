@@ -7,7 +7,7 @@ import 'package:tennis_cup/widgets/player_search.dart';
 class RankingPanel extends StatelessWidget {
   const RankingPanel({super.key});
 
-  void showFilters(BuildContext context) {
+  void _showFilters(BuildContext context) {
     showModalBottomSheet(
       useSafeArea: true,
       isScrollControlled: true,
@@ -16,18 +16,18 @@ class RankingPanel extends StatelessWidget {
     );
   }
 
-  void showPlayerDetails(BuildContext context, Player player) {
+  void _showPlayerDetails(BuildContext context, Player player) {
     Navigator.of(context).pushReplacement(MaterialPageRoute(
       builder: (context) => PlayerDetails(player: player),
     ));
   }
 
-  void showSearchField(BuildContext context) {
+  void _showSearchField(BuildContext context) {
     showModalBottomSheet(
       useSafeArea: true,
       isScrollControlled: true,
       context: context,
-      builder: (ctx) => PlayerSearch(onSelectPlayer: showPlayerDetails),
+      builder: (ctx) => PlayerSearch(onSelectPlayer: _showPlayerDetails),
     );
   }
 
@@ -52,13 +52,13 @@ class RankingPanel extends StatelessWidget {
             children: [
               IconButton(
                 onPressed: () {
-                  showSearchField(context);
+                  _showSearchField(context);
                 },
                 icon: const Icon(Icons.search),
               ),
               IconButton(
                 onPressed: () {
-                  showFilters(context);
+                  _showFilters(context);
                 },
                 icon: const Icon(Icons.filter_list),
               ),

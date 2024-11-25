@@ -15,7 +15,7 @@ class _PlayerSearchState extends State<PlayerSearch> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   Future<List<Player>>? searchResults;
 
-  Future<List<Player>> searchPlayers(String value) async {
+  Future<List<Player>> _searchPlayers(String value) async {
     final query = value.trim();
 
     if (query.isEmpty) {
@@ -52,7 +52,7 @@ class _PlayerSearchState extends State<PlayerSearch> {
             textCapitalization: TextCapitalization.sentences,
             onChanged: (value) {
               setState(() {
-                searchResults = searchPlayers(value);
+                searchResults = _searchPlayers(value);
               });
             },
             decoration: InputDecoration(

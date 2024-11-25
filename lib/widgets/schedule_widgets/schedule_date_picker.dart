@@ -5,7 +5,7 @@ import 'package:tennis_cup/providers/schedule_date_provider.dart';
 class ScheduleDatePicker extends ConsumerWidget {
   const ScheduleDatePicker({super.key});
 
-  void pickDate(BuildContext context, WidgetRef ref) async {
+  void _pickDate(BuildContext context, WidgetRef ref) async {
     DateTime? pickedDate = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
@@ -26,7 +26,7 @@ class ScheduleDatePicker extends ConsumerWidget {
 
     return IconButton(
       onPressed: () {
-        pickDate(context, ref);
+        _pickDate(context, ref);
       },
       icon: Stack(
         alignment: Alignment.center,
