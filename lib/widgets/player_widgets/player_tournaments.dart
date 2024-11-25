@@ -24,8 +24,8 @@ class _PlayerTournamentsState extends ConsumerState<PlayerTournaments> {
     super.initState();
     _scrollController.addListener(_onScroll);
 
-    _playerTournamentsProvider = StateNotifierProvider<PlayerTournamentsNotifier,
-            AsyncValue<List<Tournament>>>(
+    _playerTournamentsProvider = StateNotifierProvider<
+            PlayerTournamentsNotifier, AsyncValue<List<Tournament>>>(
         (ref) => PlayerTournamentsNotifier(widget.player));
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
@@ -83,7 +83,7 @@ class _PlayerTournamentsState extends ConsumerState<PlayerTournaments> {
                 );
               },
               error: (error, stackTrace) => const Center(
-                child: Text('Unexpected error'),
+                child: Text('Ooops, something went wrong'),
               ),
               loading: () => const CircularProgressIndicator(),
             ),

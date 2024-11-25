@@ -49,7 +49,7 @@ class _PlayerSearchState extends State<PlayerSearch> {
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: TextField(
-            textCapitalization: TextCapitalization.sentences,
+            textCapitalization: TextCapitalization.words,
             onChanged: (value) {
               setState(() {
                 searchResults = _searchPlayers(value);
@@ -80,8 +80,8 @@ class _PlayerSearchState extends State<PlayerSearch> {
                 );
               }
               if (snapshot.hasError) {
-                return Center(
-                  child: Text('Error: ${snapshot.error}'),
+                return const Center(
+                  child: Text('Ooops, something went wrong'),
                 );
               }
               if (!snapshot.hasData || snapshot.data!.isEmpty) {

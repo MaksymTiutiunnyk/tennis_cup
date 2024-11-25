@@ -73,7 +73,8 @@ class AllNews extends ConsumerWidget {
                 );
               },
               loading: () => const Center(child: CircularProgressIndicator()),
-              error: (error, stack) => Center(child: Text('Error: $error')),
+              error: (error, stack) =>
+                  const Center(child: Text('Ooops, something went wrong')),
             ),
           ),
         ],

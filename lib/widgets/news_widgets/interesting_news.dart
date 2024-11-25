@@ -29,7 +29,7 @@ class InterestingNews extends StatelessWidget {
               },
             );
           }
-          return const Center(child: Text('Oops, something went wrong'));
+          return const Center(child: Text('Ooops, something went wrong'));
         },
       ),
     );

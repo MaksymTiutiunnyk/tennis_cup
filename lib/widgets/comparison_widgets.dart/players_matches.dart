@@ -114,7 +114,7 @@ class _PlayersMatchesState extends ConsumerState<PlayersMatches> {
               );
             },
             error: (error, stackTrace) =>
-                const Center(child: Text('Unexpacted error')),
+                const Center(child: Text('Ooops, something went wrong')),
             loading: () => const Center(child: CircularProgressIndicator()),
           ),
         ),
