@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:tennis_cup/model/news.dart';
 import 'package:intl/intl.dart';
 
@@ -20,54 +21,63 @@ class SingleInterestingNews extends StatelessWidget {
         ),
       ),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Center(
-            child: ClipRRect(
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(6),
-                topRight: Radius.circular(6),
-              ),
-              child: Image.network(
-                news.imageUrl,
-                width: double.infinity,
-                height: 200,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Image.asset(
-                    'assets/default_image.jpg',
+          Expanded(
+            child: Center(
+              child: ClipRRect(
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(6),
+                  topRight: Radius.circular(6),
+                ),
+                child: LayoutBuilder(builder: (context, constraints) {
+                  return Image.network(
+                    news.imageUrl,
                     width: double.infinity,
-                    height: 200,
+                    // height: constraints.maxHeight,
                     fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Image.asset(
+                        'assets/default_image.jpg',
+                        width: double.infinity,
+                        // height: 200,
+                        fit: BoxFit.cover,
+                      );
+                    },
+                    loadingBuilder: (context, child, loadingProgress) {
+                      if (loadingProgress == null) {
+                        return child;
+                      }
+                      return SizedBox(
+                        // height: 200,
+                        child: Center(
+                          child: CircularProgressIndicator(
+                            value: loadingProgress.cumulativeBytesLoaded /
+                                (loadingProgress.expectedTotalBytes ?? 1),
+                          ),
+                        ),
+                      );
+                    },
                   );
-                },
-                loadingBuilder: (context, child, loadingProgress) {
-                  if (loadingProgress == null) {
-                    return child;
-                  }
-                  return SizedBox(
-                    height: 200,
-                    child: Center(
-                      child: CircularProgressIndicator(
-                        value: loadingProgress.cumulativeBytesLoaded /
-                            (loadingProgress.expectedTotalBytes ?? 1),
-                      ),
-                    ),
-                  );
-                },
+                }),
               ),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(8, 12, 8, 4),
-            child: Text(
-              formatter.format(news.date),
-              style: Theme.of(context).textTheme.bodySmall,
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(8, 12, 8, 4),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    formatter.format(news.date),
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                  Text(news.title),
+                ],
+              ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: Text(news.title),
           ),
         ],
       ),
