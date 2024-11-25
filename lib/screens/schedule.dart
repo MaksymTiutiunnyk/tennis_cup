@@ -17,23 +17,40 @@ class Schedule extends ConsumerWidget {
     return Scaffold(
       body: scheduledTournament.when(
         data: (scheduledTournament) => Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
             const SchedulePanel(),
-            if (scheduledTournament.isEmpty)
-              const Expanded(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Center(
-                      child: Text('Tournament is not found'),
+            Flexible(
+              fit: FlexFit.loose,
+              child: scheduledTournament.isEmpty
+                  ? const Center(child: Text('Tournament is not found'))
+                  : LayoutBuilder(
+                      builder: (context, constraints) {
+                        if (constraints.maxHeight >= 600) {
+                          return Column(
+                            children: [
+                              ScheduledMatches(
+                                tournament: scheduledTournament.first,
+                              ),
+                              TournamentResults(scheduledTournament.first),
+                            ],
+                          );
+                        }
+                        return SingleChildScrollView(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              ScheduledMatches(
+                                tournament: scheduledTournament.first,
+                                isScrollable: false,
+                              ),
+                              TournamentResults(scheduledTournament.first),
+                            ],
+                          ),
+                        );
+                      },
                     ),
-                  ],
-                ),
-              ),
-            if (scheduledTournament.isNotEmpty)
-              ScheduledMatches(tournament: scheduledTournament.first),
-            if (scheduledTournament.isNotEmpty)
-              TournamentResults(scheduledTournament.first),
+            ),
           ],
         ),
         loading: () => const Center(child: CircularProgressIndicator()),
