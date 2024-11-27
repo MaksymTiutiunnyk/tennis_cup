@@ -4,8 +4,8 @@ import 'package:tennis_cup/repositories/tournament_repository.dart';
 import 'package:tennis_cup/widgets/home_widgets/winner.dart';
 
 class Winners extends ConsumerWidget {
-  final bool isWideScreen;
-  const Winners({super.key, this.isWideScreen = false});
+  final bool isScreenWide;
+  const Winners({super.key, this.isScreenWide = false});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -29,7 +29,7 @@ class Winners extends ConsumerWidget {
           ),
         ),
         SizedBox(
-          height: isWideScreen ? 220 : 190,
+          height: isScreenWide ? 220 : 190,
           child: FutureBuilder(
             future: winnersTournaments,
             builder: (context, snapshot) {
@@ -42,7 +42,7 @@ class Winners extends ConsumerWidget {
                 }
                 return PageView.builder(
                   scrollDirection:
-                      isWideScreen ? Axis.vertical : Axis.horizontal,
+                      isScreenWide ? Axis.vertical : Axis.horizontal,
                   controller: PageController(viewportFraction: 0.90),
                   itemCount: snapshot.data!.length,
                   itemBuilder: (context, index) {

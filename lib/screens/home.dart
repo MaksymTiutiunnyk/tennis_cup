@@ -17,8 +17,8 @@ class Home extends StatelessWidget {
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Expanded(child: LiveStreamMatches(isWideScreen: true)),
-                    Expanded(child: Winners(isWideScreen: true))
+                    Expanded(child: LiveStreamMatches(isScreenWide: true)),
+                    Expanded(child: Winners(isScreenWide: true))
                   ],
                 ),
                 UpcomingMatches()

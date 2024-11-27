@@ -8,9 +8,12 @@ class InterestingNews extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final interestingNews = NewsRepository.fetchInterestingNews();
+    final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
+    final isScreenHigh = height / width > 16 / 9;
 
     return SizedBox(
-      height: 330,
+      height: isScreenHigh ? height * 0.4 : height * 0.5,
       child: FutureBuilder(
         future: interestingNews,
         builder: (context, snapshot) {
@@ -26,7 +29,10 @@ class InterestingNews extends StatelessWidget {
               controller: PageController(viewportFraction: 0.90),
               itemCount: snapshot.data!.length,
               itemBuilder: (context, index) {
-                return SingleInterestingNews(news: snapshot.data![index]);
+                return SingleInterestingNews(
+                  news: snapshot.data![index],
+                  isScreenWide: width > 600,
+                );
               },
             );
           }
