@@ -46,7 +46,7 @@ class UpcomingMatches extends StatelessWidget {
     return Flexible(
       fit: FlexFit.loose,
       child: Column(
-        mainAxisSize: MainAxisSize.min,
+        mainAxisSize: isBetween ? MainAxisSize.max : MainAxisSize.min,
         children: [
           Padding(
             padding: const EdgeInsets.all(16),
