@@ -5,7 +5,8 @@ import 'package:tennis_cup/widgets/home_widgets/live_stream_match.dart';
 import 'package:tennis_cup/model/match.dart';
 
 class LiveStreamMatches extends StatelessWidget {
-  const LiveStreamMatches({super.key});
+  final bool isWideScreen;
+  const LiveStreamMatches({super.key, this.isWideScreen = false});
 
   List<Match> _getMatchesToDisplay(List<Tournament> tournaments) {
     final List<MapEntry<Match, Tournament>> matchesWithTournaments = [];
@@ -46,7 +47,7 @@ class LiveStreamMatches extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -60,7 +61,7 @@ class LiveStreamMatches extends StatelessWidget {
           ),
         ),
         SizedBox(
-          height: 170,
+          height: isWideScreen ? 220 : 170,
           child: FutureBuilder(
             future: liveStreamMatchesTournaments,
             builder: (context, snapshot) {
@@ -75,7 +76,8 @@ class LiveStreamMatches extends StatelessWidget {
                 final matches = _getMatchesToDisplay(tournaments);
 
                 return PageView.builder(
-                  scrollDirection: Axis.horizontal,
+                  scrollDirection:
+                      isWideScreen ? Axis.vertical : Axis.horizontal,
                   controller: PageController(viewportFraction: 0.90),
                   itemCount: matches.length,
                   itemBuilder: (context, index) {

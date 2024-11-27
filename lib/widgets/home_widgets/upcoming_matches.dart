@@ -5,8 +5,8 @@ import 'package:tennis_cup/widgets/home_widgets/upcoming_match.dart';
 import 'package:tennis_cup/model/match.dart';
 
 class UpcomingMatches extends StatelessWidget {
-  final bool isBetween;
-  const UpcomingMatches({super.key, this.isBetween = true});
+  final bool isScrollable;
+  const UpcomingMatches({super.key, this.isScrollable = true});
 
   List<Match> _getMatchesToDisplay(List<Tournament> tournaments) {
     final List<MapEntry<Match, Tournament>> matchesWithTournaments = [];
@@ -46,10 +46,10 @@ class UpcomingMatches extends StatelessWidget {
     return Flexible(
       fit: FlexFit.loose,
       child: Column(
-        mainAxisSize: isBetween ? MainAxisSize.max : MainAxisSize.min,
+        mainAxisSize: isScrollable ? MainAxisSize.max : MainAxisSize.min,
         children: [
           Padding(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -80,7 +80,7 @@ class UpcomingMatches extends StatelessWidget {
 
                   return ListView.builder(
                     physics:
-                        isBetween ? null : const NeverScrollableScrollPhysics(),
+                        isScrollable ? null : const NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
                     itemCount: matches.length,
                     itemBuilder: (context, index) {

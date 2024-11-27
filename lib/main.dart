@@ -21,8 +21,10 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
-      .then((fn) {
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]).then((fn) {
     runApp(const ProviderScope(child: TennisCup()));
   });
 }

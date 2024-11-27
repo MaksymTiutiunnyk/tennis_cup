@@ -25,7 +25,7 @@ class Winner extends StatelessWidget {
             MaterialPageRoute(builder: (ctx) => PlayerDetails(player: winner)));
       },
       child: Container(
-        margin: const EdgeInsets.all(8),
+        margin: const EdgeInsets.fromLTRB(8, 0, 8, 8),
         padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8),

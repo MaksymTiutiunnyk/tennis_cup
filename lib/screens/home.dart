@@ -8,28 +8,44 @@ class Home extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: LayoutBuilder(
-      builder: (context, constraints) {
-        if (constraints.maxHeight >= 650) {
-          return const Column(
-            children: [
-              LiveStreamMatches(),
-              UpcomingMatches(),
-              Winners(),
-            ],
+    return Scaffold(
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          if (constraints.maxWidth >= 800 && constraints.maxHeight >= 500) {
+            return const Column(
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(child: LiveStreamMatches(isWideScreen: true)),
+                    Expanded(child: Winners(isWideScreen: true))
+                  ],
+                ),
+                UpcomingMatches()
+              ],
+            );
+          }
+          if (constraints.maxHeight >= 650) {
+            return const Column(
+              children: [
+                LiveStreamMatches(),
+                UpcomingMatches(),
+                Winners(),
+              ],
+            );
+          }
+          return const SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                LiveStreamMatches(),
+                Winners(),
+                UpcomingMatches(isScrollable: false),
+              ],
+            ),
           );
-        }
-        return const SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              LiveStreamMatches(),
-              Winners(),
-              UpcomingMatches(isBetween: false),
-            ],
-          ),
-        );
-      },
-    ));
+        },
+      ),
+    );
   }
 }

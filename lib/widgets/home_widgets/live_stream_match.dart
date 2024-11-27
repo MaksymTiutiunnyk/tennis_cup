@@ -45,13 +45,13 @@ class LiveStreamMatch extends ConsumerWidget {
     ref.watch(liveStreamMatchTournamentProvider);
 
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 8),
+      margin: const EdgeInsets.fromLTRB(8, 0, 8, 8),
       child: Column(
         children: [
           Container(
             padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-            decoration:
-                BoxDecoration(color: Theme.of(context).colorScheme.primaryContainer),
+            decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.primaryContainer),
             child: Column(
               children: [
                 Row(
@@ -101,8 +101,8 @@ class LiveStreamMatch extends ConsumerWidget {
           Expanded(
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              decoration:
-                  BoxDecoration(color: Theme.of(context).colorScheme.onInverseSurface),
+              decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.onInverseSurface),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
