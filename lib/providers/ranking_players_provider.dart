@@ -13,7 +13,7 @@ class RankingPlayersNotifier extends StateNotifier<Map<String, dynamic>> {
   RankingPlayersNotifier(this.sexFilter)
       : super({'players': [], 'isLoading': false});
 
-  Future<void> fetchPlayers({int limit = 5}) async {
+  Future<void> fetchPlayers({int limit = 10}) async {
     if (_isLoading || !_hasMore) return;
 
     _isLoading = true;
