@@ -9,7 +9,8 @@ class InterestingNews extends StatelessWidget {
   Widget build(BuildContext context) {
     final interestingNews = NewsRepository.fetchInterestingNews();
 
-    return Expanded(
+    return SizedBox(
+      height: 330,
       child: FutureBuilder(
         future: interestingNews,
         builder: (context, snapshot) {
