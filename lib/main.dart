@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tennis_cup/connection_monitor.dart';
+import 'package:tennis_cup/cubit/tab_index_cubit.dart';
 import 'package:tennis_cup/screens/tabs.dart';
 
 import 'package:firebase_core/firebase_core.dart';
@@ -25,7 +27,14 @@ void main() async {
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]).then((fn) {
-    runApp(const ProviderScope(child: TennisCup()));
+    runApp(
+      MultiBlocProvider(
+        providers: [
+          BlocProvider<TabIndexCubit>(create: (_) => TabIndexCubit()),
+        ],
+        child: const ProviderScope(child: TennisCup()),
+      ),
+    );
   });
 }
 

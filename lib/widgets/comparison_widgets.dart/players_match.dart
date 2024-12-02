@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tennis_cup/cubit/tab_index_cubit.dart';
 import 'package:tennis_cup/model/player.dart';
 import 'package:tennis_cup/model/match.dart';
 import 'package:intl/intl.dart';
 import 'package:tennis_cup/model/tournament.dart';
 import 'package:tennis_cup/providers/arena_filter_provider.dart';
 import 'package:tennis_cup/providers/schedule_date_provider.dart';
-import 'package:tennis_cup/providers/tab_index_provider.dart';
 import 'package:tennis_cup/providers/time_filter_provider.dart';
 import 'package:tennis_cup/repositories/tournament_repository.dart';
 import 'package:tennis_cup/screens/tabs.dart';
@@ -77,7 +78,7 @@ class PlayersMatch extends ConsumerWidget {
         ref.read(scheduleDateProvider.notifier).selectDate(tournament.date);
         ref.read(timeFilterProvider.notifier).selectTime(tournament.time);
         ref.read(arenaFilterProvider.notifier).selectArena(tournament.arena);
-        ref.read(tabIndexProvider.notifier).selectTab(1);
+        context.read<TabIndexCubit>().selectTab(1);
 
         Navigator.of(context)
             .push(MaterialPageRoute(builder: (ctx) => const Tabs()));
