@@ -3,8 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tennis_cup/connection_monitor.dart';
-import 'package:tennis_cup/cubit/tab_index_cubit.dart';
-import 'package:tennis_cup/screens/tabs.dart';
+import 'package:tennis_cup/logic/cubit/tab_index_cubit.dart';
+import 'package:tennis_cup/presentation/screens/tabs.dart';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
