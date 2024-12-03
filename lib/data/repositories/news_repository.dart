@@ -1,16 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:tennis_cup/data/data_providers/news_api.dart';
 import 'package:tennis_cup/data/models/news.dart';
 
 class NewsRepository {
-  static Future<List<News>> fetchNewsWithinPeriod(DateTime period) async {
-    final newsCollection = FirebaseFirestore.instance.collection('news');
+  final NewsApi newsApi;
 
-    QuerySnapshot querySnapshot = await newsCollection
-        .where('date',
-            isGreaterThanOrEqualTo: DateTime(period.year, period.month, 1))
-        .where('date', isLessThan: DateTime(period.year, period.month + 1, 1))
-        .orderBy('date', descending: true)
-        .get();
+  const NewsRepository({required this.newsApi});
+
+  Future<List<News>> fetchNewsWithinPeriod(DateTime period) async {
+    final querySnapshot = await newsApi.fetchNewsWithinPeriod(period);
 
     List<News> newsList = querySnapshot.docs.map((doc) {
       final data = doc.data() as Map<String, dynamic>;
@@ -24,13 +22,8 @@ class NewsRepository {
     return newsList;
   }
 
-  static Future<List<News>> fetchInterestingNews() async {
-    final newsCollection = FirebaseFirestore.instance.collection('news');
-
-    QuerySnapshot querySnapshot = await newsCollection
-        .where('title', isNotEqualTo: 'Attention!')
-        .limit(10)
-        .get();
+   Future<List<News>> fetchInterestingNews() async {
+    final querySnapshot = await newsApi.fetchInterestingNews();
 
     List<News> interestingNews = querySnapshot.docs.map((doc) {
       final data = doc.data() as Map<String, dynamic>;
