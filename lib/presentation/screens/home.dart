@@ -12,7 +12,7 @@ class Home extends StatelessWidget {
       body: LayoutBuilder(
         builder: (context, constraints) {
           if (constraints.maxWidth >= 800 && constraints.maxHeight >= 500) {
-            return const Column(
+            return Column(
               children: [
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -26,7 +26,7 @@ class Home extends StatelessWidget {
             );
           }
           if (constraints.maxHeight >= 650) {
-            return const Column(
+            return Column(
               children: [
                 LiveStreamMatches(),
                 UpcomingMatches(),
@@ -34,7 +34,7 @@ class Home extends StatelessWidget {
               ],
             );
           }
-          return const SingleChildScrollView(
+          return SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [

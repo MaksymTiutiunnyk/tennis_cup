@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:tennis_cup/data/data_providers/tournament_api.dart';
 import 'package:tennis_cup/data/models/tournament.dart';
 import 'package:tennis_cup/data/repositories/tournament_repository.dart';
 import 'package:tennis_cup/presentation/widgets/home_widgets/live_stream_match.dart';
 import 'package:tennis_cup/data/models/match.dart';
 
 class LiveStreamMatches extends StatelessWidget {
+  final tournamentRepository =
+      TournamentRepository(tournamentApi: TournamentApi());
+
   final bool isScreenWide;
-  const LiveStreamMatches({super.key, this.isScreenWide = false});
+  LiveStreamMatches({super.key, this.isScreenWide = false});
 
   List<Match> _getMatchesToDisplay(List<Tournament> tournaments) {
     final List<MapEntry<Match, Tournament>> matchesWithTournaments = [];
@@ -41,7 +45,7 @@ class LiveStreamMatches extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final liveStreamMatchesTournaments =
-        TournamentRepository.fetchLiveStreamMatchesTournaments();
+        tournamentRepository.fetchLiveStreamMatchesTournaments();
 
     return Column(
       mainAxisSize: MainAxisSize.min,

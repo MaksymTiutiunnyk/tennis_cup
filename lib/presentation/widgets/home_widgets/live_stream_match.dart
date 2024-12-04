@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tennis_cup/data/data_providers/tournament_api.dart';
 import 'package:tennis_cup/logic/cubit/tab_index_cubit.dart';
 import 'package:tennis_cup/data/models/match.dart';
 import 'package:intl/intl.dart';
@@ -15,6 +16,9 @@ DateFormat formatter = DateFormat('yyyy-MM-dd');
 
 // ignore: must_be_immutable
 class LiveStreamMatch extends ConsumerWidget {
+  final tournamentRepository =
+      TournamentRepository(tournamentApi: TournamentApi());
+
   Match match;
   Tournament tournament;
 
@@ -35,9 +39,9 @@ class LiveStreamMatch extends ConsumerWidget {
     final liveStreamMatchTournamentProvider =
         StreamProvider.autoDispose<Tournament>((ref) async* {
       await for (final _
-          in TournamentRepository.watchMatchChanges(tournament.tournamentId)) {
+          in tournamentRepository.watchMatchChanges(tournament.tournamentId)) {
         Tournament fetchedTournament =
-            await TournamentRepository.fetchTournament(
+            await tournamentRepository.fetchTournamentById(
                 tournamentId: tournament.tournamentId);
         _updateTournamentAndMatch(fetchedTournament);
         yield fetchedTournament;

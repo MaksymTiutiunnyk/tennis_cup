@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tennis_cup/data/data_providers/tournament_api.dart';
 import 'package:tennis_cup/data/repositories/tournament_repository.dart';
 import 'package:tennis_cup/presentation/widgets/home_widgets/winner.dart';
 
 class Winners extends ConsumerWidget {
+  final tournamentRepository =
+      TournamentRepository(tournamentApi: TournamentApi());
+
   final bool isScreenWide;
-  const Winners({super.key, this.isScreenWide = false});
+  Winners({super.key, this.isScreenWide = false});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final winnersTournaments = TournamentRepository.fetchWinnersTournaments();
+    final winnersTournaments = tournamentRepository.fetchWinnersTournaments();
 
     return Column(
       mainAxisSize: MainAxisSize.min,

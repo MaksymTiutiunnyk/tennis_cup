@@ -1,17 +1,22 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tennis_cup/data/data_providers/tournament_api.dart';
 import 'package:tennis_cup/data/models/player.dart';
 import 'package:tennis_cup/data/models/tournament.dart';
 import 'package:tennis_cup/data/repositories/tournament_repository.dart';
 
 class PlayersTournamentsNotifier
     extends StateNotifier<AsyncValue<List<Tournament>>> {
+  final tournamentRepository =
+      TournamentRepository(tournamentApi: TournamentApi());
+
   DocumentSnapshot? _lastDocument;
   bool _hasMore = true;
   bool _isLoading = false;
   final Player player1, player2;
 
-  PlayersTournamentsNotifier({required this.player1, required this.player2}) : super(const AsyncValue.data([]));
+  PlayersTournamentsNotifier({required this.player1, required this.player2})
+      : super(const AsyncValue.data([]));
 
   Future<void> fetchTournaments({
     int limit = 5,
@@ -23,7 +28,7 @@ class PlayersTournamentsNotifier
     _isLoading = true;
     state = const AsyncValue.loading();
 
-    final result = await TournamentRepository.fetchPlayersTournaments(
+    final result = await tournamentRepository.fetchPlayersTournaments(
       player1Id: player1.playerId,
       player2Id: player2.playerId,
       limit: limit,

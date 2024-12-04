@@ -1,26 +1,21 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:tennis_cup/data/data_providers/tournament_api.dart';
 import 'package:tennis_cup/data/models/arena.dart';
 import 'package:tennis_cup/data/models/tournament.dart';
 
 class TournamentRepository {
-  static final CollectionReference tournamentsCollection =
-      FirebaseFirestore.instance.collection('tournaments');
+  final TournamentApi tournamentApi;
 
-  static Future<Map<String, dynamic>> fetchPlayerTournaments({
+  const TournamentRepository({required this.tournamentApi});
+
+  Future<Map<String, dynamic>> fetchPlayerTournaments({
     required String playerId,
     required int limit,
     DocumentSnapshot? startAfter,
   }) async {
-    Query query = tournamentsCollection
-        .where('players', arrayContains: playerId)
-        .orderBy('date', descending: true)
-        .limit(limit);
+    final querySnapshot = await tournamentApi.fetchPlayerTournaments(
+        playerId: playerId, limit: limit, startAfter: startAfter);
 
-    if (startAfter != null) {
-      query = query.startAfterDocument(startAfter);
-    }
-
-    final querySnapshot = await query.get();
     final tournaments = querySnapshot.docs.map((doc) {
       return Tournament.fromFirestore(doc);
     }).toList();
@@ -32,33 +27,14 @@ class TournamentRepository {
     };
   }
 
-  static Future<List<Tournament>> fetchScheduledTournament(
+  Future<List<Tournament>> fetchScheduledTournament(
       {required DateTime tournamentDate,
       required Arena tournamentArena,
       required Time tournamentTime}) async {
-    final Timestamp startOfDay = Timestamp.fromDate(DateTime(
-      tournamentDate.year,
-      tournamentDate.month,
-      tournamentDate.day,
-      0,
-      0,
-      0,
-    ));
-    final Timestamp endOfDay = Timestamp.fromDate(DateTime(
-      tournamentDate.year,
-      tournamentDate.month,
-      tournamentDate.day,
-      23,
-      59,
-      59,
-    ));
-
-    final querySnapshot = await tournamentsCollection
-        .where('date', isGreaterThanOrEqualTo: startOfDay)
-        .where('date', isLessThanOrEqualTo: endOfDay)
-        .where('time', isEqualTo: tournamentTime.name)
-        .where('arena', isEqualTo: tournamentArena.title)
-        .get();
+    final querySnapshot = await tournamentApi.fetchScheduledTournament(
+        tournamentDate: tournamentDate,
+        tournamentArena: tournamentArena,
+        tournamentTime: tournamentTime);
 
     List<Tournament> mappedTournaments = await Future.wait(
         querySnapshot.docs.map((doc) async => Tournament.fromFirestore(doc)));
@@ -66,11 +42,9 @@ class TournamentRepository {
     return mappedTournaments;
   }
 
-  static Future<List<Tournament>> fetchLiveStreamMatchesTournaments() async {
-    final QuerySnapshot querySnapshot = await tournamentsCollection
-        .orderBy('date', descending: true)
-        .limit(10)
-        .get();
+  Future<List<Tournament>> fetchLiveStreamMatchesTournaments() async {
+    final QuerySnapshot querySnapshot =
+        await tournamentApi.fetchLiveStreamMatchesTournaments();
 
     List<Tournament> mappedTournaments = await Future.wait(
         querySnapshot.docs.map((doc) async => Tournament.fromFirestore(doc)));
@@ -78,12 +52,9 @@ class TournamentRepository {
     return mappedTournaments;
   }
 
-  static Future<List<Tournament>> fetchUpcomingMatchesTournaments() async {
-    final QuerySnapshot querySnapshot = await tournamentsCollection
-        .where('isFinished', isNotEqualTo: true)
-        .orderBy('date', descending: true)
-        .limit(10)
-        .get();
+  Future<List<Tournament>> fetchUpcomingMatchesTournaments() async {
+    final QuerySnapshot querySnapshot =
+        await tournamentApi.fetchUpcomingMatchesTournaments();
 
     List<Tournament> mappedTournaments = await Future.wait(
         querySnapshot.docs.map((doc) async => Tournament.fromFirestore(doc)));
@@ -91,12 +62,9 @@ class TournamentRepository {
     return mappedTournaments;
   }
 
-  static Future<List<Tournament>> fetchWinnersTournaments() async {
-    final QuerySnapshot querySnapshot = await tournamentsCollection
-        .where('isFinished', isEqualTo: true)
-        .orderBy('date', descending: true)
-        .limit(10)
-        .get();
+  Future<List<Tournament>> fetchWinnersTournaments() async {
+    final QuerySnapshot querySnapshot =
+        await tournamentApi.fetchWinnersTournaments();
 
     List<Tournament> mappedTournaments = await Future.wait(
         querySnapshot.docs.map((doc) async => Tournament.fromFirestore(doc)));
@@ -104,29 +72,18 @@ class TournamentRepository {
     return mappedTournaments;
   }
 
-  static Stream<void> watchMatchChanges(String tournamentId) {
-    return FirebaseFirestore.instance
-        .collectionGroup('matches')
-        .where('tournamentId', isEqualTo: tournamentId)
-        .snapshots();
+  Stream<void> watchMatchChanges(String tournamentId) {
+    return tournamentApi.watchMatchChanges(tournamentId);
   }
 
-  static Future<Map<String, dynamic>> fetchPlayersTournaments({
+  Future<Map<String, dynamic>> fetchPlayersTournaments({
     required String player1Id,
     required String player2Id,
     required int limit,
     DocumentSnapshot? startAfter,
   }) async {
-    Query query = tournamentsCollection
-        .where('players', arrayContains: player1Id)
-        .orderBy('date', descending: true)
-        .limit(limit);
-
-    if (startAfter != null) {
-      query = query.startAfterDocument(startAfter);
-    }
-
-    final querySnapshot = await query.get();
+    final querySnapshot = await tournamentApi.fetchPlayerTournaments(
+        playerId: player1Id, limit: limit, startAfter: startAfter);
 
     final tournaments = <Tournament>[];
     for (final doc in querySnapshot.docs) {
@@ -143,11 +100,11 @@ class TournamentRepository {
     };
   }
 
-  static Future<Tournament> fetchTournament({
+  Future<Tournament> fetchTournamentById({
     required String tournamentId,
   }) async {
     DocumentSnapshot tournamentSnapshot =
-        await tournamentsCollection.doc(tournamentId).get();
+        await tournamentApi.fetchTournamentById(tournamentId: tournamentId);
 
     return await Tournament.fromFirestore(tournamentSnapshot);
   }
