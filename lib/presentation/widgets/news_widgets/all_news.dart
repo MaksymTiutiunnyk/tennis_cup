@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tennis_cup/logic/cubit/news_cubit.dart';
+import 'package:tennis_cup/logic/cubit/news_period_cubit.dart';
 import 'package:tennis_cup/presentation/widgets/news_widgets/single_news.dart';
 
 class AllNews extends StatefulWidget {
@@ -14,7 +15,7 @@ class _AllNewsState extends State<AllNews> {
   @override
   void initState() {
     super.initState();
-    context.read<NewsCubit>().fetchNews(DateTime.now());
+    context.read<NewsCubit>().fetchNews(context.read<NewsPeriodCubit>().state);
   }
 
   @override

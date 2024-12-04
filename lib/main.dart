@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tennis_cup/connection_monitor.dart';
+import 'package:tennis_cup/logic/cubit/news_cubit.dart';
+import 'package:tennis_cup/logic/cubit/news_period_cubit.dart';
 import 'package:tennis_cup/logic/cubit/tab_index_cubit.dart';
 import 'package:tennis_cup/presentation/screens/tabs.dart';
 
@@ -31,6 +33,13 @@ void main() async {
       MultiBlocProvider(
         providers: [
           BlocProvider<TabIndexCubit>(create: (_) => TabIndexCubit()),
+          BlocProvider(
+            create: (context) => NewsPeriodCubit(),
+          ),
+          BlocProvider(
+            create: (context) => NewsCubit(
+                newsPeriodCubit: BlocProvider.of<NewsPeriodCubit>(context)),
+          ),
         ],
         child: const ProviderScope(child: TennisCup()),
       ),
