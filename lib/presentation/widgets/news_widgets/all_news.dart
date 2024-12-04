@@ -1,34 +1,45 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:tennis_cup/data/models/news.dart';
-import 'package:tennis_cup/logic/riverpod/news_provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tennis_cup/logic/cubit/news_cubit.dart';
 import 'package:tennis_cup/presentation/widgets/news_widgets/single_news.dart';
 
-class AllNews extends ConsumerWidget {
+class AllNews extends StatefulWidget {
   const AllNews({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final AsyncValue<List<News>> newsList = ref.watch(newsProvider);
+  State<AllNews> createState() => _AllNewsState();
+}
 
+class _AllNewsState extends State<AllNews> {
+  @override
+  void initState() {
+    super.initState();
+    context.read<NewsCubit>().fetchNews(DateTime.now());
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Flexible(
       fit: FlexFit.loose,
-      child: newsList.when(
-        data: (newsList) {
-          if (newsList.isEmpty) {
+      child: BlocBuilder<NewsCubit, NewsState>(
+        builder: (context, state) {
+          if (state is NewsFetched && state.fetchedNews.isEmpty) {
             return const Text('No news found');
           }
-          return ListView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: newsList.length,
-            itemBuilder: (ctx, index) {
-              return SingleNews(news: newsList[index]);
-            },
-          );
+
+          if (state is NewsFetched) {
+            return ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: state.fetchedNews.length,
+              itemBuilder: (ctx, index) {
+                return SingleNews(news: state.fetchedNews[index]);
+              },
+            );
+          }
+
+          return const Center(child: CircularProgressIndicator());
         },
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stack) => const Text('Ooops, something went wrong'),
       ),
     );
   }

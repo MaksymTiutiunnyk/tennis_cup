@@ -1,12 +1,12 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+// import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class NewsPeriodNotifier extends StateNotifier<DateTime> {
-  NewsPeriodNotifier() : super(DateTime.now());
+// class NewsPeriodNotifier extends StateNotifier<DateTime> {
+//   NewsPeriodNotifier() : super(DateTime.now());
 
-  void selectPeriod(DateTime period) {
-    state = period;
-  }
-}
+//   void selectPeriod(DateTime period) {
+//     state = period;
+//   }
+// }
 
-final newsPeriodProvider = StateNotifierProvider<NewsPeriodNotifier, DateTime>(
-    (ref) => NewsPeriodNotifier());
+// final newsPeriodProvider = StateNotifierProvider<NewsPeriodNotifier, DateTime>(
+//     (ref) => NewsPeriodNotifier());
