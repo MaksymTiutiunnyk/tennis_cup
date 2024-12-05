@@ -1,11 +1,11 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
-import 'package:tennis_cup/logic/riverpod/schedule_date_provider.dart';
+import 'package:tennis_cup/logic/cubit/schedule_date_cubit.dart';
 
-class ScheduleDatePicker extends ConsumerWidget {
+class ScheduleDatePicker extends StatelessWidget {
   const ScheduleDatePicker({super.key});
 
-  void _pickDate(BuildContext context, WidgetRef ref) async {
+  void _pickDate(BuildContext context) async {
     DateTime? pickedDate = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
@@ -17,16 +17,18 @@ class ScheduleDatePicker extends ConsumerWidget {
       return;
     }
 
-    ref.read(scheduleDateProvider.notifier).selectDate(pickedDate);
+    if (!context.mounted) {
+      return;
+    }
+
+    context.read<ScheduleDateCubit>().selectDate(pickedDate);
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    DateTime selectedDate = ref.watch(scheduleDateProvider);
-
+  Widget build(BuildContext context) {
     return IconButton(
       onPressed: () {
-        _pickDate(context, ref);
+        _pickDate(context);
       },
       icon: Stack(
         alignment: Alignment.center,
@@ -34,12 +36,14 @@ class ScheduleDatePicker extends ConsumerWidget {
           const Icon(Icons.calendar_today),
           Positioned(
             top: 6,
-            child: Text(
-              '${selectedDate.day}',
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.bold,
-                color: Theme.of(context).colorScheme.tertiary,
+            child: BlocBuilder<ScheduleDateCubit, DateTime>(
+              builder: (context, state) => Text(
+                '${state.day}',
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.tertiary,
+                ),
               ),
             ),
           ),

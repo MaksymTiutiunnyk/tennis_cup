@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tennis_cup/data/data_providers/tournament_api.dart';
+import 'package:tennis_cup/logic/cubit/arena_filter_cubit.dart';
+import 'package:tennis_cup/logic/cubit/schedule_date_cubit.dart';
 import 'package:tennis_cup/logic/cubit/tab_index_cubit.dart';
 import 'package:tennis_cup/data/models/match.dart';
 import 'package:intl/intl.dart';
 import 'package:tennis_cup/data/models/tournament.dart';
-import 'package:tennis_cup/logic/riverpod/arena_filter_provider.dart';
-import 'package:tennis_cup/logic/riverpod/schedule_date_provider.dart';
-import 'package:tennis_cup/logic/riverpod/time_filter_provider.dart';
 import 'package:tennis_cup/data/repositories/tournament_repository.dart';
+import 'package:tennis_cup/logic/cubit/time_filter_cubit.dart';
 import 'package:tennis_cup/presentation/widgets/home_widgets/live_stream_match_player.dart';
 
 DateFormat formatter = DateFormat('yyyy-MM-dd');
@@ -40,9 +40,8 @@ class LiveStreamMatch extends ConsumerWidget {
         StreamProvider.autoDispose<Tournament>((ref) async* {
       await for (final _
           in tournamentRepository.watchMatchChanges(tournament.tournamentId)) {
-        Tournament fetchedTournament =
-            await tournamentRepository.fetchTournamentById(
-                tournamentId: tournament.tournamentId);
+        Tournament fetchedTournament = await tournamentRepository
+            .fetchTournamentById(tournamentId: tournament.tournamentId);
         _updateTournamentAndMatch(fetchedTournament);
         yield fetchedTournament;
       }
@@ -65,14 +64,14 @@ class LiveStreamMatch extends ConsumerWidget {
                   children: [
                     InkWell(
                       onTap: () {
-                        ref
-                            .read(scheduleDateProvider.notifier)
+                        context
+                            .read<ScheduleDateCubit>()
                             .selectDate(tournament.date);
-                        ref
-                            .read(timeFilterProvider.notifier)
+                        context
+                            .read<TimeFilterCubit>()
                             .selectTime(tournament.time);
-                        ref
-                            .read(arenaFilterProvider.notifier)
+                        context
+                            .read<ArenaFilterCubit>()
                             .selectArena(tournament.arena);
                         context.read<TabIndexCubit>().selectTab(1);
                       },

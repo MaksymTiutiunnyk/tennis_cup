@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tennis_cup/data/data_providers/tournament_api.dart';
+import 'package:tennis_cup/logic/cubit/arena_filter_cubit.dart';
+import 'package:tennis_cup/logic/cubit/schedule_date_cubit.dart';
 import 'package:tennis_cup/logic/cubit/tab_index_cubit.dart';
 import 'package:tennis_cup/data/models/player.dart';
 import 'package:tennis_cup/data/models/match.dart';
 import 'package:intl/intl.dart';
 import 'package:tennis_cup/data/models/tournament.dart';
-import 'package:tennis_cup/logic/riverpod/arena_filter_provider.dart';
-import 'package:tennis_cup/logic/riverpod/schedule_date_provider.dart';
-import 'package:tennis_cup/logic/riverpod/time_filter_provider.dart';
 import 'package:tennis_cup/data/repositories/tournament_repository.dart';
+import 'package:tennis_cup/logic/cubit/time_filter_cubit.dart';
 import 'package:tennis_cup/presentation/screens/tabs.dart';
 
 DateFormat dateTimeFormatter = DateFormat('yyyy-MM-dd, HH:mm');
@@ -79,9 +79,9 @@ class PlayersMatch extends ConsumerWidget {
 
     return InkWell(
       onTap: () {
-        ref.read(scheduleDateProvider.notifier).selectDate(tournament.date);
-        ref.read(timeFilterProvider.notifier).selectTime(tournament.time);
-        ref.read(arenaFilterProvider.notifier).selectArena(tournament.arena);
+        context.read<ScheduleDateCubit>().selectDate(tournament.date);
+        context.read<TimeFilterCubit>().selectTime(tournament.time);
+        context.read<ArenaFilterCubit>().selectArena(tournament.arena);
         context.read<TabIndexCubit>().selectTab(1);
 
         Navigator.of(context)

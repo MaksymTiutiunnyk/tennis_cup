@@ -1,19 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tennis_cup/data/data_providers/arenas.dart';
 import 'package:tennis_cup/data/models/arena.dart';
 import 'package:tennis_cup/data/models/tournament.dart';
-import 'package:tennis_cup/logic/riverpod/arena_filter_provider.dart';
-import 'package:tennis_cup/logic/riverpod/time_filter_provider.dart';
+import 'package:tennis_cup/logic/cubit/arena_filter_cubit.dart';
+import 'package:tennis_cup/logic/cubit/time_filter_cubit.dart';
 
-class ScheduleFilters extends ConsumerWidget {
+class ScheduleFilters extends StatelessWidget {
   const ScheduleFilters({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    Time selectedTime = ref.watch(timeFilterProvider);
-    Arena selectedArena = ref.watch(arenaFilterProvider);
-
+  Widget build(BuildContext context) {
     return Column(
       children: [
         Padding(
@@ -48,25 +45,25 @@ class ScheduleFilters extends ConsumerWidget {
         Expanded(
           child: Padding(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-            child: ListView(
-              children: [
-                for (Time time in Time.values)
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(time.name),
-                      Radio<Time>(
-                        value: time,
-                        groupValue: selectedTime,
-                        onChanged: (value) {
-                          ref
-                              .read(timeFilterProvider.notifier)
-                              .selectTime(value!);
-                        },
-                      ),
-                    ],
-                  ),
-              ],
+            child: BlocBuilder<TimeFilterCubit, Time>(
+              builder: (context, state) => ListView(
+                children: [
+                  for (Time time in Time.values)
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(time.name),
+                        Radio<Time>(
+                          value: time,
+                          groupValue: state,
+                          onChanged: (value) {
+                            context.read<TimeFilterCubit>().selectTime(value!);
+                          },
+                        ),
+                      ],
+                    ),
+                ],
+              ),
             ),
           ),
         ),
@@ -75,35 +72,37 @@ class ScheduleFilters extends ConsumerWidget {
           flex: 2,
           child: Padding(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-            child: ListView(
-              children: [
-                for (Arena arena in arenas)
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.circle,
-                            color: arena.color,
-                            size: 10,
-                          ),
-                          const SizedBox(width: 8),
-                          Text('Arena: ${arena.title}'),
-                        ],
-                      ),
-                      Radio<Arena>(
-                        value: arena,
-                        groupValue: selectedArena,
-                        onChanged: (value) {
-                          ref
-                              .read(arenaFilterProvider.notifier)
-                              .selectArena(value!);
-                        },
-                      ),
-                    ],
-                  ),
-              ],
+            child: BlocBuilder<ArenaFilterCubit, Arena>(
+              builder: (context, state) => ListView(
+                children: [
+                  for (Arena arena in arenas)
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.circle,
+                              color: arena.color,
+                              size: 10,
+                            ),
+                            const SizedBox(width: 8),
+                            Text('Arena: ${arena.title}'),
+                          ],
+                        ),
+                        Radio<Arena>(
+                          value: arena,
+                          groupValue: state,
+                          onChanged: (value) {
+                            context
+                                .read<ArenaFilterCubit>()
+                                .selectArena(value!);
+                          },
+                        ),
+                      ],
+                    ),
+                ],
+              ),
             ),
           ),
         ),
