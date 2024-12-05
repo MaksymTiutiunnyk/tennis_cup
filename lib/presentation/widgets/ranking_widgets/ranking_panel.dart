@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tennis_cup/data/models/player.dart';
+import 'package:tennis_cup/logic/cubit/sex_filter_cubit.dart';
 import 'package:tennis_cup/presentation/screens/player_details.dart';
 import 'package:tennis_cup/presentation/widgets/ranking_widgets/ranking_filters.dart';
 import 'package:tennis_cup/presentation/widgets/player_search.dart';
@@ -12,7 +14,10 @@ class RankingPanel extends StatelessWidget {
       useSafeArea: true,
       isScrollControlled: true,
       context: context,
-      builder: (ctx) => const RankingFilters(),
+      builder: (ctx) => BlocProvider.value(
+        value: BlocProvider.of<SexFilterCubit>(context),
+        child: const RankingFilters(),
+      ),
     );
   }
 

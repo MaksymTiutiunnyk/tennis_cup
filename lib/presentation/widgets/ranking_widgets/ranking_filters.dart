@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tennis_cup/data/models/player.dart';
-import 'package:tennis_cup/logic/riverpod/sex_filter_provider.dart';
+import 'package:tennis_cup/logic/cubit/sex_filter_cubit.dart';
 
-class RankingFilters extends ConsumerWidget {
+class RankingFilters extends StatelessWidget {
   const RankingFilters({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    Sex selectedSex = ref.watch(sexFilterProvider);
-
+  Widget build(BuildContext context) {
     return Column(
       children: [
         Padding(
@@ -44,25 +42,25 @@ class RankingFilters extends ConsumerWidget {
         Expanded(
           child: Padding(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-            child: ListView(
-              children: [
-                for (Sex sex in Sex.values)
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(sex.name),
-                      Radio<Sex>(
-                        value: sex,
-                        groupValue: selectedSex,
-                        onChanged: (value) {
-                          ref
-                              .read(sexFilterProvider.notifier)
-                              .selectSex(value!);
-                        },
-                      ),
-                    ],
-                  ),
-              ],
+            child: BlocBuilder<SexFilterCubit, Sex>(
+              builder: (context, state) => ListView(
+                children: [
+                  for (Sex sex in Sex.values)
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(sex.name),
+                        Radio<Sex>(
+                          value: sex,
+                          groupValue: state,
+                          onChanged: (value) {
+                            context.read<SexFilterCubit>().selectSex(value!);
+                          },
+                        ),
+                      ],
+                    ),
+                ],
+              ),
             ),
           ),
         ),

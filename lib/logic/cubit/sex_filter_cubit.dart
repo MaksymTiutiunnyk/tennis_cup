@@ -4,7 +4,7 @@ import 'package:tennis_cup/data/models/player.dart';
 class SexFilterCubit extends Cubit<Sex> {
   SexFilterCubit() : super(Sex.All);
 
-  void selectedSex(Sex sex) {
+  void selectSex(Sex sex) {
     emit(sex);
   }
 }
