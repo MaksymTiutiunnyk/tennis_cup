@@ -1,55 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tennis_cup/data/models/player.dart';
-import 'package:tennis_cup/data/models/tournament.dart';
-import 'package:tennis_cup/logic/riverpod/player_tournaments_notifier.dart';
+import 'package:tennis_cup/logic/cubit/player_tournaments_cubit.dart';
 import 'package:tennis_cup/presentation/widgets/player_widgets/player_tournament.dart';
 
-class PlayerTournaments extends ConsumerStatefulWidget {
+class PlayerTournaments extends StatefulWidget {
   final Player player;
 
   const PlayerTournaments({super.key, required this.player});
 
   @override
-  ConsumerState createState() => _PlayerTournamentsState();
+  State<PlayerTournaments> createState() => _PlayerTournamentsState();
 }
 
-class _PlayerTournamentsState extends ConsumerState<PlayerTournaments> {
-  late StateNotifierProvider<PlayerTournamentsNotifier,
-      AsyncValue<List<Tournament>>> _playerTournamentsProvider;
-  final ScrollController _scrollController = ScrollController();
-
-  @override
-  void initState() {
-    super.initState();
-    _scrollController.addListener(_onScroll);
-
-    _playerTournamentsProvider = StateNotifierProvider<
-            PlayerTournamentsNotifier, AsyncValue<List<Tournament>>>(
-        (ref) => PlayerTournamentsNotifier(widget.player));
-
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
-      await ref.read(_playerTournamentsProvider.notifier).fetchTournaments();
-    });
-  }
-
-  @override
-  void dispose() {
-    _scrollController.dispose();
-    super.dispose();
-  }
-
-  void _onScroll() {
-    if (_scrollController.position.atEdge &&
-        _scrollController.position.pixels != 0) {
-      ref.read(_playerTournamentsProvider.notifier).fetchTournaments();
-    }
-  }
-
+class _PlayerTournamentsState extends State<PlayerTournaments> {
   @override
   Widget build(BuildContext context) {
-    final playerTournaments = ref.watch(_playerTournamentsProvider);
-
     return Flexible(
       fit: FlexFit.loose,
       child: Column(
@@ -67,25 +33,31 @@ class _PlayerTournamentsState extends ConsumerState<PlayerTournaments> {
           ),
           Flexible(
             fit: FlexFit.loose,
-            child: playerTournaments.when(
-              data: (playerTournaments) {
-                if (playerTournaments.isEmpty) {
+            child: BlocBuilder<PlayerTournamentsCubit, PlayerTournamentsState>(
+              builder: (context, state) {
+                if (state.isLoading && state.tournaments.isEmpty) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                if (state.errorMessage != null) {
+                  return const Center(
+                      child: Text('Oops, something went wrong'));
+                }
+
+                if (state.tournaments.isEmpty) {
                   return const Center(child: Text('No tournaments found'));
                 }
+
                 return ListView.builder(
                   shrinkWrap: true,
-                  controller: _scrollController,
-                  itemCount: playerTournaments.length,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: state.tournaments.length,
                   itemBuilder: (ctx, index) => PlayerTournament(
-                    tournament: playerTournaments[index],
+                    tournament: state.tournaments[index],
                     player: widget.player,
                   ),
                 );
               },
-              error: (error, stackTrace) => const Center(
-                child: Text('Ooops, something went wrong'),
-              ),
-              loading: () => const CircularProgressIndicator(),
             ),
           ),
         ],

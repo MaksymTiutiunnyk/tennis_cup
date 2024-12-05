@@ -44,7 +44,6 @@ void main() async {
             create: (context) => NewsCubit(
                 newsPeriodCubit: BlocProvider.of<NewsPeriodCubit>(context)),
           ),
-          
           BlocProvider(create: (context) => ScheduleDateCubit()),
           BlocProvider(create: (context) => ArenaFilterCubit()),
           BlocProvider(create: (context) => TimeFilterCubit()),
