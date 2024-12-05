@@ -5,19 +5,20 @@ import 'package:tennis_cup/data/models/player.dart';
 import 'package:tennis_cup/data/models/tournament.dart';
 import 'package:tennis_cup/data/repositories/tournament_repository.dart';
 
-part 'player_tournaments_state.dart';
+part 'players_tournaments_state.dart';
 
-class PlayerTournamentsCubit extends Cubit<PlayerTournamentsState> {
+class PlayersTournamentsCubit extends Cubit<PlayersTournamentsState> {
   final TournamentRepository tournamentRepository =
       TournamentRepository(tournamentApi: TournamentApi());
 
   final Player player1;
+  final Player player2;
   DocumentSnapshot? _lastDocument;
   bool _hasMore = true;
   bool _isLoading = false;
 
-  PlayerTournamentsCubit(this.player1)
-      : super(PlayerTournamentsState(tournaments: [], isLoading: false));
+  PlayersTournamentsCubit(this.player1, this.player2)
+      : super(PlayersTournamentsState(tournaments: [], isLoading: false));
 
   Future<void> fetchTournaments({int limit = 2}) async {
     if (_isLoading || !_hasMore) return;
@@ -28,6 +29,7 @@ class PlayerTournamentsCubit extends Cubit<PlayerTournamentsState> {
     try {
       final result = await tournamentRepository.fetchPlayersTournaments(
         player1Id: player1.playerId,
+        player2Id: player2.playerId,
         limit: limit,
         startAfter: _lastDocument,
       );
@@ -41,7 +43,7 @@ class PlayerTournamentsCubit extends Cubit<PlayerTournamentsState> {
         _hasMore = false;
       }
 
-      emit(PlayerTournamentsState(
+      emit(PlayersTournamentsState(
           tournaments: allTournaments, isLoading: false));
     } catch (e) {
       emit(state.copyWith(

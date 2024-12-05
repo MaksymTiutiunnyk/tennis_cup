@@ -1,37 +1,27 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tennis_cup/data/models/player.dart';
 import 'package:tennis_cup/data/models/match.dart';
 import 'package:tennis_cup/data/models/tournament.dart';
-import 'package:tennis_cup/logic/riverpod/players_tournaments_notifier.dart';
+import 'package:tennis_cup/logic/cubit/players_tournaments_cubit.dart';
 import 'package:tennis_cup/presentation/widgets/comparison_widgets.dart/players_match.dart';
 
-class PlayersMatches extends ConsumerStatefulWidget {
+class PlayersMatches extends StatelessWidget {
   final Player player1, player2;
   const PlayersMatches(
       {super.key, required this.player1, required this.player2});
-
-  @override
-  ConsumerState<PlayersMatches> createState() {
-    return _PlayersMatchesState();
-  }
-}
-
-class _PlayersMatchesState extends ConsumerState<PlayersMatches> {
-  late StateNotifierProvider<PlayersTournamentsNotifier,
-      AsyncValue<List<Tournament>>> _playersTournamentsProvider;
 
   List<PlayersMatch> _getPlayersMatches(Tournament tournament) {
     final List<PlayersMatch> playersMatches = [];
 
     for (Match match in tournament.matches!) {
-      if ((match.bluePlayer.playerId == widget.player1.playerId ||
-              match.redPlayer.playerId == widget.player1.playerId) &&
-          (match.bluePlayer.playerId == widget.player2.playerId ||
-              match.redPlayer.playerId == widget.player2.playerId)) {
+      if ((match.bluePlayer.playerId == player1.playerId ||
+              match.redPlayer.playerId == player1.playerId) &&
+          (match.bluePlayer.playerId == player2.playerId ||
+              match.redPlayer.playerId == player2.playerId)) {
         playersMatches.add(PlayersMatch(
-          player1: widget.player1,
-          player2: widget.player2,
+          player1: player1,
+          player2: player2,
           match: match,
           tournament: tournament,
         ));
@@ -41,42 +31,8 @@ class _PlayersMatchesState extends ConsumerState<PlayersMatches> {
     return playersMatches;
   }
 
-  final ScrollController _scrollController = ScrollController();
-
-  @override
-  void initState() {
-    super.initState();
-    _scrollController.addListener(_onScroll);
-
-    _playersTournamentsProvider = StateNotifierProvider<
-            PlayersTournamentsNotifier, AsyncValue<List<Tournament>>>(
-        (ref) => PlayersTournamentsNotifier(
-              player1: widget.player1,
-              player2: widget.player2,
-            ));
-
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
-      await ref.read(_playersTournamentsProvider.notifier).fetchTournaments();
-    });
-  }
-
-  @override
-  void dispose() {
-    _scrollController.dispose();
-    super.dispose();
-  }
-
-  void _onScroll() {
-    if (_scrollController.position.atEdge &&
-        _scrollController.position.pixels != 0) {
-      ref.read(_playersTournamentsProvider.notifier).fetchTournaments();
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    final playersTournaments = ref.watch(_playersTournamentsProvider);
-
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -88,7 +44,7 @@ class _PlayersMatchesState extends ConsumerState<PlayersMatches> {
               const SizedBox(width: 8),
               Flexible(
                 child: Text(
-                  "Players' matches: ${widget.player1.fullName} vs ${widget.player2.fullName}",
+                  "Players' matches: ${player1.fullName} vs ${player2.fullName}",
                   softWrap: true,
                 ),
               ),
@@ -97,10 +53,18 @@ class _PlayersMatchesState extends ConsumerState<PlayersMatches> {
         ),
         Flexible(
           fit: FlexFit.loose,
-          child: playersTournaments.when(
-            data: (playersTournaments) {
+          child: BlocBuilder<PlayersTournamentsCubit, PlayersTournamentsState>(
+            builder: (context, state) {
+              if (state.isLoading && state.tournaments.isEmpty) {
+                return const Center(child: CircularProgressIndicator());
+              }
+
+              if (state.errorMessage != null) {
+                return const Center(child: Text('Oops, something went wrong'));
+              }
+
               final playersMatches = [];
-              for (Tournament tournament in playersTournaments) {
+              for (Tournament tournament in state.tournaments) {
                 playersMatches.addAll(_getPlayersMatches(tournament));
               }
               if (playersMatches.isEmpty) {
@@ -108,14 +72,11 @@ class _PlayersMatchesState extends ConsumerState<PlayersMatches> {
               }
               return ListView.builder(
                 shrinkWrap: true,
-                controller: _scrollController,
+                physics: const NeverScrollableScrollPhysics(),
                 itemCount: playersMatches.length,
                 itemBuilder: (context, index) => playersMatches[index],
               );
             },
-            error: (error, stackTrace) =>
-                const Center(child: Text('Ooops, something went wrong')),
-            loading: () => const Center(child: CircularProgressIndicator()),
           ),
         ),
       ],

@@ -4,16 +4,11 @@ import 'package:tennis_cup/data/models/player.dart';
 import 'package:tennis_cup/logic/cubit/player_tournaments_cubit.dart';
 import 'package:tennis_cup/presentation/widgets/player_widgets/player_tournament.dart';
 
-class PlayerTournaments extends StatefulWidget {
+class PlayerTournaments extends StatelessWidget {
   final Player player;
 
   const PlayerTournaments({super.key, required this.player});
 
-  @override
-  State<PlayerTournaments> createState() => _PlayerTournamentsState();
-}
-
-class _PlayerTournamentsState extends State<PlayerTournaments> {
   @override
   Widget build(BuildContext context) {
     return Flexible(
@@ -54,7 +49,7 @@ class _PlayerTournamentsState extends State<PlayerTournaments> {
                   itemCount: state.tournaments.length,
                   itemBuilder: (ctx, index) => PlayerTournament(
                     tournament: state.tournaments[index],
-                    player: widget.player,
+                    player: player,
                   ),
                 );
               },

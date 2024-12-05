@@ -36,11 +36,7 @@ class _PlayerDetailsScrollableState extends State<PlayerDetailsScrollable> {
   void _onScroll() {
     if (_scrollController.position.atEdge &&
         _scrollController.position.pixels != 0) {
-      print("Reached the bottom of the list");
-      final cubit = context.read<PlayerTournamentsCubit>();
-      cubit.fetchTournaments();
-    } else {
-      print("not at the bottom yet");
+      context.read<PlayerTournamentsCubit>().fetchTournaments();
     }
   }
 

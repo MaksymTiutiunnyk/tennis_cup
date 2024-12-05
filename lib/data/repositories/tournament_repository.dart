@@ -8,25 +8,6 @@ class TournamentRepository {
 
   const TournamentRepository({required this.tournamentApi});
 
-  Future<Map<String, dynamic>> fetchPlayerTournaments({
-    required String playerId,
-    required int limit,
-    DocumentSnapshot? startAfter,
-  }) async {
-    final querySnapshot = await tournamentApi.fetchPlayerTournaments(
-        playerId: playerId, limit: limit, startAfter: startAfter);
-
-    final tournaments = querySnapshot.docs.map((doc) {
-      return Tournament.fromFirestore(doc);
-    }).toList();
-
-    return {
-      'tournaments': tournaments,
-      'lastDocument':
-          querySnapshot.docs.isNotEmpty ? querySnapshot.docs.last : null,
-    };
-  }
-
   Future<List<Tournament>> fetchScheduledTournament(
       {required DateTime tournamentDate,
       required Arena tournamentArena,
@@ -78,7 +59,7 @@ class TournamentRepository {
 
   Future<Map<String, dynamic>> fetchPlayersTournaments({
     required String player1Id,
-    required String player2Id,
+    String? player2Id,
     required int limit,
     DocumentSnapshot? startAfter,
   }) async {
@@ -86,9 +67,14 @@ class TournamentRepository {
         playerId: player1Id, limit: limit, startAfter: startAfter);
 
     final tournaments = <Tournament>[];
+
     for (final doc in querySnapshot.docs) {
       final tournament = await Tournament.fromFirestore(doc);
-      if (tournament.players.any((player) => player.playerId == player2Id)) {
+      if (player2Id != null) {
+        if (tournament.players.any((player) => player.playerId == player2Id)) {
+          tournaments.add(tournament);
+        }
+      } else {
         tournaments.add(tournament);
       }
     }

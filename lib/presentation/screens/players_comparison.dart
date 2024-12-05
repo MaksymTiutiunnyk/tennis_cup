@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tennis_cup/data/models/player.dart';
-import 'package:tennis_cup/presentation/widgets/comparison_widgets.dart/players_intro.dart';
-import 'package:tennis_cup/presentation/widgets/comparison_widgets.dart/players_matches.dart';
-import 'package:tennis_cup/presentation/widgets/comparison_widgets.dart/players_statistics.dart';
+import 'package:tennis_cup/logic/cubit/players_tournaments_cubit.dart';
+import 'package:tennis_cup/presentation/widgets/comparison_widgets.dart/players_comparison_scrollable.dart';
 
 class PlayersComparison extends StatelessWidget {
   final Player player1, player2;
@@ -11,20 +11,14 @@ class PlayersComparison extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leadingWidth: 35,
-        title: const Text('Tennis Cup: Players comparison'),
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            PlayersIntro(player1: player1, player2: player2),
-            PlayersStatistics(player1: player1, player2: player2),
-            PlayersMatches(player1: player1, player2: player2),
-          ],
+    return BlocProvider<PlayersTournamentsCubit>(
+      create: (context) => PlayersTournamentsCubit(player1, player2),
+      child: Scaffold(
+        appBar: AppBar(
+          leadingWidth: 35,
+          title: const Text('Tennis Cup: Players comparison'),
         ),
+        body: PlayersComparisonScrollable(player1: player1, player2: player2),
       ),
     );
   }
