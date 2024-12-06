@@ -64,9 +64,12 @@ class Match {
         bluePlayer == other.bluePlayer &&
         redPlayer == other.redPlayer &&
         blueScore == other.blueScore &&
-        redScore == other.redScore;
+        redScore == other.redScore &&
+        blueSetScores == other.blueSetScores &&
+        redSetScores == other.redSetScores;
   }
 
   @override
-  int get hashCode => Object.hash(matchId, bluePlayer, redPlayer, blueScore, redScore);
+  int get hashCode =>
+      Object.hash(matchId, bluePlayer, redPlayer, blueScore, redScore);
 }
