@@ -9,8 +9,10 @@ class PlayerApi {
     DocumentSnapshot? startAfter,
     Sex? sexFilter,
   }) async {
-    Query query =
-        FirebaseFirestore.instance.collection('players').orderBy('rank_tennis', descending: true).limit(limit);
+    Query query = FirebaseFirestore.instance
+        .collection('players')
+        .orderBy('rank_tennis', descending: true)
+        .limit(limit);
 
     if (sexFilter != null && sexFilter != Sex.All) {
       query = query.where('sex', isEqualTo: sexFilter.name);
@@ -21,5 +23,25 @@ class PlayerApi {
     }
 
     return await query.get();
+  }
+
+  Future<QuerySnapshot> fetchPlayersBySubstring(
+      {required String substring, bool isSurname = false}) async {
+    QuerySnapshot querySnapshot;
+
+    if (isSurname) {
+      querySnapshot = await FirebaseFirestore.instance
+          .collection('players')
+          .where('surname', isGreaterThanOrEqualTo: substring)
+          .where('surname', isLessThanOrEqualTo: '$substring\uf8ff')
+          .get();
+    } else {
+      querySnapshot = await FirebaseFirestore.instance
+          .collection('players')
+          .where('name', isGreaterThanOrEqualTo: substring)
+          .where('name', isLessThanOrEqualTo: '$substring\uf8ff')
+          .get();
+    }
+    return querySnapshot;
   }
 }
