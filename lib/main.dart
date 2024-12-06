@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tennis_cup/connection_monitor.dart';
 import 'package:tennis_cup/logic/cubit/arena_filter_cubit.dart';
 import 'package:tennis_cup/logic/cubit/news_period_cubit.dart';
 import 'package:tennis_cup/logic/cubit/schedule_date_cubit.dart';
-import 'package:tennis_cup/logic/cubit/scheduled_tournament_cubit.dart';
 import 'package:tennis_cup/logic/cubit/tab_index_cubit.dart';
 import 'package:tennis_cup/logic/cubit/time_filter_cubit.dart';
 import 'package:tennis_cup/presentation/screens/tabs.dart';
@@ -35,21 +33,13 @@ void main() async {
     runApp(
       MultiBlocProvider(
         providers: [
-          BlocProvider<TabIndexCubit>(create: (_) => TabIndexCubit()),
-          BlocProvider(
-            create: (context) => NewsPeriodCubit(),
-          ),
+          BlocProvider<TabIndexCubit>(create: (context) => TabIndexCubit()),
+          BlocProvider(create: (context) => NewsPeriodCubit()),
           BlocProvider(create: (context) => ScheduleDateCubit()),
           BlocProvider(create: (context) => ArenaFilterCubit()),
           BlocProvider(create: (context) => TimeFilterCubit()),
-          BlocProvider(
-            create: (context) => ScheduledTournamentCubit(
-                scheduleDateCubit: BlocProvider.of<ScheduleDateCubit>(context),
-                arenaFilterCubit: BlocProvider.of<ArenaFilterCubit>(context),
-                timeFilterCubit: BlocProvider.of<TimeFilterCubit>(context)),
-          ),
         ],
-        child: const ProviderScope(child: TennisCup()),
+        child: const TennisCup(),
       ),
     );
   });
