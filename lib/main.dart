@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tennis_cup/connection_monitor.dart';
 import 'package:tennis_cup/logic/cubit/arena_filter_cubit.dart';
-import 'package:tennis_cup/logic/cubit/news_cubit.dart';
 import 'package:tennis_cup/logic/cubit/news_period_cubit.dart';
 import 'package:tennis_cup/logic/cubit/schedule_date_cubit.dart';
 import 'package:tennis_cup/logic/cubit/scheduled_tournament_cubit.dart';
@@ -39,10 +38,6 @@ void main() async {
           BlocProvider<TabIndexCubit>(create: (_) => TabIndexCubit()),
           BlocProvider(
             create: (context) => NewsPeriodCubit(),
-          ),
-          BlocProvider(
-            create: (context) => NewsCubit(
-                newsPeriodCubit: BlocProvider.of<NewsPeriodCubit>(context)),
           ),
           BlocProvider(create: (context) => ScheduleDateCubit()),
           BlocProvider(create: (context) => ArenaFilterCubit()),
