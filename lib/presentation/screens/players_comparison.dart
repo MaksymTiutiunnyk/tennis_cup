@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tennis_cup/data/models/player.dart';
 import 'package:tennis_cup/logic/cubit/players_tournaments_cubit.dart';
-import 'package:tennis_cup/presentation/widgets/comparison_widgets.dart/players_comparison_scrollable.dart';
+import 'package:tennis_cup/presentation/widgets/comparison_widgets.dart/scrollable_body.dart';
 
 class PlayersComparison extends StatelessWidget {
   final Player player1, player2;
@@ -18,7 +18,7 @@ class PlayersComparison extends StatelessWidget {
           leadingWidth: 35,
           title: const Text('Tennis Cup: Players comparison'),
         ),
-        body: PlayersComparisonScrollable(player1: player1, player2: player2),
+        body: ScrollableBody(player1: player1, player2: player2),
       ),
     );
   }

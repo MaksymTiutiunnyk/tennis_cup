@@ -6,27 +6,25 @@ import 'package:tennis_cup/presentation/widgets/comparison_widgets.dart/players_
 import 'package:tennis_cup/presentation/widgets/comparison_widgets.dart/players_matches.dart';
 import 'package:tennis_cup/presentation/widgets/comparison_widgets.dart/players_statistics.dart';
 
-class PlayersComparisonScrollable extends StatefulWidget {
+class ScrollableBody extends StatefulWidget {
   final Player player1, player2;
 
-  const PlayersComparisonScrollable(
+  const ScrollableBody(
       {super.key, required this.player1, required this.player2});
 
   @override
-  State<PlayersComparisonScrollable> createState() {
-    return _PlayersComparisonScrollableState();
+  State<ScrollableBody> createState() {
+    return _ScrollableBodyState();
   }
 }
 
-class _PlayersComparisonScrollableState
-    extends State<PlayersComparisonScrollable> {
+class _ScrollableBodyState extends State<ScrollableBody> {
   final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
     _scrollController.addListener(_onScroll);
-
     context.read<PlayersTournamentsCubit>().fetchTournaments();
   }
 
