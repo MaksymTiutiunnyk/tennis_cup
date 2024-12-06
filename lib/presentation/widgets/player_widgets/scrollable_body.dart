@@ -7,17 +7,17 @@ import 'package:tennis_cup/presentation/widgets/player_search.dart';
 import 'package:tennis_cup/presentation/widgets/player_widgets/player_info.dart';
 import 'package:tennis_cup/presentation/widgets/player_widgets/player_tournaments.dart';
 
-class PlayerDetailsScrollable extends StatefulWidget {
+class ScrollableBody extends StatefulWidget {
   final Player player;
-  const PlayerDetailsScrollable(this.player, {super.key});
+  const ScrollableBody(this.player, {super.key});
 
   @override
-  State<PlayerDetailsScrollable> createState() {
-    return _PlayerDetailsScrollableState();
+  State<ScrollableBody> createState() {
+    return _ScrollableBodyState();
   }
 }
 
-class _PlayerDetailsScrollableState extends State<PlayerDetailsScrollable> {
+class _ScrollableBodyState extends State<ScrollableBody> {
   final ScrollController _scrollController = ScrollController();
 
   @override
@@ -49,7 +49,7 @@ class _PlayerDetailsScrollableState extends State<PlayerDetailsScrollable> {
     ));
   }
 
-  void _showSearchField(BuildContext context) {
+  void _showSearchField() {
     showModalBottomSheet(
       useSafeArea: true,
       isScrollControlled: true,
@@ -74,7 +74,7 @@ class _PlayerDetailsScrollableState extends State<PlayerDetailsScrollable> {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
-                    _showSearchField(context);
+                    _showSearchField();
                   },
                   style: ElevatedButton.styleFrom(
                     shape: RoundedRectangleBorder(
