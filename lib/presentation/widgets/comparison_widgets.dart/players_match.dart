@@ -48,7 +48,7 @@ class PlayersMatch extends ConsumerWidget {
     final playersTournamentProvider =
         StreamProvider.autoDispose<Tournament>((ref) async* {
       await for (final _
-          in tournamentRepository.watchMatchChanges(tournament.tournamentId)) {
+          in tournamentRepository.watchTournamentChanges(tournament.tournamentId)) {
         Tournament fetchedTournament =
             await tournamentRepository.fetchTournamentById(
                 tournamentId: tournament.tournamentId);

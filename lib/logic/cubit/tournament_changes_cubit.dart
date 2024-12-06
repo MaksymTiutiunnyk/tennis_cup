@@ -11,8 +11,9 @@ class TournamentChangesCubit extends Cubit<void> {
       TournamentRepository(tournamentApi: TournamentApi());
 
   TournamentChangesCubit({required this.tournamentId}) : super(null) {
-    subscription =
-        tournamentRepository.watchMatchChanges(tournamentId).listen((event) {
+    subscription = tournamentRepository
+        .watchTournamentChanges(tournamentId)
+        .listen((event) {
       emit(event);
     });
   }

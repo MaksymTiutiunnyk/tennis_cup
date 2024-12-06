@@ -53,8 +53,8 @@ class TournamentRepository {
     return mappedTournaments;
   }
 
-  Stream<void> watchMatchChanges(String tournamentId) {
-    return tournamentApi.watchMatchChanges(tournamentId);
+  Stream<void> watchTournamentChanges(String tournamentId) {
+    return tournamentApi.watchTournamentChanges(tournamentId);
   }
 
   Future<Map<String, dynamic>> fetchPlayersTournaments({

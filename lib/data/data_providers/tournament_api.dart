@@ -3,18 +3,15 @@ import 'package:tennis_cup/data/models/arena.dart';
 import 'package:tennis_cup/data/models/tournament.dart';
 
 class TournamentApi {
-  final CollectionReference tournamentsCollection;
-
-  TournamentApi()
-      : tournamentsCollection =
-            FirebaseFirestore.instance.collection('tournaments');
+  const TournamentApi();
 
   Future<QuerySnapshot> fetchPlayerTournaments({
     required String playerId,
     required int limit,
     DocumentSnapshot? startAfter,
   }) async {
-    Query query = tournamentsCollection
+    Query query = FirebaseFirestore.instance
+        .collection('tournaments')
         .where('players', arrayContains: playerId)
         .orderBy('date', descending: true)
         .limit(limit);
@@ -47,7 +44,8 @@ class TournamentApi {
       59,
     ));
 
-    return await tournamentsCollection
+    return await FirebaseFirestore.instance
+        .collection('tournaments')
         .where('date', isGreaterThanOrEqualTo: startOfDay)
         .where('date', isLessThanOrEqualTo: endOfDay)
         .where('time', isEqualTo: tournamentTime.name)
@@ -56,7 +54,8 @@ class TournamentApi {
   }
 
   Future<QuerySnapshot> fetchLiveStreamMatchesTournaments() async {
-    final QuerySnapshot querySnapshot = await tournamentsCollection
+    final QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('tournaments')
         .orderBy('date', descending: true)
         .limit(10)
         .get();
@@ -65,7 +64,8 @@ class TournamentApi {
   }
 
   Future<QuerySnapshot> fetchUpcomingMatchesTournaments() async {
-    final QuerySnapshot querySnapshot = await tournamentsCollection
+    final QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('tournaments')
         .where('isFinished', isNotEqualTo: true)
         .orderBy('date', descending: true)
         .limit(10)
@@ -75,7 +75,8 @@ class TournamentApi {
   }
 
   Future<QuerySnapshot> fetchWinnersTournaments() async {
-    final QuerySnapshot querySnapshot = await tournamentsCollection
+    final QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('tournaments')
         .where('isFinished', isEqualTo: true)
         .orderBy('date', descending: true)
         .limit(10)
@@ -84,7 +85,7 @@ class TournamentApi {
     return querySnapshot;
   }
 
-  Stream<void> watchMatchChanges(String tournamentId) {
+  Stream<void> watchTournamentChanges(String tournamentId) {
     return FirebaseFirestore.instance
         .collectionGroup('matches')
         .where('tournamentId', isEqualTo: tournamentId)
@@ -94,8 +95,10 @@ class TournamentApi {
   Future<DocumentSnapshot> fetchTournamentById({
     required String tournamentId,
   }) async {
-    DocumentSnapshot tournamentSnapshot =
-        await tournamentsCollection.doc(tournamentId).get();
+    DocumentSnapshot tournamentSnapshot = await FirebaseFirestore.instance
+        .collection('tournaments')
+        .doc(tournamentId)
+        .get();
 
     return tournamentSnapshot;
   }
