@@ -5,7 +5,6 @@ import 'package:tennis_cup/connection_monitor.dart';
 import 'package:tennis_cup/logic/cubit/arena_filter_cubit.dart';
 import 'package:tennis_cup/logic/cubit/news_period_cubit.dart';
 import 'package:tennis_cup/logic/cubit/schedule_date_cubit.dart';
-import 'package:tennis_cup/logic/cubit/tab_index_cubit.dart';
 import 'package:tennis_cup/logic/cubit/time_filter_cubit.dart';
 import 'package:tennis_cup/presentation/screens/tabs.dart';
 
@@ -33,7 +32,6 @@ void main() async {
     runApp(
       MultiBlocProvider(
         providers: [
-          BlocProvider<TabIndexCubit>(create: (context) => TabIndexCubit()),
           BlocProvider(create: (context) => NewsPeriodCubit()),
           BlocProvider(create: (context) => ScheduleDateCubit()),
           BlocProvider(create: (context) => ArenaFilterCubit()),
@@ -110,7 +108,7 @@ class TennisCup extends StatelessWidget {
           backgroundColor: kcolorScheme.onSecondary,
         ),
       ),
-      home: const ConnectionMonitor(child: Tabs()),
+      home: const ConnectionMonitor(child: Tabs(initialTabIndex: 0)),
     );
   }
 }

@@ -4,7 +4,6 @@ import 'package:tennis_cup/logic/cubit/arena_filter_cubit.dart';
 import 'package:tennis_cup/logic/cubit/match_changes_cubit.dart';
 import 'package:tennis_cup/logic/cubit/players_match_cubit.dart';
 import 'package:tennis_cup/logic/cubit/schedule_date_cubit.dart';
-import 'package:tennis_cup/logic/cubit/tab_index_cubit.dart';
 import 'package:tennis_cup/data/models/player.dart';
 import 'package:tennis_cup/data/models/match.dart';
 import 'package:intl/intl.dart';
@@ -52,10 +51,12 @@ class PlayersMatch extends StatelessWidget {
             context.read<ScheduleDateCubit>().selectDate(tournament.date);
             context.read<TimeFilterCubit>().selectTime(tournament.time);
             context.read<ArenaFilterCubit>().selectArena(tournament.arena);
-            context.read<TabIndexCubit>().selectTab(1);
 
-            Navigator.of(context)
-                .push(MaterialPageRoute(builder: (ctx) => const Tabs()));
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (ctx) => const Tabs(initialTabIndex: 1),
+              ),
+            );
           },
           child: Card(
             child: Padding(

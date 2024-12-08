@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:tennis_cup/logic/cubit/arena_filter_cubit.dart';
 import 'package:tennis_cup/logic/cubit/schedule_date_cubit.dart';
-import 'package:tennis_cup/logic/cubit/tab_index_cubit.dart';
 import 'package:tennis_cup/data/models/player.dart';
 import 'package:tennis_cup/data/models/tournament.dart';
 import 'package:tennis_cup/logic/cubit/time_filter_cubit.dart';
@@ -67,10 +66,12 @@ class PlayerTournament extends StatelessWidget {
         context.read<ScheduleDateCubit>().selectDate(tournament.date);
         context.read<TimeFilterCubit>().selectTime(tournament.time);
         context.read<ArenaFilterCubit>().selectArena(tournament.arena);
-        context.read<TabIndexCubit>().selectTab(1);
 
-        Navigator.of(context)
-            .push(MaterialPageRoute(builder: (ctx) => const Tabs()));
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (ctx) => const Tabs(initialTabIndex: 1),
+          ),
+        );
       },
       child: Card(
         child: Padding(
