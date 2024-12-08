@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tennis_cup/data/models/arena.dart';
 import 'package:tennis_cup/data/models/tournament.dart';
 import 'package:tennis_cup/logic/cubit/arena_filter_cubit.dart';
@@ -12,7 +11,7 @@ import 'package:tennis_cup/presentation/screens/news.dart';
 import 'package:tennis_cup/presentation/screens/ranking.dart';
 import 'package:tennis_cup/presentation/screens/schedule.dart';
 
-class Tabs extends ConsumerWidget {
+class Tabs extends StatelessWidget {
   final int initialTabIndex;
   final DateTime initialDate;
   final Arena initialArena;
@@ -26,7 +25,7 @@ class Tabs extends ConsumerWidget {
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
         BlocProvider<ScheduleDateCubit>(

@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tennis_cup/data/data_providers/tournament_api.dart';
 import 'package:tennis_cup/data/repositories/tournament_repository.dart';
 import 'package:tennis_cup/presentation/widgets/home_widgets/winner.dart';
 
-class Winners extends ConsumerWidget {
+class Winners extends StatelessWidget {
   final tournamentRepository =
       const TournamentRepository(tournamentApi: TournamentApi());
 
@@ -12,7 +11,7 @@ class Winners extends ConsumerWidget {
   const Winners({super.key, this.isScreenWide = false});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final winnersTournaments = tournamentRepository.fetchWinnersTournaments();
 
     return Column(
