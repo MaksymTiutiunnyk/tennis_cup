@@ -24,7 +24,7 @@ class _ScheduleState extends State<Schedule> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
+    return BlocProvider<ScheduledTournamentCubit>(
       create: (context) => ScheduledTournamentCubit(
         scheduleDateCubit: BlocProvider.of<ScheduleDateCubit>(context),
         arenaFilterCubit: BlocProvider.of<ArenaFilterCubit>(context),

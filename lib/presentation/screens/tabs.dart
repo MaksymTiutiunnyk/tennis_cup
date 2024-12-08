@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tennis_cup/data/models/arena.dart';
+import 'package:tennis_cup/data/models/tournament.dart';
+import 'package:tennis_cup/logic/cubit/arena_filter_cubit.dart';
+import 'package:tennis_cup/logic/cubit/schedule_date_cubit.dart';
 import 'package:tennis_cup/logic/cubit/tab_index_cubit.dart';
+import 'package:tennis_cup/logic/cubit/time_filter_cubit.dart';
 import 'package:tennis_cup/presentation/screens/home.dart';
 import 'package:tennis_cup/presentation/screens/news.dart';
 import 'package:tennis_cup/presentation/screens/ranking.dart';
@@ -9,12 +14,34 @@ import 'package:tennis_cup/presentation/screens/schedule.dart';
 
 class Tabs extends ConsumerWidget {
   final int initialTabIndex;
-  const Tabs({super.key, required this.initialTabIndex});
+  final DateTime initialDate;
+  final Arena initialArena;
+  final Time initialTime;
+  const Tabs({
+    super.key,
+    required this.initialTabIndex,
+    required this.initialDate,
+    required this.initialArena,
+    required this.initialTime,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return BlocProvider<TabIndexCubit>(
-      create: (context) => TabIndexCubit(initialTabIndex),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<ScheduleDateCubit>(
+          create: (context) => ScheduleDateCubit(initialDate),
+        ),
+        BlocProvider<ArenaFilterCubit>(
+          create: (context) => ArenaFilterCubit(initialArena),
+        ),
+        BlocProvider<TimeFilterCubit>(
+          create: (context) => TimeFilterCubit(initialTime),
+        ),
+        BlocProvider<TabIndexCubit>(
+          create: (context) => TabIndexCubit(initialTabIndex),
+        ),
+      ],
       child: BlocBuilder<TabIndexCubit, int>(
         builder: (context, state) {
           Widget activePage;

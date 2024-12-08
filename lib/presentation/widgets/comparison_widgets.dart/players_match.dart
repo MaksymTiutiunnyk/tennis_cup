@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tennis_cup/logic/cubit/arena_filter_cubit.dart';
 import 'package:tennis_cup/logic/cubit/match_changes_cubit.dart';
 import 'package:tennis_cup/logic/cubit/players_match_cubit.dart';
-import 'package:tennis_cup/logic/cubit/schedule_date_cubit.dart';
 import 'package:tennis_cup/data/models/player.dart';
 import 'package:tennis_cup/data/models/match.dart';
 import 'package:intl/intl.dart';
 import 'package:tennis_cup/data/models/tournament.dart';
-import 'package:tennis_cup/logic/cubit/time_filter_cubit.dart';
 import 'package:tennis_cup/presentation/screens/tabs.dart';
 
 DateFormat dateTimeFormatter = DateFormat('yyyy-MM-dd, HH:mm');
@@ -48,13 +45,14 @@ class PlayersMatch extends StatelessWidget {
         },
         child: InkWell(
           onTap: () {
-            context.read<ScheduleDateCubit>().selectDate(tournament.date);
-            context.read<TimeFilterCubit>().selectTime(tournament.time);
-            context.read<ArenaFilterCubit>().selectArena(tournament.arena);
-
             Navigator.of(context).push(
               MaterialPageRoute(
-                builder: (ctx) => const Tabs(initialTabIndex: 1),
+                builder: (ctx) => Tabs(
+                  initialTabIndex: 1,
+                  initialDate: tournament.date,
+                  initialArena: tournament.arena,
+                  initialTime: tournament.time,
+                ),
               ),
             );
           },
