@@ -1,6 +1,6 @@
 part of 'news_cubit.dart';
 
-class NewsState {
+abstract class NewsState {
   const NewsState();
 }
 

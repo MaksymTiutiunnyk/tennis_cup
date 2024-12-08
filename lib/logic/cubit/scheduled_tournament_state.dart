@@ -1,6 +1,6 @@
 part of 'scheduled_tournament_cubit.dart';
 
-class ScheduledTournamentState {
+abstract class ScheduledTournamentState {
   const ScheduledTournamentState();
 }
 
