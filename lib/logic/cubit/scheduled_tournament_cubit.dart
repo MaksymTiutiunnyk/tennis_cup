@@ -12,7 +12,7 @@ part 'scheduled_tournament_state.dart';
 
 class ScheduledTournamentCubit extends Cubit<ScheduledTournamentState> {
   final tournamentRepository =
-      TournamentRepository(tournamentApi: TournamentApi());
+      const TournamentRepository(tournamentApi: TournamentApi());
 
   final ScheduleDateCubit scheduleDateCubit;
   final ArenaFilterCubit arenaFilterCubit;

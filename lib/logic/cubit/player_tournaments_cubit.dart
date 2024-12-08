@@ -9,7 +9,7 @@ part 'player_tournaments_state.dart';
 
 class PlayerTournamentsCubit extends Cubit<PlayerTournamentsState> {
   final TournamentRepository tournamentRepository =
-      TournamentRepository(tournamentApi: TournamentApi());
+      const TournamentRepository(tournamentApi: TournamentApi());
 
   final Player player1;
   DocumentSnapshot? _lastDocument;
@@ -17,7 +17,7 @@ class PlayerTournamentsCubit extends Cubit<PlayerTournamentsState> {
   bool _isLoading = false;
 
   PlayerTournamentsCubit(this.player1)
-      : super(PlayerTournamentsState(tournaments: [], isLoading: false));
+      : super(const PlayerTournamentsState(tournaments: [], isLoading: false));
 
   Future<void> fetchTournaments({int limit = 2}) async {
     if (_isLoading || !_hasMore) return;

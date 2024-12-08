@@ -19,7 +19,17 @@ class SchedulePanel extends StatelessWidget {
       useSafeArea: true,
       context: context,
       isScrollControlled: true,
-      builder: (ctx) => const ScheduleFilters(),
+      builder: (ctx) => MultiBlocProvider(
+        providers: [
+          BlocProvider.value(
+            value: BlocProvider.of<TimeFilterCubit>(context),
+          ),
+          BlocProvider.value(
+            value: BlocProvider.of<ArenaFilterCubit>(context),
+          ),
+        ],
+        child: const ScheduleFilters(),
+      ),
     );
   }
 

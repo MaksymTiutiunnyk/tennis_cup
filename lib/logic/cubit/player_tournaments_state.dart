@@ -5,7 +5,7 @@ class PlayerTournamentsState {
   final bool isLoading;
   final String? errorMessage;
 
-  PlayerTournamentsState({
+  const PlayerTournamentsState({
     required this.tournaments,
     required this.isLoading,
     this.errorMessage,

@@ -6,10 +6,10 @@ import 'package:tennis_cup/presentation/widgets/home_widgets/winner.dart';
 
 class Winners extends ConsumerWidget {
   final tournamentRepository =
-      TournamentRepository(tournamentApi: TournamentApi());
+      const TournamentRepository(tournamentApi: TournamentApi());
 
   final bool isScreenWide;
-  Winners({super.key, this.isScreenWide = false});
+  const Winners({super.key, this.isScreenWide = false});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

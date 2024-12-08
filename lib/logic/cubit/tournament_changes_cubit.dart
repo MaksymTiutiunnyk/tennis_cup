@@ -8,7 +8,7 @@ class TournamentChangesCubit extends Cubit<void> {
   final String tournamentId;
   late StreamSubscription subscription;
   final tournamentRepository =
-      TournamentRepository(tournamentApi: TournamentApi());
+      const TournamentRepository(tournamentApi: TournamentApi());
 
   TournamentChangesCubit({required this.tournamentId}) : super(null) {
     subscription = tournamentRepository

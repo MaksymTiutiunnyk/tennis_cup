@@ -1,9 +1,11 @@
 part of 'player_search_bloc.dart';
 
-abstract class PlayerSearchEvent {}
+abstract class PlayerSearchEvent {
+  const PlayerSearchEvent();
+}
 
 class SearchFieldChanged extends PlayerSearchEvent {
   final String value;
 
-  SearchFieldChanged(this.value);
+  const SearchFieldChanged(this.value);
 }

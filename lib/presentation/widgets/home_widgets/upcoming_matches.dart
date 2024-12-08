@@ -7,10 +7,10 @@ import 'package:tennis_cup/data/models/match.dart';
 
 class UpcomingMatches extends StatelessWidget {
   final tournamentRepository =
-      TournamentRepository(tournamentApi: TournamentApi());
+      const TournamentRepository(tournamentApi: TournamentApi());
 
   final bool isScrollable;
-  UpcomingMatches({super.key, this.isScrollable = true});
+  const UpcomingMatches({super.key, this.isScrollable = true});
 
   List<Match> _getMatchesToDisplay(List<Tournament> tournaments) {
     final List<MapEntry<Match, Tournament>> matchesWithTournaments = [];

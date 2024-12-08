@@ -1,11 +1,13 @@
 part of 'news_cubit.dart';
 
-class NewsState {}
+class NewsState {
+  const NewsState();
+}
 
 class NewsFetching extends NewsState {}
 
 class NewsFetched extends NewsState {
   final List<News> fetchedNews;
 
-  NewsFetched({required this.fetchedNews});
+  const NewsFetched({required this.fetchedNews});
 }

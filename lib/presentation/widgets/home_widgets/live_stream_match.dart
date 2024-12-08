@@ -15,7 +15,6 @@ import 'package:tennis_cup/presentation/widgets/home_widgets/live_stream_match_p
 
 DateFormat formatter = DateFormat('yyyy-MM-dd');
 
-// ignore: must_be_immutable
 class LiveStreamMatch extends StatelessWidget {
   final tournamentRepository =
       const TournamentRepository(tournamentApi: TournamentApi());

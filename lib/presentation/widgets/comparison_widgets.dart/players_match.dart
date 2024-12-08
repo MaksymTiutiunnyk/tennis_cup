@@ -11,7 +11,6 @@ import 'package:tennis_cup/presentation/screens/tabs.dart';
 DateFormat dateTimeFormatter = DateFormat('yyyy-MM-dd, HH:mm');
 DateFormat dateFormatter = DateFormat('yyyy-MM-dd');
 
-// ignore: must_be_immutable
 class PlayersMatch extends StatelessWidget {
   final Player player1, player2;
   final Match match;

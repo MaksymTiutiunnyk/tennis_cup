@@ -7,10 +7,10 @@ import 'package:tennis_cup/data/models/match.dart';
 
 class LiveStreamMatches extends StatelessWidget {
   final tournamentRepository =
-      TournamentRepository(tournamentApi: TournamentApi());
+      const TournamentRepository(tournamentApi: TournamentApi());
 
   final bool isScreenWide;
-  LiveStreamMatches({super.key, this.isScreenWide = false});
+  const LiveStreamMatches({super.key, this.isScreenWide = false});
 
   List<Match> _getMatchesToDisplay(List<Tournament> tournaments) {
     final List<MapEntry<Match, Tournament>> matchesWithTournaments = [];
