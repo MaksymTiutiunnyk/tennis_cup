@@ -32,7 +32,9 @@ class RankingPanel extends StatelessWidget {
       useSafeArea: true,
       isScrollControlled: true,
       context: context,
-      builder: (ctx) => PlayerSearch(onSelectPlayer: _showPlayerDetails),
+      builder: (ctx) => Scaffold(
+        body: PlayerSearch(onSelectPlayer: _showPlayerDetails),
+      ),
     );
   }
 
