@@ -41,12 +41,24 @@ class _ScrollableBodyState extends State<ScrollableBody> {
   }
 
   void _comparePlayers(BuildContext context, Player player) {
-    Navigator.of(context).pushReplacement(MaterialPageRoute(
-      builder: (context) => PlayersComparison(
-        player1: widget.player,
-        player2: player,
+    ScaffoldMessenger.of(context).clearSnackBars();
+    if (widget.player == player) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          duration: Duration(seconds: 2),
+          content: Text('Cannot be compared to oneself'),
+        ),
+      );
+      return;
+    }
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(
+        builder: (context) => PlayersComparison(
+          player1: widget.player,
+          player2: player,
+        ),
       ),
-    ));
+    );
   }
 
   void _showSearchField() {
@@ -54,7 +66,9 @@ class _ScrollableBodyState extends State<ScrollableBody> {
       useSafeArea: true,
       isScrollControlled: true,
       context: context,
-      builder: (ctx) => PlayerSearch(onSelectPlayer: _comparePlayers),
+      builder: (ctx) => Scaffold(
+        body: PlayerSearch(onSelectPlayer: _comparePlayers),
+      ),
     );
   }
 

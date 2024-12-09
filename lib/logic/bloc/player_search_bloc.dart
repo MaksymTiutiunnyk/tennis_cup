@@ -15,6 +15,11 @@ class PlayerSearchBloc extends Bloc<PlayerSearchEvent, PlayerSearchState> {
 
       final players = await _searchPlayers(event.value);
 
+      if (players.isEmpty) {
+        emit(PlayersNotFound());
+        return;
+      }
+
       emit(PlayerSearchLoaded(players));
     });
   }
