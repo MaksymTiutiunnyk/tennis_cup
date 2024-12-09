@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tennis_cup/connection_monitor.dart';
-import 'package:tennis_cup/screens/tabs.dart';
+import 'package:tennis_cup/data/data_providers/arenas.dart';
+import 'package:tennis_cup/data/models/tournament.dart';
+import 'package:tennis_cup/logic/cubit/news_period_cubit.dart';
+import 'package:tennis_cup/presentation/screens/tabs.dart';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
@@ -25,7 +28,14 @@ void main() async {
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]).then((fn) {
-    runApp(const ProviderScope(child: TennisCup()));
+    runApp(
+      MultiBlocProvider(
+        providers: [
+          BlocProvider(create: (context) => NewsPeriodCubit()),
+        ],
+        child: const TennisCup(),
+      ),
+    );
   });
 }
 
@@ -94,7 +104,14 @@ class TennisCup extends StatelessWidget {
           backgroundColor: kcolorScheme.onSecondary,
         ),
       ),
-      home: const ConnectionMonitor(child: Tabs()),
+      home: ConnectionMonitor(
+        child: Tabs(
+          initialTabIndex: 0,
+          initialDate: DateTime.now(),
+          initialArena: arenas[1],
+          initialTime: Time.Evening,
+        ),
+      ),
     );
   }
 }

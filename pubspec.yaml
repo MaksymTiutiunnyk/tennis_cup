@@ -1,5 +1,5 @@
 name: tennis_cup
-description: "A new Flutter project."
+description: "A Flutter project that implements a Tennis Cup application for improving players' experience of getting information about tournaments"
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -34,14 +34,12 @@ dependencies:
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.6
   intl: ^0.19.0
-  transparent_image: ^2.0.1
-  flutter_riverpod: ^2.6.1
   firebase_core: ^3.4.0
   cloud_firestore: ^5.4.0
   firebase_storage: ^12.2.0
   connectivity_plus: ^6.1.0
+  flutter_bloc: ^8.1.6
 
 dev_dependencies:
   flutter_test:
