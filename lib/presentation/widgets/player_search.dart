@@ -42,9 +42,9 @@ class PlayerSearch extends StatelessWidget {
             Expanded(
               child: BlocBuilder<PlayerSearchBloc, PlayerSearchState>(
                 builder: (context, state) {
-                  if (state is PlayerSearchLoading) {
+                  if (state is PlayerSearchError) {
                     return const Center(
-                      child: CircularProgressIndicator(),
+                      child: Text('Ooops, something went wrong'),
                     );
                   }
                   if (state is PlayersNotFound) {
@@ -68,9 +68,7 @@ class PlayerSearch extends StatelessWidget {
                       },
                     );
                   }
-                  return const Center(
-                    child: Text('Ooops, something went wrong'),
-                  );
+                  return const Center(child: CircularProgressIndicator());
                 },
               ),
             ),

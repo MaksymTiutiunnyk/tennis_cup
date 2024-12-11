@@ -40,30 +40,38 @@ class ScheduledTournamentCubit extends Cubit<ScheduledTournamentState> {
   void fetchScheduledTournament() async {
     emit(ScheduledTournamentFetching());
 
-    final tournaments = await tournamentRepository.fetchScheduledTournament(
-        tournamentDate: scheduleDateCubit.state,
-        tournamentArena: arenaFilterCubit.state,
-        tournamentTime: timeFilterCubit.state);
+    try {
+      final tournaments = await tournamentRepository.fetchScheduledTournament(
+          tournamentDate: scheduleDateCubit.state,
+          tournamentArena: arenaFilterCubit.state,
+          tournamentTime: timeFilterCubit.state);
 
-    if (tournaments.isEmpty) {
-      emit(TournamentNotFound());
-      return;
+      if (tournaments.isEmpty) {
+        emit(TournamentNotFound());
+        return;
+      }
+
+      emit(ScheduledTournamentFetched(tournaments.first));
+    } catch (e) {
+      emit(ScheduledTournamentError(e));
     }
-
-    emit(ScheduledTournamentFetched(tournaments.first));
   }
 
   void fetchScheduledTournamentWithoutLoading() async {
-    final tournaments = await tournamentRepository.fetchScheduledTournament(
-        tournamentDate: scheduleDateCubit.state,
-        tournamentArena: arenaFilterCubit.state,
-        tournamentTime: timeFilterCubit.state);
+    try {
+      final tournaments = await tournamentRepository.fetchScheduledTournament(
+          tournamentDate: scheduleDateCubit.state,
+          tournamentArena: arenaFilterCubit.state,
+          tournamentTime: timeFilterCubit.state);
 
-    if (tournaments.isEmpty) {
-      return;
+      if (tournaments.isEmpty) {
+        return;
+      }
+
+      emit(ScheduledTournamentFetched(tournaments.first));
+    } catch (e) {
+      emit(ScheduledTournamentError(e));
     }
-
-    emit(ScheduledTournamentFetched(tournaments.first));
   }
 
   @override

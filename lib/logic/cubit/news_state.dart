@@ -11,3 +11,9 @@ class NewsFetched extends NewsState {
 
   const NewsFetched({required this.fetchedNews});
 }
+
+class NewsError extends NewsState {
+  final Object e;
+
+  const NewsError(this.e);
+}

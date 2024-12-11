@@ -40,6 +40,11 @@ class _ScheduleState extends State<Schedule> {
               child: BlocBuilder<ScheduledTournamentCubit,
                   ScheduledTournamentState>(
                 builder: (context, state) {
+                  if (state is ScheduledTournamentError) {
+                    return const Center(
+                      child: Text('Ooops, something went wrong'),
+                    );
+                  }
                   if (state is TournamentNotFound) {
                     return const Center(child: Text('Tournament is not found'));
                   }

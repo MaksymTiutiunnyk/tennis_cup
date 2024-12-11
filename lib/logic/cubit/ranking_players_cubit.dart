@@ -24,64 +24,76 @@ class RankingPlayersCubit extends Cubit<RankingPlayersState> {
   }
 
   Future<void> fetchPlayersOnSexChange(Sex sex, {int limit = 10}) async {
-    emit(state.copyWith(isLoading: true));
+    emit(state.copyWith(isLoading: true, hasError: false));
 
-    final result = await playerRepository.fetchRankingPlayers(
-      limit: limit,
-      startAfter: null,
-      sexFilter: sex,
-    );
-    final newPlayers = result['players'] as List<Player>;
-    _lastDocument = result['lastDocument'] as DocumentSnapshot?;
+    try {
+      final result = await playerRepository.fetchRankingPlayers(
+        limit: limit,
+        startAfter: null,
+        sexFilter: sex,
+      );
+      final newPlayers = result['players'] as List<Player>;
+      _lastDocument = result['lastDocument'] as DocumentSnapshot?;
 
-    emit(
-      state.copyWith(
-        players: newPlayers,
-        isLoading: false,
-        hasMore: newPlayers.isNotEmpty,
-      ),
-    );
+      emit(
+        state.copyWith(
+          players: newPlayers,
+          isLoading: false,
+          hasMore: newPlayers.isNotEmpty,
+        ),
+      );
+    } catch (e) {
+      emit(state.copyWith(isLoading: false, hasError: true));
+    }
   }
 
   Future<void> fetchPlayersInitially({int limit = 10}) async {
-    emit(state.copyWith(isLoading: true));
+    emit(state.copyWith(isLoading: true, hasError: false));
 
-    final result = await playerRepository.fetchRankingPlayers(
-      limit: limit,
-      startAfter: null,
-      sexFilter: Sex.All,
-    );
+    try {
+      final result = await playerRepository.fetchRankingPlayers(
+        limit: limit,
+        startAfter: null,
+        sexFilter: Sex.All,
+      );
 
-    final newPlayers = result['players'] as List<Player>;
-    _lastDocument = result['lastDocument'] as DocumentSnapshot?;
+      final newPlayers = result['players'] as List<Player>;
+      _lastDocument = result['lastDocument'] as DocumentSnapshot?;
 
-    emit(
-      state.copyWith(
-        players: newPlayers,
-        isLoading: false,
-        hasMore: newPlayers.isNotEmpty,
-      ),
-    );
+      emit(
+        state.copyWith(
+          players: newPlayers,
+          isLoading: false,
+          hasMore: newPlayers.isNotEmpty,
+        ),
+      );
+    } catch (e) {
+      emit(state.copyWith(isLoading: false, hasError: true));
+    }
   }
 
   Future<void> fetchPlayersWhenScrolled({int limit = 10}) async {
     if (state.isLoading || !state.hasMore) return;
 
-    final result = await playerRepository.fetchRankingPlayers(
-      limit: limit,
-      startAfter: _lastDocument,
-      sexFilter: sexFilterCubit.state,
-    );
+    try {
+      final result = await playerRepository.fetchRankingPlayers(
+        limit: limit,
+        startAfter: _lastDocument,
+        sexFilter: sexFilterCubit.state,
+      );
 
-    final newPlayers = result['players'] as List<Player>;
-    _lastDocument = result['lastDocument'] as DocumentSnapshot?;
+      final newPlayers = result['players'] as List<Player>;
+      _lastDocument = result['lastDocument'] as DocumentSnapshot?;
 
-    emit(
-      state.copyWith(
-        players: [...state.players, ...newPlayers],
-        isLoading: false,
-        hasMore: newPlayers.isNotEmpty,
-      ),
-    );
+      emit(
+        state.copyWith(
+          players: [...state.players, ...newPlayers],
+          isLoading: false,
+          hasMore: newPlayers.isNotEmpty,
+        ),
+      );
+    } catch (e) {
+      emit(state.copyWith(isLoading: false, hasError: true));
+    }
   }
 }

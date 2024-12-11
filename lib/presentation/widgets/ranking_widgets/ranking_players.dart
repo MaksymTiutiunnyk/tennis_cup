@@ -39,6 +39,10 @@ class _RankingPlayersState extends State<RankingPlayers> {
     return Expanded(
       child: BlocBuilder<RankingPlayersCubit, RankingPlayersState>(
         builder: (context, state) {
+          if (state.hasError) {
+            return const Center(child: Text('Ooops, something went wrong'));
+          }
+
           if (state.isLoading && state.players.isEmpty) {
             return const Center(child: CircularProgressIndicator());
           }

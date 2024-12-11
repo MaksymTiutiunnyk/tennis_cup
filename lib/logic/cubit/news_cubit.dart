@@ -22,9 +22,12 @@ class NewsCubit extends Cubit<NewsState> {
   void fetchNews(DateTime period) async {
     emit(NewsFetching());
 
-    final fetchedNews = await newsRepository.fetchNewsWithinPeriod(period);
-
-    emit(NewsFetched(fetchedNews: fetchedNews));
+    try {
+      final fetchedNews = await newsRepository.fetchNewsWithinPeriod(period);
+      emit(NewsFetched(fetchedNews: fetchedNews));
+    } catch (e) {
+      emit(NewsError(e));
+    }
   }
 
   @override

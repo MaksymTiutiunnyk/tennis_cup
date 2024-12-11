@@ -44,10 +44,14 @@ class PlayersTournamentsCubit extends Cubit<PlayersTournamentsState> {
       }
 
       emit(PlayersTournamentsState(
-          tournaments: allTournaments, isLoading: false));
+        tournaments: allTournaments,
+        isLoading: false,
+      ));
     } catch (e) {
       emit(state.copyWith(
-          isLoading: false, errorMessage: 'Error loading tournaments'));
+        isLoading: false,
+        errorMessage: 'Error loading tournaments',
+      ));
     } finally {
       _isLoading = false;
     }

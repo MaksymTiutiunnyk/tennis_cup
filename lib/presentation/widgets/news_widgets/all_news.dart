@@ -24,6 +24,10 @@ class _AllNewsState extends State<AllNews> {
       fit: FlexFit.loose,
       child: BlocBuilder<NewsCubit, NewsState>(
         builder: (context, state) {
+          if (state is NewsError) {
+            return const Text('Ooops, something went wrong');
+          }
+
           if (state is NewsFetched && state.fetchedNews.isEmpty) {
             return const Text('No news found');
           }

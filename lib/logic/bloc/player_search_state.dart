@@ -13,3 +13,9 @@ class PlayerSearchLoaded extends PlayerSearchState {
 
   const PlayerSearchLoaded(this.players);
 }
+
+class PlayerSearchError extends PlayerSearchState {
+  final Object e;
+
+  const PlayerSearchError(this.e);
+}

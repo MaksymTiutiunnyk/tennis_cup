@@ -13,14 +13,18 @@ class PlayerSearchBloc extends Bloc<PlayerSearchEvent, PlayerSearchState> {
     on<SearchFieldChanged>((event, emit) async {
       emit(PlayerSearchLoading());
 
-      final players = await _searchPlayers(event.value);
+      try {
+        final players = await _searchPlayers(event.value);
 
-      if (players.isEmpty) {
-        emit(PlayersNotFound());
-        return;
+        if (players.isEmpty) {
+          emit(PlayersNotFound());
+          return;
+        }
+
+        emit(PlayerSearchLoaded(players));
+      } catch (e) {
+        emit(PlayerSearchError(e));
       }
-
-      emit(PlayerSearchLoaded(players));
     });
   }
 

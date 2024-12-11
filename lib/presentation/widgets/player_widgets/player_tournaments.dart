@@ -36,7 +36,8 @@ class PlayerTournaments extends StatelessWidget {
 
                 if (state.errorMessage != null) {
                   return const Center(
-                      child: Text('Oops, something went wrong'));
+                    child: Text('Oops, something went wrong'),
+                  );
                 }
 
                 if (state.tournaments.isEmpty) {
