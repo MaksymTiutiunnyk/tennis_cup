@@ -54,7 +54,7 @@ class RankingPlayersCubit extends Cubit<RankingPlayersState> {
       final result = await playerRepository.fetchRankingPlayers(
         limit: limit,
         startAfter: null,
-        sexFilter: Sex.All,
+        sexFilter: sexFilterCubit.state,
       );
 
       final newPlayers = result['players'] as List<Player>;
@@ -75,6 +75,11 @@ class RankingPlayersCubit extends Cubit<RankingPlayersState> {
   Future<void> fetchPlayersWhenScrolled({int limit = 10}) async {
     if (state.isLoading || !state.hasMore) return;
 
+    emit(state.copyWith(
+      isLoading: true,
+      hasError: false,
+      isScrollFetching: true,
+    ));
     try {
       final result = await playerRepository.fetchRankingPlayers(
         limit: limit,
@@ -90,10 +95,20 @@ class RankingPlayersCubit extends Cubit<RankingPlayersState> {
           players: [...state.players, ...newPlayers],
           isLoading: false,
           hasMore: newPlayers.isNotEmpty,
+          isScrollFetching: false,
         ),
       );
     } catch (e) {
-      emit(state.copyWith(isLoading: false, hasError: true));
+      emit(state.copyWith(
+        isLoading: false,
+        hasError: true,
+        isScrollFetching: false,
+      ));
     }
+  }
+  @override
+  Future<void> close() {
+    sexFilterSubscription.cancel();
+    return super.close();
   }
 }

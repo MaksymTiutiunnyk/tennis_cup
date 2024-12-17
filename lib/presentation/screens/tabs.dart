@@ -4,6 +4,7 @@ import 'package:tennis_cup/data/models/arena.dart';
 import 'package:tennis_cup/data/models/tournament.dart';
 import 'package:tennis_cup/logic/cubit/arena_filter_cubit.dart';
 import 'package:tennis_cup/logic/cubit/schedule_date_cubit.dart';
+import 'package:tennis_cup/logic/cubit/sex_filter_cubit.dart';
 import 'package:tennis_cup/logic/cubit/tab_index_cubit.dart';
 import 'package:tennis_cup/logic/cubit/time_filter_cubit.dart';
 import 'package:tennis_cup/presentation/screens/home.dart';
@@ -39,6 +40,9 @@ class Tabs extends StatelessWidget {
         ),
         BlocProvider<TabIndexCubit>(
           create: (context) => TabIndexCubit(initialTabIndex),
+        ),
+        BlocProvider<SexFilterCubit>(
+          create: (context) => SexFilterCubit(),
         ),
       ],
       child: BlocBuilder<TabIndexCubit, int>(

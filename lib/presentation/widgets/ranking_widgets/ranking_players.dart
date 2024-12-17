@@ -43,7 +43,7 @@ class _RankingPlayersState extends State<RankingPlayers> {
             return const Center(child: Text('Ooops, something went wrong'));
           }
 
-          if (state.isLoading && state.players.isEmpty) {
+          if (state.isLoading && !state.isScrollFetching) {
             return const Center(child: CircularProgressIndicator());
           }
 

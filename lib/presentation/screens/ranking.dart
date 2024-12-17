@@ -10,17 +10,10 @@ class Ranking extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider<SexFilterCubit>(
-          create: (context) => SexFilterCubit(),
-        ),
-        BlocProvider<RankingPlayersCubit>(
-          create: (context) => RankingPlayersCubit(
-            sexFilterCubit: BlocProvider.of<SexFilterCubit>(context),
-          )..fetchPlayersInitially(),
-        ),
-      ],
+    return BlocProvider<RankingPlayersCubit>(
+      create: (context) => RankingPlayersCubit(
+        sexFilterCubit: BlocProvider.of<SexFilterCubit>(context),
+      )..fetchPlayersInitially(),
       child: const Scaffold(
         body: Column(
           children: [
