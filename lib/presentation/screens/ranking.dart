@@ -14,13 +14,11 @@ class Ranking extends StatelessWidget {
       create: (context) => RankingPlayersCubit(
         sexFilterCubit: BlocProvider.of<SexFilterCubit>(context),
       )..fetchPlayersInitially(),
-      child: const Scaffold(
-        body: Column(
-          children: [
-            RankingPanel(),
-            RankingPlayers(),
-          ],
-        ),
+      child: Column(
+        children: [
+          RankingPanel(),
+          RankingPlayers(),
+        ],
       ),
     );
   }

@@ -51,3 +51,10 @@ app.*.map.json
 
 # Code analyzer
 analysis_options.yaml
+analysis_options.yaml.sonar
+devtools_options.yaml
+sonar-project.properties
+tests.output
+.scannerwork/.sonar_lock
+.scannerwork/report-task.txt
+.vscode/launch.json

@@ -30,72 +30,70 @@ class _ScheduleState extends State<Schedule> {
         arenaFilterCubit: BlocProvider.of<ArenaFilterCubit>(context),
         timeFilterCubit: BlocProvider.of<TimeFilterCubit>(context),
       )..fetchScheduledTournament(),
-      child: Scaffold(
-        body: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const SchedulePanel(),
-            Flexible(
-              fit: FlexFit.loose,
-              child: BlocBuilder<ScheduledTournamentCubit,
-                  ScheduledTournamentState>(
-                builder: (context, state) {
-                  if (state is ScheduledTournamentError) {
-                    return const Center(
-                      child: Text('Ooops, something went wrong'),
-                    );
-                  }
-                  if (state is TournamentNotFound) {
-                    return const Center(child: Text('Tournament is not found'));
-                  }
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const SchedulePanel(),
+          Flexible(
+            fit: FlexFit.loose,
+            child:
+                BlocBuilder<ScheduledTournamentCubit, ScheduledTournamentState>(
+              builder: (context, state) {
+                if (state is ScheduledTournamentError) {
+                  return const Center(
+                    child: Text('Ooops, something went wrong'),
+                  );
+                }
+                if (state is TournamentNotFound) {
+                  return const Center(child: Text('Tournament is not found'));
+                }
 
-                  if (state is ScheduledTournamentFetched) {
-                    return BlocProvider<TournamentChangesCubit>(
-                      create: (context) => TournamentChangesCubit(
-                        tournamentId: state.tournament.tournamentId,
-                      ),
-                      child: BlocListener<TournamentChangesCubit, void>(
-                        listener: (context, state) {
-                          context
-                              .read<ScheduledTournamentCubit>()
-                              .fetchScheduledTournamentWithoutLoading();
-                        },
-                        child: LayoutBuilder(
-                          builder: (context, constraints) {
-                            if (constraints.maxHeight >= 600) {
-                              return Column(
-                                children: [
-                                  ScheduledMatches(
-                                    tournament: state.tournament,
-                                  ),
-                                  TournamentResults(state.tournament),
-                                ],
-                              );
-                            }
-                            return SingleChildScrollView(
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  ScheduledMatches(
-                                    tournament: state.tournament,
-                                    isScrollable: false,
-                                  ),
-                                  TournamentResults(state.tournament),
-                                ],
-                              ),
+                if (state is ScheduledTournamentFetched) {
+                  return BlocProvider<TournamentChangesCubit>(
+                    create: (context) => TournamentChangesCubit(
+                      tournamentId: state.tournament.tournamentId,
+                    ),
+                    child: BlocListener<TournamentChangesCubit, void>(
+                      listener: (context, state) {
+                        context
+                            .read<ScheduledTournamentCubit>()
+                            .fetchScheduledTournamentWithoutLoading();
+                      },
+                      child: LayoutBuilder(
+                        builder: (context, constraints) {
+                          if (constraints.maxHeight >= 600) {
+                            return Column(
+                              children: [
+                                ScheduledMatches(
+                                  tournament: state.tournament,
+                                ),
+                                TournamentResults(state.tournament),
+                              ],
                             );
-                          },
-                        ),
+                          }
+                          return SingleChildScrollView(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                ScheduledMatches(
+                                  tournament: state.tournament,
+                                  isScrollable: false,
+                                ),
+                                TournamentResults(state.tournament),
+                              ],
+                            ),
+                          );
+                        },
                       ),
-                    );
-                  }
+                    ),
+                  );
+                }
 
-                  return const Center(child: CircularProgressIndicator());
-                },
-              ),
+                return const Center(child: CircularProgressIndicator());
+              },
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

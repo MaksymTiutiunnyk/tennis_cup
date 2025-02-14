@@ -60,13 +60,7 @@ class Match {
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
     if (other is! Match) return false;
-    return matchId == other.matchId &&
-        bluePlayer == other.bluePlayer &&
-        redPlayer == other.redPlayer &&
-        blueScore == other.blueScore &&
-        redScore == other.redScore &&
-        blueSetScores == other.blueSetScores &&
-        redSetScores == other.redSetScores;
+    return matchId == other.matchId;
   }
 
   @override

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tennis_cup/data/data_providers/tournament_api.dart';
 import 'package:tennis_cup/data/models/tournament.dart';
 import 'package:tennis_cup/data/repositories/tournament_repository.dart';
+import 'package:tennis_cup/logic/cubit/live_stream_match_index_cubit.dart';
 import 'package:tennis_cup/presentation/widgets/home_widgets/live_stream_match.dart';
 import 'package:tennis_cup/data/models/match.dart';
 
@@ -65,7 +67,7 @@ class LiveStreamMatches extends StatelessWidget {
           ),
         ),
         SizedBox(
-          height: isScreenWide ? 220 : 170,
+          height: isScreenWide ? 220 : 200,
           child: FutureBuilder(
             future: liveStreamMatchesTournaments,
             builder: (context, snapshot) {
@@ -82,7 +84,13 @@ class LiveStreamMatches extends StatelessWidget {
                 return PageView.builder(
                   scrollDirection:
                       isScreenWide ? Axis.vertical : Axis.horizontal,
-                  controller: PageController(viewportFraction: 0.90),
+                  controller: PageController(
+                    viewportFraction: 0.90,
+                    initialPage:
+                        context.read<LiveStreamMatchIndexCubit>().state,
+                  ),
+                  onPageChanged: (index) =>
+                      context.read<LiveStreamMatchIndexCubit>().setIndex(index),
                   itemCount: matches.length,
                   itemBuilder: (context, index) {
                     return LiveStreamMatch(

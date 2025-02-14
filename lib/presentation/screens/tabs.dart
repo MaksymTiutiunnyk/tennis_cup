@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tennis_cup/data/models/arena.dart';
 import 'package:tennis_cup/data/models/tournament.dart';
 import 'package:tennis_cup/logic/cubit/arena_filter_cubit.dart';
+import 'package:tennis_cup/logic/cubit/live_stream_match_index_cubit.dart';
+import 'package:tennis_cup/logic/cubit/video_player_cubit.dart';
 import 'package:tennis_cup/logic/cubit/schedule_date_cubit.dart';
 import 'package:tennis_cup/logic/cubit/sex_filter_cubit.dart';
 import 'package:tennis_cup/logic/cubit/tab_index_cubit.dart';
@@ -44,6 +46,12 @@ class Tabs extends StatelessWidget {
         BlocProvider<SexFilterCubit>(
           create: (context) => SexFilterCubit(),
         ),
+        BlocProvider<VideoPlayerCubit>(
+          create: (context) => VideoPlayerCubit(),
+        ),
+        BlocProvider<LiveStreamMatchIndexCubit>(
+          create: (context) => LiveStreamMatchIndexCubit(),
+        ),
       ],
       child: BlocBuilder<TabIndexCubit, int>(
         builder: (context, state) {
@@ -69,24 +77,33 @@ class Tabs extends StatelessWidget {
               activePage = const Home();
               pageTitle = 'Tennis Cup: Home page';
           }
-          return Scaffold(
-            appBar: AppBar(title: Text(pageTitle)),
-            body: activePage,
-            bottomNavigationBar: BottomNavigationBar(
-              onTap: (index) {
-                context.read<TabIndexCubit>().selectTab(index);
-              },
-              currentIndex: state,
-              items: const [
-                BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-                BottomNavigationBarItem(
-                    icon: Icon(Icons.schedule), label: 'Schedule'),
-                BottomNavigationBarItem(
-                    icon: Icon(Icons.people), label: 'Ranking'),
-                BottomNavigationBarItem(
-                    icon: Icon(Icons.newspaper), label: 'News'),
-              ],
-            ),
+          return BlocBuilder<VideoPlayerCubit, VideoPlayerState>(
+            builder: (context, fullScreenState) {
+              return Scaffold(
+                appBar: fullScreenState is PlayerFullScreenRunning
+                    ? null
+                    : AppBar(title: Text(pageTitle)),
+                body: activePage,
+                bottomNavigationBar: fullScreenState is PlayerFullScreenRunning
+                    ? null
+                    : BottomNavigationBar(
+                        onTap: (index) {
+                          context.read<TabIndexCubit>().selectTab(index);
+                        },
+                        currentIndex: state,
+                        items: const [
+                          BottomNavigationBarItem(
+                              icon: Icon(Icons.home), label: 'Home'),
+                          BottomNavigationBarItem(
+                              icon: Icon(Icons.schedule), label: 'Schedule'),
+                          BottomNavigationBarItem(
+                              icon: Icon(Icons.people), label: 'Ranking'),
+                          BottomNavigationBarItem(
+                              icon: Icon(Icons.newspaper), label: 'News'),
+                        ],
+                      ),
+              );
+            },
           );
         },
       ),
