@@ -12,7 +12,7 @@ class PlayerIntro extends StatelessWidget {
     return Expanded(
       child: InkWell(
         onTap: () {
-          Navigator.of(context).push(MaterialPageRoute(
+          Navigator.of(context).push(MaterialPageRoute<PlayerDetails>(
               builder: (ctx) => PlayerDetails(player: player)));
         },
         child: Card(

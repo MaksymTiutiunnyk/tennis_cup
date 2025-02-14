@@ -9,6 +9,7 @@ import 'package:tennis_cup/logic/cubit/schedule_date_cubit.dart';
 import 'package:tennis_cup/logic/cubit/sex_filter_cubit.dart';
 import 'package:tennis_cup/logic/cubit/tab_index_cubit.dart';
 import 'package:tennis_cup/logic/cubit/time_filter_cubit.dart';
+import 'package:tennis_cup/main.dart';
 import 'package:tennis_cup/presentation/screens/home.dart';
 import 'package:tennis_cup/presentation/screens/news.dart';
 import 'package:tennis_cup/presentation/screens/ranking.dart';
@@ -55,6 +56,11 @@ class Tabs extends StatelessWidget {
       ],
       child: BlocBuilder<TabIndexCubit, int>(
         builder: (context, state) {
+          context
+              .findAncestorWidgetOfExactType<TennisCup>()!
+              .observer
+              .stopPlayerCallback = context.read<VideoPlayerCubit>().stopPlayer;
+
           Widget activePage;
           String pageTitle;
 

@@ -45,7 +45,7 @@ class PlayersMatch extends StatelessWidget {
         child: InkWell(
           onTap: () {
             Navigator.of(context).push(
-              MaterialPageRoute(
+              MaterialPageRoute<Tabs>(
                 builder: (ctx) => Tabs(
                   initialTabIndex: 1,
                   initialDate: tournament.date,

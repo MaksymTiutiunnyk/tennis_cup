@@ -52,7 +52,7 @@ class _ScrollableBodyState extends State<ScrollableBody> {
       return;
     }
     Navigator.of(context).pushReplacement(
-      MaterialPageRoute(
+      MaterialPageRoute<PlayersComparison>(
         builder: (context) => PlayersComparison(
           player1: widget.player,
           player2: player,

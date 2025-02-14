@@ -32,6 +32,9 @@ class VideoPlayerCubit extends Cubit<VideoPlayerState> {
   }
 
   void stopPlayer() {
+    if (state is PlayerStopped) {
+      return;
+    }
     emit(PlayerStopped());
   }
 

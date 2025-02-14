@@ -71,7 +71,7 @@ class TournamentResults extends StatelessWidget {
                 DataCell(
                   InkWell(
                     onTap: () {
-                      Navigator.of(context).push(MaterialPageRoute(
+                      Navigator.of(context).push(MaterialPageRoute<PlayerDetails>(
                           builder: (ctx) => PlayerDetails(player: player)));
                     },
                     child: Text(
