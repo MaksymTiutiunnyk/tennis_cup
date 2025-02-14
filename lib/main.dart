@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tennis_cup/connection_monitor.dart';
+import 'package:tennis_cup/custom_navigator_observer.dart';
 import 'package:tennis_cup/data/data_providers/arenas.dart';
 import 'package:tennis_cup/data/models/tournament.dart';
 import 'package:tennis_cup/logic/cubit/news_period_cubit.dart';
@@ -33,14 +34,15 @@ void main() async {
         providers: [
           BlocProvider(create: (context) => NewsPeriodCubit()),
         ],
-        child: const TennisCup(),
+        child: TennisCup(),
       ),
     );
   });
 }
 
 class TennisCup extends StatelessWidget {
-  const TennisCup({super.key});
+  TennisCup({super.key});
+  final observer = CustomNavigatorObserver();
 
   @override
   Widget build(BuildContext context) {
@@ -112,6 +114,7 @@ class TennisCup extends StatelessWidget {
           initialTime: Time.Evening,
         ),
       ),
+      navigatorObservers: [observer],
     );
   }
 }

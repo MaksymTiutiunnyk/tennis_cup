@@ -22,7 +22,7 @@ class RankingPanel extends StatelessWidget {
   }
 
   void _showPlayerDetails(BuildContext context, Player player) {
-    Navigator.of(context).pushReplacement(MaterialPageRoute(
+    Navigator.of(context).pushReplacement(MaterialPageRoute<PlayerDetails>(
       builder: (context) => PlayerDetails(player: player),
     ));
   }

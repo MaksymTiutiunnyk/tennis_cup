@@ -11,7 +11,7 @@ class RankingPlayer extends StatelessWidget {
     return InkWell(
       onTap: () {
         Navigator.of(context).push(
-            MaterialPageRoute(builder: (ctx) => PlayerDetails(player: player)));
+            MaterialPageRoute<PlayerDetails>(builder: (ctx) => PlayerDetails(player: player)));
       },
       child: Card(
         child: Padding(

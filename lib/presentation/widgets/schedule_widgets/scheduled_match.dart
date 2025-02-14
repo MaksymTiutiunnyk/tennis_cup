@@ -28,7 +28,7 @@ class ScheduledMatch extends StatelessWidget {
                   IconButton(
                     onPressed: () {
                       Navigator.of(context).push(
-                        MaterialPageRoute(
+                        MaterialPageRoute<PlayersComparison>(
                           builder: (ctx) => PlayersComparison(
                             player1: match.bluePlayer,
                             player2: match.redPlayer,
@@ -45,7 +45,7 @@ class ScheduledMatch extends StatelessWidget {
                 children: [
                   InkWell(
                     onTap: () {
-                      Navigator.of(context).push(MaterialPageRoute(
+                      Navigator.of(context).push(MaterialPageRoute<PlayerDetails>(
                           builder: (ctx) =>
                               PlayerDetails(player: match.bluePlayer)));
                     },
@@ -71,7 +71,7 @@ class ScheduledMatch extends StatelessWidget {
                 children: [
                   InkWell(
                     onTap: () {
-                      Navigator.of(context).push(MaterialPageRoute(
+                      Navigator.of(context).push(MaterialPageRoute<PlayerDetails>(
                           builder: (ctx) =>
                               PlayerDetails(player: match.redPlayer)));
                     },

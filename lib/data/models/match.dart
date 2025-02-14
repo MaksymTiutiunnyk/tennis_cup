@@ -1,7 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:equatable/equatable.dart';
 import 'package:tennis_cup/data/models/player.dart';
 
-class Match {
+class Match extends Equatable {
   final String matchId;
   final Player bluePlayer;
   final Player redPlayer;
@@ -57,13 +58,11 @@ class Match {
   }
 
   @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-    if (other is! Match) return false;
-    return matchId == other.matchId;
-  }
-
-  @override
-  int get hashCode =>
-      Object.hash(matchId, bluePlayer, redPlayer, blueScore, redScore);
+  List<Object?> get props => [
+        matchId,
+        blueScore,
+        redScore,
+        blueSetScores,
+        redSetScores,
+      ];
 }

@@ -22,7 +22,7 @@ class Winner extends StatelessWidget {
     return InkWell(
       onTap: () {
         Navigator.of(context).push(
-            MaterialPageRoute(builder: (ctx) => PlayerDetails(player: winner)));
+            MaterialPageRoute<PlayerDetails>(builder: (ctx) => PlayerDetails(player: winner)));
       },
       child: Container(
         margin: const EdgeInsets.fromLTRB(8, 0, 8, 8),
