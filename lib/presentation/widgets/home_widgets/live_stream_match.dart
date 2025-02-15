@@ -15,7 +15,7 @@ import 'package:tennis_cup/presentation/widgets/home_widgets/live_stream_match_p
 
 DateFormat formatter = DateFormat('yyyy-MM-dd');
 
-class LiveStreamMatch extends StatefulWidget {
+class LiveStreamMatch extends StatelessWidget {
   final Match match;
   final Tournament tournament;
 
@@ -23,19 +23,14 @@ class LiveStreamMatch extends StatefulWidget {
       {super.key, required this.match, required this.tournament});
 
   @override
-  _LiveStreamMatchState createState() => _LiveStreamMatchState();
-}
-
-class _LiveStreamMatchState extends State<LiveStreamMatch> {
-  @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
         BlocProvider<MatchChangesCubit>(
-          create: (context) => MatchChangesCubit(widget.match),
+          create: (context) => MatchChangesCubit(match),
         ),
         BlocProvider<LiveStreamMatchCubit>(
-          create: (context) => LiveStreamMatchCubit(widget.match),
+          create: (context) => LiveStreamMatchCubit(match),
         ),
       ],
       child: BlocListener<MatchChangesCubit, void>(
@@ -48,7 +43,7 @@ class _LiveStreamMatchState extends State<LiveStreamMatch> {
             var isPlaying = false;
             var state = context.read<VideoPlayerCubit>().state;
             if (state is PlayerRunning) {
-              if (state.match == widget.match) {
+              if (state.match == match) {
                 isPlaying = true;
               }
             }
@@ -68,13 +63,13 @@ class _LiveStreamMatchState extends State<LiveStreamMatch> {
                           onTap: () {
                             context
                                 .read<ScheduleDateCubit>()
-                                .selectDate(widget.tournament.date);
+                                .selectDate(tournament.date);
                             context
                                 .read<TimeFilterCubit>()
-                                .selectTime(widget.tournament.time);
+                                .selectTime(tournament.time);
                             context
                                 .read<ArenaFilterCubit>()
-                                .selectArena(widget.tournament.arena);
+                                .selectArena(tournament.arena);
                             context.read<TabIndexCubit>().selectTab(1);
                           },
                           child: Column(
@@ -84,19 +79,19 @@ class _LiveStreamMatchState extends State<LiveStreamMatch> {
                                 children: [
                                   Icon(
                                     Icons.circle,
-                                    color: widget.tournament.arena.color,
+                                    color: tournament.arena.color,
                                     size: 8,
                                   ),
                                   const SizedBox(width: 8),
                                   Text(
-                                    'Arena: ${widget.tournament.arena.title}',
+                                    'Arena: ${tournament.arena.title}',
                                     style:
                                         Theme.of(context).textTheme.bodyMedium,
                                   ),
                                 ],
                               ),
                               Text(
-                                '${formatter.format(widget.tournament.date)} ${widget.tournament.players[0].sex.name}, ${widget.tournament.time.name} ${widget.tournament.isFinished ? '(Finished)' : ''}',
+                                '${formatter.format(tournament.date)} ${tournament.players[0].sex.name}, ${tournament.time.name} ${tournament.isFinished ? '(Finished)' : ''}',
                                 style: Theme.of(context).textTheme.bodySmall,
                               ),
                             ],
@@ -108,7 +103,7 @@ class _LiveStreamMatchState extends State<LiveStreamMatch> {
                               context.read<VideoPlayerCubit>().stopPlayer();
                             } else {
                               context.read<VideoPlayerCubit>().runPlayer(
-                                  widget.match,
+                                  match,
                                   state.youtubePlayerController != null
                                       ? state.youtubePlayerController!.value
                                           .position.inSeconds
@@ -138,7 +133,7 @@ class _LiveStreamMatchState extends State<LiveStreamMatch> {
                               context
                                   .read<VideoPlayerCubit>()
                                   .runFullScreenPlayer(
-                                    widget.match,
+                                    match,
                                     state.youtubePlayerController!.value
                                         .position.inSeconds,
                                   );
