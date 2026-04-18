@@ -6,9 +6,23 @@ allprojects {
 }
 
 rootProject.buildDir = '../build'
+
+// Block 1: Setup paths and register hooks BEFORE evaluation
 subprojects {
     project.buildDir = "${rootProject.buildDir}/${project.name}"
+
+    afterEvaluate {
+        if (project.hasProperty('android')) {
+            project.android {
+                if (namespace == null) {
+                    namespace project.group
+                }
+            }
+        }
+    }
 }
+
+// Block 2: Force evaluation AFTER hooks are registered
 subprojects {
     project.evaluationDependsOn(':app')
 }
