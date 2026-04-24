@@ -1,97 +1,55 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:tennis_cup/data/data_providers/tournament_api.dart';
 import 'package:tennis_cup/data/models/arena.dart';
+import 'package:tennis_cup/data/models/page_request.dart';
+import 'package:tennis_cup/data/models/page_result.dart';
 import 'package:tennis_cup/data/models/tournament.dart';
+import 'package:tennis_cup/data/services/abstract/i_tournament_service.dart';
 
 class TournamentRepository {
-  final TournamentApi tournamentApi;
+  final ITournamentService _service;
 
-  const TournamentRepository({required this.tournamentApi});
+  const TournamentRepository(this._service);
 
-  Future<List<Tournament>> fetchScheduledTournament(
-      {required DateTime tournamentDate,
-      required Arena tournamentArena,
-      required Time tournamentTime}) async {
-    final querySnapshot = await tournamentApi.fetchScheduledTournament(
-        tournamentDate: tournamentDate,
-        tournamentArena: tournamentArena,
-        tournamentTime: tournamentTime);
-
-    List<Tournament> mappedTournaments = await Future.wait(
-        querySnapshot.docs.map((doc) async => Tournament.fromFirestore(doc)));
-
-    return mappedTournaments;
+  Future<List<Tournament>> fetchScheduledTournament({
+    required DateTime tournamentDate,
+    required Arena tournamentArena,
+    required Time tournamentTime,
+  }) {
+    return _service.fetchScheduledTournaments(
+      date: tournamentDate,
+      arena: tournamentArena,
+      time: tournamentTime,
+    );
   }
 
-  Future<List<Tournament>> fetchLiveStreamMatchesTournaments() async {
-    final QuerySnapshot querySnapshot =
-        await tournamentApi.fetchLiveStreamMatchesTournaments();
-
-    List<Tournament> mappedTournaments = await Future.wait(
-        querySnapshot.docs.map((doc) async => Tournament.fromFirestore(doc)));
-
-    return mappedTournaments;
+  Future<List<Tournament>> fetchLiveStreamMatchesTournaments() {
+    return _service.fetchRecentTournaments();
   }
 
-  Future<List<Tournament>> fetchUpcomingMatchesTournaments() async {
-    final QuerySnapshot querySnapshot =
-        await tournamentApi.fetchUpcomingMatchesTournaments();
-
-    List<Tournament> mappedTournaments = await Future.wait(
-        querySnapshot.docs.map((doc) async => Tournament.fromFirestore(doc)));
-
-    return mappedTournaments;
+  Future<List<Tournament>> fetchUpcomingMatchesTournaments() {
+    return _service.fetchUpcomingTournaments();
   }
 
-  Future<List<Tournament>> fetchWinnersTournaments() async {
-    final QuerySnapshot querySnapshot =
-        await tournamentApi.fetchWinnersTournaments();
-
-    List<Tournament> mappedTournaments = await Future.wait(
-        querySnapshot.docs.map((doc) async => Tournament.fromFirestore(doc)));
-
-    return mappedTournaments;
+  Future<List<Tournament>> fetchWinnersTournaments() {
+    return _service.fetchRecentTournaments();
   }
 
   Stream<void> watchTournamentChanges(String tournamentId) {
-    return tournamentApi.watchTournamentChanges(tournamentId);
+    return _service.watchTournamentChanges(tournamentId);
   }
 
-  Future<Map<String, dynamic>> fetchPlayersTournaments({
+  Future<PageResult<Tournament>> fetchPlayersTournaments({
     required String player1Id,
     String? player2Id,
-    required int limit,
-    DocumentSnapshot? startAfter,
-  }) async {
-    final querySnapshot = await tournamentApi.fetchPlayerTournaments(
-        playerId: player1Id, limit: limit, startAfter: startAfter);
-
-    final tournaments = <Tournament>[];
-
-    for (final doc in querySnapshot.docs) {
-      final tournament = await Tournament.fromFirestore(doc);
-      if (player2Id != null) {
-        if (tournament.players.any((player) => player.playerId == player2Id)) {
-          tournaments.add(tournament);
-        }
-      } else {
-        tournaments.add(tournament);
-      }
-    }
-
-    return {
-      'tournaments': tournaments,
-      'lastDocument':
-          querySnapshot.docs.isNotEmpty ? querySnapshot.docs.last : null,
-    };
+    required PageRequest page,
+  }) {
+    return _service.fetchPlayerTournaments(
+      playerId: player1Id,
+      player2Id: player2Id,
+      page: page,
+    );
   }
 
-  Future<Tournament> fetchTournamentById({
-    required String tournamentId,
-  }) async {
-    DocumentSnapshot tournamentSnapshot =
-        await tournamentApi.fetchTournamentById(tournamentId: tournamentId);
-
-    return await Tournament.fromFirestore(tournamentSnapshot);
+  Future<Tournament> fetchTournamentById({required String tournamentId}) {
+    return _service.fetchTournamentById(tournamentId);
   }
 }
