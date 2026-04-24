@@ -1,7 +1,5 @@
 // ignore_for_file: constant_identifier_names
 
-import 'package:cloud_firestore/cloud_firestore.dart';
-
 enum Sex { All, Men, Women }
 
 class Player {
@@ -21,47 +19,27 @@ class Player {
   final double rankTennis;
   final double rankUTTF;
   final String imageUrl;
+  final bool hasDetailedStats;
 
-  Player(
-      {required this.playerId,
-      required this.year,
-      required this.tournaments,
-      required this.matches,
-      required this.wins,
-      required this.loses,
-      required this.place,
-      required this.gold,
-      required this.silver,
-      required this.bronze,
-      required this.rankTennis,
-      required this.rankUTTF,
-      required this.imageUrl,
-      required this.name,
-      required this.surname,
-      required this.sex});
-
-  factory Player.fromFirestore(DocumentSnapshot doc) {
-    final data = doc.data() as Map<String, dynamic>;
-
-    return Player(
-      playerId: doc.id,
-      bronze: data['bronze'],
-      gold: data['gold'],
-      name: data['name'],
-      surname: data['surname'],
-      imageUrl: data['imageUrl'] ?? '',
-      loses: data['loses'],
-      matches: data['matches'],
-      place: data['place'],
-      rankTennis: double.parse(data['rank_tennis'].toString()),
-      rankUTTF: double.parse(data['rank_uttf'].toString()),
-      silver: data['silver'],
-      tournaments: data['tournaments'],
-      wins: data['wins'],
-      year: data['year'],
-      sex: Sex.values.firstWhere((value) => value.name == data['sex']),
-    );
-  }
+  Player({
+    required this.playerId,
+    required this.year,
+    required this.tournaments,
+    required this.matches,
+    required this.wins,
+    required this.loses,
+    required this.place,
+    required this.gold,
+    required this.silver,
+    required this.bronze,
+    required this.rankTennis,
+    required this.rankUTTF,
+    required this.imageUrl,
+    required this.name,
+    required this.surname,
+    required this.sex,
+    this.hasDetailedStats = true,
+  });
 
   String get fullName {
     return '$surname $name';
