@@ -65,5 +65,4 @@ class DefaultFirebaseOptions {
     storageBucket: 'tennis-cup-55341.firebasestorage.app',
     iosBundleId: 'com.example.tennisCup',
   );
-
 }
