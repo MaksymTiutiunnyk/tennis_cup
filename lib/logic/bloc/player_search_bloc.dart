@@ -1,5 +1,4 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tennis_cup/data/data_providers/player_api.dart';
 import 'package:tennis_cup/data/models/player.dart';
 import 'package:tennis_cup/data/repositories/player_repository.dart';
 
@@ -7,9 +6,12 @@ part 'player_search_state.dart';
 part 'player_search_event.dart';
 
 class PlayerSearchBloc extends Bloc<PlayerSearchEvent, PlayerSearchState> {
-  final playerRepository = const PlayerRepository(playerApi: PlayerApi());
+  final PlayerRepository playerRepository;
 
-  PlayerSearchBloc(super.initialState) {
+  PlayerSearchBloc({
+    required this.playerRepository,
+    required PlayerSearchState initialState,
+  }) : super(initialState) {
     on<SearchFieldChanged>((event, emit) async {
       emit(PlayerSearchLoading());
 
