@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tennis_cup/core/di/service_locator.dart';
 import 'package:tennis_cup/logic/cubit/match_changes_cubit.dart';
 import 'package:tennis_cup/logic/cubit/players_match_cubit.dart';
 import 'package:tennis_cup/data/models/player.dart';
@@ -31,16 +32,21 @@ class PlayersMatch extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider<PlayersMatchCubit>(
-          create: (context) => PlayersMatchCubit(match),
+          create: (context) => PlayersMatchCubit(
+            matchRepository: ServiceLocator.matchRepository,
+          ),
         ),
         BlocProvider<MatchChangesCubit>(
-          create: (context) => MatchChangesCubit(match),
+          create: (context) => MatchChangesCubit(
+            match,
+            matchRepository: ServiceLocator.matchRepository,
+          ),
         ),
       ],
       child: BlocListener<MatchChangesCubit, void>(
         listener: (context, state) {
           context.read<PlayersMatchCubit>().fetchPlayersMatch(
-              context.read<PlayersMatchCubit>().state.matchId);
+              context.read<PlayersMatchCubit>().state?.matchId ?? match.matchId);
         },
         child: InkWell(
           onTap: () {
@@ -58,19 +64,19 @@ class PlayersMatch extends StatelessWidget {
           child: Card(
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-              child: BlocBuilder<PlayersMatchCubit, Match>(
+              child: BlocBuilder<PlayersMatchCubit, Match?>(
                 builder: (context, state) {
-                  final match = context.read<PlayersMatchCubit>().state;
+                  final currentMatch = state ?? match;
 
                   final int player1Score =
-                      isPlayer1Blue ? match.blueScore : match.redScore;
+                      isPlayer1Blue ? currentMatch.blueScore : currentMatch.redScore;
                   final int player2Score =
-                      isPlayer1Blue ? match.redScore : match.blueScore;
+                      isPlayer1Blue ? currentMatch.redScore : currentMatch.blueScore;
 
                   final List<int> player1SetScores =
-                      isPlayer1Blue ? match.blueSetScores : match.redSetScores;
+                      isPlayer1Blue ? currentMatch.blueSetScores : currentMatch.redSetScores;
                   final List<int> player2SetScores =
-                      isPlayer1Blue ? match.redSetScores : match.blueSetScores;
+                      isPlayer1Blue ? currentMatch.redSetScores : currentMatch.blueSetScores;
 
                   int setsPlayed = player1Score + player2Score;
                   if (player1Score != 3 && player2Score != 3) {
@@ -86,7 +92,7 @@ class PlayersMatch extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        dateTimeFormatter.format(match.dateTime),
+                        dateTimeFormatter.format(currentMatch.dateTime),
                         style: Theme.of(context).textTheme.bodySmall,
                       ),
                       Row(

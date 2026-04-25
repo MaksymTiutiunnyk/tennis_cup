@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tennis_cup/logic/cubit/video_player_cubit.dart';
-import 'package:youtube_player_flutter/youtube_player_flutter.dart';
+import 'package:intl/intl.dart';
+import 'package:tennis_cup/core/di/service_locator.dart';
+import 'package:tennis_cup/data/models/match.dart';
+import 'package:tennis_cup/data/models/tournament.dart';
 import 'package:tennis_cup/logic/cubit/arena_filter_cubit.dart';
 import 'package:tennis_cup/logic/cubit/live_stream_match_cubit.dart';
 import 'package:tennis_cup/logic/cubit/match_changes_cubit.dart';
 import 'package:tennis_cup/logic/cubit/schedule_date_cubit.dart';
 import 'package:tennis_cup/logic/cubit/tab_index_cubit.dart';
-import 'package:tennis_cup/data/models/match.dart';
-import 'package:intl/intl.dart';
-import 'package:tennis_cup/data/models/tournament.dart';
 import 'package:tennis_cup/logic/cubit/time_filter_cubit.dart';
+import 'package:tennis_cup/logic/cubit/video_player_cubit.dart';
 import 'package:tennis_cup/presentation/widgets/home_widgets/live_stream_match_player.dart';
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 DateFormat formatter = DateFormat('yyyy-MM-dd');
 
@@ -27,16 +28,19 @@ class LiveStreamMatch extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider<MatchChangesCubit>(
-          create: (context) => MatchChangesCubit(match),
+          create: (context) => MatchChangesCubit(match,
+              matchRepository: ServiceLocator.matchRepository),
         ),
         BlocProvider<LiveStreamMatchCubit>(
-          create: (context) => LiveStreamMatchCubit(match),
+          create: (context) => LiveStreamMatchCubit(
+              matchRepository: ServiceLocator.matchRepository),
         ),
       ],
       child: BlocListener<MatchChangesCubit, void>(
         listener: (context, state) {
           context.read<LiveStreamMatchCubit>().fetchLiveStreamMatch(
-              context.read<LiveStreamMatchCubit>().state.matchId);
+              context.read<LiveStreamMatchCubit>().state?.matchId ??
+                  match.matchId);
         },
         child: BlocBuilder<VideoPlayerCubit, VideoPlayerState>(
           builder: (context, state) {
@@ -139,7 +143,7 @@ class LiveStreamMatch extends StatelessWidget {
                                   );
                             },
                           )
-                        : BlocBuilder<LiveStreamMatchCubit, Match>(
+                        : BlocBuilder<LiveStreamMatchCubit, Match?>(
                             builder: (context, state) => Container(
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 16, vertical: 8),
@@ -151,13 +155,14 @@ class LiveStreamMatch extends StatelessWidget {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   LiveStreamMatchPlayer(
-                                    player: state.bluePlayer,
-                                    score: state.blueScore,
+                                    player:
+                                        state?.bluePlayer ?? match.bluePlayer,
+                                    score: state?.blueScore ?? match.blueScore,
                                   ),
                                   const SizedBox(height: 16),
                                   LiveStreamMatchPlayer(
-                                    player: state.redPlayer,
-                                    score: state.redScore,
+                                    player: state?.redPlayer ?? match.redPlayer,
+                                    score: state?.redScore ?? match.redScore,
                                   ),
                                 ],
                               ),
