@@ -1,21 +1,16 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:tennis_cup/data/data_providers/match_api.dart';
 import 'package:tennis_cup/data/models/match.dart';
+import 'package:tennis_cup/data/services/abstract/i_match_service.dart';
 
 class MatchRepository {
-  final MatchApi matchApi;
+  final IMatchService _service;
 
-  const MatchRepository({required this.matchApi});
+  const MatchRepository(this._service);
 
-  Future<Match> fetchMatchById({
-    required String matchId,
-  }) async {
-    DocumentSnapshot? matchSnapshot = await matchApi.fetchMatchById(matchId);
-
-    return await Match.fromFirestore(matchSnapshot!);
+  Future<Match?> fetchMatchById({required String matchId}) {
+    return _service.fetchMatchById(matchId);
   }
 
   Stream<void> watchMatchChanges(String matchId) {
-    return matchApi.watchMatchChanges(matchId);
+    return _service.watchMatchChanges(matchId);
   }
 }
