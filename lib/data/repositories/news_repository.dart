@@ -1,40 +1,16 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:tennis_cup/data/data_providers/news_api.dart';
 import 'package:tennis_cup/data/models/news.dart';
+import 'package:tennis_cup/data/services/abstract/i_news_service.dart';
 
 class NewsRepository {
-  final NewsApi newsApi;
+  final INewsService _service;
 
-  const NewsRepository({required this.newsApi});
+  const NewsRepository(this._service);
 
-  Future<List<News>> fetchNewsWithinPeriod(DateTime period) async {
-    final querySnapshot = await newsApi.fetchNewsWithinPeriod(period);
-
-    List<News> newsList = querySnapshot.docs.map((doc) {
-      final data = doc.data() as Map<String, dynamic>;
-      return News(
-          title: data['title'] == "" ? 'Attention!' : data['title'],
-          text: data['text'],
-          date: (data['date'] as Timestamp).toDate(),
-          imageUrl: data['imageUrl']);
-    }).toList();
-
-    return newsList;
+  Future<List<News>> fetchNewsWithinPeriod(DateTime period) {
+    return _service.fetchNewsWithinPeriod(period);
   }
 
-   Future<List<News>> fetchInterestingNews() async {
-    final querySnapshot = await newsApi.fetchInterestingNews();
-
-    List<News> interestingNews = querySnapshot.docs.map((doc) {
-      final data = doc.data() as Map<String, dynamic>;
-      return News(
-        title: data['title'] == "" ? 'Attention!' : data['title'],
-        text: data['text'],
-        date: (data['date'] as Timestamp).toDate(),
-        imageUrl: data['imageUrl'],
-      );
-    }).toList();
-
-    return interestingNews;
+  Future<List<News>> fetchInterestingNews() {
+    return _service.fetchInterestingNews();
   }
 }
