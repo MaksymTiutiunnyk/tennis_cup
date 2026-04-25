@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tennis_cup/data/data_providers/news_api.dart';
 import 'package:tennis_cup/data/models/news.dart';
 import 'package:tennis_cup/data/repositories/news_repository.dart';
 import 'package:tennis_cup/logic/cubit/news_period_cubit.dart';
@@ -9,11 +8,14 @@ import 'package:tennis_cup/logic/cubit/news_period_cubit.dart';
 part 'news_state.dart';
 
 class NewsCubit extends Cubit<NewsState> {
-  final newsRepository = const NewsRepository(newsApi: NewsApi());
+  final NewsRepository newsRepository;
   final NewsPeriodCubit newsPeriodCubit;
   late StreamSubscription newsPeriodSubscription;
 
-  NewsCubit({required this.newsPeriodCubit}) : super(NewsFetching()) {
+  NewsCubit({
+    required this.newsRepository,
+    required this.newsPeriodCubit,
+  }) : super(NewsFetching()) {
     newsPeriodSubscription = newsPeriodCubit.stream.listen((period) {
       fetchNews(period);
     });
