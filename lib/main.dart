@@ -2,14 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tennis_cup/connection_monitor.dart';
+import 'package:tennis_cup/core/di/service_locator.dart';
 import 'package:tennis_cup/custom_navigator_observer.dart';
-import 'package:tennis_cup/data/data_providers/arenas.dart';
+import 'package:tennis_cup/data/models/arena.dart';
 import 'package:tennis_cup/data/models/tournament.dart';
+import 'package:tennis_cup/features/auth/logic/auth_cubit.dart';
 import 'package:tennis_cup/logic/cubit/news_period_cubit.dart';
 import 'package:tennis_cup/presentation/screens/tabs.dart';
-
-import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
 
 ColorScheme kcolorScheme = ColorScheme.fromSeed(
   seedColor: const Color.fromARGB(255, 4, 5, 100),
@@ -22,9 +21,7 @@ ColorScheme kdarkColorScheme = ColorScheme.fromSeed(
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  ServiceLocator.init();
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
@@ -33,6 +30,12 @@ void main() async {
       MultiBlocProvider(
         providers: [
           BlocProvider(create: (context) => NewsPeriodCubit()),
+          BlocProvider(
+            create: (context) => AuthCubit(
+              authService: ServiceLocator.authService,
+              tokenStore: ServiceLocator.tokenStore,
+            )..checkAuthStatus(),
+          ),
         ],
         child: TennisCup(),
       ),
@@ -110,7 +113,7 @@ class TennisCup extends StatelessWidget {
         child: Tabs(
           initialTabIndex: 0,
           initialDate: DateTime.now(),
-          initialArena: arenas[1],
+          initialArena: Arena(title: '', color: Colors.grey),
           initialTime: Time.Evening,
         ),
       ),
