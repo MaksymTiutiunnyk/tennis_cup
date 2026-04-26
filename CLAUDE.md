@@ -42,6 +42,8 @@ RestService → Repository → Cubit/Bloc → UI Widget
 - Use **Blocs** only when multiple distinct event types drive the same state machine
 - Cubits that depend on filter cubits subscribe via `StreamSubscription` in their constructor and cancel in `close()`
 - Pagination uses `PageRequest(page, size)` / `PageResult<T>(items, hasMore)` — no Firebase cursor types anywhere above the service layer
+- **Prefer Cubits over `StatefulWidget`** for all UI state. Use `StatefulWidget` only when lifecycle hooks (`initState`, `dispose`, `didUpdateWidget`) or animation controllers are genuinely needed and cannot be lifted into a cubit
+- **One widget per file** — every public widget class lives in its own dedicated `.dart` file
 
 ### Data models
 
