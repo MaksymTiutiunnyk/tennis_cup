@@ -1,14 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:tennis_cup/data/data_providers/tournament_api.dart';
-import 'package:tennis_cup/data/models/tournament.dart';
-import 'package:tennis_cup/data/repositories/tournament_repository.dart';
-import 'package:tennis_cup/presentation/widgets/home_widgets/upcoming_match.dart';
+import 'package:tennis_cup/core/di/service_locator.dart';
 import 'package:tennis_cup/data/models/match.dart';
+import 'package:tennis_cup/data/models/tournament.dart';
+import 'package:tennis_cup/presentation/widgets/home_widgets/upcoming_match.dart';
 
 class UpcomingMatches extends StatelessWidget {
-  final tournamentRepository =
-      const TournamentRepository(tournamentApi: TournamentApi());
-
   final bool isScrollable;
   const UpcomingMatches({super.key, this.isScrollable = true});
 
@@ -19,8 +15,8 @@ class UpcomingMatches extends StatelessWidget {
       Match? closestUpcomingMatch;
       Duration closestDuration = const Duration(days: 365000);
 
-      for (final match in tournament.matches!) {
-        Duration difference = match.dateTime.difference(DateTime.now());
+      for (final match in tournament.matches ?? []) {
+        final difference = match.dateTime.difference(DateTime.now());
         if (difference > Duration.zero && difference < closestDuration) {
           closestDuration = difference;
           closestUpcomingMatch = match;
@@ -45,7 +41,7 @@ class UpcomingMatches extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final upcomingMatchesTournaments =
-        tournamentRepository.fetchUpcomingMatchesTournaments();
+        ServiceLocator.tournamentRepository.fetchUpcomingMatchesTournaments();
 
     return Flexible(
       fit: FlexFit.loose,
