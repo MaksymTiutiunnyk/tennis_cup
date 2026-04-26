@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tennis_cup/data/data_providers/arenas.dart';
+import 'package:tennis_cup/core/di/service_locator.dart';
 import 'package:tennis_cup/data/models/arena.dart';
 import 'package:tennis_cup/data/models/tournament.dart';
 import 'package:tennis_cup/logic/cubit/arena_filter_cubit.dart';
@@ -72,37 +72,49 @@ class ScheduleFilters extends StatelessWidget {
           flex: 2,
           child: Padding(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-            child: BlocBuilder<ArenaFilterCubit, Arena>(
-              builder: (context, state) => ListView(
-                children: [
-                  for (Arena arena in arenas)
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
+            child: FutureBuilder<List<Arena>>(
+              future: ServiceLocator.arenaRepository.fetchAllArenas(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                final arenas = snapshot.data ?? [];
+                if (arenas.isEmpty) {
+                  return const Center(child: Text('Arenas not found'));
+                }
+                return BlocBuilder<ArenaFilterCubit, Arena>(
+                  builder: (context, selected) => ListView(
+                    children: [
+                      for (Arena arena in arenas)
                         Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Icon(
-                              Icons.circle,
-                              color: arena.color,
-                              size: 10,
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.circle,
+                                  color: arena.color,
+                                  size: 10,
+                                ),
+                                const SizedBox(width: 8),
+                                Text('Arena: ${arena.title}'),
+                              ],
                             ),
-                            const SizedBox(width: 8),
-                            Text('Arena: ${arena.title}'),
+                            Radio<Arena>(
+                              value: arena,
+                              groupValue: selected,
+                              onChanged: (value) {
+                                context
+                                    .read<ArenaFilterCubit>()
+                                    .selectArena(value!);
+                              },
+                            ),
                           ],
                         ),
-                        Radio<Arena>(
-                          value: arena,
-                          groupValue: state,
-                          onChanged: (value) {
-                            context
-                                .read<ArenaFilterCubit>()
-                                .selectArena(value!);
-                          },
-                        ),
-                      ],
-                    ),
-                ],
-              ),
+                    ],
+                  ),
+                );
+              },
             ),
           ),
         ),
