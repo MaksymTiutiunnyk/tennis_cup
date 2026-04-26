@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tennis_cup/core/di/service_locator.dart';
 import 'package:tennis_cup/logic/cubit/ranking_players_cubit.dart';
 import 'package:tennis_cup/logic/cubit/sex_filter_cubit.dart';
 import 'package:tennis_cup/presentation/widgets/ranking_widgets/ranking_panel.dart';
@@ -13,8 +14,9 @@ class Ranking extends StatelessWidget {
     return BlocProvider<RankingPlayersCubit>(
       create: (context) => RankingPlayersCubit(
         sexFilterCubit: BlocProvider.of<SexFilterCubit>(context),
+        playerRepository: ServiceLocator.playerRepository,
       )..fetchPlayersInitially(),
-      child: Column(
+      child: const Column(
         children: [
           RankingPanel(),
           RankingPlayers(),
