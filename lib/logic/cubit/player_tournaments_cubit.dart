@@ -1,6 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:tennis_cup/data/data_providers/tournament_api.dart';
+import 'package:tennis_cup/data/models/page_request.dart';
 import 'package:tennis_cup/data/models/player.dart';
 import 'package:tennis_cup/data/models/tournament.dart';
 import 'package:tennis_cup/data/repositories/tournament_repository.dart';
@@ -8,18 +7,18 @@ import 'package:tennis_cup/data/repositories/tournament_repository.dart';
 part 'player_tournaments_state.dart';
 
 class PlayerTournamentsCubit extends Cubit<PlayerTournamentsState> {
-  final TournamentRepository tournamentRepository =
-      const TournamentRepository(tournamentApi: TournamentApi());
-
+  final TournamentRepository tournamentRepository;
   final Player player1;
-  DocumentSnapshot? _lastDocument;
+  PageRequest _currentPage = const PageRequest(page: 0, size: 2);
   bool _hasMore = true;
   bool _isLoading = false;
 
-  PlayerTournamentsCubit(this.player1)
-      : super(const PlayerTournamentsState(tournaments: [], isLoading: false));
+  PlayerTournamentsCubit(
+    this.player1, {
+    required this.tournamentRepository,
+  }) : super(const PlayerTournamentsState(tournaments: [], isLoading: false));
 
-  Future<void> fetchTournaments({int limit = 2}) async {
+  Future<void> fetchTournaments() async {
     if (_isLoading || !_hasMore) return;
 
     _isLoading = true;
@@ -28,21 +27,14 @@ class PlayerTournamentsCubit extends Cubit<PlayerTournamentsState> {
     try {
       final result = await tournamentRepository.fetchPlayersTournaments(
         player1Id: player1.playerId,
-        limit: limit,
-        startAfter: _lastDocument,
+        page: _currentPage,
       );
 
-      final newTournaments = result['tournaments'] as List<Tournament>;
-      _lastDocument = result['lastDocument'] as DocumentSnapshot?;
-
-      final allTournaments = [...state.tournaments, ...newTournaments];
-
-      if (newTournaments.isEmpty) {
-        _hasMore = false;
-      }
+      if (result.hasMore) _currentPage = _currentPage.next;
+      _hasMore = result.hasMore;
 
       emit(PlayerTournamentsState(
-        tournaments: allTournaments,
+        tournaments: [...state.tournaments, ...result.items],
         isLoading: false,
       ));
     } catch (e) {
