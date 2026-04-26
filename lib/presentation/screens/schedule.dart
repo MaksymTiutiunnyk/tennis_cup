@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tennis_cup/core/di/service_locator.dart';
 import 'package:tennis_cup/logic/cubit/arena_filter_cubit.dart';
 import 'package:tennis_cup/logic/cubit/schedule_date_cubit.dart';
 import 'package:tennis_cup/logic/cubit/scheduled_tournament_cubit.dart';
@@ -26,6 +27,7 @@ class _ScheduleState extends State<Schedule> {
   Widget build(BuildContext context) {
     return BlocProvider<ScheduledTournamentCubit>(
       create: (context) => ScheduledTournamentCubit(
+        tournamentRepository: ServiceLocator.tournamentRepository,
         scheduleDateCubit: BlocProvider.of<ScheduleDateCubit>(context),
         arenaFilterCubit: BlocProvider.of<ArenaFilterCubit>(context),
         timeFilterCubit: BlocProvider.of<TimeFilterCubit>(context),
@@ -52,6 +54,7 @@ class _ScheduleState extends State<Schedule> {
                   return BlocProvider<TournamentChangesCubit>(
                     create: (context) => TournamentChangesCubit(
                       tournamentId: state.tournament.tournamentId,
+                      tournamentRepository: ServiceLocator.tournamentRepository,
                     ),
                     child: BlocListener<TournamentChangesCubit, void>(
                       listener: (context, state) {
