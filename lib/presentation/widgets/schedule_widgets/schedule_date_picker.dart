@@ -10,7 +10,7 @@ class ScheduleDatePicker extends StatelessWidget {
       context: context,
       initialDate: DateTime.now(),
       firstDate: DateTime(2018, 1, 1),
-      lastDate: DateTime(2026, 1, 1),
+      lastDate: DateTime(2226, 1, 1),
     );
 
     if (pickedDate == null) {
