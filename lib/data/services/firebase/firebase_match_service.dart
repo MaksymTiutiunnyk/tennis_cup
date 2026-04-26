@@ -26,7 +26,7 @@ class FirebaseMatchService implements IMatchService {
     return FirebaseFirestore.instance
         .collectionGroup('matches')
         .snapshots()
-        .map((_) => null);
+        .map((_) {});
   }
 
   Future<Match?> _matchFromDoc(DocumentSnapshot doc) async {

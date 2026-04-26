@@ -140,7 +140,7 @@ class FirebaseTournamentService implements ITournamentService {
         .collectionGroup('matches')
         .where('tournamentId', isEqualTo: tournamentId)
         .snapshots()
-        .map((_) => null);
+        .map((_) {});
   }
 
   Future<Tournament?> _tournamentFromDoc(DocumentSnapshot doc) async {

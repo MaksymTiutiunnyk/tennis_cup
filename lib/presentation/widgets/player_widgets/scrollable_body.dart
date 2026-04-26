@@ -111,8 +111,10 @@ class _ScrollableBodyState extends State<ScrollableBody> {
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color:
-                        Theme.of(context).colorScheme.shadow.withOpacity(0.25),
+                    color: Theme.of(context)
+                        .colorScheme
+                        .shadow
+                        .withValues(alpha: 0.25),
                     spreadRadius: 1,
                     blurRadius: 5,
                     offset: const Offset(0, 0),

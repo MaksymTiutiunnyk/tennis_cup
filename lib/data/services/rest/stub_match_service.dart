@@ -8,5 +8,5 @@ class StubMatchService implements IMatchService {
   Future<Match?> fetchMatchById(String id) async => null;
 
   @override
-  Stream<void> watchMatchChanges(String matchId) => Stream.empty();
+  Stream<void> watchMatchChanges(String matchId) => const Stream.empty();
 }

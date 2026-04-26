@@ -116,7 +116,7 @@ class RestTournamentService implements ITournamentService {
   }
 
   @override
-  Stream<void> watchTournamentChanges(String tournamentId) => Stream.empty();
+  Stream<void> watchTournamentChanges(String tournamentId) => const Stream.empty();
 
   Tournament _parseTournament(
     Map<String, dynamic> json,

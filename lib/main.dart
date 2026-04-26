@@ -85,8 +85,8 @@ class TennisCup extends StatelessWidget {
       theme: ThemeData().copyWith(
         colorScheme: kcolorScheme,
         appBarTheme: const AppBarTheme().copyWith(
-          backgroundColor: kcolorScheme.onBackground,
-          foregroundColor: kcolorScheme.background,
+          backgroundColor: kcolorScheme.onSurface,
+          foregroundColor: kcolorScheme.surface,
         ),
         iconTheme: const IconThemeData()
             .copyWith(color: kcolorScheme.onPrimaryContainer),
