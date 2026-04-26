@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tennis_cup/data/models/player.dart';
 import 'package:tennis_cup/data/models/match.dart';
+import 'package:tennis_cup/data/models/player.dart';
 import 'package:tennis_cup/data/models/tournament.dart';
 import 'package:tennis_cup/logic/cubit/players_tournaments_cubit.dart';
 import 'package:tennis_cup/presentation/widgets/comparison_widgets.dart/players_match.dart';
@@ -13,6 +13,9 @@ class PlayersMatches extends StatelessWidget {
 
   List<PlayersMatch> _getPlayersMatches(Tournament tournament) {
     final List<PlayersMatch> playersMatches = [];
+    if (tournament.matches == null) {
+      return playersMatches;
+    }
 
     for (Match match in tournament.matches!) {
       if ((match.bluePlayer.playerId == player1.playerId ||
