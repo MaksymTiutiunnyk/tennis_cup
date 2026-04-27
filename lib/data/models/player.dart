@@ -21,7 +21,6 @@ class Player extends Equatable {
   final double rankTennis;
   final double rankUTTF;
   final String imageUrl;
-  final bool hasDetailedStats;
 
   const Player({
     required this.playerId,
@@ -40,7 +39,6 @@ class Player extends Equatable {
     required this.name,
     required this.surname,
     required this.sex,
-    this.hasDetailedStats = true,
   });
 
   String get fullName => '$surname $name';
@@ -63,6 +61,5 @@ class Player extends Equatable {
         rankTennis,
         rankUTTF,
         imageUrl,
-        hasDetailedStats,
       ];
 }

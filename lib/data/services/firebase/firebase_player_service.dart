@@ -67,10 +67,8 @@ class FirebasePlayerService implements IPlayerService {
 
   @override
   Future<Player> fetchPlayerById(String id) async {
-    final doc = await FirebaseFirestore.instance
-        .collection('players')
-        .doc(id)
-        .get();
+    final doc =
+        await FirebaseFirestore.instance.collection('players').doc(id).get();
     final player = _playerFromDoc(doc);
     if (player == null) throw Exception('Player $id not found');
     return player;
@@ -102,7 +100,6 @@ class FirebasePlayerService implements IPlayerService {
       rankTennis: (data['rank_tennis'] as num?)?.toDouble() ?? 0,
       rankUTTF: (data['rank_uttf'] as num?)?.toDouble() ?? 0,
       imageUrl: data['imageUrl'] as String? ?? '',
-      hasDetailedStats: true,
     );
   }
 }

@@ -56,12 +56,21 @@ class RestPlayerService implements IPlayerService {
       playerId: json['playerId']?.toString() ?? '',
       name: json['firstName'] as String? ?? '',
       surname: json['lastName'] as String? ?? '',
-      sex: gender == 'MALE' ? Sex.Men : (gender == 'FEMALE' ? Sex.Women : Sex.All),
-      year: 0, tournaments: 0, matches: 0, wins: 0, loses: 0,
-      place: '', gold: 0, silver: 0, bronze: 0,
+      sex: gender == 'MALE'
+          ? Sex.Men
+          : (gender == 'FEMALE' ? Sex.Women : Sex.All),
+      year: 0,
+      tournaments: 0,
+      matches: 0,
+      wins: 0,
+      loses: 0,
+      place: '',
+      gold: 0,
+      silver: 0,
+      bronze: 0,
       rankTennis: (json['ratingValue'] as num?)?.toDouble() ?? 0,
-      rankUTTF: 0, imageUrl: '',
-      hasDetailedStats: false,
+      rankUTTF: 0,
+      imageUrl: '',
     );
   }
 
@@ -71,11 +80,21 @@ class RestPlayerService implements IPlayerService {
       playerId: json['id']?.toString() ?? '',
       name: json['firstName'] as String? ?? '',
       surname: json['lastName'] as String? ?? '',
-      sex: gender == 'MALE' ? Sex.Men : (gender == 'FEMALE' ? Sex.Women : Sex.All),
-      year: 0, tournaments: 0, matches: 0, wins: 0, loses: 0,
-      place: '', gold: 0, silver: 0, bronze: 0,
-      rankTennis: 0, rankUTTF: 0, imageUrl: '',
-      hasDetailedStats: false,
+      sex: gender == 'MALE'
+          ? Sex.Men
+          : (gender == 'FEMALE' ? Sex.Women : Sex.All),
+      year: 0,
+      tournaments: 0,
+      matches: 0,
+      wins: 0,
+      loses: 0,
+      place: '',
+      gold: 0,
+      silver: 0,
+      bronze: 0,
+      rankTennis: 0,
+      rankUTTF: 0,
+      imageUrl: '',
     );
   }
 }
