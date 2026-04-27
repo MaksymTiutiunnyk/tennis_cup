@@ -1,3 +1,8 @@
+const gatewayUrl = String.fromEnvironment(
+  'GATEWAY_URL',
+  defaultValue: 'http://localhost:8080',
+);
+
 const playerServiceUrl = String.fromEnvironment(
   'PLAYER_URL',
   defaultValue: 'http://localhost:8082',

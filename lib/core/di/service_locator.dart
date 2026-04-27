@@ -49,7 +49,7 @@ class ServiceLocator {
     tokenStore = const AuthTokenStore();
 
     final authDio = Dio(BaseOptions(
-      baseUrl: authServiceUrl,
+      baseUrl: gatewayUrl,
       connectTimeout: const Duration(seconds: 10),
       receiveTimeout: const Duration(seconds: 15),
       headers: {'Content-Type': 'application/json'},
@@ -57,17 +57,17 @@ class ServiceLocator {
     authService = RestAuthService(dio: authDio, tokenStore: tokenStore);
 
     final playerDio = DioClient.create(
-      baseUrl: playerServiceUrl,
+      baseUrl: gatewayUrl,
       tokenStore: tokenStore,
       refreshToken: authService.refreshAccessToken,
     );
     final tournamentDio = DioClient.create(
-      baseUrl: tournamentServiceUrl,
+      baseUrl: gatewayUrl,
       tokenStore: tokenStore,
       refreshToken: authService.refreshAccessToken,
     );
     final arenaDio = DioClient.create(
-      baseUrl: arenaServiceUrl,
+      baseUrl: gatewayUrl,
       tokenStore: tokenStore,
       refreshToken: authService.refreshAccessToken,
     );
