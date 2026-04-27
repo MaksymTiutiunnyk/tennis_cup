@@ -27,9 +27,13 @@ class Match extends Equatable {
   @override
   List<Object?> get props => [
         matchId,
+        bluePlayer,
+        redPlayer,
         blueScore,
         redScore,
         blueSetScores,
         redSetScores,
+        tournamentId,
+        dateTime,
       ];
 }

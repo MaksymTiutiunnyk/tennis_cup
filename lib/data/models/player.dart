@@ -1,8 +1,10 @@
 // ignore_for_file: constant_identifier_names
 
+import 'package:equatable/equatable.dart';
+
 enum Sex { All, Men, Women }
 
-class Player {
+class Player extends Equatable {
   final String playerId;
   final String name;
   final String surname;
@@ -21,7 +23,7 @@ class Player {
   final String imageUrl;
   final bool hasDetailedStats;
 
-  Player({
+  const Player({
     required this.playerId,
     required this.year,
     required this.tournaments,
@@ -41,17 +43,26 @@ class Player {
     this.hasDetailedStats = true,
   });
 
-  String get fullName {
-    return '$surname $name';
-  }
+  String get fullName => '$surname $name';
 
   @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-    if (other is! Player) return false;
-    return playerId == other.playerId && fullName == other.fullName;
-  }
-
-  @override
-  int get hashCode => Object.hash(playerId, fullName);
+  List<Object?> get props => [
+        playerId,
+        name,
+        surname,
+        sex,
+        year,
+        tournaments,
+        matches,
+        wins,
+        loses,
+        place,
+        gold,
+        silver,
+        bronze,
+        rankTennis,
+        rankUTTF,
+        imageUrl,
+        hasDetailedStats,
+      ];
 }

@@ -1,3 +1,4 @@
+import 'package:equatable/equatable.dart';
 import 'package:intl/intl.dart';
 import 'package:tennis_cup/data/models/arena.dart';
 import 'package:tennis_cup/data/models/match.dart';
@@ -8,18 +9,18 @@ DateFormat formatter = DateFormat('yyyy-MM-dd');
 // ignore: constant_identifier_names
 enum Time { Morning, Evening, Day, Midnight, Night }
 
-class Tournament {
+class Tournament extends Equatable {
   final String tournamentId;
   final List<Player> players;
-  List<Match>? matches;
+  final List<Match>? matches;
   final DateTime date;
   final Arena arena;
   final Time time;
   final List<int> points;
   final List<int> places;
-  bool isFinished;
+  final bool isFinished;
 
-  Tournament({
+  const Tournament({
     required this.tournamentId,
     required this.players,
     required this.date,
@@ -32,12 +33,15 @@ class Tournament {
   });
 
   @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-    if (other is! Tournament) return false;
-    return tournamentId == other.tournamentId;
-  }
-
-  @override
-  int get hashCode => tournamentId.hashCode;
+  List<Object?> get props => [
+        tournamentId,
+        players,
+        matches,
+        date,
+        arena,
+        time,
+        points,
+        places,
+        isFinished,
+      ];
 }
