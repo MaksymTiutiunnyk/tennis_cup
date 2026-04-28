@@ -25,9 +25,10 @@ RestService → Repository → Cubit/Bloc → UI Widget
 ### Layer responsibilities
 
 - `lib/data/services/abstract/` — abstract interfaces (`IPlayerService`, `ITournamentService`, `IArenaService`, `IMatchService`, `INewsService`)
+- `lib/data/services/dto/` — raw API data transfer objects (`TournamentDto`, `ArenaDto`); services return DTOs, never domain models
 - `lib/data/services/rest/` — REST implementations of those interfaces; stub implementations for features not yet backed by a REST API
-- `lib/data/repositories/` — wraps services, maps raw data to domain models, owns pagination state
-- `lib/logic/cubit/` — 23+ cubits for UI state (filters, pagination, feature state)
+- `lib/data/repositories/` — assembles domain models from DTOs (may call multiple services), owns pagination state
+- `lib/logic/cubit/` — 28+ cubits for UI state (filters, pagination, feature state)
 - `lib/logic/bloc/` — `PlayerSearchBloc` for name/surname search
 - `lib/presentation/screens/` — 6 screens: Home, Schedule, Ranking, News, Player Details, Player Comparison
 - `lib/presentation/widgets/` — widgets grouped by screen (`ranking_widgets/`, `home_widgets/`, etc.)
@@ -40,14 +41,14 @@ RestService → Repository → Cubit/Bloc → UI Widget
 
 - Use **Cubits** for simple state driven by filters or pagination
 - Use **Blocs** only when multiple distinct event types drive the same state machine
-- Cubits that depend on filter cubits subscribe via `StreamSubscription` in their constructor and cancel in `close()`
+- Cubits do **not** subscribe to other cubits internally. The widget tree drives re-fetches via `BlocListener` / `MultiBlocListener`, passing current filter states as explicit params to cubit methods
 - Pagination uses `PageRequest(page, size)` / `PageResult<T>(items, hasMore)` — no Firebase cursor types anywhere above the service layer
 - **Prefer Cubits over `StatefulWidget`** for all UI state. Use `StatefulWidget` only when lifecycle hooks (`initState`, `dispose`, `didUpdateWidget`) or animation controllers are genuinely needed and cannot be lifted into a cubit
 - **One widget per file** — every public widget class lives in its own dedicated `.dart` file
 
 ### Data models
 
-Models in `lib/data/models/` are pure data classes — no factory methods. All mapping from raw API responses to domain models happens in private static methods inside the service layer (`lib/data/services/rest/`).
+Models in `lib/data/models/` are pure data classes — no factory methods. Services parse API responses into DTOs (`lib/data/services/dto/`); repositories map DTOs to domain models via private static methods. Shared string→value helpers (e.g. `arenaColorFromString`, `timeFromString`) live as top-level functions in the relevant DTO file.
 
 `Player` has a `hasDetailedStats` flag (`false` for REST-sourced players). Widgets check this before rendering stats fields (wins/losses/medals/rankUTTF) and show `–` when false.
 
@@ -79,14 +80,14 @@ const authServiceUrl      = String.fromEnvironment('AUTH_URL',       defaultValu
 
 `lib/features/auth/` — soft auth: browsing (rankings, schedule, news) works without login; player-specific actions require authentication.
 
-- `AuthCubit` is provided at app root alongside `NewsPeriodCubit`
+- `AuthCubit` is provided at app root alongside `NewsCubit`
 - Auth does **not** gate the main app content — the cubit only tracks session state
 - Registration creates PLAYER accounts only (referees have a separate app); new accounts are `PENDING_APPROVAL` until an admin approves them
 - JWT tokens are stored in `flutter_secure_storage` via `AuthTokenStore`
 
 ### Global providers
 
-`NewsPeriodCubit` and `AuthCubit` are provided at the app root in `main.dart`. All other cubits/blocs are provided at screen level.
+`NewsCubit` and `AuthCubit` are provided at the app root in `main.dart`. All other cubits/blocs are provided at screen level.
 
 ### Connectivity
 
