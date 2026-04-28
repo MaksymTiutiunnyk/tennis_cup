@@ -42,6 +42,7 @@ class LiveStreamMatches extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // TODO: remove repository dependency from here and any other widgets - create cubits (or use existing ones) instead
     final liveStreamMatchesTournaments =
         ServiceLocator.tournamentRepository.fetchLiveStreamMatchesTournaments();
 

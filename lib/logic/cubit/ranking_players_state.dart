@@ -1,5 +1,6 @@
 part of 'ranking_players_cubit.dart';
 
+// TODO: use sealed class instead
 class RankingPlayersState {
   final List<Player> players;
   final bool isLoading;
@@ -23,11 +24,10 @@ class RankingPlayersState {
     bool? isScrollFetching,
   }) {
     return RankingPlayersState(
-      players: players ?? this.players,
-      isLoading: isLoading ?? this.isLoading,
-      hasMore: hasMore ?? this.hasMore,
-      hasError: hasError ?? this.hasError,
-      isScrollFetching: isScrollFetching ?? this.isScrollFetching
-    );
+        players: players ?? this.players,
+        isLoading: isLoading ?? this.isLoading,
+        hasMore: hasMore ?? this.hasMore,
+        hasError: hasError ?? this.hasError,
+        isScrollFetching: isScrollFetching ?? this.isScrollFetching);
   }
 }

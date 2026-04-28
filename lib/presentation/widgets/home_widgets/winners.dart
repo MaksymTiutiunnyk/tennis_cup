@@ -8,6 +8,7 @@ class Winners extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // TODO: remove repository dependency from here and any other widgets - create cubits (or use existing ones) instead
     final winnersTournaments =
         ServiceLocator.tournamentRepository.fetchWinnersTournaments();
 
@@ -38,8 +39,7 @@ class Winners extends StatelessWidget {
               }
               if (snapshot.hasData) {
                 final tournaments = snapshot.data!
-                    .where((t) =>
-                        t.places.contains(1) && t.players.isNotEmpty)
+                    .where((t) => t.places.contains(1) && t.players.isNotEmpty)
                     .toList();
                 if (tournaments.isEmpty) {
                   return const Center(child: Text('No winners found'));

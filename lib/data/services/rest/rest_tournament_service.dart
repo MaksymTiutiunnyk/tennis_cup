@@ -12,6 +12,7 @@ final _dateFormat = DateFormat('yyyy-MM-dd');
 
 class RestTournamentService implements ITournamentService {
   final Dio _dio;
+  // TODO: remove dependency
   final ArenaRepository _arenaRepository;
 
   const RestTournamentService(this._dio, this._arenaRepository);
@@ -71,8 +72,8 @@ class RestTournamentService implements ITournamentService {
     };
     if (arena.id != null) queryParams['arenaId'] = arena.id;
 
-    final response = await _dio.get('/api/v1/tournaments',
-        queryParameters: queryParams);
+    final response =
+        await _dio.get('/api/v1/tournaments', queryParameters: queryParams);
     final body = response.data as Map<String, dynamic>;
     final content = body['content'] as List<dynamic>;
     final arenas = await _arenaRepository.fetchAllArenas();
@@ -116,7 +117,8 @@ class RestTournamentService implements ITournamentService {
   }
 
   @override
-  Stream<void> watchTournamentChanges(String tournamentId) => const Stream.empty();
+  Stream<void> watchTournamentChanges(String tournamentId) =>
+      const Stream.empty();
 
   Tournament _parseTournament(
     Map<String, dynamic> json,
@@ -125,7 +127,8 @@ class RestTournamentService implements ITournamentService {
     final arenaId = json['arenaId']?.toString();
     final arena = arenas.firstWhere(
       (a) => a.id == arenaId,
-      orElse: () => Arena(title: arenaId ?? 'Unknown', color: const Color(0xFF9E9E9E)),
+      orElse: () =>
+          Arena(title: arenaId ?? 'Unknown', color: const Color(0xFF9E9E9E)),
     );
     return Tournament(
       tournamentId: json['id']?.toString() ?? '',
@@ -142,11 +145,16 @@ class RestTournamentService implements ITournamentService {
 
   static Time _timeFromString(String value) {
     switch (value.toUpperCase()) {
-      case 'MORNING': return Time.Morning;
-      case 'DAY':     return Time.Day;
-      case 'EVENING': return Time.Evening;
-      case 'NIGHT':   return Time.Night;
-      default:        return Time.Morning;
+      case 'MORNING':
+        return Time.Morning;
+      case 'DAY':
+        return Time.Day;
+      case 'EVENING':
+        return Time.Evening;
+      case 'NIGHT':
+        return Time.Night;
+      default:
+        return Time.Morning;
     }
   }
 }

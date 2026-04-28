@@ -27,6 +27,7 @@ class LiveStreamMatch extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
+        // TODO: it seems like we can completely remove one of these cubits as well
         BlocProvider<MatchChangesCubit>(
           create: (context) => MatchChangesCubit(match,
               matchRepository: ServiceLocator.matchRepository),

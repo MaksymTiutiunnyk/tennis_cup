@@ -11,9 +11,12 @@ part 'scheduled_tournament_state.dart';
 
 class ScheduledTournamentCubit extends Cubit<ScheduledTournamentState> {
   final TournamentRepository tournamentRepository;
+
+  // TODO: remove depependencies (by creating a bloc listener or by moving these fields to ScheduledTournamentState)
   final ScheduleDateCubit scheduleDateCubit;
   final ArenaFilterCubit arenaFilterCubit;
   final TimeFilterCubit timeFilterCubit;
+
   late StreamSubscription scheduleDateSubscription;
   late StreamSubscription arenaFilterSubscription;
   late StreamSubscription timeFilterSubscription;

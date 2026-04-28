@@ -2,14 +2,16 @@ import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tennis_cup/data/models/page_request.dart';
-import 'package:tennis_cup/data/repositories/player_repository.dart';
 import 'package:tennis_cup/data/models/player.dart';
+import 'package:tennis_cup/data/repositories/player_repository.dart';
 import 'package:tennis_cup/logic/cubit/sex_filter_cubit.dart';
 
 part 'ranking_players_state.dart';
 
 class RankingPlayersCubit extends Cubit<RankingPlayersState> {
   final PlayerRepository playerRepository;
+
+  // TODO: remove dependency by creating a bloc listener that calls methods of this class
   final SexFilterCubit sexFilterCubit;
   late StreamSubscription sexFilterSubscription;
   PageRequest _currentPage = const PageRequest(page: 0, size: 10);

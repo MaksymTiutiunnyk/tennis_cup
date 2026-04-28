@@ -1,5 +1,6 @@
 part of 'players_tournaments_cubit.dart';
 
+// TODO: use sealed class
 class PlayersTournamentsState {
   final List<Tournament> tournaments;
   final bool isLoading;

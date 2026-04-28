@@ -40,6 +40,7 @@ class UpcomingMatches extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // TODO: remove repository dependency from here and any other widgets - create cubits (or use existing ones) instead
     final upcomingMatchesTournaments =
         ServiceLocator.tournamentRepository.fetchUpcomingMatchesTournaments();
 

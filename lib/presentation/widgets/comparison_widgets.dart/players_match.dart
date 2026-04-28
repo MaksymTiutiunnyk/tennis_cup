@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:tennis_cup/core/di/service_locator.dart';
+import 'package:tennis_cup/data/models/match.dart';
+import 'package:tennis_cup/data/models/player.dart';
+import 'package:tennis_cup/data/models/tournament.dart';
 import 'package:tennis_cup/logic/cubit/match_changes_cubit.dart';
 import 'package:tennis_cup/logic/cubit/players_match_cubit.dart';
-import 'package:tennis_cup/data/models/player.dart';
-import 'package:tennis_cup/data/models/match.dart';
-import 'package:intl/intl.dart';
-import 'package:tennis_cup/data/models/tournament.dart';
 import 'package:tennis_cup/presentation/screens/tabs.dart';
 
 DateFormat dateTimeFormatter = DateFormat('yyyy-MM-dd, HH:mm');
@@ -31,6 +31,7 @@ class PlayersMatch extends StatelessWidget {
 
     return MultiBlocProvider(
       providers: [
+        // TODO: it seems like we can completely remove one of these cubits
         BlocProvider<PlayersMatchCubit>(
           create: (context) => PlayersMatchCubit(
             matchRepository: ServiceLocator.matchRepository,
@@ -46,7 +47,8 @@ class PlayersMatch extends StatelessWidget {
       child: BlocListener<MatchChangesCubit, void>(
         listener: (context, state) {
           context.read<PlayersMatchCubit>().fetchPlayersMatch(
-              context.read<PlayersMatchCubit>().state?.matchId ?? match.matchId);
+              context.read<PlayersMatchCubit>().state?.matchId ??
+                  match.matchId);
         },
         child: InkWell(
           onTap: () {
@@ -68,15 +70,19 @@ class PlayersMatch extends StatelessWidget {
                 builder: (context, state) {
                   final currentMatch = state ?? match;
 
-                  final int player1Score =
-                      isPlayer1Blue ? currentMatch.blueScore : currentMatch.redScore;
-                  final int player2Score =
-                      isPlayer1Blue ? currentMatch.redScore : currentMatch.blueScore;
+                  final int player1Score = isPlayer1Blue
+                      ? currentMatch.blueScore
+                      : currentMatch.redScore;
+                  final int player2Score = isPlayer1Blue
+                      ? currentMatch.redScore
+                      : currentMatch.blueScore;
 
-                  final List<int> player1SetScores =
-                      isPlayer1Blue ? currentMatch.blueSetScores : currentMatch.redSetScores;
-                  final List<int> player2SetScores =
-                      isPlayer1Blue ? currentMatch.redSetScores : currentMatch.blueSetScores;
+                  final List<int> player1SetScores = isPlayer1Blue
+                      ? currentMatch.blueSetScores
+                      : currentMatch.redSetScores;
+                  final List<int> player2SetScores = isPlayer1Blue
+                      ? currentMatch.redSetScores
+                      : currentMatch.blueSetScores;
 
                   int setsPlayed = player1Score + player2Score;
                   if (player1Score != 3 && player2Score != 3) {
