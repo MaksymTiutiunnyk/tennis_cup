@@ -7,7 +7,7 @@ import 'package:tennis_cup/custom_navigator_observer.dart';
 import 'package:tennis_cup/data/models/arena.dart';
 import 'package:tennis_cup/data/models/tournament.dart';
 import 'package:tennis_cup/features/auth/logic/auth_cubit.dart';
-import 'package:tennis_cup/logic/cubit/news_period_cubit.dart';
+import 'package:tennis_cup/logic/cubit/news_cubit.dart';
 import 'package:tennis_cup/presentation/screens/tabs.dart';
 
 ColorScheme kcolorScheme = ColorScheme.fromSeed(
@@ -29,7 +29,11 @@ void main() async {
     runApp(
       MultiBlocProvider(
         providers: [
-          BlocProvider(create: (context) => NewsPeriodCubit()),
+          BlocProvider(
+            create: (context) => NewsCubit(
+              newsRepository: ServiceLocator.newsRepository,
+            ),
+          ),
           BlocProvider(
             create: (context) => AuthCubit(
               authService: ServiceLocator.authService,
