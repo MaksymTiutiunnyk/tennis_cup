@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tennis_cup/features/auth/logic/auth_view_cubit.dart';
 import 'package:tennis_cup/features/auth/presentation/login_screen.dart';
 import 'package:tennis_cup/features/auth/presentation/register_screen.dart';
-import 'package:tennis_cup/logic/cubit/auth_view_cubit.dart';
 
 class AuthGate extends StatelessWidget {
   const AuthGate({super.key});
