@@ -6,8 +6,8 @@ class NewsRepository {
 
   const NewsRepository(this._service);
 
-  Future<List<News>> fetchNewsWithinPeriod(DateTime period) {
-    return _service.fetchNewsWithinPeriod(period);
+  Future<List<News>> fetchNewsWithinPeriod(DateTime start, DateTime end) {
+    return _service.fetchNewsWithinPeriod(start, end);
   }
 
   Future<List<News>> fetchInterestingNews() {

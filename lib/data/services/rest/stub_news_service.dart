@@ -5,7 +5,9 @@ class StubNewsService implements INewsService {
   const StubNewsService();
 
   @override
-  Future<List<News>> fetchNewsWithinPeriod(DateTime period) async => [];
+  Future<List<News>> fetchNewsWithinPeriod(
+          DateTime start, DateTime end) async =>
+      [];
 
   @override
   Future<List<News>> fetchInterestingNews() async => [];

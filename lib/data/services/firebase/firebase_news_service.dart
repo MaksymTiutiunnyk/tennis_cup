@@ -6,12 +6,11 @@ class FirebaseNewsService implements INewsService {
   const FirebaseNewsService();
 
   @override
-  Future<List<News>> fetchNewsWithinPeriod(DateTime period) async {
+  Future<List<News>> fetchNewsWithinPeriod(DateTime start, DateTime end) async {
     final snapshot = await FirebaseFirestore.instance
         .collection('news')
-        .where('date',
-            isGreaterThanOrEqualTo: DateTime(period.year, period.month, 1))
-        .where('date', isLessThan: DateTime(period.year, period.month + 1, 1))
+        .where('date', isGreaterThanOrEqualTo: start)
+        .where('date', isLessThan: end)
         .orderBy('date', descending: true)
         .get();
 
