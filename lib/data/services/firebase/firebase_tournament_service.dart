@@ -1,34 +1,26 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
 import 'package:tennis_cup/data/models/arena.dart';
-import 'package:tennis_cup/data/models/match.dart';
 import 'package:tennis_cup/data/models/page_request.dart';
 import 'package:tennis_cup/data/models/page_result.dart';
-import 'package:tennis_cup/data/models/player.dart';
 import 'package:tennis_cup/data/models/tournament.dart';
 import 'package:tennis_cup/data/services/abstract/i_tournament_service.dart';
-import 'package:tennis_cup/data/services/firebase/firebase_player_service.dart';
+import 'package:tennis_cup/data/services/dto/tournament_dto.dart';
 
 // Note: fetchPlayerTournaments filters by player1Id via Firestore arrayContains.
 // player2Id filtering is applied client-side — Firestore only supports one
 // arrayContains per query.
 class FirebaseTournamentService implements ITournamentService {
-  final FirebasePlayerService _playerService;
-
   DocumentSnapshot? _tournamentCursor;
 
-  FirebaseTournamentService([FirebasePlayerService? playerService])
-      : _playerService = playerService ?? FirebasePlayerService();
-
   @override
-  Future<PageResult<Tournament>> fetchPlayerTournaments({
+  Future<PageResult<TournamentDto>> fetchPlayerTournaments({
     required String playerId,
     String? player2Id,
     required PageRequest page,
   }) async {
     if (page.page == 0) _tournamentCursor = null;
 
-    Query query = FirebaseFirestore.instance
+    Query<Map<String, dynamic>> query = FirebaseFirestore.instance
         .collection('tournaments')
         .where('players', arrayContains: playerId)
         .orderBy('date', descending: true)
@@ -44,38 +36,46 @@ class FirebaseTournamentService implements ITournamentService {
       _tournamentCursor = snapshot.docs.last;
     }
 
-    final tournaments = <Tournament>[];
+    final dtos = <TournamentDto>[];
     for (final doc in snapshot.docs) {
-      if (player2Id != null) {
-        final ids = (doc['players'] as List<dynamic>?)
-                ?.map((e) => e.toString())
-                .toList() ??
-            [];
-        if (!ids.contains(player2Id)) continue;
+      final data = doc.data();
+
+      final playerIds = (data['players'] as List<dynamic>?)
+              ?.map((e) => int.tryParse(e.toString()) ?? 0)
+              .toList() ??
+          [];
+
+      if (player2Id != null &&
+          !playerIds.map((id) => id.toString()).contains(player2Id)) {
+        continue;
       }
-      final t = await _tournamentFromDoc(doc);
-      if (t != null) tournaments.add(t);
+
+      dtos.add(_dtoFromDoc(doc.id, data, playerIds));
     }
 
     return PageResult(
-      items: tournaments,
+      items: dtos,
       hasMore: snapshot.docs.length == page.size,
     );
   }
 
   @override
-  Future<Tournament> fetchTournamentById(String id) async {
+  Future<TournamentDto> fetchTournamentById(String id) async {
     final doc = await FirebaseFirestore.instance
         .collection('tournaments')
         .doc(id)
         .get();
-    final t = await _tournamentFromDoc(doc);
-    if (t == null) throw Exception('Tournament $id not found');
-    return t;
+    final data = doc.data();
+    if (data == null) throw Exception('Tournament $id not found');
+    final playerIds = (data['players'] as List<dynamic>?)
+            ?.map((e) => int.tryParse(e.toString()) ?? 0)
+            .toList() ??
+        [];
+    return _dtoFromDoc(doc.id, data, playerIds);
   }
 
   @override
-  Future<List<Tournament>> fetchScheduledTournaments({
+  Future<List<TournamentDto>> fetchScheduledTournaments({
     required DateTime date,
     required Arena arena,
     required Time time,
@@ -93,32 +93,36 @@ class FirebaseTournamentService implements ITournamentService {
         .where('arena', isEqualTo: arena.title)
         .get();
 
-    final results = <Tournament>[];
-    for (final doc in snapshot.docs) {
-      final t = await _tournamentFromDoc(doc);
-      if (t != null) results.add(t);
-    }
-    return results;
+    return snapshot.docs.map((doc) {
+      final data = doc.data();
+      final playerIds = (data['players'] as List<dynamic>?)
+              ?.map((e) => int.tryParse(e.toString()) ?? 0)
+              .toList() ??
+          [];
+      return _dtoFromDoc(doc.id, data, playerIds);
+    }).toList();
   }
 
   @override
-  Future<List<Tournament>> fetchRecentTournaments({int limit = 10}) async {
+  Future<List<TournamentDto>> fetchRecentTournaments({int limit = 10}) async {
     final snapshot = await FirebaseFirestore.instance
         .collection('tournaments')
         .orderBy('date', descending: true)
         .limit(limit)
         .get();
 
-    final results = <Tournament>[];
-    for (final doc in snapshot.docs) {
-      final t = await _tournamentFromDoc(doc);
-      if (t != null) results.add(t);
-    }
-    return results;
+    return snapshot.docs.map((doc) {
+      final data = doc.data();
+      final playerIds = (data['players'] as List<dynamic>?)
+              ?.map((e) => int.tryParse(e.toString()) ?? 0)
+              .toList() ??
+          [];
+      return _dtoFromDoc(doc.id, data, playerIds);
+    }).toList();
   }
 
   @override
-  Future<List<Tournament>> fetchUpcomingTournaments({int limit = 10}) async {
+  Future<List<TournamentDto>> fetchUpcomingTournaments({int limit = 10}) async {
     final snapshot = await FirebaseFirestore.instance
         .collection('tournaments')
         .where('isFinished', isNotEqualTo: true)
@@ -126,12 +130,14 @@ class FirebaseTournamentService implements ITournamentService {
         .limit(limit)
         .get();
 
-    final results = <Tournament>[];
-    for (final doc in snapshot.docs) {
-      final t = await _tournamentFromDoc(doc);
-      if (t != null) results.add(t);
-    }
-    return results;
+    return snapshot.docs.map((doc) {
+      final data = doc.data();
+      final playerIds = (data['players'] as List<dynamic>?)
+              ?.map((e) => int.tryParse(e.toString()) ?? 0)
+              .toList() ??
+          [];
+      return _dtoFromDoc(doc.id, data, playerIds);
+    }).toList();
   }
 
   @override
@@ -143,106 +149,39 @@ class FirebaseTournamentService implements ITournamentService {
         .map((_) {});
   }
 
-  Future<Tournament?> _tournamentFromDoc(DocumentSnapshot doc) async {
-    final data = doc.data() as Map<String, dynamic>?;
-    if (data == null) return null;
-
-    final arenaTitle = data['arena'] as String? ?? '';
-    final arena = Arena(title: arenaTitle, color: _colorForArena(arenaTitle));
-
-    final playerIds = (data['players'] as List<dynamic>?)
-            ?.map((e) => e.toString())
-            .toList() ??
-        [];
-    final players = <Player>[];
-    for (final id in playerIds) {
-      try {
-        players.add(await _playerService.fetchPlayerById(id));
-      } catch (_) {}
-    }
-
-    final matchDocs = await FirebaseFirestore.instance
-        .collection('tournaments')
-        .doc(doc.id)
-        .collection('matches')
-        .get();
-
-    final matches = matchDocs.docs
-        .map((m) => _matchFromDoc(m, players, doc.id))
-        .whereType<Match>()
-        .toList();
-
-    final ts = data['date'] as Timestamp?;
-
-    return Tournament(
-      tournamentId: doc.id,
-      players: players,
-      date: ts?.toDate() ?? DateTime.now(),
-      arena: arena,
-      time: _timeFromString(data['time'] as String? ?? ''),
-      points: List<int>.from(data['points'] as List? ?? []),
-      places: List<int>.from(data['places'] as List? ?? []),
-      isFinished: data['isFinished'] as bool? ?? false,
-      matches: matches.isEmpty ? null : matches,
-    );
-  }
-
-  static Match? _matchFromDoc(
-    DocumentSnapshot doc,
-    List<Player> players,
-    String tournamentId,
+  static TournamentDto _dtoFromDoc(
+    String docId,
+    Map<String, dynamic> data,
+    List<int> playerIds,
   ) {
-    final data = doc.data() as Map<String, dynamic>?;
-    if (data == null) return null;
+    final ts = data['date'] as Timestamp?;
+    final dateTime = ts?.toDate() ?? DateTime.now();
+    final isFinished = data['isFinished'] as bool? ?? false;
 
-    Player? find(String id) =>
-        players.where((p) => p.playerId == id).firstOrNull;
-
-    final blue = find(data['bluePlayer'] as String? ?? '');
-    final red = find(data['redPlayer'] as String? ?? '');
-    if (blue == null || red == null) return null;
-
-    final ts = data['dateTime'] as Timestamp?;
-
-    return Match(
-      matchId: doc.id,
-      bluePlayer: blue,
-      redPlayer: red,
-      blueScore: (data['blueScore'] as num?)?.toInt() ?? 0,
-      redScore: (data['redScore'] as num?)?.toInt() ?? 0,
-      blueSetScores: List<int>.from(data['blueSetScores'] as List? ?? []),
-      redSetScores: List<int>.from(data['redSetScores'] as List? ?? []),
-      tournamentId: tournamentId,
-      dateTime: ts?.toDate() ?? DateTime.now(),
+    return TournamentDto(
+      id: int.tryParse(docId) ?? 0,
+      name: data['arena'] as String? ?? '',
+      type: _toRestType(data['time'] as String? ?? ''),
+      status: isFinished ? 'FINISHED' : 'PENDING',
+      startTime: dateTime.toIso8601String(),
+      arenaId: 0,
+      gender: 'MALE',
+      playerIds: playerIds,
     );
   }
 
-  static Time _timeFromString(String value) {
-    switch (value) {
+  static String _toRestType(String firebaseTime) {
+    switch (firebaseTime) {
       case 'Morning':
-        return Time.Morning;
+        return 'MORNING';
       case 'Day':
-        return Time.Day;
+        return 'DAY';
       case 'Evening':
-        return Time.Evening;
+        return 'EVENING';
       case 'Night':
-        return Time.Night;
+        return 'NIGHT';
       default:
-        return Time.Morning;
+        return 'MORNING';
     }
-  }
-
-  // Firebase arenas were identified by title string; map known titles to colors.
-  // See firebase_arena_service.dart for the full hardcoded list.
-  static Color _colorForArena(String title) {
-    const map = <String, Color>{
-      'Europe': Color.fromARGB(255, 4, 6, 114),
-      'Australia': Colors.green,
-      'America': Colors.red,
-      'Africa': Colors.black,
-      'Asia': Colors.yellowAccent,
-      'Beijing': Colors.greenAccent,
-    };
-    return map[title] ?? Colors.grey;
   }
 }

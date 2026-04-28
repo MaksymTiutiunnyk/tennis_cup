@@ -1,31 +1,29 @@
-import 'package:flutter/material.dart';
-import 'package:tennis_cup/data/models/arena.dart';
 import 'package:tennis_cup/data/services/abstract/i_arena_service.dart';
+import 'package:tennis_cup/data/services/dto/arena_dto.dart';
 
 // Firebase had no separate arenas collection — arenas were a hardcoded list
-// in the app. This implementation fulfills IArenaService by returning that
-// same static list, keeping the interface contract consistent with REST.
+// in the app. This implementation fulfils IArenaService by returning that
+// same static list with synthetic IDs mapped to the legacy title strings.
 class FirebaseArenaService implements IArenaService {
   const FirebaseArenaService();
 
   @override
-  Future<List<Arena>> fetchAllArenas() async => [
-        const Arena(title: 'Australia', color: Colors.green),
-        const Arena(title: 'Europe', color: Color.fromARGB(255, 4, 6, 114)),
-        const Arena(title: 'Beijing', color: Colors.greenAccent),
-        const Arena(title: 'America', color: Colors.red),
-        const Arena(title: 'Africa', color: Colors.black),
-        const Arena(title: 'Asia', color: Colors.yellowAccent),
-        const Arena(title: 'Montreal', color: Color.fromARGB(255, 30, 118, 8)),
-        const Arena(
-            title: 'New Delhi', color: Color.fromARGB(255, 123, 158, 41)),
-        const Arena(title: 'Rio', color: Color.fromARGB(255, 51, 50, 50)),
-        const Arena(title: 'Mexico', color: Color.fromARGB(255, 95, 15, 10)),
-        const Arena(title: 'Rome', color: Color.fromARGB(255, 172, 52, 9)),
-        const Arena(title: 'Paris', color: Color.fromARGB(255, 29, 186, 214)),
-        const Arena(title: 'Prague', color: Color.fromARGB(255, 189, 190, 135)),
-        const Arena(title: 'Seoul', color: Colors.orange),
-        const Arena(title: 'Tokyo', color: Color.fromARGB(255, 162, 0, 191)),
-        const Arena(title: 'London', color: Color.fromARGB(255, 135, 34, 128))
+  Future<List<ArenaDto>> fetchAllArenas() async => const [
+        ArenaDto(id: 1, name: 'Australia', color: 'GREEN'),
+        ArenaDto(id: 2, name: 'Europe', color: 'BLUE'),
+        ArenaDto(id: 3, name: 'Beijing', color: 'GREEN'),
+        ArenaDto(id: 4, name: 'America', color: 'RED'),
+        ArenaDto(id: 5, name: 'Africa', color: 'BLACK'),
+        ArenaDto(id: 6, name: 'Asia', color: 'YELLOW'),
+        ArenaDto(id: 7, name: 'Montreal', color: 'GREEN'),
+        ArenaDto(id: 8, name: 'New Delhi', color: 'GREEN'),
+        ArenaDto(id: 9, name: 'Rio', color: 'BLACK'),
+        ArenaDto(id: 10, name: 'Mexico', color: 'RED'),
+        ArenaDto(id: 11, name: 'Rome', color: 'RED'),
+        ArenaDto(id: 12, name: 'Paris', color: 'BLUE'),
+        ArenaDto(id: 13, name: 'Prague', color: 'WHITE'),
+        ArenaDto(id: 14, name: 'Seoul', color: 'YELLOW'),
+        ArenaDto(id: 15, name: 'Tokyo', color: 'BROWN'),
+        ArenaDto(id: 16, name: 'London', color: 'BROWN'),
       ];
 }

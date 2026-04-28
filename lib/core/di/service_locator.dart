@@ -76,12 +76,12 @@ class ServiceLocator {
     arenaRepository = ArenaRepository(arenaService);
 
     playerService = RestPlayerService(playerDio);
-    tournamentService = RestTournamentService(tournamentDio, arenaRepository);
+    tournamentService = RestTournamentService(tournamentDio);
     matchService = const StubMatchService();
     newsService = const StubNewsService();
 
     playerRepository = PlayerRepository(playerService);
-    tournamentRepository = TournamentRepository(tournamentService);
+    tournamentRepository = TournamentRepository(tournamentService, arenaService);
     matchRepository = MatchRepository(matchService);
     newsRepository = NewsRepository(newsService);
   }
