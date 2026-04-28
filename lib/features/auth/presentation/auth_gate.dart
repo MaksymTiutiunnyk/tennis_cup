@@ -14,14 +14,9 @@ class AuthGate extends StatelessWidget {
       child: BlocBuilder<AuthViewCubit, AuthView>(
         builder: (context, view) {
           if (view == AuthView.login) {
-            return LoginContent(
-              onSwitchToRegister: () =>
-                  context.read<AuthViewCubit>().showRegister(),
-            );
+            return const LoginContent();
           }
-          return RegisterContent(
-            onSwitchToLogin: () => context.read<AuthViewCubit>().showLogin(),
-          );
+          return const RegisterContent();
         },
       ),
     );

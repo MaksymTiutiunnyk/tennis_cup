@@ -2,11 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:tennis_cup/features/auth/logic/auth_cubit.dart';
+import 'package:tennis_cup/features/auth/logic/auth_view_cubit.dart';
 
 class RegisterContent extends StatefulWidget {
-  final VoidCallback onSwitchToLogin;
-
-  const RegisterContent({super.key, required this.onSwitchToLogin});
+  const RegisterContent({super.key});
 
   @override
   State<RegisterContent> createState() => _RegisterContentState();
@@ -75,7 +74,7 @@ class _RegisterContentState extends State<RegisterContent> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(state.message!)),
           );
-          widget.onSwitchToLogin();
+          context.read<AuthViewCubit>().showLogin();
         }
         if (state is AuthError) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -183,7 +182,7 @@ class _RegisterContentState extends State<RegisterContent> {
                 ),
                 const SizedBox(height: 16),
                 TextButton(
-                  onPressed: widget.onSwitchToLogin,
+                  onPressed: context.read<AuthViewCubit>().showLogin,
                   child: const Text('Already have an account? Sign in'),
                 ),
               ],

@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tennis_cup/features/auth/logic/auth_cubit.dart';
+import 'package:tennis_cup/features/auth/logic/auth_view_cubit.dart';
 
 class LoginContent extends StatefulWidget {
-  final VoidCallback onSwitchToRegister;
-
-  const LoginContent({super.key, required this.onSwitchToRegister});
+  const LoginContent({super.key});
 
   @override
   State<LoginContent> createState() => _LoginContentState();
@@ -85,7 +84,7 @@ class _LoginContentState extends State<LoginContent> {
                   ),
                   const SizedBox(height: 16),
                   TextButton(
-                    onPressed: widget.onSwitchToRegister,
+                    onPressed: context.read<AuthViewCubit>().showRegister,
                     child: const Text('Create account'),
                   ),
                 ],
