@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:tennis_cup/core/di/service_locator.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tennis_cup/data/models/tournament.dart';
+import 'package:tennis_cup/logic/cubit/winners_cubit.dart';
 import 'package:tennis_cup/presentation/widgets/home_widgets/winner.dart';
 
 class Winners extends StatelessWidget {
@@ -8,10 +10,6 @@ class Winners extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: remove repository dependency from here and any other widgets - create cubits (or use existing ones) instead
-    final winnersTournaments =
-        ServiceLocator.tournamentRepository.fetchWinnersTournaments();
-
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -31,34 +29,34 @@ class Winners extends StatelessWidget {
         ),
         SizedBox(
           height: isScreenWide ? 220 : 190,
-          child: FutureBuilder(
-            future: winnersTournaments,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
-              }
-              if (snapshot.hasData) {
-                final tournaments = snapshot.data!
-                    .where((t) => t.places.contains(1) && t.players.isNotEmpty)
-                    .toList();
-                if (tournaments.isEmpty) {
-                  return const Center(child: Text('No winners found'));
-                }
-                return PageView.builder(
-                  scrollDirection:
-                      isScreenWide ? Axis.vertical : Axis.horizontal,
-                  controller: PageController(viewportFraction: 0.90),
-                  itemCount: tournaments.length,
-                  itemBuilder: (context, index) {
-                    return Winner(tournament: tournaments[index]);
-                  },
-                );
-              }
-              return const Center(child: Text('Ooops, something went wrong'));
+          child: BlocBuilder<WinnersCubit, WinnersState>(
+            builder: (context, state) => switch (state) {
+              WinnersLoading() =>
+                const Center(child: CircularProgressIndicator()),
+              WinnersError() =>
+                const Center(child: Text('Ooops, something went wrong')),
+              WinnersLoaded(:final tournaments) => _buildContent(tournaments),
             },
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildContent(List<Tournament> tournaments) {
+    final filtered = tournaments
+        .where((t) => t.places.contains(1) && t.players.isNotEmpty)
+        .toList();
+    if (filtered.isEmpty) {
+      return const Center(child: Text('No winners found'));
+    }
+    return PageView.builder(
+      scrollDirection: isScreenWide ? Axis.vertical : Axis.horizontal,
+      controller: PageController(viewportFraction: 0.90),
+      itemCount: filtered.length,
+      itemBuilder: (context, index) {
+        return Winner(tournament: filtered[index]);
+      },
     );
   }
 }

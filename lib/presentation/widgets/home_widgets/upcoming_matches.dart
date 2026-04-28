@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:tennis_cup/core/di/service_locator.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tennis_cup/data/models/match.dart';
 import 'package:tennis_cup/data/models/tournament.dart';
+import 'package:tennis_cup/logic/cubit/upcoming_tournaments_cubit.dart';
 import 'package:tennis_cup/presentation/widgets/home_widgets/upcoming_match.dart';
 
 class UpcomingMatches extends StatelessWidget {
@@ -40,10 +41,6 @@ class UpcomingMatches extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: remove repository dependency from here and any other widgets - create cubits (or use existing ones) instead
-    final upcomingMatchesTournaments =
-        ServiceLocator.tournamentRepository.fetchUpcomingMatchesTournaments();
-
     return Flexible(
       fit: FlexFit.loose,
       child: Column(
@@ -65,40 +62,38 @@ class UpcomingMatches extends StatelessWidget {
           ),
           Flexible(
             fit: FlexFit.loose,
-            child: FutureBuilder(
-              future: upcomingMatchesTournaments,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-                if (snapshot.hasData) {
-                  final tournaments = snapshot.data!;
-                  final matches = _getMatchesToDisplay(tournaments);
-
-                  if (matches.isEmpty) {
-                    return const Center(child: Text('No matches found'));
-                  }
-
-                  return ListView.builder(
-                    physics: isScrollable
-                        ? null
-                        : const NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    itemCount: matches.length,
-                    itemBuilder: (context, index) {
-                      return UpcomingMatch(
-                        match: matches[index],
-                        tournament: tournaments[index],
-                      );
-                    },
-                  );
-                }
-                return const Center(child: Text('Ooops, something went wrong'));
+            child: BlocBuilder<UpcomingTournamentsCubit, UpcomingTournamentsState>(
+              builder: (context, state) => switch (state) {
+                UpcomingTournamentsLoading() =>
+                  const Center(child: CircularProgressIndicator()),
+                UpcomingTournamentsError() =>
+                  const Center(child: Text('Ooops, something went wrong')),
+                UpcomingTournamentsLoaded(:final tournaments) =>
+                  _buildList(tournaments),
               },
             ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildList(List<Tournament> tournaments) {
+    final matches = _getMatchesToDisplay(tournaments);
+    if (matches.isEmpty) {
+      return const Center(child: Text('No matches found'));
+    }
+    return ListView.builder(
+      physics:
+          isScrollable ? null : const NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
+      itemCount: matches.length,
+      itemBuilder: (context, index) {
+        return UpcomingMatch(
+          match: matches[index],
+          tournament: tournaments[index],
+        );
+      },
     );
   }
 }
