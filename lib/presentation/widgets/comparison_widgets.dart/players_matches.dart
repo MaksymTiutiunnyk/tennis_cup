@@ -57,32 +57,32 @@ class PlayersMatches extends StatelessWidget {
         Flexible(
           fit: FlexFit.loose,
           child: BlocBuilder<PlayersTournamentsCubit, PlayersTournamentsState>(
-            builder: (context, state) {
-              if (state.isLoading && state.tournaments.isEmpty) {
-                return const Center(child: CircularProgressIndicator());
-              }
-
-              if (state.errorMessage != null) {
-                return const Center(child: Text('Oops, something went wrong'));
-              }
-
-              final playersMatches = [];
-              for (Tournament tournament in state.tournaments) {
-                playersMatches.addAll(_getPlayersMatches(tournament));
-              }
-              if (playersMatches.isEmpty) {
-                return const Center(child: Text('No matches found'));
-              }
-              return ListView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: playersMatches.length,
-                itemBuilder: (context, index) => playersMatches[index],
-              );
+            builder: (context, state) => switch (state) {
+              PlayersTournamentsLoading() =>
+                const Center(child: CircularProgressIndicator()),
+              PlayersTournamentsError() =>
+                const Center(child: Text('Oops, something went wrong')),
+              PlayersTournamentsLoaded(:final tournaments) =>
+                _buildList(tournaments),
             },
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildList(List<Tournament> tournaments) {
+    final matches = [
+      for (final t in tournaments) ..._getPlayersMatches(t),
+    ];
+    if (matches.isEmpty) {
+      return const Center(child: Text('No matches found'));
+    }
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: matches.length,
+      itemBuilder: (context, index) => matches[index],
     );
   }
 }

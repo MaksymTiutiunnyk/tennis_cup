@@ -29,30 +29,24 @@ class PlayerTournaments extends StatelessWidget {
           Flexible(
             fit: FlexFit.loose,
             child: BlocBuilder<PlayerTournamentsCubit, PlayerTournamentsState>(
-              builder: (context, state) {
-                if (state.isLoading && state.tournaments.isEmpty) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-
-                if (state.errorMessage != null) {
-                  return const Center(
-                    child: Text('Oops, something went wrong'),
-                  );
-                }
-
-                if (state.tournaments.isEmpty) {
-                  return const Center(child: Text('No tournaments found'));
-                }
-
-                return ListView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: state.tournaments.length,
-                  itemBuilder: (ctx, index) => PlayerTournament(
-                    tournament: state.tournaments[index],
-                    player: player,
+              builder: (context, state) => switch (state) {
+                PlayerTournamentsLoading() =>
+                  const Center(child: CircularProgressIndicator()),
+                PlayerTournamentsError() =>
+                  const Center(child: Text('Oops, something went wrong')),
+                PlayerTournamentsLoaded(:final tournaments)
+                    when tournaments.isEmpty =>
+                  const Center(child: Text('No tournaments found')),
+                PlayerTournamentsLoaded(:final tournaments) =>
+                  ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: tournaments.length,
+                    itemBuilder: (ctx, index) => PlayerTournament(
+                      tournament: tournaments[index],
+                      player: player,
+                    ),
                   ),
-                );
               },
             ),
           ),

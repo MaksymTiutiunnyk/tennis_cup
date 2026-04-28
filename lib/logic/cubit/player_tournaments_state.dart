@@ -1,26 +1,20 @@
 part of 'player_tournaments_cubit.dart';
 
-// TODO: use sealed class instead
-class PlayerTournamentsState {
+sealed class PlayerTournamentsState {
+  const PlayerTournamentsState();
+}
+
+final class PlayerTournamentsLoading extends PlayerTournamentsState {
+  const PlayerTournamentsLoading();
+}
+
+final class PlayerTournamentsLoaded extends PlayerTournamentsState {
   final List<Tournament> tournaments;
-  final bool isLoading;
-  final String? errorMessage;
+  final bool hasMore;
+  const PlayerTournamentsLoaded({required this.tournaments, required this.hasMore});
+}
 
-  const PlayerTournamentsState({
-    required this.tournaments,
-    required this.isLoading,
-    this.errorMessage,
-  });
-
-  PlayerTournamentsState copyWith({
-    List<Tournament>? tournaments,
-    bool? isLoading,
-    String? errorMessage,
-  }) {
-    return PlayerTournamentsState(
-      tournaments: tournaments ?? this.tournaments,
-      isLoading: isLoading ?? this.isLoading,
-      errorMessage: errorMessage ?? this.errorMessage,
-    );
-  }
+final class PlayerTournamentsError extends PlayerTournamentsState {
+  final String message;
+  const PlayerTournamentsError(this.message);
 }

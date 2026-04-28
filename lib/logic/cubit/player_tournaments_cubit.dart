@@ -10,38 +10,34 @@ class PlayerTournamentsCubit extends Cubit<PlayerTournamentsState> {
   final TournamentRepository tournamentRepository;
   final Player player1;
   PageRequest _currentPage = const PageRequest(page: 0, size: 2);
-  bool _hasMore = true;
   bool _isLoading = false;
 
   PlayerTournamentsCubit(
     this.player1, {
     required this.tournamentRepository,
-  }) : super(const PlayerTournamentsState(tournaments: [], isLoading: false));
+  }) : super(const PlayerTournamentsLoading());
 
   Future<void> fetchTournaments() async {
-    if (_isLoading || !_hasMore) return;
+    if (_isLoading) return;
+    final current = state;
+    if (current is PlayerTournamentsLoaded && !current.hasMore) return;
 
     _isLoading = true;
-    emit(state.copyWith(isLoading: true));
-
     try {
       final result = await tournamentRepository.fetchPlayersTournaments(
         player1Id: player1.playerId,
         page: _currentPage,
       );
-
       if (result.hasMore) _currentPage = _currentPage.next;
-      _hasMore = result.hasMore;
 
-      emit(PlayerTournamentsState(
-        tournaments: [...state.tournaments, ...result.items],
-        isLoading: false,
+      final existing =
+          current is PlayerTournamentsLoaded ? current.tournaments : <Tournament>[];
+      emit(PlayerTournamentsLoaded(
+        tournaments: [...existing, ...result.items],
+        hasMore: result.hasMore,
       ));
     } catch (e) {
-      emit(state.copyWith(
-        isLoading: false,
-        errorMessage: 'Error loading tournaments',
-      ));
+      emit(const PlayerTournamentsError('Error loading tournaments'));
     } finally {
       _isLoading = false;
     }

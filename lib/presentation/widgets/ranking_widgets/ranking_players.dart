@@ -38,25 +38,34 @@ class _RankingPlayersState extends State<RankingPlayers> {
   Widget build(BuildContext context) {
     return Expanded(
       child: BlocBuilder<RankingPlayersCubit, RankingPlayersState>(
-        builder: (context, state) {
-          if (state.hasError) {
-            return const Center(child: Text('Ooops, something went wrong'));
-          }
-
-          if (state.isLoading && !state.isScrollFetching) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
-          if (!state.isLoading && state.players.isEmpty) {
-            return const Center(child: Text('No players found'));
-          }
-
-          return ListView.builder(
-            controller: _scrollController,
-            itemCount: state.players.length,
-            itemBuilder: (ctx, index) =>
-                RankingPlayer(player: state.players[index]),
-          );
+        builder: (context, state) => switch (state) {
+          RankingPlayersLoading() =>
+            const Center(child: CircularProgressIndicator()),
+          RankingPlayersError() =>
+            const Center(child: Text('Ooops, something went wrong')),
+          RankingPlayersLoaded(:final players) when players.isEmpty =>
+            const Center(child: Text('No players found')),
+          RankingPlayersLoaded(:final players) =>
+            ListView.builder(
+              controller: _scrollController,
+              itemCount: players.length,
+              itemBuilder: (ctx, index) =>
+                  RankingPlayer(player: players[index]),
+            ),
+          RankingPlayersLoadingMore(:final players) =>
+            ListView.builder(
+              controller: _scrollController,
+              itemCount: players.length + 1,
+              itemBuilder: (ctx, index) {
+                if (index == players.length) {
+                  return const Padding(
+                    padding: EdgeInsets.all(8),
+                    child: Center(child: CircularProgressIndicator()),
+                  );
+                }
+                return RankingPlayer(player: players[index]);
+              },
+            ),
         },
       ),
     );
