@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:tennis_cup/data/models/arena.dart';
 import 'package:tennis_cup/data/models/tournament.dart';
 import 'package:tennis_cup/logic/cubit/arena_filter_cubit.dart';
+import 'package:tennis_cup/logic/cubit/arenas_cubit.dart';
 import 'package:tennis_cup/logic/cubit/schedule_date_cubit.dart';
 import 'package:tennis_cup/logic/cubit/time_filter_cubit.dart';
 import 'package:tennis_cup/presentation/widgets/schedule_widgets/schedule_date_picker.dart';
@@ -26,6 +27,9 @@ class SchedulePanel extends StatelessWidget {
           ),
           BlocProvider.value(
             value: BlocProvider.of<ArenaFilterCubit>(context),
+          ),
+          BlocProvider.value(
+            value: BlocProvider.of<ArenasCubit>(context),
           ),
         ],
         child: const ScheduleFilters(),
