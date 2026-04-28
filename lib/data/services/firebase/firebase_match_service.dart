@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:tennis_cup/data/models/match.dart';
+import 'package:tennis_cup/data/models/page_request.dart';
+import 'package:tennis_cup/data/models/page_result.dart';
 import 'package:tennis_cup/data/models/player.dart';
 import 'package:tennis_cup/data/services/abstract/i_match_service.dart';
 import 'package:tennis_cup/data/services/firebase/firebase_player_service.dart';
@@ -58,5 +60,13 @@ class FirebaseMatchService implements IMatchService {
       tournamentId: data['tournamentId'] as String? ?? '',
       dateTime: ts?.toDate() ?? DateTime.now(),
     );
+  }
+
+  @override
+  Future<PageResult<Match>> fetchPlayersMatches(
+      {required String playerId,
+      String? player2Id,
+      required PageRequest page}) {
+    throw UnimplementedError();
   }
 }
