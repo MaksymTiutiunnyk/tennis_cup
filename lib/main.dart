@@ -121,7 +121,7 @@ class TennisCup extends StatelessWidget {
         child: Tabs(
           initialTabIndex: 0,
           initialDate: DateTime.now(),
-          initialArena: Arena(title: '', color: Colors.grey),
+          initialArena: const Arena(title: '', color: Colors.grey),
           initialTime: Time.Evening,
         ),
       ),
