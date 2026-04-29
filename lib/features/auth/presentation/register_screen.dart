@@ -150,9 +150,17 @@ class _RegisterContentState extends State<RegisterContent> {
                 DropdownButtonFormField<String>(
                   value: _gender,
                   decoration: const InputDecoration(labelText: 'Gender'),
-                  items: const [
-                    DropdownMenuItem(value: 'MALE', child: Text('Male')),
-                    DropdownMenuItem(value: 'FEMALE', child: Text('Female')),
+                  items: [
+                    DropdownMenuItem(
+                        value: 'MALE',
+                        child: Text(
+                          'Male',
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        )),
+                    DropdownMenuItem(
+                        value: 'FEMALE',
+                        child: Text('Female',
+                            style: Theme.of(context).textTheme.bodyMedium)),
                   ],
                   onChanged: (v) => setState(() => _gender = v),
                 ),
