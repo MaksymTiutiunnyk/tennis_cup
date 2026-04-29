@@ -22,3 +22,8 @@ const authServiceUrl = String.fromEnvironment(
   'AUTH_URL',
   defaultValue: 'http://localhost:8081',
 );
+
+const matchServiceUrl = String.fromEnvironment(
+  'MATCH_URL',
+  defaultValue: 'http://localhost:8085',
+);
