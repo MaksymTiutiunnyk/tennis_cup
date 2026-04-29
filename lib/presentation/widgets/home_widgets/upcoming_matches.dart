@@ -9,7 +9,7 @@ class UpcomingMatches extends StatelessWidget {
   final bool isScrollable;
   const UpcomingMatches({super.key, this.isScrollable = true});
 
-  List<Match> _getMatchesToDisplay(List<Tournament> tournaments) {
+  List<MapEntry<Match, Tournament>> _getMatchesToDisplay(List<Tournament> tournaments) {
     final List<MapEntry<Match, Tournament>> matchesWithTournaments = [];
 
     for (final tournament in tournaments) {
@@ -29,14 +29,8 @@ class UpcomingMatches extends StatelessWidget {
       }
     }
 
-    matchesWithTournaments
-        .sort((a, b) => a.key.dateTime.compareTo(b.key.dateTime));
-
-    tournaments
-      ..clear()
-      ..addAll(matchesWithTournaments.map((entry) => entry.value));
-
-    return matchesWithTournaments.map((entry) => entry.key).toList();
+    matchesWithTournaments.sort((a, b) => a.key.dateTime.compareTo(b.key.dateTime));
+    return matchesWithTournaments;
   }
 
   @override
@@ -79,19 +73,18 @@ class UpcomingMatches extends StatelessWidget {
   }
 
   Widget _buildList(List<Tournament> tournaments) {
-    final matches = _getMatchesToDisplay(tournaments);
-    if (matches.isEmpty) {
+    final entries = _getMatchesToDisplay(tournaments);
+    if (entries.isEmpty) {
       return const Center(child: Text('No matches found'));
     }
     return ListView.builder(
-      physics:
-          isScrollable ? null : const NeverScrollableScrollPhysics(),
+      physics: isScrollable ? null : const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
-      itemCount: matches.length,
+      itemCount: entries.length,
       itemBuilder: (context, index) {
         return UpcomingMatch(
-          match: matches[index],
-          tournament: tournaments[index],
+          match: entries[index].key,
+          tournament: entries[index].value,
         );
       },
     );
