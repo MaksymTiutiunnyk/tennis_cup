@@ -80,6 +80,8 @@ class TennisCup extends StatelessWidget {
                 fontSize: 30,
                 color: Colors.white,
               ),
+              headlineMedium:
+                  const TextStyle(fontSize: 24, color: Colors.white),
             ),
         bottomNavigationBarTheme: const BottomNavigationBarThemeData().copyWith(
           type: BottomNavigationBarType.fixed,
@@ -115,6 +117,8 @@ class TennisCup extends StatelessWidget {
                 fontSize: 30,
                 color: Colors.black,
               ),
+              headlineMedium:
+                  const TextStyle(fontSize: 24, color: Colors.black),
             ),
         bottomNavigationBarTheme: const BottomNavigationBarThemeData().copyWith(
           type: BottomNavigationBarType.fixed,

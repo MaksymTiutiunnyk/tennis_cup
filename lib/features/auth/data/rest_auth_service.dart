@@ -80,6 +80,23 @@ class RestAuthService {
     return tokens.accessToken;
   }
 
+  Future<void> changePassword({
+    required String currentPassword,
+    required String newPassword,
+  }) async {
+    final accessToken = await _tokenStore.getAccessToken();
+    if (accessToken == null) throw Exception('Not authenticated');
+
+    await _dio.post(
+      '/api/v1/auth/change-password',
+      data: {
+        'currentPassword': currentPassword,
+        'newPassword': newPassword,
+      },
+      options: Options(headers: {'Authorization': 'Bearer $accessToken'}),
+    );
+  }
+
   Future<void> logout() async {
     final refreshToken = await _tokenStore.getRefreshToken();
     if (refreshToken == null) return;
