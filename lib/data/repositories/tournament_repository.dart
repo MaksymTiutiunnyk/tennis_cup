@@ -50,7 +50,7 @@ class TournamentRepository {
 
   Future<List<Tournament>> fetchWinnersTournaments() async {
     final dtos = await _service.fetchRecentTournaments();
-    return _buildTournaments(dtos, withMatches: false);
+    return _buildTournaments(dtos);
   }
 
   Stream<void> watchTournamentChanges(String tournamentId) {
@@ -107,24 +107,74 @@ class TournamentRepository {
     final arenaDtos = await arenaDtosF;
 
     return dtos.map((dto) {
-      final players = withPlayers
-          ? dto.playerIds
-              .map((id) => playerMap[id])
-              .whereType<Player>()
-              .toList()
-          : const <Player>[];
-      final matches = withMatches
-          ? _buildMatches(matchDtosByTournament[dto.id] ?? const [], playerMap)
-          : null;
-      return _toTournament(dto, arenaDtos, players: players, matches: matches);
+      final tournamentMatchDtos = matchDtosByTournament[dto.id] ?? const [];
+      final pointsById = withMatches
+          ? _computePointsById(tournamentMatchDtos)
+          : const <int, int>{};
+
+      final players = <Player>[];
+      final points = <int>[];
+      if (withPlayers) {
+        for (final id in dto.playerIds) {
+          final p = playerMap[id];
+          if (p == null) continue;
+          players.add(p);
+          if (withMatches) points.add(pointsById[id] ?? 0);
+        }
+      }
+
+      final matches =
+          withMatches ? _buildMatches(tournamentMatchDtos, playerMap) : null;
+      final places = dto.status == 'FINISHED' && withMatches
+          ? _computePlaces(points)
+          : const <int>[];
+
+      return _toTournament(
+        dto,
+        arenaDtos,
+        players: players,
+        matches: matches,
+        points: points,
+        places: places,
+      );
     }).toList();
+  }
+
+  // TODO: Points and places are derived client-side until the backend exposes them.
+  static Map<int, int> _computePointsById(List<MatchDto> matches) {
+    final pointsByPlayer = <int, int>{};
+    for (final match in matches) {
+      final winner = match.winnerId;
+      if (winner == null) continue;
+      final loser =
+          winner == match.bluePlayerId ? match.redPlayerId : match.bluePlayerId;
+      pointsByPlayer.update(winner, (v) => v + 2, ifAbsent: () => 2);
+      pointsByPlayer.update(loser, (v) => v + 1, ifAbsent: () => 1);
+    }
+    return pointsByPlayer;
+  }
+
+  static List<int> _computePlaces(List<int> points) {
+    if (points.isEmpty) return const [];
+    final ranked = List.generate(points.length, (i) => i)
+      ..sort((a, b) => points[b].compareTo(points[a]));
+    final places = List<int>.filled(points.length, 0);
+    var currentPlace = 1;
+    for (var i = 0; i < ranked.length; i++) {
+      if (i > 0 && points[ranked[i]] != points[ranked[i - 1]]) {
+        currentPlace = i + 1;
+      }
+      places[ranked[i]] = currentPlace;
+    }
+    return places;
   }
 
   Future<Map<int, List<MatchDto>>> _fetchTournamentMatches(
     List<TournamentDto> dtos,
   ) async {
     final entries = await Future.wait(dtos.map((dto) async {
-      final matches = await _matchService.fetchTournamentMatches(dto.id.toString());
+      final matches =
+          await _matchService.fetchTournamentMatches(dto.id.toString());
       return MapEntry(dto.id, matches);
     }));
     return Map.fromEntries(entries);
@@ -161,7 +211,8 @@ class TournamentRepository {
         matchId: dto.id.toString(),
         bluePlayer: blue,
         redPlayer: red,
-        blueScore: sortedSets.where((s) => s.winnerId == dto.bluePlayerId).length,
+        blueScore:
+            sortedSets.where((s) => s.winnerId == dto.bluePlayerId).length,
         redScore: sortedSets.where((s) => s.winnerId == dto.redPlayerId).length,
         blueSetScores: sortedSets.map((s) => s.bluePlayerScore).toList(),
         redSetScores: sortedSets.map((s) => s.redPlayerScore).toList(),
@@ -177,6 +228,8 @@ class TournamentRepository {
     List<ArenaDto> arenaDtos, {
     List<Player> players = const [],
     List<Match>? matches,
+    List<int> points = const [],
+    List<int> places = const [],
   }) {
     final arenaDto = arenaDtos.firstWhere(
       (a) => a.id == dto.arenaId,
@@ -198,8 +251,8 @@ class TournamentRepository {
         city: arenaDto.city,
       ),
       time: timeFromString(dto.type),
-      points: const [],
-      places: const [],
+      points: points,
+      places: places,
       isFinished: dto.status == 'FINISHED',
       matches: matches,
     );

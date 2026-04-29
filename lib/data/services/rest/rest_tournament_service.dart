@@ -21,9 +21,9 @@ class RestTournamentService implements ITournamentService {
     required PageRequest page,
   }) async {
     final response = await _dio.get('/api/v1/tournaments', queryParameters: {
-      'page': page.page,
-      'size': page.size,
-      'sortDirection': 'DESC',
+      // 'page': page.page,
+      // 'size': page.size,
+      // TODO: to be commented in
     });
 
     final body = response.data as Map<String, dynamic>;
@@ -63,7 +63,6 @@ class RestTournamentService implements ITournamentService {
   }) async {
     final queryParams = <String, dynamic>{
       'start': _dateFormat.format(date),
-      'sortDirection': 'ASC',
     };
     if (arena.id != null) queryParams['arenaId'] = arena.id;
 
@@ -109,5 +108,4 @@ class RestTournamentService implements ITournamentService {
   @override
   Stream<void> watchTournamentChanges(String tournamentId) =>
       const Stream.empty();
-
 }

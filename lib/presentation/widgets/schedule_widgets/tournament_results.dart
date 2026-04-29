@@ -64,15 +64,17 @@ class TournamentResults extends StatelessWidget {
             ],
             rows: tournament.players.map((player) {
               int playerIndex = tournament.players.indexOf(player);
-              int points = tournament.points[playerIndex];
-              int position = tournament.places[playerIndex];
+              int points = tournament.points.elementAtOrNull(playerIndex) ?? 0;
+              int position =
+                  tournament.places.elementAtOrNull(playerIndex) ?? 0;
 
               List<DataCell> cells = [
                 DataCell(
                   InkWell(
                     onTap: () {
-                      Navigator.of(context).push(MaterialPageRoute<PlayerDetails>(
-                          builder: (ctx) => PlayerDetails(player: player)));
+                      Navigator.of(context).push(
+                          MaterialPageRoute<PlayerDetails>(
+                              builder: (ctx) => PlayerDetails(player: player)));
                     },
                     child: Text(
                       player.fullName,
