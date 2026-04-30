@@ -1,23 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tennis_cup/connection_monitor.dart';
 import 'package:tennis_cup/core/di/service_locator.dart';
-import 'package:tennis_cup/custom_navigator_observer.dart';
 import 'package:tennis_cup/data/models/arena.dart';
 import 'package:tennis_cup/data/models/tournament.dart';
-import 'package:tennis_cup/features/auth/logic/auth_cubit.dart';
-import 'package:tennis_cup/logic/cubit/news_cubit.dart';
-import 'package:tennis_cup/presentation/screens/tabs.dart';
-
-ColorScheme kcolorScheme = ColorScheme.fromSeed(
-  seedColor: const Color.fromARGB(255, 4, 5, 100),
-);
-
-ColorScheme kdarkColorScheme = ColorScheme.fromSeed(
-  seedColor: const Color.fromARGB(255, 4, 5, 100),
-  brightness: Brightness.dark,
-);
+import 'package:tennis_cup/ui/auth/view_models/auth_cubit.dart';
+import 'package:tennis_cup/ui/core/themes/app_theme.dart';
+import 'package:tennis_cup/ui/core/widgets/connection_monitor.dart';
+import 'package:tennis_cup/ui/core/widgets/custom_navigator_observer.dart';
+import 'package:tennis_cup/ui/shell/widgets/tabs.dart';
+import 'package:tennis_cup/ui/view_only/news/view_models/news_cubit.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -55,76 +47,8 @@ class TennisCup extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Tennis Cup',
-      darkTheme: ThemeData.dark().copyWith(
-        colorScheme: kdarkColorScheme,
-        iconTheme: const IconThemeData()
-            .copyWith(color: kdarkColorScheme.onPrimaryContainer),
-        iconButtonTheme: IconButtonThemeData(
-          style: const ButtonStyle()
-              .copyWith(visualDensity: VisualDensity.compact),
-        ),
-        textTheme: ThemeData().textTheme.copyWith(
-              bodyLarge: const TextStyle(fontSize: 18, color: Colors.white),
-              bodyMedium: const TextStyle(fontSize: 16, color: Colors.white),
-              bodySmall: const TextStyle(fontSize: 14, color: Colors.grey),
-              labelMedium: const TextStyle(
-                fontSize: 16,
-                color: Color.fromARGB(255, 98, 98, 98),
-              ),
-              labelLarge: const TextStyle(
-                fontSize: 16,
-                color: Colors.white,
-                fontWeight: FontWeight.normal,
-              ),
-              headlineLarge: const TextStyle(
-                fontSize: 30,
-                color: Colors.white,
-              ),
-              headlineMedium:
-                  const TextStyle(fontSize: 24, color: Colors.white),
-            ),
-        bottomNavigationBarTheme: const BottomNavigationBarThemeData().copyWith(
-          type: BottomNavigationBarType.fixed,
-          backgroundColor: kdarkColorScheme.onSecondary,
-        ),
-      ),
-      theme: ThemeData().copyWith(
-        colorScheme: kcolorScheme,
-        appBarTheme: const AppBarTheme().copyWith(
-          backgroundColor: kcolorScheme.onSurface,
-          foregroundColor: kcolorScheme.surface,
-        ),
-        iconTheme: const IconThemeData()
-            .copyWith(color: kcolorScheme.onPrimaryContainer),
-        iconButtonTheme: IconButtonThemeData(
-          style: const ButtonStyle()
-              .copyWith(visualDensity: VisualDensity.compact),
-        ),
-        textTheme: ThemeData().textTheme.copyWith(
-              bodyLarge: const TextStyle(fontSize: 18, color: Colors.black),
-              bodyMedium: const TextStyle(fontSize: 16, color: Colors.black),
-              bodySmall: const TextStyle(fontSize: 14, color: Colors.grey),
-              labelMedium: const TextStyle(
-                fontSize: 16,
-                color: Color.fromARGB(255, 98, 98, 98),
-              ),
-              labelLarge: const TextStyle(
-                fontSize: 16,
-                color: Colors.black,
-                fontWeight: FontWeight.normal,
-              ),
-              headlineLarge: const TextStyle(
-                fontSize: 30,
-                color: Colors.black,
-              ),
-              headlineMedium:
-                  const TextStyle(fontSize: 24, color: Colors.black),
-            ),
-        bottomNavigationBarTheme: const BottomNavigationBarThemeData().copyWith(
-          type: BottomNavigationBarType.fixed,
-          backgroundColor: kcolorScheme.onSecondary,
-        ),
-      ),
+      theme: AppTheme.light,
+      darkTheme: AppTheme.dark,
       home: ConnectionMonitor(
         child: Tabs(
           initialTabIndex: 0,

@@ -1,6 +1,6 @@
+import 'package:tennis_cup/core/pagination/page_request.dart';
+import 'package:tennis_cup/core/pagination/page_result.dart';
 import 'package:tennis_cup/data/models/match.dart';
-import 'package:tennis_cup/data/models/page_request.dart';
-import 'package:tennis_cup/data/models/page_result.dart';
 import 'package:tennis_cup/data/models/player.dart';
 import 'package:tennis_cup/data/services/abstract/i_match_service.dart';
 import 'package:tennis_cup/data/services/abstract/i_player_service.dart';
@@ -66,7 +66,8 @@ class MatchRepository {
     final blue = players[dto.bluePlayerId];
     final red = players[dto.redPlayerId];
     if (blue == null || red == null) return null;
-    final sortedSets = [...dto.sets]..sort((a, b) => a.number.compareTo(b.number));
+    final sortedSets = [...dto.sets]
+      ..sort((a, b) => a.number.compareTo(b.number));
     return Match(
       matchId: dto.id.toString(),
       bluePlayer: blue,

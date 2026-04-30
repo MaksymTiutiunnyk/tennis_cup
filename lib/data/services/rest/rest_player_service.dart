@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
-import 'package:tennis_cup/data/models/page_request.dart';
-import 'package:tennis_cup/data/models/page_result.dart';
+import 'package:tennis_cup/core/pagination/page_request.dart';
+import 'package:tennis_cup/core/pagination/page_result.dart';
 import 'package:tennis_cup/data/models/player.dart';
 import 'package:tennis_cup/data/services/abstract/i_player_service.dart';
 

@@ -10,7 +10,7 @@
 // Firebase service implementations live in lib/data/services/firebase/.
 
 import 'package:dio/dio.dart';
-import 'package:tennis_cup/core/config.dart';
+import 'package:tennis_cup/config/app_config.dart';
 import 'package:tennis_cup/core/network/dio_client.dart';
 import 'package:tennis_cup/data/repositories/arena_repository.dart';
 import 'package:tennis_cup/data/repositories/invitations_repository.dart';
@@ -27,9 +27,9 @@ import 'package:tennis_cup/data/services/rest/rest_arena_service.dart';
 import 'package:tennis_cup/data/services/rest/rest_player_service.dart';
 import 'package:tennis_cup/data/services/rest/rest_tournament_service.dart';
 import 'package:tennis_cup/data/services/rest/rest_match_service.dart';
-import 'package:tennis_cup/data/services/rest/stub_news_service.dart';
-import 'package:tennis_cup/features/auth/data/auth_token_store.dart';
-import 'package:tennis_cup/features/auth/data/rest_auth_service.dart';
+import 'package:tennis_cup/data/services/stub/stub_news_service.dart';
+import 'package:tennis_cup/data/auth/auth_token_store.dart';
+import 'package:tennis_cup/data/services/rest/rest_auth_service.dart';
 
 class ServiceLocator {
   static late AuthTokenStore tokenStore;
