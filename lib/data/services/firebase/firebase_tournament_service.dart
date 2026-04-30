@@ -5,6 +5,7 @@ import 'package:tennis_cup/data/models/page_result.dart';
 import 'package:tennis_cup/data/models/tournament.dart';
 import 'package:tennis_cup/data/services/abstract/i_tournament_service.dart';
 import 'package:tennis_cup/data/services/dto/tournament_dto.dart';
+import 'package:tennis_cup/data/services/dto/tournament_invitation_dto.dart';
 
 // Note: fetchPlayerTournaments filters by player1Id via Firestore arrayContains.
 // player2Id filtering is applied client-side — Firestore only supports one
@@ -184,4 +185,16 @@ class FirebaseTournamentService implements ITournamentService {
         return 'MORNING';
     }
   }
+
+  @override
+  Future<List<TournamentInvitationDto>> fetchInvitations({
+    required String playerId,
+  }) async =>
+      const [];
+
+  @override
+  Future<void> acceptInvitation(String invitationId) async {}
+
+  @override
+  Future<void> declineInvitation(String invitationId) async {}
 }

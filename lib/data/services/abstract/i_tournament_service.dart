@@ -3,6 +3,7 @@ import 'package:tennis_cup/data/models/page_request.dart';
 import 'package:tennis_cup/data/models/page_result.dart';
 import 'package:tennis_cup/data/models/tournament.dart';
 import 'package:tennis_cup/data/services/dto/tournament_dto.dart';
+import 'package:tennis_cup/data/services/dto/tournament_invitation_dto.dart';
 
 abstract interface class ITournamentService {
   Future<PageResult<TournamentDto>> fetchPlayerTournaments({
@@ -24,4 +25,12 @@ abstract interface class ITournamentService {
   Future<List<TournamentDto>> fetchUpcomingTournaments({int limit = 10});
 
   Stream<void> watchTournamentChanges(String tournamentId);
+
+  Future<List<TournamentInvitationDto>> fetchInvitations({
+    required String playerId,
+  });
+
+  Future<void> acceptInvitation(String invitationId);
+
+  Future<void> declineInvitation(String invitationId);
 }

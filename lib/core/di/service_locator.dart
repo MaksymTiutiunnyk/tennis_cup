@@ -13,6 +13,7 @@ import 'package:dio/dio.dart';
 import 'package:tennis_cup/core/config.dart';
 import 'package:tennis_cup/core/network/dio_client.dart';
 import 'package:tennis_cup/data/repositories/arena_repository.dart';
+import 'package:tennis_cup/data/repositories/invitations_repository.dart';
 import 'package:tennis_cup/data/repositories/match_repository.dart';
 import 'package:tennis_cup/data/repositories/news_repository.dart';
 import 'package:tennis_cup/data/repositories/player_repository.dart';
@@ -44,6 +45,7 @@ class ServiceLocator {
   static late ArenaRepository arenaRepository;
   static late MatchRepository matchRepository;
   static late NewsRepository newsRepository;
+  static late InvitationsRepository invitationsRepository;
 
   static void init() {
     tokenStore = const AuthTokenStore();
@@ -89,5 +91,7 @@ class ServiceLocator {
     tournamentRepository = TournamentRepository(tournamentService, arenaService, playerService, matchService);
     matchRepository = MatchRepository(matchService, playerService);
     newsRepository = NewsRepository(newsService);
+    invitationsRepository =
+        InvitationsRepository(tournamentService, arenaService);
   }
 }
