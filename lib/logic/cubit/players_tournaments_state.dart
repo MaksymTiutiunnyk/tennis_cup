@@ -1,25 +1,20 @@
 part of 'players_tournaments_cubit.dart';
 
-class PlayersTournamentsState {
+sealed class PlayersTournamentsState {
+  const PlayersTournamentsState();
+}
+
+final class PlayersTournamentsLoading extends PlayersTournamentsState {
+  const PlayersTournamentsLoading();
+}
+
+final class PlayersTournamentsLoaded extends PlayersTournamentsState {
   final List<Tournament> tournaments;
-  final bool isLoading;
-  final String? errorMessage;
+  final bool hasMore;
+  const PlayersTournamentsLoaded({required this.tournaments, required this.hasMore});
+}
 
-  const PlayersTournamentsState({
-    required this.tournaments,
-    required this.isLoading,
-    this.errorMessage,
-  });
-
-  PlayersTournamentsState copyWith({
-    List<Tournament>? tournaments,
-    bool? isLoading,
-    String? errorMessage,
-  }) {
-    return PlayersTournamentsState(
-      tournaments: tournaments ?? this.tournaments,
-      isLoading: isLoading ?? this.isLoading,
-      errorMessage: errorMessage ?? this.errorMessage,
-    );
-  }
+final class PlayersTournamentsError extends PlayersTournamentsState {
+  final String message;
+  const PlayersTournamentsError(this.message);
 }

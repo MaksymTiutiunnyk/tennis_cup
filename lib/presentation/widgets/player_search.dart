@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tennis_cup/core/di/service_locator.dart';
 import 'package:tennis_cup/data/models/player.dart';
 import 'package:tennis_cup/logic/bloc/player_search_bloc.dart';
 
@@ -11,7 +12,10 @@ class PlayerSearch extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => PlayerSearchBloc(PlayersNotFound()),
+      create: (context) => PlayerSearchBloc(
+        playerRepository: ServiceLocator.playerRepository,
+        initialState: PlayersNotFound(),
+      ),
       child: Builder(
         builder: (context) => Column(
           children: [

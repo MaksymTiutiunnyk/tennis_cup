@@ -1,33 +1,24 @@
 part of 'ranking_players_cubit.dart';
 
-class RankingPlayersState {
+sealed class RankingPlayersState {
+  const RankingPlayersState();
+}
+
+final class RankingPlayersLoading extends RankingPlayersState {
+  const RankingPlayersLoading();
+}
+
+final class RankingPlayersLoaded extends RankingPlayersState {
   final List<Player> players;
-  final bool isLoading;
   final bool hasMore;
-  final bool hasError;
-  final bool isScrollFetching;
+  const RankingPlayersLoaded({required this.players, required this.hasMore});
+}
 
-  const RankingPlayersState({
-    this.players = const [],
-    this.isLoading = false,
-    this.hasMore = true,
-    this.hasError = false,
-    this.isScrollFetching = false,
-  });
+final class RankingPlayersLoadingMore extends RankingPlayersState {
+  final List<Player> players;
+  const RankingPlayersLoadingMore({required this.players});
+}
 
-  RankingPlayersState copyWith({
-    List<Player>? players,
-    bool? isLoading,
-    bool? hasMore,
-    bool? hasError,
-    bool? isScrollFetching,
-  }) {
-    return RankingPlayersState(
-      players: players ?? this.players,
-      isLoading: isLoading ?? this.isLoading,
-      hasMore: hasMore ?? this.hasMore,
-      hasError: hasError ?? this.hasError,
-      isScrollFetching: isScrollFetching ?? this.isScrollFetching
-    );
-  }
+final class RankingPlayersError extends RankingPlayersState {
+  const RankingPlayersError();
 }

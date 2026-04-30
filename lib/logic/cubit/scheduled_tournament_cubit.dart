@@ -1,84 +1,53 @@
-import 'dart:async';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tennis_cup/data/data_providers/tournament_api.dart';
+import 'package:tennis_cup/data/models/arena.dart';
 import 'package:tennis_cup/data/models/tournament.dart';
 import 'package:tennis_cup/data/repositories/tournament_repository.dart';
-import 'package:tennis_cup/logic/cubit/arena_filter_cubit.dart';
-import 'package:tennis_cup/logic/cubit/schedule_date_cubit.dart';
-import 'package:tennis_cup/logic/cubit/time_filter_cubit.dart';
 
 part 'scheduled_tournament_state.dart';
 
 class ScheduledTournamentCubit extends Cubit<ScheduledTournamentState> {
-  final tournamentRepository =
-      const TournamentRepository(tournamentApi: TournamentApi());
+  final TournamentRepository tournamentRepository;
 
-  final ScheduleDateCubit scheduleDateCubit;
-  final ArenaFilterCubit arenaFilterCubit;
-  final TimeFilterCubit timeFilterCubit;
-  late StreamSubscription scheduleDateSubscription;
-  late StreamSubscription arenaFilterSubscription;
-  late StreamSubscription timeFilterSubscription;
+  ScheduledTournamentCubit({required this.tournamentRepository})
+      : super(ScheduledTournamentFetching());
 
-  ScheduledTournamentCubit(
-      {required this.scheduleDateCubit,
-      required this.arenaFilterCubit,
-      required this.timeFilterCubit})
-      : super(ScheduledTournamentFetching()) {
-    scheduleDateSubscription = scheduleDateCubit.stream.listen((dateTime) {
-      fetchScheduledTournament();
-    });
-    arenaFilterSubscription = arenaFilterCubit.stream.listen((arena) {
-      fetchScheduledTournament();
-    });
-    timeFilterSubscription = timeFilterCubit.stream.listen((time) {
-      fetchScheduledTournament();
-    });
-  }
-
-  void fetchScheduledTournament() async {
+  Future<void> fetchScheduledTournament({
+    required DateTime date,
+    required Arena arena,
+    required Time time,
+  }) async {
     emit(ScheduledTournamentFetching());
-
     try {
       final tournaments = await tournamentRepository.fetchScheduledTournament(
-          tournamentDate: scheduleDateCubit.state,
-          tournamentArena: arenaFilterCubit.state,
-          tournamentTime: timeFilterCubit.state);
-
+        tournamentDate: date,
+        tournamentArena: arena,
+        tournamentTime: time,
+      );
       if (tournaments.isEmpty) {
         emit(TournamentNotFound());
         return;
       }
-
       emit(ScheduledTournamentFetched(tournaments.first));
     } catch (e) {
       emit(ScheduledTournamentError(e));
     }
   }
 
-  void fetchScheduledTournamentWithoutLoading() async {
+  Future<void> fetchScheduledTournamentWithoutLoading({
+    required DateTime date,
+    required Arena arena,
+    required Time time,
+  }) async {
     try {
       final tournaments = await tournamentRepository.fetchScheduledTournament(
-          tournamentDate: scheduleDateCubit.state,
-          tournamentArena: arenaFilterCubit.state,
-          tournamentTime: timeFilterCubit.state);
-
-      if (tournaments.isEmpty) {
-        return;
-      }
-
+        tournamentDate: date,
+        tournamentArena: arena,
+        tournamentTime: time,
+      );
+      if (tournaments.isEmpty) return;
       emit(ScheduledTournamentFetched(tournaments.first));
     } catch (e) {
       emit(ScheduledTournamentError(e));
     }
-  }
-
-  @override
-  Future<void> close() {
-    scheduleDateSubscription.cancel();
-    arenaFilterSubscription.cancel();
-    timeFilterSubscription.cancel();
-    return super.close();
   }
 }

@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tennis_cup/core/di/service_locator.dart';
+import 'package:tennis_cup/logic/cubit/live_stream_tournaments_cubit.dart';
+import 'package:tennis_cup/logic/cubit/upcoming_tournaments_cubit.dart';
 import 'package:tennis_cup/logic/cubit/video_player_cubit.dart';
+import 'package:tennis_cup/logic/cubit/winners_cubit.dart';
 import 'package:tennis_cup/presentation/widgets/home_widgets/live_stream_matches.dart';
 import 'package:tennis_cup/presentation/widgets/home_widgets/upcoming_matches.dart';
 import 'package:tennis_cup/presentation/widgets/home_widgets/winners.dart';
@@ -16,60 +20,79 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<VideoPlayerCubit, VideoPlayerState>(
-      builder: (context, state) {
-        if (state is PlayerFullScreenRunning) {
-          return YoutubePlayerBuilder(
-            player: YoutubePlayer(
-              controller: state.youtubePlayerController!,
-            ),
-            builder: (context, player) => player,
-            onExitFullScreen: () {
-              context.read<VideoPlayerCubit>().runPlayer(
-                    state.match,
-                    state.youtubePlayerController!.value.position.inSeconds,
-                  );
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (_) => LiveStreamTournamentsCubit(
+            tournamentRepository: ServiceLocator.tournamentRepository,
+          ),
+        ),
+        BlocProvider(
+          create: (_) => UpcomingTournamentsCubit(
+            tournamentRepository: ServiceLocator.tournamentRepository,
+          ),
+        ),
+        BlocProvider(
+          create: (_) => WinnersCubit(
+            tournamentRepository: ServiceLocator.tournamentRepository,
+          ),
+        ),
+      ],
+      child: BlocBuilder<VideoPlayerCubit, VideoPlayerState>(
+        builder: (context, state) {
+          if (state is PlayerFullScreenRunning) {
+            return YoutubePlayerBuilder(
+              player: YoutubePlayer(
+                controller: state.youtubePlayerController!,
+              ),
+              builder: (context, player) => player,
+              onExitFullScreen: () {
+                context.read<VideoPlayerCubit>().runPlayer(
+                      state.match,
+                      state.youtubePlayerController!.value.position.inSeconds,
+                    );
+              },
+            );
+          }
+          return LayoutBuilder(
+            builder: (context, constraints) {
+              if (constraints.maxWidth >= 800 && constraints.maxHeight >= 500) {
+                return const Column(
+                  children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(child: LiveStreamMatches(isScreenWide: true)),
+                        Expanded(child: Winners(isScreenWide: true))
+                      ],
+                    ),
+                    UpcomingMatches()
+                  ],
+                );
+              }
+              if (constraints.maxHeight >= 680) {
+                return const Column(
+                  children: [
+                    LiveStreamMatches(),
+                    UpcomingMatches(),
+                    Winners(),
+                  ],
+                );
+              }
+              return const SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    LiveStreamMatches(),
+                    Winners(),
+                    UpcomingMatches(isScrollable: false),
+                  ],
+                ),
+              );
             },
           );
-        }
-        return LayoutBuilder(
-          builder: (context, constraints) {
-            if (constraints.maxWidth >= 800 && constraints.maxHeight >= 500) {
-              return const Column(
-                children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(child: LiveStreamMatches(isScreenWide: true)),
-                      Expanded(child: Winners(isScreenWide: true))
-                    ],
-                  ),
-                  UpcomingMatches()
-                ],
-              );
-            }
-            if (constraints.maxHeight >= 680) {
-              return const Column(
-                children: [
-                  LiveStreamMatches(),
-                  UpcomingMatches(),
-                  Winners(),
-                ],
-              );
-            }
-            return const SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  LiveStreamMatches(),
-                  Winners(),
-                  UpcomingMatches(isScrollable: false),
-                ],
-              ),
-            );
-          },
-        );
-      },
+        },
+      ),
     );
   }
 

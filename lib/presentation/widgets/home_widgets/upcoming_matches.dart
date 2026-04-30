@@ -1,26 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:tennis_cup/data/data_providers/tournament_api.dart';
-import 'package:tennis_cup/data/models/tournament.dart';
-import 'package:tennis_cup/data/repositories/tournament_repository.dart';
-import 'package:tennis_cup/presentation/widgets/home_widgets/upcoming_match.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tennis_cup/data/models/match.dart';
+import 'package:tennis_cup/data/models/tournament.dart';
+import 'package:tennis_cup/logic/cubit/upcoming_tournaments_cubit.dart';
+import 'package:tennis_cup/presentation/widgets/home_widgets/upcoming_match.dart';
 
 class UpcomingMatches extends StatelessWidget {
-  final tournamentRepository =
-      const TournamentRepository(tournamentApi: TournamentApi());
-
   final bool isScrollable;
   const UpcomingMatches({super.key, this.isScrollable = true});
 
-  List<Match> _getMatchesToDisplay(List<Tournament> tournaments) {
+  List<MapEntry<Match, Tournament>> _getMatchesToDisplay(List<Tournament> tournaments) {
     final List<MapEntry<Match, Tournament>> matchesWithTournaments = [];
 
     for (final tournament in tournaments) {
       Match? closestUpcomingMatch;
       Duration closestDuration = const Duration(days: 365000);
 
-      for (final match in tournament.matches!) {
-        Duration difference = match.dateTime.difference(DateTime.now());
+      for (final match in tournament.matches ?? []) {
+        final difference = match.dateTime.difference(DateTime.now());
         if (difference > Duration.zero && difference < closestDuration) {
           closestDuration = difference;
           closestUpcomingMatch = match;
@@ -32,21 +29,12 @@ class UpcomingMatches extends StatelessWidget {
       }
     }
 
-    matchesWithTournaments
-        .sort((a, b) => a.key.dateTime.compareTo(b.key.dateTime));
-
-    tournaments
-      ..clear()
-      ..addAll(matchesWithTournaments.map((entry) => entry.value));
-
-    return matchesWithTournaments.map((entry) => entry.key).toList();
+    matchesWithTournaments.sort((a, b) => a.key.dateTime.compareTo(b.key.dateTime));
+    return matchesWithTournaments;
   }
 
   @override
   Widget build(BuildContext context) {
-    final upcomingMatchesTournaments =
-        tournamentRepository.fetchUpcomingMatchesTournaments();
-
     return Flexible(
       fit: FlexFit.loose,
       child: Column(
@@ -68,40 +56,37 @@ class UpcomingMatches extends StatelessWidget {
           ),
           Flexible(
             fit: FlexFit.loose,
-            child: FutureBuilder(
-              future: upcomingMatchesTournaments,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-                if (snapshot.hasData) {
-                  final tournaments = snapshot.data!;
-                  final matches = _getMatchesToDisplay(tournaments);
-
-                  if (matches.isEmpty) {
-                    return const Center(child: Text('No matches found'));
-                  }
-
-                  return ListView.builder(
-                    physics: isScrollable
-                        ? null
-                        : const NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    itemCount: matches.length,
-                    itemBuilder: (context, index) {
-                      return UpcomingMatch(
-                        match: matches[index],
-                        tournament: tournaments[index],
-                      );
-                    },
-                  );
-                }
-                return const Center(child: Text('Ooops, something went wrong'));
+            child: BlocBuilder<UpcomingTournamentsCubit, UpcomingTournamentsState>(
+              builder: (context, state) => switch (state) {
+                UpcomingTournamentsLoading() =>
+                  const Center(child: CircularProgressIndicator()),
+                UpcomingTournamentsError() =>
+                  const Center(child: Text('Ooops, something went wrong')),
+                UpcomingTournamentsLoaded(:final tournaments) =>
+                  _buildList(tournaments),
               },
             ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildList(List<Tournament> tournaments) {
+    final entries = _getMatchesToDisplay(tournaments);
+    if (entries.isEmpty) {
+      return const Center(child: Text('No matches found'));
+    }
+    return ListView.builder(
+      physics: isScrollable ? null : const NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
+      itemCount: entries.length,
+      itemBuilder: (context, index) {
+        return UpcomingMatch(
+          match: entries[index].key,
+          tournament: entries[index].value,
+        );
+      },
     );
   }
 }

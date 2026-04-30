@@ -1,39 +1,28 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:tennis_cup/data/data_providers/player_api.dart';
+import 'package:tennis_cup/data/models/page_request.dart';
+import 'package:tennis_cup/data/models/page_result.dart';
 import 'package:tennis_cup/data/models/player.dart';
+import 'package:tennis_cup/data/services/abstract/i_player_service.dart';
 
 class PlayerRepository {
-  final PlayerApi playerApi;
+  final IPlayerService _service;
 
-  const PlayerRepository({required this.playerApi});
+  const PlayerRepository(this._service);
 
-  Future<Map<String, dynamic>> fetchRankingPlayers({
-    required int limit,
-    DocumentSnapshot? startAfter,
+  Future<PageResult<Player>> fetchRankingPlayers({
+    required PageRequest page,
     Sex? sexFilter,
-  }) async {
-    final querySnapshot = await playerApi.fetchRankingPlayers(
-      limit: limit,
-      startAfter: startAfter,
-      sexFilter: sexFilter,
-    );
-
-    final players = querySnapshot.docs.map((doc) {
-      return Player.fromFirestore(doc);
-    }).toList();
-
-    return {
-      'players': players,
-      'lastDocument':
-          querySnapshot.docs.isNotEmpty ? querySnapshot.docs.last : null,
-    };
+  }) {
+    return _service.fetchRankingPlayers(page: page, sexFilter: sexFilter);
   }
 
-  Future<Iterable<Player>> fetchPlayersBySubstring(
-      {required String substring, bool isSurname = false}) async {
-    final querySnapshot = await playerApi.fetchPlayersBySubstring(
-        substring: substring, isSurname: isSurname);
+  Future<List<Player>> fetchPlayersBySubstring({
+    required String substring,
+    bool isSurname = false,
+  }) {
+    return _service.searchPlayersByName(query: substring, isSurname: isSurname);
+  }
 
-    return querySnapshot.docs.map((doc) => Player.fromFirestore(doc));
+  Future<Player> fetchPlayerById(String id) {
+    return _service.fetchPlayerById(id);
   }
 }

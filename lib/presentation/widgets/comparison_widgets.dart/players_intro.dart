@@ -14,8 +14,7 @@ class PlayersIntro extends StatelessWidget {
         IntrinsicHeight(
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            crossAxisAlignment:
-                CrossAxisAlignment.stretch,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               PlayerIntro(player1),
               PlayerIntro(player2),
@@ -28,7 +27,10 @@ class PlayersIntro extends StatelessWidget {
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                  color: Theme.of(context).colorScheme.shadow.withOpacity(0.25),
+                  color: Theme.of(context)
+                      .colorScheme
+                      .shadow
+                      .withValues(alpha: 0.25),
                   spreadRadius: 1,
                   blurRadius: 5,
                   offset: const Offset(0, 0),

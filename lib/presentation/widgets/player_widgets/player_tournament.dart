@@ -99,7 +99,7 @@ class PlayerTournament extends StatelessWidget {
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                   Text(
-                    tournament.places[index].toString(),
+                    tournament.places.elementAtOrNull(index).toString(),
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                 ],
@@ -161,7 +161,7 @@ class PlayerTournament extends StatelessWidget {
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                   Text(
-                    tournament.points[index].toString(),
+                    tournament.points.elementAtOrNull(index).toString(),
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                 ],
