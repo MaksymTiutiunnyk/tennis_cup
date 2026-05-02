@@ -8,6 +8,7 @@ import 'package:tennis_cup/data/models/tournament.dart';
 import 'package:tennis_cup/routing/app_router.dart';
 import 'package:tennis_cup/ui/auth/view_models/auth_cubit.dart';
 import 'package:tennis_cup/ui/core/themes/app_theme.dart';
+import 'package:tennis_cup/ui/user/core/view_models/active_role_cubit.dart';
 import 'package:tennis_cup/ui/core/widgets/connection_monitor.dart';
 import 'package:tennis_cup/ui/view_only/home/view_models/live_stream_match_index_cubit.dart';
 import 'package:tennis_cup/ui/view_only/home/view_models/video_player_cubit.dart';
@@ -61,6 +62,7 @@ class _TennisCupState extends State<TennisCup> {
             tokenStore: ServiceLocator.tokenStore,
           )..checkAuthStatus(),
         ),
+        BlocProvider(create: (_) => ActiveRoleCubit()),
         BlocProvider(
           create: (_) => NewsCubit(
             newsRepository: ServiceLocator.newsRepository,
@@ -81,14 +83,24 @@ class _TennisCupState extends State<TennisCup> {
         BlocProvider(create: (_) => VideoPlayerCubit()),
         BlocProvider(create: (_) => LiveStreamMatchIndexCubit()),
       ],
-      child: MaterialApp.router(
-        title: 'Tennis Cup',
-        theme: AppTheme.light,
-        darkTheme: AppTheme.dark,
-        routerConfig: _router,
-        builder: (context, child) => ConnectionMonitor(
-          navigatorKey: _navigatorKey,
-          child: child!,
+      child: BlocListener<AuthCubit, AuthState>(
+        listener: (context, state) {
+          final roleCubit = context.read<ActiveRoleCubit>();
+          if (state is AuthAuthenticated) {
+            roleCubit.initRoles(state.roles);
+          } else if (state is AuthUnauthenticated) {
+            roleCubit.initRoles([]);
+          }
+        },
+        child: MaterialApp.router(
+          title: 'Tennis Cup',
+          theme: AppTheme.light,
+          darkTheme: AppTheme.dark,
+          routerConfig: _router,
+          builder: (context, child) => ConnectionMonitor(
+            navigatorKey: _navigatorKey,
+            child: child!,
+          ),
         ),
       ),
     );
