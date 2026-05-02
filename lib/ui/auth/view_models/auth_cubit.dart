@@ -1,5 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tennis_cup/core/utils/jwt_utils.dart';
 import 'package:tennis_cup/data/auth/auth_token_store.dart';
+import 'package:tennis_cup/data/models/user_role.dart';
 import 'package:tennis_cup/data/services/rest/rest_auth_service.dart';
 
 part 'auth_state.dart';
@@ -18,7 +20,10 @@ class AuthCubit extends Cubit<AuthState> {
   Future<void> checkAuthStatus() async {
     final token = await _tokenStore.getAccessToken();
     if (token != null) {
-      emit(AuthAuthenticated(''));
+      emit(AuthAuthenticated(
+        userId: extractUserId(token),
+        roles: extractRoles(token),
+      ));
     } else {
       emit(AuthUnauthenticated());
     }
@@ -31,7 +36,11 @@ class AuthCubit extends Cubit<AuthState> {
     emit(AuthLoading());
     try {
       await _authService.login(login: login, password: password);
-      emit(AuthAuthenticated(''));
+      final token = await _tokenStore.getAccessToken();
+      emit(AuthAuthenticated(
+        userId: token != null ? extractUserId(token) : '',
+        roles: token != null ? extractRoles(token) : [UserRole.player],
+      ));
     } catch (e) {
       emit(AuthError(_parseError(e)));
     }

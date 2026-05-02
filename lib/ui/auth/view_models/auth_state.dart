@@ -8,7 +8,8 @@ class AuthLoading extends AuthState {}
 
 class AuthAuthenticated extends AuthState {
   final String userId;
-  AuthAuthenticated(this.userId);
+  final List<UserRole> roles;
+  AuthAuthenticated({required this.userId, required this.roles});
 }
 
 class AuthUnauthenticated extends AuthState {
