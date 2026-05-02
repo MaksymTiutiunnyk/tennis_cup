@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:tennis_cup/core/di/service_locator.dart';
 import 'package:tennis_cup/data/models/match.dart';
 import 'package:tennis_cup/data/models/tournament.dart';
+import 'package:tennis_cup/routing/app_router.dart';
 import 'package:tennis_cup/ui/view_only/schedule/view_models/arena_filter_cubit.dart';
 import 'package:tennis_cup/ui/view_only/home/view_models/live_match_cubit.dart';
 import 'package:tennis_cup/ui/view_only/schedule/view_models/schedule_date_cubit.dart';
-import 'package:tennis_cup/ui/shell/view_models/tab_index_cubit.dart';
 import 'package:tennis_cup/ui/view_only/schedule/view_models/time_filter_cubit.dart';
 import 'package:tennis_cup/ui/view_only/home/view_models/video_player_cubit.dart';
 import 'package:tennis_cup/ui/view_only/home/widgets/live_stream_match_player.dart';
@@ -61,7 +62,7 @@ class LiveStreamMatch extends StatelessWidget {
                           context
                               .read<ArenaFilterCubit>()
                               .selectArena(tournament.arena);
-                          context.read<TabIndexCubit>().selectTab(1);
+                          context.go(AppRoutes.viewSchedule);
                         },
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,

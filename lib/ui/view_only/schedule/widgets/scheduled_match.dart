@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:tennis_cup/data/models/match.dart';
-import 'package:tennis_cup/ui/view_only/player_details/widgets/player_details.dart';
-import 'package:tennis_cup/ui/view_only/player_comparison/widgets/players_comparison.dart';
+import 'package:tennis_cup/routing/app_router.dart';
 
 DateFormat formatter = DateFormat('HH:mm');
 
@@ -26,16 +26,13 @@ class ScheduledMatch extends StatelessWidget {
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                   IconButton(
-                    onPressed: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute<PlayersComparison>(
-                          builder: (ctx) => PlayersComparison(
-                            player1: match.bluePlayer,
-                            player2: match.redPlayer,
-                          ),
-                        ),
-                      );
-                    },
+                    onPressed: () => context.push(
+                      AppRoutes.playersComparison(
+                        match.bluePlayer.playerId,
+                        match.redPlayer.playerId,
+                      ),
+                      extra: (p1: match.bluePlayer, p2: match.redPlayer),
+                    ),
                     icon: const Icon(Icons.people),
                   ),
                 ],
@@ -44,11 +41,10 @@ class ScheduledMatch extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   InkWell(
-                    onTap: () {
-                      Navigator.of(context).push(MaterialPageRoute<PlayerDetails>(
-                          builder: (ctx) =>
-                              PlayerDetails(player: match.bluePlayer)));
-                    },
+                    onTap: () => context.push(
+                      AppRoutes.playerDetails(match.bluePlayer.playerId),
+                      extra: match.bluePlayer,
+                    ),
                     child: Text(
                       match.bluePlayer.fullName,
                       style: Theme.of(context).textTheme.bodyMedium,
@@ -70,11 +66,10 @@ class ScheduledMatch extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   InkWell(
-                    onTap: () {
-                      Navigator.of(context).push(MaterialPageRoute<PlayerDetails>(
-                          builder: (ctx) =>
-                              PlayerDetails(player: match.redPlayer)));
-                    },
+                    onTap: () => context.push(
+                      AppRoutes.playerDetails(match.redPlayer.playerId),
+                      extra: match.redPlayer,
+                    ),
                     child: Text(
                       match.redPlayer.fullName,
                       style: Theme.of(context).textTheme.bodyMedium,

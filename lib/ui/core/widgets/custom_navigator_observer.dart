@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:tennis_cup/ui/shell/widgets/tabs.dart';
 
+/// NavigatorObserver attached to the root [GoRouter]. When a route is pushed
+/// on top of an existing one we stop the YouTube player so it doesn't keep
+/// playing audio behind a detail screen.
+///
+/// VideoPlayerCubit registers its [stopPlayer] handler via [stopPlayerCallback]
+/// at construction time. The static field keeps the observer decoupled from
+/// the cubit's location in the widget tree.
 class CustomNavigatorObserver extends NavigatorObserver {
-  late VoidCallback stopPlayerCallback;
+  static VoidCallback? stopPlayerCallback;
 
   @override
   void didPush(Route route, Route? previousRoute) {
@@ -13,10 +19,7 @@ class CustomNavigatorObserver extends NavigatorObserver {
     }
 
     if (previousRoute != null) {
-      if ((previousRoute.runtimeType == MaterialPageRoute<dynamic>) ||
-          previousRoute.runtimeType == MaterialPageRoute<Tabs>) {
-        stopPlayerCallback();
-      }
+      stopPlayerCallback?.call();
     }
   }
 }

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:tennis_cup/routing/app_router.dart';
 import 'package:tennis_cup/ui/view_only/schedule/view_models/arena_filter_cubit.dart';
 import 'package:tennis_cup/ui/view_only/schedule/view_models/schedule_date_cubit.dart';
-import 'package:tennis_cup/ui/shell/view_models/tab_index_cubit.dart';
 import 'package:tennis_cup/data/models/match.dart';
 import 'package:intl/intl.dart';
 import 'package:tennis_cup/data/models/tournament.dart';
@@ -23,7 +24,7 @@ class UpcomingMatch extends StatelessWidget {
         context.read<ScheduleDateCubit>().selectDate(tournament.date);
         context.read<TimeFilterCubit>().selectTime(tournament.time);
         context.read<ArenaFilterCubit>().selectArena(tournament.arena);
-        context.read<TabIndexCubit>().selectTab(1);
+        context.go(AppRoutes.viewSchedule);
       },
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

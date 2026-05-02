@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:tennis_cup/data/models/player.dart';
 import 'package:tennis_cup/data/models/tournament.dart';
-import 'package:tennis_cup/ui/view_only/player_details/widgets/player_details.dart';
+import 'package:tennis_cup/routing/app_router.dart';
 
 DateFormat formatter = DateFormat('yyyy-MM-dd');
 
@@ -20,10 +21,10 @@ class Winner extends StatelessWidget {
     final winner = _defineWinner();
 
     return InkWell(
-      onTap: () {
-        Navigator.of(context).push(MaterialPageRoute<PlayerDetails>(
-            builder: (ctx) => PlayerDetails(player: winner)));
-      },
+      onTap: () => context.push(
+        AppRoutes.playerDetails(winner.playerId),
+        extra: winner,
+      ),
       child: Container(
         margin: const EdgeInsets.fromLTRB(8, 0, 8, 8),
         padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),

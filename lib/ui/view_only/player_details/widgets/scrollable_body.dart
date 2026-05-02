@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:tennis_cup/data/models/player.dart';
+import 'package:tennis_cup/routing/app_router.dart';
 import 'package:tennis_cup/ui/view_only/player_details/view_models/player_tournaments_cubit.dart';
-import 'package:tennis_cup/ui/view_only/player_comparison/widgets/players_comparison.dart';
 import 'package:tennis_cup/ui/view_only/player_search/widgets/player_search.dart';
 import 'package:tennis_cup/ui/view_only/player_details/widgets/player_info.dart';
 import 'package:tennis_cup/ui/view_only/player_details/widgets/player_tournaments.dart';
@@ -51,13 +52,9 @@ class _ScrollableBodyState extends State<ScrollableBody> {
       );
       return;
     }
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute<PlayersComparison>(
-        builder: (context) => PlayersComparison(
-          player1: widget.player,
-          player2: player,
-        ),
-      ),
+    context.pushReplacement(
+      AppRoutes.playersComparison(widget.player.playerId, player.playerId),
+      extra: (p1: widget.player, p2: player),
     );
   }
 

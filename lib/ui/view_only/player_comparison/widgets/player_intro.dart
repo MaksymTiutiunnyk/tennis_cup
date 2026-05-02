@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:tennis_cup/ui/core/icons/custom_icons_icons.dart';
 import 'package:tennis_cup/data/models/player.dart';
-import 'package:tennis_cup/ui/view_only/player_details/widgets/player_details.dart';
+import 'package:tennis_cup/routing/app_router.dart';
 
 class PlayerIntro extends StatelessWidget {
   final Player player;
@@ -11,10 +12,10 @@ class PlayerIntro extends StatelessWidget {
   Widget build(BuildContext context) {
     return Expanded(
       child: InkWell(
-        onTap: () {
-          Navigator.of(context).push(MaterialPageRoute<PlayerDetails>(
-              builder: (ctx) => PlayerDetails(player: player)));
-        },
+        onTap: () => context.push(
+          AppRoutes.playerDetails(player.playerId),
+          extra: player,
+        ),
         child: Card(
           margin: const EdgeInsets.all(8),
           child: Padding(
