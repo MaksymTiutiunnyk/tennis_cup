@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//Users/max/Desktop/diploma_backend/tournament-platform/api-specs/**)",
+      "Read(//Users/max/Desktop/diploma_backend/tournament-platform/**)"
+    ]
+  }
+}
