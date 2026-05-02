@@ -41,8 +41,7 @@ lib/
 │   └── services/
 │       ├── abstract/              # interfaces (IPlayerService, etc.)
 │       ├── dto/                   # raw API data transfer objects
-│       ├── rest/                  # REST implementations
-│       └── stub/                  # stub implementations for unfinished APIs
+│       └── rest/                  # REST implementations
 ├── routing/app_router.dart        # GoRouter config + AppRoutes constants
 └── ui/
     ├── core/
@@ -109,14 +108,14 @@ Models in `lib/data/models/` are pure data classes — no factory methods. Servi
 
 `Player.imageUrl` is `''` for REST-sourced players (no image API yet). Use `PlayerAvatar` widget instead of `FadeInImage.assetNetwork` directly — it guards against the empty URL.
 
-### Features without REST API yet
+### Partially implemented features
 
-`StubMatchService` and `StubNewsService` return empty data; affected UI falls back gracefully:
-- News screen — shows empty state (no news API)
-- Match detail / scores — not shown (`StubMatchService.fetchMatchById` returns `null`)
-- Real-time updates — no auto-refresh (`watchTournamentChanges` / `watchMatchChanges` return `Stream.empty()`; manual pull-to-refresh only)
-- Player stats: wins, losses, medals, rankUTTF, year, place — shows `–` (`hasDetailedStats = false`)
+All services are on REST. The following behaviours are still incomplete:
+
+- Real-time updates — no auto-refresh (`watchMatchChanges` / `watchTournamentChanges` return `Stream.empty()`; manual pull-to-refresh only)
+- Player stats: wins, losses, medals, rankUTTF, year, place — shows `–` (`hasDetailedStats = false` for REST-sourced players)
 - Player avatars — shows default asset (`imageUrl` is always `''` from REST)
+- News images are served from a local GCS-compatible storage emulator at `localhost:4443`. On Android emulator, `localhost` resolves to the emulator's own loopback — replace it with `10.0.2.2`. The `SingleInterestingNews` widget falls back to `default_image.jpg` on any load failure.
 
 Home screen widgets (`LiveStreamMatches`, `UpcomingMatches`, `Winners`) fetch real tournament data from the REST API. They fall back to "No matches found" / "No winners found" when `tournament.matches` is `null` or `tournament.players`/`places` are empty.
 
@@ -127,12 +126,16 @@ Home screen widgets (`LiveStreamMatches`, `UpcomingMatches`, `Winners`) fetch re
 Service base URLs are configured via `lib/config/`:
 
 ```dart
-// Override at build time: flutter run --dart-define=PLAYER_URL=http://prod:8082
+// Override at build time: flutter run --dart-define=GATEWAY_URL=http://prod:8080
+const gatewayUrl           = String.fromEnvironment('GATEWAY_URL',    defaultValue: 'http://localhost:8080');
 const playerServiceUrl     = String.fromEnvironment('PLAYER_URL',     defaultValue: 'http://localhost:8082');
 const tournamentServiceUrl = String.fromEnvironment('TOURNAMENT_URL', defaultValue: 'http://localhost:8084');
 const arenaServiceUrl      = String.fromEnvironment('ARENA_URL',      defaultValue: 'http://localhost:8083');
 const authServiceUrl       = String.fromEnvironment('AUTH_URL',       defaultValue: 'http://localhost:8081');
+const matchServiceUrl      = String.fromEnvironment('MATCH_URL',      defaultValue: 'http://localhost:8085');
 ```
+
+All `DioClient` instances in `ServiceLocator` currently use `gatewayUrl` as their base URL — every service call goes through the API gateway. The individual service URL constants exist for direct-to-service access if the gateway is bypassed.
 
 ### Auth
 
