@@ -1,6 +1,6 @@
-import 'package:tennis_cup/data/models/news.dart';
+import 'package:tennis_cup/data/services/dto/news_dto.dart';
 
 abstract interface class INewsService {
-  Future<List<News>> fetchNewsWithinPeriod(DateTime start, DateTime end);
-  Future<List<News>> fetchInterestingNews();
+  Future<List<NewsDto>> fetchNewsWithinPeriod(DateTime start, DateTime end);
+  Future<List<NewsDto>> fetchInterestingNews();
 }

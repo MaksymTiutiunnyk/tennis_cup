@@ -27,7 +27,7 @@ import 'package:tennis_cup/data/services/rest/rest_arena_service.dart';
 import 'package:tennis_cup/data/services/rest/rest_player_service.dart';
 import 'package:tennis_cup/data/services/rest/rest_tournament_service.dart';
 import 'package:tennis_cup/data/services/rest/rest_match_service.dart';
-import 'package:tennis_cup/data/services/stub/stub_news_service.dart';
+import 'package:tennis_cup/data/services/rest/rest_news_service.dart';
 import 'package:tennis_cup/data/auth/auth_token_store.dart';
 import 'package:tennis_cup/data/services/rest/rest_auth_service.dart';
 
@@ -85,7 +85,12 @@ class ServiceLocator {
       refreshToken: authService.refreshAccessToken,
     );
     matchService = RestMatchService(matchDio);
-    newsService = const StubNewsService();
+    final newsDio = DioClient.create(
+      baseUrl: gatewayUrl,
+      tokenStore: tokenStore,
+      refreshToken: authService.refreshAccessToken,
+    );
+    newsService = RestNewsService(newsDio);
 
     playerRepository = PlayerRepository(playerService);
     tournamentRepository = TournamentRepository(tournamentService, arenaService, playerService, matchService);
