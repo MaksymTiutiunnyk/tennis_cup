@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:tennis_cup/data/models/player.dart';
 import 'package:tennis_cup/data/models/tournament.dart';
 import 'package:tennis_cup/routing/app_router.dart';
+import 'package:tennis_cup/ui/core/widgets/player_avatar.dart';
 
 DateFormat formatter = DateFormat('yyyy-MM-dd');
 
@@ -34,21 +35,7 @@ class Winner extends StatelessWidget {
         ),
         child: Column(
           children: [
-            CircleAvatar(
-              radius: 40,
-              child: ClipOval(
-                child: FadeInImage.assetNetwork(
-                  placeholder: 'assets/default_avatar.jpg',
-                  image: winner.imageUrl,
-                  fit: BoxFit.cover,
-                  imageErrorBuilder: (context, error, stackTrace) =>
-                      Image.asset(
-                    'assets/default_avatar.jpg',
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ),
-            ),
+            PlayerAvatar(imageUrl: winner.imageUrl, radius: 40),
             const SizedBox(height: 8),
             Text(
               winner.fullName,

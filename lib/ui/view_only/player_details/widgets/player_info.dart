@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tennis_cup/data/models/player.dart';
+import 'package:tennis_cup/ui/core/widgets/player_avatar.dart';
 
 class PlayerInfo extends StatelessWidget {
   final Player player;
@@ -12,20 +13,7 @@ class PlayerInfo extends StatelessWidget {
       child: Column(
         children: [
           const SizedBox(height: 8),
-          CircleAvatar(
-            radius: 60,
-            child: ClipOval(
-              child: FadeInImage.assetNetwork(
-                placeholder: 'assets/default_avatar.jpg',
-                image: player.imageUrl,
-                fit: BoxFit.cover,
-                imageErrorBuilder: (context, error, stackTrace) => Image.asset(
-                  'assets/default_avatar.jpg',
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
-          ),
+          PlayerAvatar(imageUrl: player.imageUrl, radius: 60),
           const SizedBox(height: 8),
           Text(
             player.fullName,

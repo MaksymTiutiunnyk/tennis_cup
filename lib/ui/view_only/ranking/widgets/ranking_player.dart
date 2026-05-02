@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tennis_cup/data/models/player.dart';
 import 'package:tennis_cup/routing/app_router.dart';
+import 'package:tennis_cup/ui/core/widgets/player_avatar.dart';
 
 class RankingPlayer extends StatelessWidget {
   final Player player;
@@ -21,21 +22,7 @@ class RankingPlayer extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  CircleAvatar(
-                    radius: 20,
-                    child: ClipOval(
-                      child: FadeInImage.assetNetwork(
-                        placeholder: 'assets/default_avatar.jpg',
-                        image: player.imageUrl,
-                        fit: BoxFit.cover,
-                        imageErrorBuilder: (context, error, stackTrace) =>
-                            Image.asset(
-                          'assets/default_avatar.jpg',
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                  ),
+                  PlayerAvatar(imageUrl: player.imageUrl, radius: 20),
                   const SizedBox(width: 8),
                   Text(
                     '${player.surname} ${player.name}',

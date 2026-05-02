@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:tennis_cup/ui/core/icons/custom_icons_icons.dart';
 import 'package:tennis_cup/data/models/player.dart';
 import 'package:tennis_cup/routing/app_router.dart';
+import 'package:tennis_cup/ui/core/widgets/player_avatar.dart';
 
 class PlayerIntro extends StatelessWidget {
   final Player player;
@@ -24,21 +25,7 @@ class PlayerIntro extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const SizedBox(height: 8),
-                CircleAvatar(
-                  radius: 50,
-                  child: ClipOval(
-                    child: FadeInImage.assetNetwork(
-                      placeholder: 'assets/default_avatar.jpg',
-                      image: player.imageUrl,
-                      fit: BoxFit.cover,
-                      imageErrorBuilder: (context, error, stackTrace) =>
-                          Image.asset(
-                        'assets/default_avatar.jpg',
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                ),
+                PlayerAvatar(imageUrl: player.imageUrl, radius: 50),
                 const SizedBox(height: 8),
                 Text(
                   player.fullName,
