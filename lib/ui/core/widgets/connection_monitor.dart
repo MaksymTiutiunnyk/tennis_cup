@@ -3,8 +3,13 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 
 class ConnectionMonitor extends StatefulWidget {
   final Widget child;
+  final GlobalKey<NavigatorState> navigatorKey;
 
-  const ConnectionMonitor({required this.child, super.key});
+  const ConnectionMonitor({
+    required this.child,
+    required this.navigatorKey,
+    super.key,
+  });
 
   @override
   State<ConnectionMonitor> createState() => _ConnectionMonitorState();
@@ -25,10 +30,11 @@ class _ConnectionMonitorState extends State<ConnectionMonitor> {
   }
 
   void _showNoConnectionModal(BuildContext context) {
-    if (!_isDisconnected) {
+    final navContext = widget.navigatorKey.currentContext;
+    if (!_isDisconnected && navContext != null) {
       _isDisconnected = true;
       showModalBottomSheet(
-        context: context,
+        context: navContext,
         isDismissible: false,
         enableDrag: false,
         isScrollControlled: true,
@@ -62,9 +68,10 @@ class _ConnectionMonitorState extends State<ConnectionMonitor> {
   }
 
   void _closeNoConnectionModal(BuildContext context) {
-    if (_isDisconnected) {
+    final navContext = widget.navigatorKey.currentContext;
+    if (_isDisconnected && navContext != null) {
       _isDisconnected = false;
-      Navigator.of(context).pop();
+      Navigator.of(navContext).pop();
     }
   }
 

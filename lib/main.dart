@@ -37,11 +37,12 @@ class TennisCup extends StatefulWidget {
 
 class _TennisCupState extends State<TennisCup> {
   late final GoRouter _router;
+  final _navigatorKey = GlobalKey<NavigatorState>();
 
   @override
   void initState() {
     super.initState();
-    _router = buildAppRouter();
+    _router = buildAppRouter(navigatorKey: _navigatorKey);
   }
 
   @override
@@ -85,7 +86,10 @@ class _TennisCupState extends State<TennisCup> {
         theme: AppTheme.light,
         darkTheme: AppTheme.dark,
         routerConfig: _router,
-        builder: (context, child) => ConnectionMonitor(child: child!),
+        builder: (context, child) => ConnectionMonitor(
+          navigatorKey: _navigatorKey,
+          child: child!,
+        ),
       ),
     );
   }

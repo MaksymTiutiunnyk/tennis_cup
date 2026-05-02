@@ -31,8 +31,9 @@ class AppRoutes {
       '/comparison/$p1Id/$p2Id';
 }
 
-GoRouter buildAppRouter() {
+GoRouter buildAppRouter({GlobalKey<NavigatorState>? navigatorKey}) {
   return GoRouter(
+    navigatorKey: navigatorKey,
     initialLocation: AppRoutes.viewHome,
     observers: [CustomNavigatorObserver()],
     routes: [
