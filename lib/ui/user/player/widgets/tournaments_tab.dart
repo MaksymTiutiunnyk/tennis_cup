@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tennis_cup/core/di/service_locator.dart';
+import 'package:tennis_cup/ui/auth/view_models/auth_cubit.dart';
 import 'package:tennis_cup/ui/user/player/view_models/invitations_cubit.dart';
 import 'package:tennis_cup/ui/user/player/widgets/tournament_invitation_card.dart';
 
@@ -8,7 +10,13 @@ class TournamentsTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<InvitationsCubit, InvitationsState>(
+    final userId = (context.read<AuthCubit>().state as AuthAuthenticated).userId;
+    return BlocProvider(
+      create: (_) => InvitationsCubit(
+        repository: ServiceLocator.invitationsRepository,
+        playerId: userId,
+      ),
+      child: BlocBuilder<InvitationsCubit, InvitationsState>(
       builder: (context, state) {
         return switch (state) {
           InvitationsLoading() =>
@@ -24,6 +32,7 @@ class TournamentsTab extends StatelessWidget {
             ),
         };
       },
+    ),
     );
   }
 }

@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:tennis_cup/core/di/service_locator.dart';
 import 'package:tennis_cup/data/models/player.dart';
 import 'package:tennis_cup/ui/core/widgets/custom_navigator_observer.dart';
 import 'package:tennis_cup/ui/shell/widgets/user_shell.dart';
@@ -11,7 +9,6 @@ import 'package:tennis_cup/ui/user/organizer/widgets/organizer_management_tab.da
 import 'package:tennis_cup/ui/user/organizer/widgets/organizer_players_tab.dart';
 import 'package:tennis_cup/ui/user/organizer/widgets/organizer_tournaments_tab.dart';
 import 'package:tennis_cup/ui/user/organizer/widgets/pending_users_tab.dart';
-import 'package:tennis_cup/ui/user/player/view_models/invitations_cubit.dart';
 import 'package:tennis_cup/ui/user/player/widgets/tournaments_tab.dart';
 import 'package:tennis_cup/ui/view_only/home/widgets/home.dart';
 import 'package:tennis_cup/ui/view_only/news/widgets/news.dart';
@@ -96,13 +93,7 @@ GoRouter buildAppRouter({GlobalKey<NavigatorState>? navigatorKey}) {
             routes: [
               GoRoute(
                 path: AppRoutes.userInvitations,
-                builder: (context, state) => BlocProvider(
-                  create: (_) => InvitationsCubit(
-                    repository: ServiceLocator.invitationsRepository,
-                    playerId: '1', // TODO: replace with userId from AuthCubit
-                  ),
-                  child: const TournamentsTab(),
-                ),
+                builder: (context, state) => const TournamentsTab(),
               ),
             ],
           ),
