@@ -60,7 +60,7 @@ class AppTheme {
           style: const ButtonStyle()
               .copyWith(visualDensity: VisualDensity.compact),
         ),
-        textTheme: ThemeData().textTheme.copyWith(
+        textTheme: ThemeData.dark().textTheme.copyWith(
               bodyLarge: const TextStyle(fontSize: 18, color: Colors.white),
               bodyMedium: const TextStyle(fontSize: 16, color: Colors.white),
               bodySmall: const TextStyle(fontSize: 14, color: Colors.grey),
