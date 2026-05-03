@@ -11,6 +11,9 @@ enum Time { Morning, Evening, Day, Midnight, Night }
 
 class Tournament extends Equatable {
   final String tournamentId;
+  final String name;
+  final String gender;
+  final String status;
   final List<Player> players;
   final List<Match>? matches;
   final DateTime date;
@@ -28,6 +31,9 @@ class Tournament extends Equatable {
     required this.time,
     required this.points,
     required this.places,
+    this.name = '',
+    this.gender = '',
+    this.status = 'PENDING',
     this.isFinished = false,
     this.matches,
   });
@@ -35,6 +41,9 @@ class Tournament extends Equatable {
   @override
   List<Object?> get props => [
         tournamentId,
+        name,
+        gender,
+        status,
         players,
         matches,
         date,

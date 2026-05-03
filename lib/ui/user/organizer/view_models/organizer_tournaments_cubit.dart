@@ -1,10 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tennis_cup/data/models/arena.dart';
 import 'package:tennis_cup/data/models/tournament.dart';
+import 'package:tennis_cup/data/models/tournament_request.dart';
 import 'package:tennis_cup/data/repositories/tournament_repository.dart';
-
-export 'package:tennis_cup/data/services/dto/tournament_dto.dart'
-    show CreateTournamentRequestDto, UpdateTournamentRequestDto;
 
 part 'organizer_tournaments_state.dart';
 
@@ -40,18 +38,18 @@ class OrganizerTournamentsCubit extends Cubit<OrganizerTournamentsState> {
     }
   }
 
-  Future<void> create(CreateTournamentRequestDto dto) async {
+  Future<void> create(CreateTournamentRequest request) async {
     try {
-      await _repository.createTournament(dto);
+      await _repository.createTournament(request);
       await _reload();
     } catch (e) {
       emit(OrgTournamentsError(_message(e)));
     }
   }
 
-  Future<void> update(int id, UpdateTournamentRequestDto dto) async {
+  Future<void> update(int id, UpdateTournamentRequest request) async {
     try {
-      await _repository.updateTournament(id, dto);
+      await _repository.updateTournament(id, request);
       await _reload();
     } catch (e) {
       emit(OrgTournamentsError(_message(e)));
