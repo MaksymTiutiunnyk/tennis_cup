@@ -66,6 +66,12 @@ class FirebasePlayerService implements IPlayerService {
   }
 
   @override
+  Future<void> updatePlayerProfileById(
+      int playerId, Map<String, dynamic> fields) {
+    throw UnimplementedError('Admin player edit not implemented for Firebase');
+  }
+
+  @override
   Future<Player> fetchPlayerById(String id) async {
     final doc =
         await FirebaseFirestore.instance.collection('players').doc(id).get();

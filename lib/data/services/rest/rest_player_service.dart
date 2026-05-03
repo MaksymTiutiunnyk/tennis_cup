@@ -50,6 +50,13 @@ class RestPlayerService implements IPlayerService {
     return [];
   }
 
+  @override
+  Future<void> updatePlayerProfileById(
+      int playerId, Map<String, dynamic> fields) {
+    // Admin endpoint PUT /api/v1/players/{id} not yet available in the backend.
+    throw UnimplementedError('Admin player edit endpoint not yet available');
+  }
+
   static Player _playerFromRatingRecord(Map<String, dynamic> json) {
     final gender = json['gender'] as String? ?? '';
     return Player(

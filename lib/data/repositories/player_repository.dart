@@ -25,4 +25,8 @@ class PlayerRepository {
   Future<Player> fetchPlayerById(String id) {
     return _service.fetchPlayerById(id);
   }
+
+  Future<void> updatePlayerProfileById(
+          int playerId, Map<String, dynamic> fields) =>
+      _service.updatePlayerProfileById(playerId, fields);
 }

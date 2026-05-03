@@ -14,4 +14,6 @@ abstract interface class IPlayerService {
   });
 
   Future<Player> fetchPlayerById(String id);
+
+  Future<void> updatePlayerProfileById(int playerId, Map<String, dynamic> fields);
 }
