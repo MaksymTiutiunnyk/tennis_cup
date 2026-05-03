@@ -187,6 +187,42 @@ class FirebaseTournamentService implements ITournamentService {
   }
 
   @override
+  Future<PageResult<TournamentDto>> fetchTournamentsPaged(
+    PageRequest page, {
+    String? status,
+  }) async =>
+      const PageResult(items: [], hasMore: false);
+
+  @override
+  Future<TournamentDto> createTournament(CreateTournamentRequestDto dto) =>
+      throw UnimplementedError('createTournament not implemented for Firebase');
+
+  @override
+  Future<TournamentDto> updateTournament(
+          int id, UpdateTournamentRequestDto dto) =>
+      throw UnimplementedError('updateTournament not implemented for Firebase');
+
+  @override
+  Future<void> deleteTournament(int id) =>
+      throw UnimplementedError('deleteTournament not implemented for Firebase');
+
+  @override
+  Future<TournamentDto> addPlayers(int tournamentId, List<int> playerIds) =>
+      throw UnimplementedError('addPlayers not implemented for Firebase');
+
+  @override
+  Future<TournamentDto> removePlayers(int tournamentId, List<int> playerIds) =>
+      throw UnimplementedError('removePlayers not implemented for Firebase');
+
+  @override
+  Future<TournamentDto> startTournament(int id) =>
+      throw UnimplementedError('startTournament not implemented for Firebase');
+
+  @override
+  Future<TournamentDto> finishTournament(int id) =>
+      throw UnimplementedError('finishTournament not implemented for Firebase');
+
+  @override
   Future<List<TournamentInvitationDto>> fetchInvitations({
     required String playerId,
   }) async =>

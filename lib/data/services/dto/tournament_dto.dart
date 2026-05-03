@@ -1,5 +1,68 @@
 import 'package:tennis_cup/data/models/tournament.dart';
 
+class CreateTournamentRequestDto {
+  final String name;
+  final String type;
+  final String gender;
+  final String startTime;
+  final int arenaId;
+  final int refereeId;
+  final int matchDurationMinutes;
+  final List<int>? playerIds;
+
+  const CreateTournamentRequestDto({
+    required this.name,
+    required this.type,
+    required this.gender,
+    required this.startTime,
+    required this.arenaId,
+    required this.refereeId,
+    required this.matchDurationMinutes,
+    this.playerIds,
+  });
+
+  Map<String, dynamic> toJson() => {
+        'name': name,
+        'type': type,
+        'gender': gender,
+        'startTime': startTime,
+        'arenaId': arenaId,
+        'refereeId': refereeId,
+        'matchDurationMinutes': matchDurationMinutes,
+        if (playerIds != null) 'playerIds': playerIds,
+      };
+}
+
+class UpdateTournamentRequestDto {
+  final String? name;
+  final String? type;
+  final String? gender;
+  final String? startTime;
+  final int? arenaId;
+  final int? refereeId;
+  final List<int>? playerIds;
+
+  const UpdateTournamentRequestDto({
+    this.name,
+    this.type,
+    this.gender,
+    this.startTime,
+    this.arenaId,
+    this.refereeId,
+    this.playerIds,
+  });
+
+  Map<String, dynamic> toJson() => {
+        if (name != null) 'name': name,
+        if (type != null) 'type': type,
+        if (gender != null) 'gender': gender,
+        if (startTime != null) 'startTime': startTime,
+        if (arenaId != null) 'arenaId': arenaId,
+        if (refereeId != null) 'refereeId': refereeId,
+        if (playerIds != null) 'playerIds': playerIds,
+      };
+}
+
 Time timeFromString(String value) {
   switch (value.toUpperCase()) {
     case 'MORNING':

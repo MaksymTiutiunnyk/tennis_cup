@@ -12,6 +12,9 @@ import 'package:tennis_cup/data/services/dto/arena_dto.dart';
 import 'package:tennis_cup/data/services/dto/match_dto.dart';
 import 'package:tennis_cup/data/services/dto/tournament_dto.dart';
 
+export 'package:tennis_cup/data/services/dto/tournament_dto.dart'
+    show TournamentDto, CreateTournamentRequestDto, UpdateTournamentRequestDto;
+
 class TournamentRepository {
   final ITournamentService _service;
   final IArenaService _arenaService;
@@ -76,6 +79,35 @@ class TournamentRepository {
     final results = await _buildTournaments([dto]);
     return results.first;
   }
+
+  // ---- Management (lightweight — returns DTOs, no enrichment needed) ----
+
+  Future<PageResult<TournamentDto>> fetchTournamentsPaged(
+    PageRequest page, {
+    String? status,
+  }) =>
+      _service.fetchTournamentsPaged(page, status: status);
+
+  Future<TournamentDto> createTournament(CreateTournamentRequestDto dto) =>
+      _service.createTournament(dto);
+
+  Future<TournamentDto> updateTournament(
+          int id, UpdateTournamentRequestDto dto) =>
+      _service.updateTournament(id, dto);
+
+  Future<void> deleteTournament(int id) => _service.deleteTournament(id);
+
+  Future<TournamentDto> addPlayers(int tournamentId, List<int> playerIds) =>
+      _service.addPlayers(tournamentId, playerIds);
+
+  Future<TournamentDto> removePlayers(int tournamentId, List<int> playerIds) =>
+      _service.removePlayers(tournamentId, playerIds);
+
+  Future<TournamentDto> startTournament(int id) =>
+      _service.startTournament(id);
+
+  Future<TournamentDto> finishTournament(int id) =>
+      _service.finishTournament(id);
 
   Future<List<Tournament>> _buildTournaments(
     List<TournamentDto> dtos, {

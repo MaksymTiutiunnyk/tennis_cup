@@ -107,6 +107,27 @@ class RestTournamentService implements ITournamentService {
   }
 
   @override
+  Future<PageResult<TournamentDto>> fetchTournamentsPaged(
+    PageRequest page, {
+    String? status,
+  }) async {
+    final response = await _dio.get<Map<String, dynamic>>(
+      '/api/v1/tournaments',
+      queryParameters: {
+        'page': page.page,
+        'size': page.size,
+        if (status != null) 'status': status,
+      },
+    );
+    final body = response.data!;
+    final content = (body['content'] as List<dynamic>)
+        .map((e) => TournamentDto.fromJson(e as Map<String, dynamic>))
+        .toList();
+    final totalPages = (body['totalPages'] as num?)?.toInt() ?? 1;
+    return PageResult(items: content, hasMore: page.page + 1 < totalPages);
+  }
+
+  @override
   Stream<void> watchTournamentChanges(String tournamentId) =>
       const Stream.empty();
 
@@ -128,6 +149,66 @@ class RestTournamentService implements ITournamentService {
   // TODO: replace with POST /api/v1/invitations/{id}/decline once available.
   @override
   Future<void> declineInvitation(String invitationId) async {}
+
+  // ---- Write operations ----
+
+  @override
+  Future<TournamentDto> createTournament(CreateTournamentRequestDto dto) async {
+    final response = await _dio.post<Map<String, dynamic>>(
+      '/api/v1/tournaments',
+      data: dto.toJson(),
+    );
+    return TournamentDto.fromJson(response.data!);
+  }
+
+  @override
+  Future<TournamentDto> updateTournament(
+      int id, UpdateTournamentRequestDto dto) async {
+    final response = await _dio.put<Map<String, dynamic>>(
+      '/api/v1/tournaments/$id',
+      data: dto.toJson(),
+    );
+    return TournamentDto.fromJson(response.data!);
+  }
+
+  @override
+  Future<void> deleteTournament(int id) async {
+    await _dio.delete<void>('/api/v1/tournaments/$id');
+  }
+
+  @override
+  Future<TournamentDto> addPlayers(
+      int tournamentId, List<int> playerIds) async {
+    final response = await _dio.post<Map<String, dynamic>>(
+      '/api/v1/tournaments/$tournamentId/players',
+      data: {'playerIds': playerIds},
+    );
+    return TournamentDto.fromJson(response.data!);
+  }
+
+  @override
+  Future<TournamentDto> removePlayers(
+      int tournamentId, List<int> playerIds) async {
+    final response = await _dio.delete<Map<String, dynamic>>(
+      '/api/v1/tournaments/$tournamentId/players',
+      data: {'playerIds': playerIds},
+    );
+    return TournamentDto.fromJson(response.data!);
+  }
+
+  @override
+  Future<TournamentDto> startTournament(int id) async {
+    final response = await _dio
+        .post<Map<String, dynamic>>('/api/v1/tournaments/$id/start');
+    return TournamentDto.fromJson(response.data!);
+  }
+
+  @override
+  Future<TournamentDto> finishTournament(int id) async {
+    final response = await _dio
+        .post<Map<String, dynamic>>('/api/v1/tournaments/$id/finish');
+    return TournamentDto.fromJson(response.data!);
+  }
 
   static const _stubPlayerId = 1;
   // TODO: tournamentIds reference real tournaments in the dev backend so the
