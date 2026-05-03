@@ -8,7 +8,7 @@ class ModeSwitcher extends StatelessWidget {
   const ModeSwitcher({super.key});
 
   static String _lastViewRoute = AppRoutes.viewHome;
-  static String _lastUserRoute = AppRoutes.userTournaments;
+  static String _lastUserRoute = AppRoutes.userInvitations;
 
   AppMode _modeFromLocation(String location) {
     return location.startsWith('/user') ? AppMode.user : AppMode.viewOnly;
