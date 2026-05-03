@@ -131,7 +131,9 @@ class _TournamentFormState extends State<TournamentForm> {
       ));
     }
 
-    if (mounted) Navigator.of(context).pop();
+    if (mounted && cubit.state is! OrgTournamentsError) {
+      Navigator.of(context).pop();
+    }
   }
 
   @override

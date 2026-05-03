@@ -35,7 +35,7 @@ class RestAdminService implements IAdminService {
   Future<void> rejectUser(int userId, {String? reason}) async {
     await _dio.post<void>(
       '/api/v1/admin/users/$userId/reject',
-      data: reason != null ? {'reason': reason} : null,
+      data: reason != null ? {'reason': reason} : <String, dynamic>{},
     );
   }
 
