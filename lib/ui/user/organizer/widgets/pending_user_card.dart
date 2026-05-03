@@ -72,7 +72,7 @@ class PendingUserCard extends StatelessWidget {
   }
 
   void _confirmReject(BuildContext context, PendingUsersCubit cubit) {
-    final reasonCtrl = TextEditingController();
+    var reason = '';
     showDialog<bool>(
       context: context,
       builder: (dialogCtx) => AlertDialog(
@@ -83,10 +83,8 @@ class PendingUserCard extends StatelessWidget {
             Text('Reject "${user.login}"?'),
             const SizedBox(height: 12),
             TextField(
-              controller: reasonCtrl,
-              decoration: const InputDecoration(
-                labelText: 'Reason (optional)',
-              ),
+              decoration: const InputDecoration(labelText: 'Reason (optional)'),
+              onChanged: (v) => reason = v,
             ),
           ],
         ),
@@ -103,12 +101,9 @@ class PendingUserCard extends StatelessWidget {
       ),
     ).then((confirmed) {
       if (confirmed == true) {
-        cubit.reject(user.id,
-            reason: reasonCtrl.text.trim().isEmpty
-                ? null
-                : reasonCtrl.text.trim());
+        final trimmed = reason.trim();
+        cubit.reject(user.id, reason: trimmed.isEmpty ? null : trimmed);
       }
-      reasonCtrl.dispose();
     });
   }
 
