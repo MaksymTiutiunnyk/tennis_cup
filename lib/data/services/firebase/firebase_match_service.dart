@@ -33,4 +33,13 @@ class FirebaseMatchService implements IMatchService {
   }) {
     throw UnimplementedError('FirebaseMatchService is deprecated; use RestMatchService.');
   }
+
+  @override
+  Future<PageResult<HeadToHeadMatchDto>> fetchHeadToHead({
+    required int player1Id,
+    required int player2Id,
+    required PageRequest page,
+  }) {
+    throw UnimplementedError('FirebaseMatchService is deprecated; use RestMatchService.');
+  }
 }

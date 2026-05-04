@@ -42,6 +42,42 @@ class MatchRepository {
     return PageResult(items: matches, hasMore: result.hasMore);
   }
 
+  Future<PageResult<Match>> fetchHeadToHead({
+    required int player1Id,
+    required int player2Id,
+    required PageRequest page,
+  }) async {
+    final resultFuture = _service.fetchHeadToHead(
+      player1Id: player1Id,
+      player2Id: player2Id,
+      page: page,
+    );
+    final p1Future = _playerService.fetchPlayerById(player1Id.toString());
+    final p2Future = _playerService.fetchPlayerById(player2Id.toString());
+
+    final result = await resultFuture;
+    final player1 = await p1Future;
+    final player2 = await p2Future;
+
+    final matches = result.items.map((dto) {
+      final sortedSets = [...dto.sets]
+        ..sort((a, b) => a.setNumber.compareTo(b.setNumber));
+      return Match(
+        matchId: dto.matchId.toString(),
+        bluePlayer: player1,
+        redPlayer: player2,
+        blueScore: dto.player1SetsWon,
+        redScore: dto.player2SetsWon,
+        blueSetScores: sortedSets.map((s) => s.player1Score).toList(),
+        redSetScores: sortedSets.map((s) => s.player2Score).toList(),
+        tournamentId: dto.tournamentId.toString(),
+        dateTime: dto.matchDate,
+      );
+    }).toList();
+
+    return PageResult(items: matches, hasMore: result.hasMore);
+  }
+
   Stream<void> watchMatchChanges(String matchId) {
     return _service.watchMatchChanges(matchId);
   }

@@ -33,6 +33,29 @@ class RestMatchService implements IMatchService {
   }
 
   @override
+  Future<PageResult<HeadToHeadMatchDto>> fetchHeadToHead({
+    required int player1Id,
+    required int player2Id,
+    required PageRequest page,
+  }) async {
+    final response = await _dio.get<Map<String, dynamic>>(
+      '/api/v1/matches/head-to-head',
+      queryParameters: {
+        'player1Id': player1Id,
+        'player2Id': player2Id,
+        'page': page.page,
+        'size': page.size,
+      },
+    );
+    final body = response.data!;
+    final content = (body['content'] as List<dynamic>)
+        .map((e) => HeadToHeadMatchDto.fromJson(e as Map<String, dynamic>))
+        .toList();
+    final totalPages = (body['totalPages'] as num?)?.toInt() ?? 1;
+    return PageResult(items: content, hasMore: page.page + 1 < totalPages);
+  }
+
+  @override
   Stream<void> watchMatchChanges(String matchId) => const Stream.empty();
 
   @override

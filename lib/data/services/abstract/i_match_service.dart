@@ -11,4 +11,9 @@ abstract interface class IMatchService {
     String? player2Id,
     required PageRequest page,
   });
+  Future<PageResult<HeadToHeadMatchDto>> fetchHeadToHead({
+    required int player1Id,
+    required int player2Id,
+    required PageRequest page,
+  });
 }
