@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tennis_cup/data/models/player.dart';
-import 'package:tennis_cup/ui/view_only/player_details/view_models/players_tournaments_cubit.dart';
+import 'package:tennis_cup/ui/view_only/player_comparison/view_models/head_to_head_cubit.dart';
 import 'package:tennis_cup/ui/view_only/player_comparison/widgets/players_intro.dart';
 import 'package:tennis_cup/ui/view_only/player_comparison/widgets/players_matches.dart';
 import 'package:tennis_cup/ui/view_only/player_comparison/widgets/players_statistics.dart';
@@ -25,7 +25,7 @@ class _ScrollableBodyState extends State<ScrollableBody> {
   void initState() {
     super.initState();
     _scrollController.addListener(_onScroll);
-    context.read<PlayersTournamentsCubit>().fetchTournaments();
+    context.read<HeadToHeadCubit>().fetch();
   }
 
   @override
@@ -37,7 +37,7 @@ class _ScrollableBodyState extends State<ScrollableBody> {
   void _onScroll() {
     if (_scrollController.position.atEdge &&
         _scrollController.position.pixels != 0) {
-      context.read<PlayersTournamentsCubit>().fetchTournaments();
+      context.read<HeadToHeadCubit>().fetch();
     }
   }
 
