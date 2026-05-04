@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:tennis_cup/data/services/abstract/i_news_service.dart';
 import 'package:tennis_cup/data/services/dto/news_dto.dart';
@@ -27,6 +29,32 @@ class FirebaseNewsService implements INewsService {
 
     return snapshot.docs.map(_dtofromDoc).whereType<NewsDto>().toList();
   }
+
+  @override
+  Future<NewsDto> createNews({
+    required String title,
+    required String body,
+    required DateTime newsTimestamp,
+    required String importance,
+    File? image,
+  }) =>
+      throw UnimplementedError('Firebase news write not implemented');
+
+  @override
+  Future<NewsDto> updateNews(
+    int id, {
+    String? title,
+    String? body,
+    DateTime? newsTimestamp,
+    String? importance,
+    bool removeImage = false,
+    File? image,
+  }) =>
+      throw UnimplementedError('Firebase news write not implemented');
+
+  @override
+  Future<void> deleteNews(int id) =>
+      throw UnimplementedError('Firebase news write not implemented');
 
   static NewsDto? _dtofromDoc(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>?;

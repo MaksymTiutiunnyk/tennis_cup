@@ -113,6 +113,13 @@ class UserShell extends StatelessWidget {
               label: 'Pending',
             ),
           ),
+          (
+            branchIndex: 7,
+            item: const BottomNavigationBarItem(
+              icon: Icon(Icons.newspaper_outlined),
+              label: 'News',
+            ),
+          ),
           settings,
         ],
       UserRole.admin => [
@@ -142,6 +149,13 @@ class UserShell extends StatelessWidget {
             item: const BottomNavigationBarItem(
               icon: Icon(Icons.manage_accounts),
               label: 'Organizers',
+            ),
+          ),
+          (
+            branchIndex: 7,
+            item: const BottomNavigationBarItem(
+              icon: Icon(Icons.newspaper_outlined),
+              label: 'News',
             ),
           ),
           settings,

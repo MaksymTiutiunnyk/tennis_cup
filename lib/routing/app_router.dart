@@ -6,6 +6,7 @@ import 'package:tennis_cup/ui/shell/widgets/user_shell.dart';
 import 'package:tennis_cup/ui/shell/widgets/view_shell.dart';
 import 'package:tennis_cup/ui/user/core/widgets/settings_tab.dart';
 import 'package:tennis_cup/ui/user/organizer/widgets/organizer_management_tab.dart';
+import 'package:tennis_cup/ui/user/organizer/widgets/organizer_news_tab.dart';
 import 'package:tennis_cup/ui/user/organizer/widgets/organizer_players_tab.dart';
 import 'package:tennis_cup/ui/user/organizer/widgets/organizer_tournaments_tab.dart';
 import 'package:tennis_cup/ui/user/organizer/widgets/pending_users_tab.dart';
@@ -30,6 +31,7 @@ class AppRoutes {
   static const organizerPlayers = '/user/organizer/players';
   static const organizerPendingUsers = '/user/organizer/pending';
   static const organizerManagement = '/user/organizer/management';
+  static const organizerNews = '/user/organizer/news';
   static const userSettings = '/user/settings';
 
   static String playerDetails(String id) => '/players/$id';
@@ -156,6 +158,16 @@ GoRouter buildAppRouter({GlobalKey<NavigatorState>? navigatorKey}) {
               GoRoute(
                 path: AppRoutes.userSettings,
                 builder: (context, state) => const SettingsTab(),
+              ),
+            ],
+          ),
+
+          // Branch 7 — Organizer+Admin: news management
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: AppRoutes.organizerNews,
+                builder: (context, state) => const OrganizerNewsTab(),
               ),
             ],
           ),
