@@ -163,11 +163,18 @@ class FirebaseTournamentService implements ITournamentService {
       id: int.tryParse(docId) ?? 0,
       name: data['arena'] as String? ?? '',
       type: _toRestType(data['time'] as String? ?? ''),
+      format: 'ROUND_ROBIN',
       status: isFinished ? 'FINISHED' : 'PENDING',
       startTime: dateTime.toIso8601String(),
       arenaId: 0,
       gender: 'MALE',
-      playerIds: playerIds,
+      refereeId: 0,
+      participants: playerIds
+          .map((id) => TournamentParticipantDto(
+                playerId: id,
+                invitationStatus: 'ACCEPTED',
+              ))
+          .toList(),
     );
   }
 

@@ -72,9 +72,17 @@ class TournamentRepository {
     return PageResult(items: tournaments, hasMore: result.hasMore);
   }
 
-  Future<Tournament> fetchTournamentById({required String tournamentId}) async {
+  Future<Tournament> fetchTournamentById({
+    required String tournamentId,
+    bool withPlayers = true,
+    bool withMatches = true,
+  }) async {
     final dto = await _service.fetchTournamentById(tournamentId);
-    final results = await _buildTournaments([dto]);
+    final results = await _buildTournaments(
+      [dto],
+      withPlayers: withPlayers,
+      withMatches: withMatches,
+    );
     return results.first;
   }
 
@@ -142,7 +150,7 @@ class TournamentRepository {
     final neededPlayerIds = <int>{};
     if (withPlayers) {
       for (final dto in dtos) {
-        neededPlayerIds.addAll(dto.playerIds);
+        neededPlayerIds.addAll(dto.participants.map((p) => p.playerId));
       }
     }
     for (final matches in matchDtosByTournament.values) {
@@ -163,20 +171,19 @@ class TournamentRepository {
 
       final players = <Player>[];
       final points = <int>[];
+      final places = <int>[];
       if (withPlayers) {
-        for (final id in dto.playerIds) {
-          final p = playerMap[id];
+        for (final participant in dto.participants) {
+          final p = playerMap[participant.playerId];
           if (p == null) continue;
           players.add(p);
-          if (withMatches) points.add(pointsById[id] ?? 0);
+          if (withMatches) points.add(pointsById[participant.playerId] ?? 0);
+          if (dto.status == 'FINISHED') places.add(participant.place ?? 0);
         }
       }
 
       final matches =
           withMatches ? _buildMatches(tournamentMatchDtos, playerMap) : null;
-      final places = dto.status == 'FINISHED' && withMatches
-          ? _computePlaces(points)
-          : const <int>[];
 
       return _toTournament(
         dto,
@@ -189,7 +196,6 @@ class TournamentRepository {
     }).toList();
   }
 
-  // TODO: Points and places are derived client-side until the backend exposes them.
   static Map<int, int> _computePointsById(List<MatchDto> matches) {
     final pointsByPlayer = <int, int>{};
     for (final match in matches) {
@@ -201,21 +207,6 @@ class TournamentRepository {
       pointsByPlayer.update(loser, (v) => v + 1, ifAbsent: () => 1);
     }
     return pointsByPlayer;
-  }
-
-  static List<int> _computePlaces(List<int> points) {
-    if (points.isEmpty) return const [];
-    final ranked = List.generate(points.length, (i) => i)
-      ..sort((a, b) => points[b].compareTo(points[a]));
-    final places = List<int>.filled(points.length, 0);
-    var currentPlace = 1;
-    for (var i = 0; i < ranked.length; i++) {
-      if (i > 0 && points[ranked[i]] != points[ranked[i - 1]]) {
-        currentPlace = i + 1;
-      }
-      places[ranked[i]] = currentPlace;
-    }
-    return places;
   }
 
   Future<Map<int, List<MatchDto>>> _fetchTournamentMatches(

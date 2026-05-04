@@ -34,11 +34,12 @@ class RestTournamentService implements ITournamentService {
     final dtos = <TournamentDto>[];
     for (final json in content) {
       final dto = TournamentDto.fromJson(json as Map<String, dynamic>);
-      if (!dto.playerIds.map((id) => id.toString()).contains(playerId)) {
+      if (!dto.participants.any((p) => p.playerId.toString() == playerId)) {
         continue;
       }
       if (player2Id != null &&
-          !dto.playerIds.map((id) => id.toString()).contains(player2Id)) {
+          !dto.participants
+              .any((p) => p.playerId.toString() == player2Id)) {
         continue;
       }
       dtos.add(dto);
