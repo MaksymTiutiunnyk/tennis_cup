@@ -1,14 +1,18 @@
 import 'package:tennis_cup/data/models/arena.dart';
 import 'package:tennis_cup/data/models/match.dart';
-import 'package:tennis_cup/data/models/page_request.dart';
-import 'package:tennis_cup/data/models/page_result.dart';
+import 'package:tennis_cup/data/models/match_view.dart';
+import 'package:tennis_cup/core/pagination/page_request.dart';
+import 'package:tennis_cup/core/pagination/page_result.dart';
 import 'package:tennis_cup/data/models/player.dart';
 import 'package:tennis_cup/data/models/tournament.dart';
+import 'package:tennis_cup/data/models/tournament_request.dart';
+import 'package:tennis_cup/data/models/winner_view.dart';
 import 'package:tennis_cup/data/services/abstract/i_arena_service.dart';
 import 'package:tennis_cup/data/services/abstract/i_match_service.dart';
 import 'package:tennis_cup/data/services/abstract/i_player_service.dart';
 import 'package:tennis_cup/data/services/abstract/i_tournament_service.dart';
 import 'package:tennis_cup/data/services/dto/arena_dto.dart';
+import 'package:tennis_cup/data/services/dto/dashboard_dto.dart';
 import 'package:tennis_cup/data/services/dto/match_dto.dart';
 import 'package:tennis_cup/data/services/dto/tournament_dto.dart';
 
@@ -38,20 +42,90 @@ class TournamentRepository {
     return _buildTournaments(dtos);
   }
 
-  Future<List<Tournament>> fetchLiveStreamMatchesTournaments() async {
-    final dtos = await _service.fetchRecentTournaments();
-    return _buildTournaments(dtos);
+  Future<List<MatchView>> fetchLiveStreamMatches() async {
+    final dtos = await _service.fetchCurrentMatches();
+    if (dtos.isEmpty) return const [];
+    final arenaMap = await _fetchArenaMap({for (final d in dtos) d.arena.id});
+    return dtos.map((dto) => _matchViewFromDto(dto, arenaMap)).toList();
   }
 
-  Future<List<Tournament>> fetchUpcomingMatchesTournaments() async {
-    final dtos = await _service.fetchUpcomingTournaments();
-    return _buildTournaments(dtos);
+  Future<List<MatchView>> fetchUpcomingMatches() async {
+    final dtos = await _service.fetchDashboardUpcomingMatches();
+    if (dtos.isEmpty) return const [];
+    final arenaMap = await _fetchArenaMap({for (final d in dtos) d.arena.id});
+    return dtos.map((dto) => _matchViewFromDto(dto, arenaMap)).toList();
   }
 
-  Future<List<Tournament>> fetchWinnersTournaments() async {
-    final dtos = await _service.fetchRecentTournaments();
-    return _buildTournaments(dtos);
+  Future<Map<int, ArenaDto>> _fetchArenaMap(Set<int> arenaIds) async {
+    final entries = await Future.wait(arenaIds.map((id) async {
+      try {
+        final arena = await _arenaService.fetchArenaById(id);
+        return MapEntry(id, arena);
+      } catch (_) {
+        return MapEntry(id, ArenaDto(id: id, name: '', color: ''));
+      }
+    }));
+    return Map.fromEntries(entries);
   }
+
+  Future<List<WinnerView>> fetchWinners() async {
+    final dtos = await _service.fetchLastWinners();
+    return dtos
+        .where((d) => d.tournament != null && d.winners?.isNotEmpty == true)
+        .map(_winnerViewFromDto)
+        .toList();
+  }
+
+  static MatchView _matchViewFromDto(
+    ArenaMatchViewDto dto,
+    Map<int, ArenaDto> arenaMap,
+  ) {
+    final arenaDto = arenaMap[dto.arena.id] ??
+        ArenaDto(id: dto.arena.id, name: dto.arena.name, color: '');
+    return MatchView(
+      matchId: dto.matchId.toString(),
+      arenaId: dto.arena.id.toString(),
+      arenaName: dto.arena.name,
+      arenaColor: arenaColorFromString(arenaDto.color),
+      tournamentId: dto.tournament.id.toString(),
+      tournamentGender: dto.tournament.gender,
+      tournamentTime: timeFromString(dto.tournament.type),
+      tournamentStart: DateTime.parse(dto.tournament.start),
+      bluePlayer: _playerFromBrief(dto.bluePlayer),
+      redPlayer: _playerFromBrief(dto.redPlayer),
+      blueScore: dto.score.blueSets,
+      redScore: dto.score.redSets,
+    );
+  }
+
+  static WinnerView _winnerViewFromDto(ArenaLastWinnerDto dto) => WinnerView(
+        arenaName: dto.arena.name,
+        tournamentId: dto.tournament!.id.toString(),
+        tournamentName: dto.tournament!.name,
+        tournamentGender: dto.tournament!.gender,
+        tournamentTime: timeFromString(dto.tournament!.type),
+        tournamentStart: DateTime.parse(dto.tournament!.start),
+        winners: dto.winners!.map(_playerFromBrief).toList(),
+      );
+
+  static Player _playerFromBrief(PlayerBriefDto dto) => Player(
+        playerId: dto.id.toString(),
+        name: dto.firstName,
+        surname: dto.lastName,
+        sex: Sex.All,
+        imageUrl: dto.avatarUrl ?? '',
+        year: 0,
+        tournaments: 0,
+        matches: 0,
+        wins: 0,
+        loses: 0,
+        place: '',
+        gold: 0,
+        silver: 0,
+        bronze: 0,
+        rankTennis: 0.0,
+        rankUTTF: 0.0,
+      );
 
   Stream<void> watchTournamentChanges(String tournamentId) {
     return _service.watchTournamentChanges(tournamentId);
@@ -71,10 +145,66 @@ class TournamentRepository {
     return PageResult(items: tournaments, hasMore: result.hasMore);
   }
 
-  Future<Tournament> fetchTournamentById({required String tournamentId}) async {
+  Future<Tournament> fetchTournamentById({
+    required String tournamentId,
+    bool withPlayers = true,
+    bool withMatches = true,
+  }) async {
     final dto = await _service.fetchTournamentById(tournamentId);
-    final results = await _buildTournaments([dto]);
+    final results = await _buildTournaments(
+      [dto],
+      withPlayers: withPlayers,
+      withMatches: withMatches,
+    );
     return results.first;
+  }
+
+  // ---- Management ----
+
+  Future<void> createTournament(CreateTournamentRequest request) async {
+    await _service.createTournament(CreateTournamentRequestDto(
+      name: request.name,
+      type: request.type,
+      gender: request.gender,
+      startTime: request.startTime.toIso8601String(),
+      arenaId: request.arenaId,
+      refereeId: request.refereeId,
+      matchDurationMinutes: request.matchDurationMinutes,
+      playerIds: request.playerIds,
+    ));
+  }
+
+  Future<void> updateTournament(int id, UpdateTournamentRequest request) async {
+    await _service.updateTournament(
+      id,
+      UpdateTournamentRequestDto(
+        name: request.name,
+        type: request.type,
+        gender: request.gender,
+        startTime: request.startTime?.toIso8601String(),
+        arenaId: request.arenaId,
+        refereeId: request.refereeId,
+        playerIds: request.playerIds,
+      ),
+    );
+  }
+
+  Future<void> deleteTournament(int id) => _service.deleteTournament(id);
+
+  Future<void> addPlayers(int tournamentId, List<int> playerIds) async {
+    await _service.addPlayers(tournamentId, playerIds);
+  }
+
+  Future<void> removePlayers(int tournamentId, List<int> playerIds) async {
+    await _service.removePlayers(tournamentId, playerIds);
+  }
+
+  Future<void> startTournament(int id) async {
+    await _service.startTournament(id);
+  }
+
+  Future<void> finishTournament(int id) async {
+    await _service.finishTournament(id);
   }
 
   Future<List<Tournament>> _buildTournaments(
@@ -93,7 +223,7 @@ class TournamentRepository {
     final neededPlayerIds = <int>{};
     if (withPlayers) {
       for (final dto in dtos) {
-        neededPlayerIds.addAll(dto.playerIds);
+        neededPlayerIds.addAll(dto.participants.map((p) => p.playerId));
       }
     }
     for (final matches in matchDtosByTournament.values) {
@@ -114,20 +244,19 @@ class TournamentRepository {
 
       final players = <Player>[];
       final points = <int>[];
+      final places = <int>[];
       if (withPlayers) {
-        for (final id in dto.playerIds) {
-          final p = playerMap[id];
+        for (final participant in dto.participants) {
+          final p = playerMap[participant.playerId];
           if (p == null) continue;
           players.add(p);
-          if (withMatches) points.add(pointsById[id] ?? 0);
+          if (withMatches) points.add(pointsById[participant.playerId] ?? 0);
+          if (dto.status == 'FINISHED') places.add(participant.place ?? 0);
         }
       }
 
       final matches =
           withMatches ? _buildMatches(tournamentMatchDtos, playerMap) : null;
-      final places = dto.status == 'FINISHED' && withMatches
-          ? _computePlaces(points)
-          : const <int>[];
 
       return _toTournament(
         dto,
@@ -140,7 +269,6 @@ class TournamentRepository {
     }).toList();
   }
 
-  // TODO: Points and places are derived client-side until the backend exposes them.
   static Map<int, int> _computePointsById(List<MatchDto> matches) {
     final pointsByPlayer = <int, int>{};
     for (final match in matches) {
@@ -152,21 +280,6 @@ class TournamentRepository {
       pointsByPlayer.update(loser, (v) => v + 1, ifAbsent: () => 1);
     }
     return pointsByPlayer;
-  }
-
-  static List<int> _computePlaces(List<int> points) {
-    if (points.isEmpty) return const [];
-    final ranked = List.generate(points.length, (i) => i)
-      ..sort((a, b) => points[b].compareTo(points[a]));
-    final places = List<int>.filled(points.length, 0);
-    var currentPlace = 1;
-    for (var i = 0; i < ranked.length; i++) {
-      if (i > 0 && points[ranked[i]] != points[ranked[i - 1]]) {
-        currentPlace = i + 1;
-      }
-      places[ranked[i]] = currentPlace;
-    }
-    return places;
   }
 
   Future<Map<int, List<MatchDto>>> _fetchTournamentMatches(
@@ -242,6 +355,9 @@ class TournamentRepository {
 
     return Tournament(
       tournamentId: dto.id.toString(),
+      name: dto.name,
+      gender: dto.gender,
+      status: dto.status,
       date: DateTime.parse(dto.startTime),
       players: players,
       arena: Arena(

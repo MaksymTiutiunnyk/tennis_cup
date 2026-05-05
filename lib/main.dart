@@ -1,23 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tennis_cup/connection_monitor.dart';
+import 'package:go_router/go_router.dart';
 import 'package:tennis_cup/core/di/service_locator.dart';
-import 'package:tennis_cup/custom_navigator_observer.dart';
 import 'package:tennis_cup/data/models/arena.dart';
 import 'package:tennis_cup/data/models/tournament.dart';
-import 'package:tennis_cup/features/auth/logic/auth_cubit.dart';
-import 'package:tennis_cup/logic/cubit/news_cubit.dart';
-import 'package:tennis_cup/presentation/screens/tabs.dart';
-
-ColorScheme kcolorScheme = ColorScheme.fromSeed(
-  seedColor: const Color.fromARGB(255, 4, 5, 100),
-);
-
-ColorScheme kdarkColorScheme = ColorScheme.fromSeed(
-  seedColor: const Color.fromARGB(255, 4, 5, 100),
-  brightness: Brightness.dark,
-);
+import 'package:tennis_cup/routing/app_router.dart';
+import 'package:tennis_cup/ui/auth/view_models/auth_cubit.dart';
+import 'package:tennis_cup/ui/core/themes/app_theme.dart';
+import 'package:tennis_cup/ui/user/core/view_models/active_role_cubit.dart';
+import 'package:tennis_cup/ui/core/widgets/connection_monitor.dart';
+import 'package:tennis_cup/ui/view_only/home/view_models/live_stream_match_index_cubit.dart';
+import 'package:tennis_cup/ui/view_only/home/view_models/video_player_cubit.dart';
+import 'package:tennis_cup/ui/view_only/news/view_models/news_cubit.dart';
+import 'package:tennis_cup/ui/view_only/ranking/view_models/sex_filter_cubit.dart';
+import 'package:tennis_cup/ui/view_only/schedule/view_models/arena_filter_cubit.dart';
+import 'package:tennis_cup/ui/view_only/schedule/view_models/schedule_date_cubit.dart';
+import 'package:tennis_cup/ui/view_only/schedule/view_models/time_filter_cubit.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,115 +24,85 @@ void main() async {
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
-  ]).then((fn) {
-    runApp(
-      MultiBlocProvider(
-        providers: [
-          BlocProvider(
-            create: (context) => NewsCubit(
-              newsRepository: ServiceLocator.newsRepository,
-            ),
-          ),
-          BlocProvider(
-            create: (context) => AuthCubit(
-              authService: ServiceLocator.authService,
-              tokenStore: ServiceLocator.tokenStore,
-            )..checkAuthStatus(),
-          ),
-        ],
-        child: TennisCup(),
-      ),
-    );
+  ]).then((_) {
+    runApp(const TennisCup());
   });
 }
 
-class TennisCup extends StatelessWidget {
-  TennisCup({super.key});
-  final observer = CustomNavigatorObserver();
+class TennisCup extends StatefulWidget {
+  const TennisCup({super.key});
+
+  @override
+  State<TennisCup> createState() => _TennisCupState();
+}
+
+class _TennisCupState extends State<TennisCup> {
+  late final GoRouter _router;
+  final _navigatorKey = GlobalKey<NavigatorState>();
+
+  @override
+  void initState() {
+    super.initState();
+    _router = buildAppRouter(navigatorKey: _navigatorKey);
+  }
+
+  @override
+  void dispose() {
+    _router.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Tennis Cup',
-      darkTheme: ThemeData.dark().copyWith(
-        colorScheme: kdarkColorScheme,
-        iconTheme: const IconThemeData()
-            .copyWith(color: kdarkColorScheme.onPrimaryContainer),
-        iconButtonTheme: IconButtonThemeData(
-          style: const ButtonStyle()
-              .copyWith(visualDensity: VisualDensity.compact),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (_) => AuthCubit(
+            authService: ServiceLocator.authService,
+            tokenStore: ServiceLocator.tokenStore,
+          )..checkAuthStatus(),
         ),
-        textTheme: ThemeData().textTheme.copyWith(
-              bodyLarge: const TextStyle(fontSize: 18, color: Colors.white),
-              bodyMedium: const TextStyle(fontSize: 16, color: Colors.white),
-              bodySmall: const TextStyle(fontSize: 14, color: Colors.grey),
-              labelMedium: const TextStyle(
-                fontSize: 16,
-                color: Color.fromARGB(255, 98, 98, 98),
-              ),
-              labelLarge: const TextStyle(
-                fontSize: 16,
-                color: Colors.white,
-                fontWeight: FontWeight.normal,
-              ),
-              headlineLarge: const TextStyle(
-                fontSize: 30,
-                color: Colors.white,
-              ),
-              headlineMedium:
-                  const TextStyle(fontSize: 24, color: Colors.white),
-            ),
-        bottomNavigationBarTheme: const BottomNavigationBarThemeData().copyWith(
-          type: BottomNavigationBarType.fixed,
-          backgroundColor: kdarkColorScheme.onSecondary,
+        BlocProvider(create: (_) => ActiveRoleCubit()),
+        BlocProvider(
+          create: (_) => NewsCubit(
+            newsRepository: ServiceLocator.newsRepository,
+          ),
         ),
-      ),
-      theme: ThemeData().copyWith(
-        colorScheme: kcolorScheme,
-        appBarTheme: const AppBarTheme().copyWith(
-          backgroundColor: kcolorScheme.onSurface,
-          foregroundColor: kcolorScheme.surface,
+        BlocProvider(
+          create: (_) => ScheduleDateCubit(DateTime.now()),
         ),
-        iconTheme: const IconThemeData()
-            .copyWith(color: kcolorScheme.onPrimaryContainer),
-        iconButtonTheme: IconButtonThemeData(
-          style: const ButtonStyle()
-              .copyWith(visualDensity: VisualDensity.compact),
+        BlocProvider(
+          create: (_) => ArenaFilterCubit(
+            const Arena(title: '', color: Colors.grey),
+          ),
         ),
-        textTheme: ThemeData().textTheme.copyWith(
-              bodyLarge: const TextStyle(fontSize: 18, color: Colors.black),
-              bodyMedium: const TextStyle(fontSize: 16, color: Colors.black),
-              bodySmall: const TextStyle(fontSize: 14, color: Colors.grey),
-              labelMedium: const TextStyle(
-                fontSize: 16,
-                color: Color.fromARGB(255, 98, 98, 98),
-              ),
-              labelLarge: const TextStyle(
-                fontSize: 16,
-                color: Colors.black,
-                fontWeight: FontWeight.normal,
-              ),
-              headlineLarge: const TextStyle(
-                fontSize: 30,
-                color: Colors.black,
-              ),
-              headlineMedium:
-                  const TextStyle(fontSize: 24, color: Colors.black),
-            ),
-        bottomNavigationBarTheme: const BottomNavigationBarThemeData().copyWith(
-          type: BottomNavigationBarType.fixed,
-          backgroundColor: kcolorScheme.onSecondary,
+        BlocProvider(
+          create: (_) => TimeFilterCubit(Time.Evening),
+        ),
+        BlocProvider(create: (_) => SexFilterCubit()),
+        BlocProvider(create: (_) => VideoPlayerCubit()),
+        BlocProvider(create: (_) => LiveStreamMatchIndexCubit()),
+      ],
+      child: BlocListener<AuthCubit, AuthState>(
+        listener: (context, state) {
+          final roleCubit = context.read<ActiveRoleCubit>();
+          if (state is AuthAuthenticated) {
+            roleCubit.initRoles(state.roles);
+          } else if (state is AuthUnauthenticated) {
+            roleCubit.initRoles([]);
+          }
+        },
+        child: MaterialApp.router(
+          title: 'Tennis Cup',
+          theme: AppTheme.light,
+          darkTheme: AppTheme.dark,
+          routerConfig: _router,
+          builder: (context, child) => ConnectionMonitor(
+            navigatorKey: _navigatorKey,
+            child: child!,
+          ),
         ),
       ),
-      home: ConnectionMonitor(
-        child: Tabs(
-          initialTabIndex: 0,
-          initialDate: DateTime.now(),
-          initialArena: const Arena(title: '', color: Colors.grey),
-          initialTime: Time.Evening,
-        ),
-      ),
-      navigatorObservers: [observer],
     );
   }
 }

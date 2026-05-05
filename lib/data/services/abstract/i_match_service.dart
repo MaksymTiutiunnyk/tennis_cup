@@ -1,5 +1,5 @@
-import 'package:tennis_cup/data/models/page_request.dart';
-import 'package:tennis_cup/data/models/page_result.dart';
+import 'package:tennis_cup/core/pagination/page_request.dart';
+import 'package:tennis_cup/core/pagination/page_result.dart';
 import 'package:tennis_cup/data/services/dto/match_dto.dart';
 
 abstract interface class IMatchService {
@@ -9,6 +9,11 @@ abstract interface class IMatchService {
   Future<PageResult<MatchDto>> fetchPlayersMatches({
     required String playerId,
     String? player2Id,
+    required PageRequest page,
+  });
+  Future<PageResult<HeadToHeadMatchDto>> fetchHeadToHead({
+    required int player1Id,
+    required int player2Id,
     required PageRequest page,
   });
 }

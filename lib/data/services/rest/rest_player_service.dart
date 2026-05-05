@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
-import 'package:tennis_cup/data/models/page_request.dart';
-import 'package:tennis_cup/data/models/page_result.dart';
+import 'package:tennis_cup/core/pagination/page_request.dart';
+import 'package:tennis_cup/core/pagination/page_result.dart';
 import 'package:tennis_cup/data/models/player.dart';
 import 'package:tennis_cup/data/services/abstract/i_player_service.dart';
 
@@ -19,6 +19,8 @@ class RestPlayerService implements IPlayerService {
       'size': page.size,
       'sortBy': 'ratingValue',
       'sortDirection': 'DESC',
+      if (sexFilter == Sex.Men) 'gender': 'MALE',
+      if (sexFilter == Sex.Women) 'gender': 'FEMALE',
     });
 
     final body = response.data as Map<String, dynamic>;
@@ -38,7 +40,7 @@ class RestPlayerService implements IPlayerService {
   @override
   Future<Player> fetchPlayerById(String id) async {
     final response = await _dio.get('/api/v1/players/$id');
-    return _playerFromJson(response.data as Map<String, dynamic>);
+    return _playerFromProfileJson(response.data as Map<String, dynamic>);
   }
 
   @override
@@ -46,19 +48,28 @@ class RestPlayerService implements IPlayerService {
     required String query,
     bool isSurname = false,
   }) async {
-    // Player search endpoint not yet available in the backend.
-    return [];
+    final response = await _dio.get<Map<String, dynamic>>(
+      '/api/v1/players/search',
+      queryParameters: {'query': query, 'size': 20},
+    );
+    final content = (response.data!['content'] as List<dynamic>);
+    return content
+        .map((e) => _playerFromProfileJson(e as Map<String, dynamic>))
+        .toList();
+  }
+
+  @override
+  Future<void> updatePlayerProfileById(
+      int playerId, Map<String, dynamic> fields) {
+    throw UnimplementedError('Admin player edit endpoint not yet available');
   }
 
   static Player _playerFromRatingRecord(Map<String, dynamic> json) {
-    final gender = json['gender'] as String? ?? '';
     return Player(
       playerId: json['playerId']?.toString() ?? '',
       name: json['firstName'] as String? ?? '',
       surname: json['lastName'] as String? ?? '',
-      sex: gender == 'MALE'
-          ? Sex.Men
-          : (gender == 'FEMALE' ? Sex.Women : Sex.All),
+      sex: Sex.All,
       year: 0,
       tournaments: 0,
       matches: 0,
@@ -74,8 +85,14 @@ class RestPlayerService implements IPlayerService {
     );
   }
 
-  static Player _playerFromJson(Map<String, dynamic> json) {
+  static Player _playerFromProfileJson(Map<String, dynamic> json) {
     final gender = json['gender'] as String? ?? '';
+    final stats = json['statistics'] as Map<String, dynamic>?;
+    final birthDate = json['birthDate'] as String?;
+    final year = birthDate != null ? DateTime.parse(birthDate).year : 0;
+    final city = json['city'] as String? ?? '';
+    final country = json['country'] as String? ?? '';
+    final place = [city, country].where((s) => s.isNotEmpty).join(', ');
     return Player(
       playerId: json['id']?.toString() ?? '',
       name: json['firstName'] as String? ?? '',
@@ -83,18 +100,18 @@ class RestPlayerService implements IPlayerService {
       sex: gender == 'MALE'
           ? Sex.Men
           : (gender == 'FEMALE' ? Sex.Women : Sex.All),
-      year: 0,
-      tournaments: 0,
-      matches: 0,
-      wins: 0,
-      loses: 0,
-      place: '',
-      gold: 0,
-      silver: 0,
-      bronze: 0,
+      year: year,
+      tournaments: (stats?['totalFinishedTournaments'] as num?)?.toInt() ?? 0,
+      matches: (stats?['totalMatches'] as num?)?.toInt() ?? 0,
+      wins: (stats?['wins'] as num?)?.toInt() ?? 0,
+      loses: (stats?['losses'] as num?)?.toInt() ?? 0,
+      place: place,
+      gold: (stats?['firstPlaceCount'] as num?)?.toInt() ?? 0,
+      silver: (stats?['secondPlaceCount'] as num?)?.toInt() ?? 0,
+      bronze: (stats?['thirdPlaceCount'] as num?)?.toInt() ?? 0,
       rankTennis: 0,
       rankUTTF: 0,
-      imageUrl: '',
+      imageUrl: json['avatarUrl'] as String? ?? '',
     );
   }
 }

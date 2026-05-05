@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:tennis_cup/features/auth/data/auth_token_store.dart';
+import 'package:tennis_cup/data/auth/auth_token_store.dart';
 
 typedef TokenRefreshCallback = Future<String> Function();
 

@@ -1,9 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:tennis_cup/data/models/arena.dart';
-import 'package:tennis_cup/data/models/page_request.dart';
-import 'package:tennis_cup/data/models/page_result.dart';
+import 'package:tennis_cup/core/pagination/page_request.dart';
+import 'package:tennis_cup/core/pagination/page_result.dart';
 import 'package:tennis_cup/data/models/tournament.dart';
 import 'package:tennis_cup/data/services/abstract/i_tournament_service.dart';
+import 'package:tennis_cup/data/services/dto/dashboard_dto.dart';
 import 'package:tennis_cup/data/services/dto/tournament_dto.dart';
 import 'package:tennis_cup/data/services/dto/tournament_invitation_dto.dart';
 
@@ -163,11 +164,18 @@ class FirebaseTournamentService implements ITournamentService {
       id: int.tryParse(docId) ?? 0,
       name: data['arena'] as String? ?? '',
       type: _toRestType(data['time'] as String? ?? ''),
+      format: 'ROUND_ROBIN',
       status: isFinished ? 'FINISHED' : 'PENDING',
       startTime: dateTime.toIso8601String(),
       arenaId: 0,
       gender: 'MALE',
-      playerIds: playerIds,
+      refereeId: 0,
+      participants: playerIds
+          .map((id) => TournamentParticipantDto(
+                playerId: id,
+                invitationStatus: 'ACCEPTED',
+              ))
+          .toList(),
     );
   }
 
@@ -187,6 +195,42 @@ class FirebaseTournamentService implements ITournamentService {
   }
 
   @override
+  Future<PageResult<TournamentDto>> fetchTournamentsPaged(
+    PageRequest page, {
+    String? status,
+  }) async =>
+      const PageResult(items: [], hasMore: false);
+
+  @override
+  Future<TournamentDto> createTournament(CreateTournamentRequestDto dto) =>
+      throw UnimplementedError('createTournament not implemented for Firebase');
+
+  @override
+  Future<TournamentDto> updateTournament(
+          int id, UpdateTournamentRequestDto dto) =>
+      throw UnimplementedError('updateTournament not implemented for Firebase');
+
+  @override
+  Future<void> deleteTournament(int id) =>
+      throw UnimplementedError('deleteTournament not implemented for Firebase');
+
+  @override
+  Future<TournamentDto> addPlayers(int tournamentId, List<int> playerIds) =>
+      throw UnimplementedError('addPlayers not implemented for Firebase');
+
+  @override
+  Future<TournamentDto> removePlayers(int tournamentId, List<int> playerIds) =>
+      throw UnimplementedError('removePlayers not implemented for Firebase');
+
+  @override
+  Future<TournamentDto> startTournament(int id) =>
+      throw UnimplementedError('startTournament not implemented for Firebase');
+
+  @override
+  Future<TournamentDto> finishTournament(int id) =>
+      throw UnimplementedError('finishTournament not implemented for Firebase');
+
+  @override
   Future<List<TournamentInvitationDto>> fetchInvitations({
     required String playerId,
   }) async =>
@@ -197,4 +241,14 @@ class FirebaseTournamentService implements ITournamentService {
 
   @override
   Future<void> declineInvitation(String invitationId) async {}
+
+  @override
+  Future<List<ArenaMatchViewDto>> fetchCurrentMatches() async => const [];
+
+  @override
+  Future<List<ArenaMatchViewDto>> fetchDashboardUpcomingMatches() async =>
+      const [];
+
+  @override
+  Future<List<ArenaLastWinnerDto>> fetchLastWinners() async => const [];
 }

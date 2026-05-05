@@ -1,5 +1,5 @@
-import 'package:tennis_cup/data/models/page_request.dart';
-import 'package:tennis_cup/data/models/page_result.dart';
+import 'package:tennis_cup/core/pagination/page_request.dart';
+import 'package:tennis_cup/core/pagination/page_result.dart';
 import 'package:tennis_cup/data/models/player.dart';
 import 'package:tennis_cup/data/services/abstract/i_player_service.dart';
 
@@ -25,4 +25,8 @@ class PlayerRepository {
   Future<Player> fetchPlayerById(String id) {
     return _service.fetchPlayerById(id);
   }
+
+  Future<void> updatePlayerProfileById(
+          int playerId, Map<String, dynamic> fields) =>
+      _service.updatePlayerProfileById(playerId, fields);
 }
