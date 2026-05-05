@@ -11,13 +11,14 @@ class NewsFetching extends NewsState {
 
 class NewsFetched extends NewsState {
   final List<News> fetchedNews;
-  final List<News>? interestingNews; // null = still loading independently
 
   const NewsFetched({
     required DateTime selectedPeriod,
     required this.fetchedNews,
-    this.interestingNews,
   }) : super(selectedPeriod);
+
+  List<News> get interestingNews =>
+      fetchedNews.where((n) => n.isInteresting).toList();
 }
 
 class NewsError extends NewsState {
