@@ -2,6 +2,7 @@ import 'package:tennis_cup/data/models/arena.dart';
 import 'package:tennis_cup/core/pagination/page_request.dart';
 import 'package:tennis_cup/core/pagination/page_result.dart';
 import 'package:tennis_cup/data/models/tournament.dart';
+import 'package:tennis_cup/data/services/dto/dashboard_dto.dart';
 import 'package:tennis_cup/data/services/dto/tournament_dto.dart';
 import 'package:tennis_cup/data/services/dto/tournament_invitation_dto.dart';
 
@@ -25,6 +26,12 @@ abstract interface class ITournamentService {
   Future<List<TournamentDto>> fetchRecentTournaments({int limit = 10});
 
   Future<List<TournamentDto>> fetchUpcomingTournaments({int limit = 10});
+
+  Future<List<ArenaMatchViewDto>> fetchCurrentMatches();
+
+  Future<List<ArenaMatchViewDto>> fetchDashboardUpcomingMatches();
+
+  Future<List<ArenaLastWinnerDto>> fetchLastWinners();
 
   Future<PageResult<TournamentDto>> fetchTournamentsPaged(
     PageRequest page, {

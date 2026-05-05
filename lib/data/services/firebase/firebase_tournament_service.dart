@@ -4,6 +4,7 @@ import 'package:tennis_cup/core/pagination/page_request.dart';
 import 'package:tennis_cup/core/pagination/page_result.dart';
 import 'package:tennis_cup/data/models/tournament.dart';
 import 'package:tennis_cup/data/services/abstract/i_tournament_service.dart';
+import 'package:tennis_cup/data/services/dto/dashboard_dto.dart';
 import 'package:tennis_cup/data/services/dto/tournament_dto.dart';
 import 'package:tennis_cup/data/services/dto/tournament_invitation_dto.dart';
 
@@ -240,4 +241,14 @@ class FirebaseTournamentService implements ITournamentService {
 
   @override
   Future<void> declineInvitation(String invitationId) async {}
+
+  @override
+  Future<List<ArenaMatchViewDto>> fetchCurrentMatches() async => const [];
+
+  @override
+  Future<List<ArenaMatchViewDto>> fetchDashboardUpcomingMatches() async =>
+      const [];
+
+  @override
+  Future<List<ArenaLastWinnerDto>> fetchLastWinners() async => const [];
 }

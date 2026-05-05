@@ -26,4 +26,13 @@ class FirebaseArenaService implements IArenaService {
         ArenaDto(id: 15, name: 'Tokyo', color: 'BROWN'),
         ArenaDto(id: 16, name: 'London', color: 'BROWN'),
       ];
+
+  @override
+  Future<ArenaDto> fetchArenaById(int id) async {
+    final all = await fetchAllArenas();
+    return all.firstWhere(
+      (a) => a.id == id,
+      orElse: () => ArenaDto(id: id, name: '', color: ''),
+    );
+  }
 }

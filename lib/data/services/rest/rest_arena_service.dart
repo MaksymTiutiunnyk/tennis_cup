@@ -15,4 +15,10 @@ class RestArenaService implements IArenaService {
         .map((json) => ArenaDto.fromJson(json as Map<String, dynamic>))
         .toList();
   }
+
+  @override
+  Future<ArenaDto> fetchArenaById(int id) async {
+    final response = await _dio.get('/api/v1/arenas/$id');
+    return ArenaDto.fromJson(response.data as Map<String, dynamic>);
+  }
 }

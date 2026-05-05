@@ -5,6 +5,7 @@ import 'package:tennis_cup/core/pagination/page_request.dart';
 import 'package:tennis_cup/core/pagination/page_result.dart';
 import 'package:tennis_cup/data/models/tournament.dart';
 import 'package:tennis_cup/data/services/abstract/i_tournament_service.dart';
+import 'package:tennis_cup/data/services/dto/dashboard_dto.dart';
 import 'package:tennis_cup/data/services/dto/tournament_dto.dart';
 import 'package:tennis_cup/data/services/dto/tournament_invitation_dto.dart';
 
@@ -104,6 +105,33 @@ class RestTournamentService implements ITournamentService {
     final content = body['content'] as List<dynamic>;
     return content
         .map((json) => TournamentDto.fromJson(json as Map<String, dynamic>))
+        .toList();
+  }
+
+  @override
+  Future<List<ArenaMatchViewDto>> fetchCurrentMatches() async {
+    final response = await _dio.get<List<dynamic>>(
+        '/api/v1/dashboard/arenas/current-matches');
+    return (response.data ?? [])
+        .map((e) => ArenaMatchViewDto.fromJson(e as Map<String, dynamic>))
+        .toList();
+  }
+
+  @override
+  Future<List<ArenaMatchViewDto>> fetchDashboardUpcomingMatches() async {
+    final response = await _dio.get<List<dynamic>>(
+        '/api/v1/dashboard/tournaments/upcoming-matches');
+    return (response.data ?? [])
+        .map((e) => ArenaMatchViewDto.fromJson(e as Map<String, dynamic>))
+        .toList();
+  }
+
+  @override
+  Future<List<ArenaLastWinnerDto>> fetchLastWinners() async {
+    final response = await _dio
+        .get<List<dynamic>>('/api/v1/dashboard/arenas/last-winners');
+    return (response.data ?? [])
+        .map((e) => ArenaLastWinnerDto.fromJson(e as Map<String, dynamic>))
         .toList();
   }
 
