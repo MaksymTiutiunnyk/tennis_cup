@@ -1,15 +1,18 @@
 import 'package:tennis_cup/data/models/arena.dart';
 import 'package:tennis_cup/data/models/match.dart';
+import 'package:tennis_cup/data/models/match_view.dart';
 import 'package:tennis_cup/core/pagination/page_request.dart';
 import 'package:tennis_cup/core/pagination/page_result.dart';
 import 'package:tennis_cup/data/models/player.dart';
 import 'package:tennis_cup/data/models/tournament.dart';
 import 'package:tennis_cup/data/models/tournament_request.dart';
+import 'package:tennis_cup/data/models/winner_view.dart';
 import 'package:tennis_cup/data/services/abstract/i_arena_service.dart';
 import 'package:tennis_cup/data/services/abstract/i_match_service.dart';
 import 'package:tennis_cup/data/services/abstract/i_player_service.dart';
 import 'package:tennis_cup/data/services/abstract/i_tournament_service.dart';
 import 'package:tennis_cup/data/services/dto/arena_dto.dart';
+import 'package:tennis_cup/data/services/dto/dashboard_dto.dart';
 import 'package:tennis_cup/data/services/dto/match_dto.dart';
 import 'package:tennis_cup/data/services/dto/tournament_dto.dart';
 
@@ -39,20 +42,90 @@ class TournamentRepository {
     return _buildTournaments(dtos);
   }
 
-  Future<List<Tournament>> fetchLiveStreamMatchesTournaments() async {
-    final dtos = await _service.fetchRecentTournaments();
-    return _buildTournaments(dtos);
+  Future<List<MatchView>> fetchLiveStreamMatches() async {
+    final dtos = await _service.fetchCurrentMatches();
+    if (dtos.isEmpty) return const [];
+    final arenaMap = await _fetchArenaMap({for (final d in dtos) d.arena.id});
+    return dtos.map((dto) => _matchViewFromDto(dto, arenaMap)).toList();
   }
 
-  Future<List<Tournament>> fetchUpcomingMatchesTournaments() async {
-    final dtos = await _service.fetchUpcomingTournaments();
-    return _buildTournaments(dtos);
+  Future<List<MatchView>> fetchUpcomingMatches() async {
+    final dtos = await _service.fetchDashboardUpcomingMatches();
+    if (dtos.isEmpty) return const [];
+    final arenaMap = await _fetchArenaMap({for (final d in dtos) d.arena.id});
+    return dtos.map((dto) => _matchViewFromDto(dto, arenaMap)).toList();
   }
 
-  Future<List<Tournament>> fetchWinnersTournaments() async {
-    final dtos = await _service.fetchRecentTournaments();
-    return _buildTournaments(dtos);
+  Future<Map<int, ArenaDto>> _fetchArenaMap(Set<int> arenaIds) async {
+    final entries = await Future.wait(arenaIds.map((id) async {
+      try {
+        final arena = await _arenaService.fetchArenaById(id);
+        return MapEntry(id, arena);
+      } catch (_) {
+        return MapEntry(id, ArenaDto(id: id, name: '', color: ''));
+      }
+    }));
+    return Map.fromEntries(entries);
   }
+
+  Future<List<WinnerView>> fetchWinners() async {
+    final dtos = await _service.fetchLastWinners();
+    return dtos
+        .where((d) => d.tournament != null && d.winners?.isNotEmpty == true)
+        .map(_winnerViewFromDto)
+        .toList();
+  }
+
+  static MatchView _matchViewFromDto(
+    ArenaMatchViewDto dto,
+    Map<int, ArenaDto> arenaMap,
+  ) {
+    final arenaDto = arenaMap[dto.arena.id] ??
+        ArenaDto(id: dto.arena.id, name: dto.arena.name, color: '');
+    return MatchView(
+      matchId: dto.matchId.toString(),
+      arenaId: dto.arena.id.toString(),
+      arenaName: dto.arena.name,
+      arenaColor: arenaColorFromString(arenaDto.color),
+      tournamentId: dto.tournament.id.toString(),
+      tournamentGender: dto.tournament.gender,
+      tournamentTime: timeFromString(dto.tournament.type),
+      tournamentStart: DateTime.parse(dto.tournament.start),
+      bluePlayer: _playerFromBrief(dto.bluePlayer),
+      redPlayer: _playerFromBrief(dto.redPlayer),
+      blueScore: dto.score.blueSets,
+      redScore: dto.score.redSets,
+    );
+  }
+
+  static WinnerView _winnerViewFromDto(ArenaLastWinnerDto dto) => WinnerView(
+        arenaName: dto.arena.name,
+        tournamentId: dto.tournament!.id.toString(),
+        tournamentName: dto.tournament!.name,
+        tournamentGender: dto.tournament!.gender,
+        tournamentTime: timeFromString(dto.tournament!.type),
+        tournamentStart: DateTime.parse(dto.tournament!.start),
+        winners: dto.winners!.map(_playerFromBrief).toList(),
+      );
+
+  static Player _playerFromBrief(PlayerBriefDto dto) => Player(
+        playerId: dto.id.toString(),
+        name: dto.firstName,
+        surname: dto.lastName,
+        sex: Sex.All,
+        imageUrl: dto.avatarUrl ?? '',
+        year: 0,
+        tournaments: 0,
+        matches: 0,
+        wins: 0,
+        loses: 0,
+        place: '',
+        gold: 0,
+        silver: 0,
+        bronze: 0,
+        rankTennis: 0.0,
+        rankUTTF: 0.0,
+      );
 
   Stream<void> watchTournamentChanges(String tournamentId) {
     return _service.watchTournamentChanges(tournamentId);
