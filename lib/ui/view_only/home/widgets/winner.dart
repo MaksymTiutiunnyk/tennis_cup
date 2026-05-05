@@ -2,29 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:tennis_cup/data/models/player.dart';
-import 'package:tennis_cup/data/models/tournament.dart';
+import 'package:tennis_cup/data/models/winner_view.dart';
 import 'package:tennis_cup/routing/app_router.dart';
 import 'package:tennis_cup/ui/core/widgets/player_avatar.dart';
 
-DateFormat formatter = DateFormat('yyyy-MM-dd');
+final _formatter = DateFormat('yyyy-MM-dd');
+
+String _formatGender(String gender) =>
+    gender.toLowerCase() == 'female' ? 'Women' : 'Men';
 
 class Winner extends StatelessWidget {
-  final Tournament tournament;
-  const Winner({super.key, required this.tournament});
-
-  Player _defineWinner() {
-    return tournament
-        .players[tournament.places.indexWhere((place) => place == 1)];
-  }
+  final WinnerView view;
+  const Winner({super.key, required this.view});
 
   @override
   Widget build(BuildContext context) {
-    final winner = _defineWinner();
+    final Player winner = view.winners.first;
 
     return InkWell(
       onTap: () => context.push(
         AppRoutes.playerDetails(winner.playerId),
-        extra: winner,
       ),
       child: Container(
         margin: const EdgeInsets.fromLTRB(8, 0, 8, 8),
@@ -48,7 +45,7 @@ class Winner extends StatelessWidget {
                 const Icon(Icons.emoji_events, color: Colors.orange, size: 24),
                 const SizedBox(width: 8),
                 Text(
-                  '${winner.sex.name}, ${tournament.time.name}',
+                  '${_formatGender(view.tournamentGender)}, ${view.tournamentTime.name}',
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),
               ],
@@ -59,9 +56,9 @@ class Winner extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(tournament.arena.title,
+                  Text(view.arenaName,
                       style: Theme.of(context).textTheme.bodySmall!),
-                  Text(formatter.format(tournament.date),
+                  Text(_formatter.format(view.tournamentStart),
                       style: Theme.of(context).textTheme.bodySmall!),
                 ],
               ),

@@ -1,5 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tennis_cup/data/models/tournament.dart';
+import 'package:tennis_cup/data/models/winner_view.dart';
 import 'package:tennis_cup/data/repositories/tournament_repository.dart';
 
 sealed class WinnersState {}
@@ -7,8 +7,8 @@ sealed class WinnersState {}
 final class WinnersLoading extends WinnersState {}
 
 final class WinnersLoaded extends WinnersState {
-  final List<Tournament> tournaments;
-  WinnersLoaded(this.tournaments);
+  final List<WinnerView> winners;
+  WinnersLoaded(this.winners);
 }
 
 final class WinnersError extends WinnersState {}
@@ -23,8 +23,8 @@ class WinnersCubit extends Cubit<WinnersState> {
 
   void _fetch() async {
     try {
-      final tournaments = await tournamentRepository.fetchWinnersTournaments();
-      emit(WinnersLoaded(tournaments));
+      final winners = await tournamentRepository.fetchWinners();
+      emit(WinnersLoaded(winners));
     } catch (_) {
       emit(WinnersError());
     }

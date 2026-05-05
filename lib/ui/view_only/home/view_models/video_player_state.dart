@@ -9,13 +9,13 @@ sealed class VideoPlayerState {
 class PlayerStopped extends VideoPlayerState {}
 
 class PlayerRunning extends VideoPlayerState {
-  Match match;
+  MatchView match;
 
   PlayerRunning(super.youtubePlayerController, this.match);
 }
 
 class PlayerFullScreenRunning extends VideoPlayerState {
-  Match match;
+  MatchView match;
 
   PlayerFullScreenRunning(super.youtubePlayerController, this.match);
 }

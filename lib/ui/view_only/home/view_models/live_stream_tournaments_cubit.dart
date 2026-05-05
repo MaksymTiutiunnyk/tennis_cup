@@ -1,5 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tennis_cup/data/models/tournament.dart';
+import 'package:tennis_cup/data/models/match_view.dart';
 import 'package:tennis_cup/data/repositories/tournament_repository.dart';
 
 sealed class LiveStreamTournamentsState {}
@@ -7,8 +7,8 @@ sealed class LiveStreamTournamentsState {}
 final class LiveStreamTournamentsLoading extends LiveStreamTournamentsState {}
 
 final class LiveStreamTournamentsLoaded extends LiveStreamTournamentsState {
-  final List<Tournament> tournaments;
-  LiveStreamTournamentsLoaded(this.tournaments);
+  final List<MatchView> matches;
+  LiveStreamTournamentsLoaded(this.matches);
 }
 
 final class LiveStreamTournamentsError extends LiveStreamTournamentsState {}
@@ -23,9 +23,8 @@ class LiveStreamTournamentsCubit extends Cubit<LiveStreamTournamentsState> {
 
   void _fetch() async {
     try {
-      final tournaments =
-          await tournamentRepository.fetchLiveStreamMatchesTournaments();
-      emit(LiveStreamTournamentsLoaded(tournaments));
+      final matches = await tournamentRepository.fetchLiveStreamMatches();
+      emit(LiveStreamTournamentsLoaded(matches));
     } catch (_) {
       emit(LiveStreamTournamentsError());
     }

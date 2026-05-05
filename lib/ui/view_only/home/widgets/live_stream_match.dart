@@ -3,8 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:tennis_cup/core/di/service_locator.dart';
+import 'package:tennis_cup/data/models/arena.dart';
 import 'package:tennis_cup/data/models/match.dart';
-import 'package:tennis_cup/data/models/tournament.dart';
+import 'package:tennis_cup/data/models/match_view.dart';
 import 'package:tennis_cup/routing/app_router.dart';
 import 'package:tennis_cup/ui/view_only/schedule/view_models/arena_filter_cubit.dart';
 import 'package:tennis_cup/ui/view_only/home/view_models/live_match_cubit.dart';
@@ -14,14 +15,15 @@ import 'package:tennis_cup/ui/view_only/home/view_models/video_player_cubit.dart
 import 'package:tennis_cup/ui/view_only/home/widgets/live_stream_match_player.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
-DateFormat formatter = DateFormat('yyyy-MM-dd');
+final _dateFormatter = DateFormat('yyyy-MM-dd');
+
+String _formatGender(String gender) =>
+    gender.toLowerCase() == 'female' ? 'Women' : 'Men';
 
 class LiveStreamMatch extends StatelessWidget {
-  final Match match;
-  final Tournament tournament;
+  final MatchView match;
 
-  const LiveStreamMatch(
-      {super.key, required this.match, required this.tournament});
+  const LiveStreamMatch({super.key, required this.match});
 
   @override
   Widget build(BuildContext context) {
@@ -55,13 +57,15 @@ class LiveStreamMatch extends StatelessWidget {
                         onTap: () {
                           context
                               .read<ScheduleDateCubit>()
-                              .selectDate(tournament.date);
+                              .selectDate(match.tournamentStart);
                           context
                               .read<TimeFilterCubit>()
-                              .selectTime(tournament.time);
-                          context
-                              .read<ArenaFilterCubit>()
-                              .selectArena(tournament.arena);
+                              .selectTime(match.tournamentTime);
+                          context.read<ArenaFilterCubit>().selectArena(Arena(
+                                id: match.arenaId,
+                                title: match.arenaName,
+                                color: match.arenaColor,
+                              ));
                           context.go(AppRoutes.viewSchedule);
                         },
                         child: Column(
@@ -69,21 +73,18 @@ class LiveStreamMatch extends StatelessWidget {
                           children: [
                             Row(
                               children: [
-                                Icon(
-                                  Icons.circle,
-                                  color: tournament.arena.color,
-                                  size: 8,
-                                ),
+                                Icon(Icons.circle,
+                                    color: match.arenaColor, size: 8),
                                 const SizedBox(width: 8),
                                 Text(
-                                  'Arena: ${tournament.arena.title}',
+                                  'Arena: ${match.arenaName}',
                                   style:
                                       Theme.of(context).textTheme.bodyMedium,
                                 ),
                               ],
                             ),
                             Text(
-                              '${formatter.format(tournament.date)} ${tournament.players[0].sex.name}, ${tournament.time.name} ${tournament.isFinished ? '(Finished)' : ''}',
+                              '${_dateFormatter.format(match.tournamentStart)} ${_formatGender(match.tournamentGender)}, ${match.tournamentTime.name}',
                               style: Theme.of(context).textTheme.bodySmall,
                             ),
                           ],

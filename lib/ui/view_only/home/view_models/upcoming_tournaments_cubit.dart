@@ -1,5 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tennis_cup/data/models/tournament.dart';
+import 'package:tennis_cup/data/models/match_view.dart';
 import 'package:tennis_cup/data/repositories/tournament_repository.dart';
 
 sealed class UpcomingTournamentsState {}
@@ -7,8 +7,8 @@ sealed class UpcomingTournamentsState {}
 final class UpcomingTournamentsLoading extends UpcomingTournamentsState {}
 
 final class UpcomingTournamentsLoaded extends UpcomingTournamentsState {
-  final List<Tournament> tournaments;
-  UpcomingTournamentsLoaded(this.tournaments);
+  final List<MatchView> matches;
+  UpcomingTournamentsLoaded(this.matches);
 }
 
 final class UpcomingTournamentsError extends UpcomingTournamentsState {}
@@ -23,9 +23,8 @@ class UpcomingTournamentsCubit extends Cubit<UpcomingTournamentsState> {
 
   void _fetch() async {
     try {
-      final tournaments =
-          await tournamentRepository.fetchUpcomingMatchesTournaments();
-      emit(UpcomingTournamentsLoaded(tournaments));
+      final matches = await tournamentRepository.fetchUpcomingMatches();
+      emit(UpcomingTournamentsLoaded(matches));
     } catch (_) {
       emit(UpcomingTournamentsError());
     }

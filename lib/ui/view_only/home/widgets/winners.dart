@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tennis_cup/data/models/tournament.dart';
+import 'package:tennis_cup/data/models/winner_view.dart';
 import 'package:tennis_cup/ui/view_only/home/view_models/winners_cubit.dart';
 import 'package:tennis_cup/ui/view_only/home/widgets/winner.dart';
 
@@ -35,7 +35,7 @@ class Winners extends StatelessWidget {
                 const Center(child: CircularProgressIndicator()),
               WinnersError() =>
                 const Center(child: Text('Ooops, something went wrong')),
-              WinnersLoaded(:final tournaments) => _buildContent(tournaments),
+              WinnersLoaded(:final winners) => _buildContent(winners),
             },
           ),
         ),
@@ -43,19 +43,16 @@ class Winners extends StatelessWidget {
     );
   }
 
-  Widget _buildContent(List<Tournament> tournaments) {
-    final filtered = tournaments
-        .where((t) => t.places.contains(1) && t.players.isNotEmpty)
-        .toList();
-    if (filtered.isEmpty) {
+  Widget _buildContent(List<WinnerView> winners) {
+    if (winners.isEmpty) {
       return const Center(child: Text('No winners found'));
     }
     return PageView.builder(
       scrollDirection: isScreenWide ? Axis.vertical : Axis.horizontal,
       controller: PageController(viewportFraction: 0.90),
-      itemCount: filtered.length,
+      itemCount: winners.length,
       itemBuilder: (context, index) {
-        return Winner(tournament: filtered[index]);
+        return Winner(view: winners[index]);
       },
     );
   }
