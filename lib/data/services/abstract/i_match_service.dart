@@ -16,4 +16,16 @@ abstract interface class IMatchService {
     required int player2Id,
     required PageRequest page,
   });
+
+  // Referee match lifecycle
+  Future<MatchDto> startMatch(int matchId);
+  Future<MatchDto> finishMatch(int matchId);
+  Future<MatchSetDto> startSet(int matchId, int setNumber);
+  Future<MatchSetDto> updateScore(
+      int matchId, int setNumber, int blueScore, int redScore);
+  Future<MatchSetDto> finishSet(int matchId, int setNumber);
+  Future<MatchDto> technicalDefeatMatch(int matchId, int loserId,
+      {String? reason});
+  Future<MatchSetDto> technicalDefeatSet(int matchId, int setNumber,
+      int loserId, {String? reason});
 }

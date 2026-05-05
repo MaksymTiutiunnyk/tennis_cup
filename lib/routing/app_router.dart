@@ -11,6 +11,8 @@ import 'package:tennis_cup/ui/user/organizer/widgets/organizer_players_tab.dart'
 import 'package:tennis_cup/ui/user/organizer/widgets/organizer_tournaments_tab.dart';
 import 'package:tennis_cup/ui/user/organizer/widgets/pending_users_tab.dart';
 import 'package:tennis_cup/ui/user/player/widgets/tournaments_tab.dart';
+import 'package:tennis_cup/ui/user/referee/widgets/referee_invitations_tab.dart';
+import 'package:tennis_cup/ui/user/referee/widgets/referee_tournaments_tab.dart';
 import 'package:tennis_cup/ui/view_only/home/widgets/home.dart';
 import 'package:tennis_cup/ui/view_only/news/widgets/news.dart';
 import 'package:tennis_cup/ui/view_only/player_comparison/widgets/players_comparison_route.dart';
@@ -27,6 +29,7 @@ class AppRoutes {
   // User shell branches (index order matches branch list below)
   static const userInvitations = '/user/invitations';
   static const refereeTournament = '/user/referee/tournament';
+  static const refereeInvitations = '/user/referee/invitations';
   static const organizerTournaments = '/user/organizer/tournaments';
   static const organizerPlayers = '/user/organizer/players';
   static const organizerPendingUsers = '/user/organizer/pending';
@@ -100,14 +103,12 @@ GoRouter buildAppRouter({GlobalKey<NavigatorState>? navigatorKey}) {
             ],
           ),
 
-          // Branch 1 — Referee: match conducting (placeholder)
+          // Branch 1 — Referee: active tournaments + match management
           StatefulShellBranch(
             routes: [
               GoRoute(
                 path: AppRoutes.refereeTournament,
-                builder: (context, state) => const Center(
-                  child: Text('Referee panel — coming soon'),
-                ),
+                builder: (context, state) => const RefereeTournamentsTab(),
               ),
             ],
           ),
@@ -168,6 +169,16 @@ GoRouter buildAppRouter({GlobalKey<NavigatorState>? navigatorKey}) {
               GoRoute(
                 path: AppRoutes.organizerNews,
                 builder: (context, state) => const OrganizerNewsTab(),
+              ),
+            ],
+          ),
+
+          // Branch 8 — Referee: invitations
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: AppRoutes.refereeInvitations,
+                builder: (context, state) => const RefereeInvitationsTab(),
               ),
             ],
           ),

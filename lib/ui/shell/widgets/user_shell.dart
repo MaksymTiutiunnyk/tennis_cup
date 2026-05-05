@@ -93,7 +93,14 @@ class UserShell extends StatelessWidget {
             branchIndex: 1,
             item: const BottomNavigationBarItem(
               icon: Icon(Icons.sports_outlined),
-              label: 'Matches',
+              label: 'Tournaments',
+            ),
+          ),
+          (
+            branchIndex: 8,
+            item: const BottomNavigationBarItem(
+              icon: Icon(Icons.mail_outline),
+              label: 'Invitations',
             ),
           ),
           settings,
