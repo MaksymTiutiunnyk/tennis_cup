@@ -37,6 +37,13 @@ class UserShell extends StatelessWidget {
                 tabs.indexWhere((t) => t.branchIndex == currentBranch);
             final currentVisibleIndex = visibleIdx >= 0 ? visibleIdx : 0;
 
+            if (visibleIdx == -1 && tabs.isNotEmpty) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                navigationShell.goBranch(tabs.first.branchIndex,
+                    initialLocation: true);
+              });
+            }
+
             return Scaffold(
               appBar: AppBar(
                 title: RoleTitle(roleState: roleState),
