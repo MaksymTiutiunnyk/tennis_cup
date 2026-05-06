@@ -51,16 +51,30 @@ class RefereeTournamentsTab extends StatelessWidget {
                   return Card(
                     child: ListTile(
                       leading: const Icon(Icons.emoji_events_outlined),
-                      title: Text(t.name),
-                      subtitle:
-                          date != null ? Text(_dateFormat.format(date)) : null,
-                      trailing: const Icon(Icons.chevron_right),
-                      onTap: () => Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) =>
-                              TournamentManagementScreen(tournament: t),
-                        ),
+                      title: Text(
+                        t.name,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
+                      subtitle: date != null
+                          ? Text(
+                              _dateFormat.format(date),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            )
+                          : null,
+                      trailing: const Icon(Icons.chevron_right),
+                      onTap: () async {
+                        await Navigator.of(context, rootNavigator: true).push(
+                          MaterialPageRoute(
+                            builder: (_) =>
+                                TournamentManagementScreen(tournament: t),
+                          ),
+                        );
+                        if (context.mounted) {
+                          context.read<RefereeTournamentsCubit>().reload();
+                        }
+                      },
                     ),
                   );
                 },

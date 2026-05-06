@@ -17,20 +17,22 @@ class MatchBody extends StatelessWidget {
     final pendingSet =
         match.sets.where((s) => s.status == 'PENDING').firstOrNull;
 
-    // Compute sets won
     final blueSetsWon = match.sets
-        .where((s) =>
-            (s.status == 'FINISHED' || s.status == 'TECHNICAL_DEFEAT') &&
-            s.winnerId == match.bluePlayerId)
+        .where(
+          (s) =>
+              (s.status == 'FINISHED' || s.status == 'TECHNICAL_DEFEAT') &&
+              s.winnerId == match.bluePlayerId,
+        )
         .length;
     final redSetsWon = match.sets
-        .where((s) =>
-            (s.status == 'FINISHED' || s.status == 'TECHNICAL_DEFEAT') &&
-            s.winnerId == match.redPlayerId)
+        .where(
+          (s) =>
+              (s.status == 'FINISHED' || s.status == 'TECHNICAL_DEFEAT') &&
+              s.winnerId == match.redPlayerId,
+        )
         .length;
 
     if (activeSet == null && pendingSet == null) {
-      // All sets done — show finish match
       return NoActiveSetView(
         blueSetsWon: blueSetsWon,
         redSetsWon: redSetsWon,
@@ -50,10 +52,11 @@ class MatchBody extends StatelessWidget {
       );
     }
 
-    // Active set UI
     final setNum = activeSet!.number;
     final swapped = state.isDisplaySwapped(setNum);
     final serverId = state.currentServerId();
+    final compact = MediaQuery.sizeOf(context).height < 520 ||
+        MediaQuery.sizeOf(context).width < 760;
 
     final leftPlayer = swapped ? state.redPlayer : state.bluePlayer;
     final rightPlayer = swapped ? state.bluePlayer : state.redPlayer;
@@ -70,62 +73,66 @@ class MatchBody extends StatelessWidget {
         leftIsBlue ? state.redIssuedCards : state.blueIssuedCards;
 
     return Column(
-      children: [
-        // Set header
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8),
-          child: Text(
-            'Set $setNum  ·  $blueSetsWon – $redSetsWon',
-            style: Theme.of(context).textTheme.titleMedium,
+        children: [
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: compact ? 4 : 8),
+            child: Text(
+              'Set $setNum  ·  $blueSetsWon – $redSetsWon',
+              style: compact
+                  ? Theme.of(context).textTheme.titleSmall
+                  : Theme.of(context).textTheme.titleMedium,
+            ),
           ),
-        ),
-        // Player columns
-        Expanded(
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Expanded(
-                child: PlayerColumn(
-                  key: const ValueKey('left-score'),
-                  player: leftPlayer,
-                  score: leftScore,
-                  isServing: serverId != null &&
-                      serverId.toString() == leftPlayer.playerId,
-                  issuedCards: leftIssuedCards,
-                  bgColor: leftIsBlue
-                      ? const Color(0xFF1565C0)
-                      : const Color(0xFFC62828),
-                  onScore: leftIsBlue ? cubit.addPointBlue : cubit.addPointRed,
-                  onToggleCard: (card) => cubit.toggleCard(leftIsBlue, card),
+          Expanded(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Expanded(
+                  child: PlayerColumn(
+                    key: const ValueKey('left-score'),
+                    player: leftPlayer,
+                    score: leftScore,
+                    isServing: serverId != null &&
+                        serverId.toString() == leftPlayer.playerId,
+                    issuedCards: leftIssuedCards,
+                    bgColor: leftIsBlue
+                        ? const Color(0xFF1565C0)
+                        : const Color(0xFFC62828),
+                    onScore:
+                        leftIsBlue ? cubit.addPointBlue : cubit.addPointRed,
+                    onToggleCard: (card) => cubit.toggleCard(leftIsBlue, card),
+                    compact: compact,
+                  ),
                 ),
-              ),
-              const VerticalDivider(width: 1),
-              Expanded(
-                child: PlayerColumn(
-                  key: const ValueKey('right-score'),
-                  player: rightPlayer,
-                  score: rightScore,
-                  isServing: serverId != null &&
-                      serverId.toString() == rightPlayer.playerId,
-                  issuedCards: rightIssuedCards,
-                  bgColor: leftIsBlue
-                      ? const Color(0xFFC62828)
-                      : const Color(0xFF1565C0),
-                  onScore: leftIsBlue ? cubit.addPointRed : cubit.addPointBlue,
-                  onToggleCard: (card) => cubit.toggleCard(!leftIsBlue, card),
+                const VerticalDivider(width: 1),
+                Expanded(
+                  child: PlayerColumn(
+                    key: const ValueKey('right-score'),
+                    player: rightPlayer,
+                    score: rightScore,
+                    isServing: serverId != null &&
+                        serverId.toString() == rightPlayer.playerId,
+                    issuedCards: rightIssuedCards,
+                    bgColor: leftIsBlue
+                        ? const Color(0xFFC62828)
+                        : const Color(0xFF1565C0),
+                    onScore:
+                        leftIsBlue ? cubit.addPointRed : cubit.addPointBlue,
+                    onToggleCard: (card) => cubit.toggleCard(!leftIsBlue, card),
+                    compact: compact,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-        // Action rows
-        ActionBar(
-          state: state,
-          activeSet: activeSet,
-          blueSetsWon: blueSetsWon,
-          redSetsWon: redSetsWon,
-        ),
-      ],
+          ActionBar(
+            state: state,
+            activeSet: activeSet,
+            blueSetsWon: blueSetsWon,
+            redSetsWon: redSetsWon,
+            compact: compact,
+          ),
+        ],
     );
   }
 }

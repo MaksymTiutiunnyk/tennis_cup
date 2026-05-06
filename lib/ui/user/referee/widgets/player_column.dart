@@ -11,6 +11,7 @@ class PlayerColumn extends StatelessWidget {
   final Color bgColor;
   final VoidCallback onScore;
   final void Function(MatchCard) onToggleCard;
+  final bool compact;
 
   const PlayerColumn({
     super.key,
@@ -21,6 +22,7 @@ class PlayerColumn extends StatelessWidget {
     required this.bgColor,
     required this.onScore,
     required this.onToggleCard,
+    this.compact = false,
   });
 
   @override
@@ -30,46 +32,56 @@ class PlayerColumn extends StatelessWidget {
 
     return Column(
       children: [
-        // Card tray (above player)
         Padding(
-          padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+          padding: EdgeInsets.symmetric(
+            vertical: compact ? 4 : 6,
+            horizontal: 4,
+          ),
+          child: Wrap(
+            alignment: WrapAlignment.center,
+            spacing: 4,
+            runSpacing: 4,
             children: trayCards
-                .map((c) => GestureDetector(
-                      onTap: () => onToggleCard(c),
-                      child: CardChip(card: c, issued: false),
-                    ))
+                .map(
+                  (c) => GestureDetector(
+                    onTap: () => onToggleCard(c),
+                    child: CardChip(card: c, issued: false),
+                  ),
+                )
                 .toList(),
           ),
         ),
-        // Issued cards (below card tray)
         if (issued.isNotEmpty)
           Padding(
             padding: const EdgeInsets.only(bottom: 4),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+            child: Wrap(
+              alignment: WrapAlignment.center,
+              spacing: 4,
+              runSpacing: 4,
               children: issued
-                  .map((c) => GestureDetector(
-                        onTap: () => onToggleCard(c),
-                        child: CardChip(card: c, issued: true),
-                      ))
+                  .map(
+                    (c) => GestureDetector(
+                      onTap: () => onToggleCard(c),
+                      child: CardChip(card: c, issued: true),
+                    ),
+                  )
                   .toList(),
             ),
           ),
-        // Player name + server indicator
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
             children: [
               Flexible(
                 child: Text(
                   '${player.name} ${player.surname}',
                   textAlign: TextAlign.center,
+                  maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.bodySmall,
+                  style: compact
+                      ? Theme.of(context).textTheme.bodySmall
+                      : Theme.of(context).textTheme.bodyMedium,
                 ),
               ),
               if (isServing) ...[
@@ -79,19 +91,22 @@ class PlayerColumn extends StatelessWidget {
             ],
           ),
         ),
-        // Score tap area
         Expanded(
           child: InkWell(
             onTap: onScore,
             child: Container(
               color: bgColor,
               alignment: Alignment.center,
-              child: Text(
-                '$score',
-                style: const TextStyle(
-                  fontSize: 72,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  '$score',
+                  style: TextStyle(
+                    fontSize: compact ? 56 : 72,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
                 ),
               ),
             ),

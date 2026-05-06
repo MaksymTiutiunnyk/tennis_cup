@@ -20,31 +20,35 @@ class NoActiveSetView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            'Sets: $blueSetsWon – $redSetsWon',
-            style: Theme.of(context).textTheme.titleLarge,
+    return SingleChildScrollView(
+        padding: const EdgeInsets.all(24),
+        child: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Sets: $blueSetsWon – $redSetsWon',
+                style: Theme.of(context).textTheme.titleLarge,
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 24),
+              if (pendingSetNumber != null && onStartSet != null)
+                FilledButton.icon(
+                  onPressed: onStartSet,
+                  icon: const Icon(Icons.play_arrow),
+                  label: Text('Start Set $pendingSetNumber'),
+                ),
+              if (canFinish) ...[
+                const SizedBox(height: 12),
+                OutlinedButton.icon(
+                  onPressed: onFinish,
+                  icon: const Icon(Icons.flag),
+                  label: const Text('Finish Match'),
+                ),
+              ],
+            ],
           ),
-          const SizedBox(height: 24),
-          if (pendingSetNumber != null && onStartSet != null)
-            FilledButton.icon(
-              onPressed: onStartSet,
-              icon: const Icon(Icons.play_arrow),
-              label: Text('Start Set $pendingSetNumber'),
-            ),
-          if (canFinish) ...[
-            const SizedBox(height: 12),
-            OutlinedButton.icon(
-              onPressed: onFinish,
-              icon: const Icon(Icons.flag),
-              label: const Text('Finish Match'),
-            ),
-          ],
-        ],
-      ),
+        ),
     );
   }
 }
