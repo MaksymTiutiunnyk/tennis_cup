@@ -77,15 +77,20 @@ class PlayerTournament extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  Icon(
-                    Icons.emoji_events,
-                    color: tournament.isFinished
-                        ? Colors.grey
-                        : Theme.of(context).colorScheme.onPrimaryContainer,
+                  SizedBox(
+                    width: 16,
+                    child: Icon(
+                      Icons.emoji_events,
+                      color: tournament.isFinished
+                          ? Colors.grey
+                          : Theme.of(context).colorScheme.onPrimaryContainer,
+                    ),
                   ),
-                  const SizedBox(width: 8),
-                  Text(
-                    '${formatter.format(tournament.date)} ${tournament.players[0].sex.name}, ${tournament.time.name} ${tournament.arena.title}',
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Text(
+                      '${formatter.format(tournament.date)} ${tournament.players[0].sex.name}, ${tournament.time.name} ${tournament.arena.title}',
+                    ),
                   ),
                 ],
               ),
