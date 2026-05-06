@@ -1,6 +1,6 @@
-import 'package:tennis_cup/data/models/arena.dart';
 import 'package:tennis_cup/core/pagination/page_request.dart';
 import 'package:tennis_cup/core/pagination/page_result.dart';
+import 'package:tennis_cup/data/models/arena.dart';
 import 'package:tennis_cup/data/models/tournament.dart';
 import 'package:tennis_cup/data/services/dto/dashboard_dto.dart';
 import 'package:tennis_cup/data/services/dto/tournament_dto.dart';
@@ -11,7 +11,6 @@ abstract interface class ITournamentService {
 
   Future<PageResult<TournamentDto>> fetchPlayerTournaments({
     required String playerId,
-    String? player2Id,
     required PageRequest page,
   });
 
@@ -52,7 +51,8 @@ abstract interface class ITournamentService {
 
   Future<TournamentDto> createTournament(CreateTournamentRequestDto dto);
 
-  Future<TournamentDto> updateTournament(int id, UpdateTournamentRequestDto dto);
+  Future<TournamentDto> updateTournament(
+      int id, UpdateTournamentRequestDto dto);
 
   Future<void> deleteTournament(int id);
 

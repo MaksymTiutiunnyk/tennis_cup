@@ -133,12 +133,10 @@ class TournamentRepository {
 
   Future<PageResult<Tournament>> fetchPlayersTournaments({
     required String player1Id,
-    String? player2Id,
     required PageRequest page,
   }) async {
     final result = await _service.fetchPlayerTournaments(
       playerId: player1Id,
-      player2Id: player2Id,
       page: page,
     );
     final tournaments = await _buildTournaments(result.items);

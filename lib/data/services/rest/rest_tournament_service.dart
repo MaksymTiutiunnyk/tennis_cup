@@ -19,13 +19,12 @@ class RestTournamentService implements ITournamentService {
   @override
   Future<PageResult<TournamentDto>> fetchPlayerTournaments({
     required String playerId,
-    String? player2Id,
     required PageRequest page,
   }) async {
     final response = await _dio.get('/api/v1/tournaments', queryParameters: {
-      // 'page': page.page,
-      // 'size': page.size,
-      // TODO: to be commented in
+      'page': page.page,
+      'size': page.size,
+      'playerId': playerId,
     });
 
     final body = response.data as Map<String, dynamic>;
@@ -35,13 +34,6 @@ class RestTournamentService implements ITournamentService {
     final dtos = <TournamentDto>[];
     for (final json in content) {
       final dto = TournamentDto.fromJson(json as Map<String, dynamic>);
-      if (!dto.participants.any((p) => p.playerId.toString() == playerId)) {
-        continue;
-      }
-      if (player2Id != null &&
-          !dto.participants.any((p) => p.playerId.toString() == player2Id)) {
-        continue;
-      }
       dtos.add(dto);
     }
 
