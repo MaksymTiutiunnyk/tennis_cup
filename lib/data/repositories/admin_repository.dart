@@ -41,9 +41,8 @@ class AdminRepository {
       _service.deleteOrganizer(organizerId);
 
   Future<List<UserSearchResult>> searchReferees(String query) async {
-    final dtos = await _service.searchUsers(query: query);
+    final dtos = await _service.searchUsers(query: query, roles: ['REFEREE']);
     return dtos
-        .where((d) => d.roles.contains('REFEREE'))
         .map((d) => UserSearchResult(
               userId: d.userId,
               firstName: d.firstName,
