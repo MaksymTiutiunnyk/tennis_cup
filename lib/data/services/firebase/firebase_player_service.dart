@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:tennis_cup/core/pagination/page_request.dart';
 import 'package:tennis_cup/core/pagination/page_result.dart';
@@ -69,6 +71,11 @@ class FirebasePlayerService implements IPlayerService {
   Future<void> updatePlayerProfileById(
       int playerId, Map<String, dynamic> fields) {
     throw UnimplementedError('Admin player edit not implemented for Firebase');
+  }
+
+  @override
+  Future<String> uploadPlayerAvatar(int playerId, Uint8List bytes) {
+    throw UnimplementedError('Avatar upload not implemented for Firebase');
   }
 
   @override

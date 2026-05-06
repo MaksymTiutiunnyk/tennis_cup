@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:tennis_cup/core/pagination/page_request.dart';
 import 'package:tennis_cup/core/pagination/page_result.dart';
 import 'package:tennis_cup/data/models/player.dart';
@@ -29,4 +31,7 @@ class PlayerRepository {
   Future<void> updatePlayerProfileById(
           int playerId, Map<String, dynamic> fields) =>
       _service.updatePlayerProfileById(playerId, fields);
+
+  Future<String> uploadPlayerAvatar(int playerId, Uint8List bytes) =>
+      _service.uploadPlayerAvatar(playerId, bytes);
 }

@@ -40,15 +40,52 @@ class AdminRepository {
   Future<void> deleteOrganizer(int organizerId) =>
       _service.deleteOrganizer(organizerId);
 
+  Future<void> registerUser({
+    required String login,
+    required String password,
+    required String role,
+    required String firstName,
+    required String lastName,
+    String? patronymicName,
+    String? birthDate,
+    String? gender,
+    String? country,
+    String? city,
+  }) =>
+      _service.registerUser(RegisterUserRequestDto(
+        login: login,
+        password: password,
+        role: role,
+        firstName: firstName,
+        lastName: lastName,
+        patronymicName: patronymicName,
+        birthDate: birthDate,
+        gender: gender,
+        country: country,
+        city: city,
+      ));
+
   Future<List<UserSearchResult>> searchReferees(String query) async {
     final dtos = await _service.searchUsers(query: query, roles: ['REFEREE']);
-    return dtos
-        .map((d) => UserSearchResult(
-              userId: d.userId,
-              firstName: d.firstName,
-              lastName: d.lastName,
-            ))
+    return dtos.map(_toUserSearchResult).toList();
+  }
+
+  Future<List<UserSearchResult>> searchAllNonPlayerUsers(String query) async {
+    final dtos = await _service.searchUsers(query: query);
+    return dtos.map(_toUserSearchResult).toList();
+  }
+
+  static UserSearchResult _toUserSearchResult(UserSearchDto d) {
+    final roles = d.roles
+        .map(userRoleFromString)
+        .whereType<UserRole>()
         .toList();
+    return UserSearchResult(
+      userId: d.userId,
+      firstName: d.firstName,
+      lastName: d.lastName,
+      roles: roles,
+    );
   }
 
   static PendingUser _toPendingUser(PendingUserDto dto) {

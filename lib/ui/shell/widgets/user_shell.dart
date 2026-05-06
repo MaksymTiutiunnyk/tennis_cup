@@ -70,7 +70,7 @@ class UserShell extends StatelessWidget {
 
   List<_Tab> _tabsForRole(UserRole role) {
     const settings = (
-      branchIndex: 6,
+      branchIndex: 5,
       item: BottomNavigationBarItem(
         icon: Icon(Icons.settings_outlined),
         label: 'Settings',
@@ -97,7 +97,7 @@ class UserShell extends StatelessWidget {
             ),
           ),
           (
-            branchIndex: 8,
+            branchIndex: 7,
             item: const BottomNavigationBarItem(
               icon: Icon(Icons.mail_outline),
               label: 'Invitations',
@@ -117,7 +117,7 @@ class UserShell extends StatelessWidget {
             branchIndex: 3,
             item: const BottomNavigationBarItem(
               icon: Icon(Icons.people),
-              label: 'Players',
+              label: 'Users',
             ),
           ),
           (
@@ -128,7 +128,7 @@ class UserShell extends StatelessWidget {
             ),
           ),
           (
-            branchIndex: 7,
+            branchIndex: 6,
             item: const BottomNavigationBarItem(
               icon: Icon(Icons.newspaper_outlined),
               label: 'News',
@@ -148,7 +148,7 @@ class UserShell extends StatelessWidget {
             branchIndex: 3,
             item: const BottomNavigationBarItem(
               icon: Icon(Icons.people),
-              label: 'Players',
+              label: 'Users',
             ),
           ),
           (
@@ -159,14 +159,7 @@ class UserShell extends StatelessWidget {
             ),
           ),
           (
-            branchIndex: 5,
-            item: const BottomNavigationBarItem(
-              icon: Icon(Icons.manage_accounts),
-              label: 'Organizers',
-            ),
-          ),
-          (
-            branchIndex: 7,
+            branchIndex: 6,
             item: const BottomNavigationBarItem(
               icon: Icon(Icons.newspaper_outlined),
               label: 'News',

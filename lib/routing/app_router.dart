@@ -5,10 +5,9 @@ import 'package:tennis_cup/ui/core/widgets/custom_navigator_observer.dart';
 import 'package:tennis_cup/ui/shell/widgets/user_shell.dart';
 import 'package:tennis_cup/ui/shell/widgets/view_shell.dart';
 import 'package:tennis_cup/ui/user/core/widgets/settings_tab.dart';
-import 'package:tennis_cup/ui/user/organizer/widgets/organizer_management_tab.dart';
 import 'package:tennis_cup/ui/user/organizer/widgets/organizer_news_tab.dart';
-import 'package:tennis_cup/ui/user/organizer/widgets/organizer_players_tab.dart';
 import 'package:tennis_cup/ui/user/organizer/widgets/organizer_tournaments_tab.dart';
+import 'package:tennis_cup/ui/user/organizer/widgets/organizer_users_tab.dart';
 import 'package:tennis_cup/ui/user/organizer/widgets/pending_users_tab.dart';
 import 'package:tennis_cup/ui/user/player/widgets/tournaments_tab.dart';
 import 'package:tennis_cup/ui/user/referee/widgets/referee_invitations_tab.dart';
@@ -31,9 +30,8 @@ class AppRoutes {
   static const refereeTournament = '/user/referee/tournament';
   static const refereeInvitations = '/user/referee/invitations';
   static const organizerTournaments = '/user/organizer/tournaments';
-  static const organizerPlayers = '/user/organizer/players';
+  static const organizerUsers = '/user/organizer/users';
   static const organizerPendingUsers = '/user/organizer/pending';
-  static const organizerManagement = '/user/organizer/management';
   static const organizerNews = '/user/organizer/news';
   static const userSettings = '/user/settings';
 
@@ -123,12 +121,12 @@ GoRouter buildAppRouter({GlobalKey<NavigatorState>? navigatorKey}) {
             ],
           ),
 
-          // Branch 3 — Organizer: player management
+          // Branch 3 — Organizer/Admin: unified user management
           StatefulShellBranch(
             routes: [
               GoRoute(
-                path: AppRoutes.organizerPlayers,
-                builder: (context, state) => const OrganizerPlayersTab(),
+                path: AppRoutes.organizerUsers,
+                builder: (context, state) => const OrganizerUsersTab(),
               ),
             ],
           ),
@@ -143,17 +141,7 @@ GoRouter buildAppRouter({GlobalKey<NavigatorState>? navigatorKey}) {
             ],
           ),
 
-          // Branch 5 — Admin only: organizer management
-          StatefulShellBranch(
-            routes: [
-              GoRoute(
-                path: AppRoutes.organizerManagement,
-                builder: (context, state) => const OrganizerManagementTab(),
-              ),
-            ],
-          ),
-
-          // Branch 6 — All roles: settings
+          // Branch 5 — All roles: settings
           StatefulShellBranch(
             routes: [
               GoRoute(
@@ -163,7 +151,7 @@ GoRouter buildAppRouter({GlobalKey<NavigatorState>? navigatorKey}) {
             ],
           ),
 
-          // Branch 7 — Organizer+Admin: news management
+          // Branch 6 — Organizer+Admin: news management
           StatefulShellBranch(
             routes: [
               GoRoute(
@@ -173,7 +161,7 @@ GoRouter buildAppRouter({GlobalKey<NavigatorState>? navigatorKey}) {
             ],
           ),
 
-          // Branch 8 — Referee: invitations
+          // Branch 7 — Referee: invitations
           StatefulShellBranch(
             routes: [
               GoRoute(

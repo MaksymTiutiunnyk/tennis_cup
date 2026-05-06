@@ -70,4 +70,9 @@ class RestAdminService implements IAdminService {
         .map((e) => UserSearchDto.fromJson(e as Map<String, dynamic>))
         .toList();
   }
+
+  @override
+  Future<void> registerUser(RegisterUserRequestDto dto) async {
+    await _dio.post<void>('/api/v1/auth/register', data: dto.toJson());
+  }
 }
