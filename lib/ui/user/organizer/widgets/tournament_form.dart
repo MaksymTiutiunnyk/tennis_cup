@@ -48,6 +48,7 @@ class _TournamentFormState extends State<TournamentForm> {
       if (e.gender.isNotEmpty) _gender = e.gender;
       _arenaId = int.tryParse(e.arena.id ?? '');
       _startTime = e.date;
+      _refereeId = e.refereeId;
       _selectedPlayers = e.players
           .map((p) => SelectedPlayer(
                 id: int.tryParse(p.playerId) ?? -1,
@@ -215,6 +216,7 @@ class _TournamentFormState extends State<TournamentForm> {
                     ),
                   const SizedBox(height: 12),
                   RefereeSearchField(
+                    initialRefereeId: widget.existing?.refereeId,
                     onChanged: (result) =>
                         setState(() => _refereeId = result?.userId),
                   ),

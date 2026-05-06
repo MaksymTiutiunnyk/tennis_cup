@@ -5,9 +5,14 @@ import 'package:tennis_cup/core/di/service_locator.dart';
 import 'package:tennis_cup/data/models/user_search_result.dart';
 
 class RefereeSearchField extends StatefulWidget {
+  final int? initialRefereeId;
   final ValueChanged<UserSearchResult?> onChanged;
 
-  const RefereeSearchField({super.key, required this.onChanged});
+  const RefereeSearchField({
+    super.key,
+    this.initialRefereeId,
+    required this.onChanged,
+  });
 
   @override
   State<RefereeSearchField> createState() => _RefereeSearchFieldState();
@@ -20,6 +25,19 @@ class _RefereeSearchFieldState extends State<RefereeSearchField> {
   bool _loading = false;
   String? _error;
   Timer? _debounce;
+
+  @override
+  void initState() {
+    super.initState();
+    final id = widget.initialRefereeId;
+    if (id != null) {
+      _selected = UserSearchResult(
+        userId: id,
+        firstName: 'Referee',
+        lastName: '#$id',
+      );
+    }
+  }
 
   @override
   void dispose() {

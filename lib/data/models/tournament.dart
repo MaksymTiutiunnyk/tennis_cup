@@ -22,6 +22,7 @@ class Tournament extends Equatable {
   final List<int> points;
   final List<int> places;
   final bool isFinished;
+  final int? refereeId;
 
   const Tournament({
     required this.tournamentId,
@@ -36,6 +37,7 @@ class Tournament extends Equatable {
     this.status = 'PENDING',
     this.isFinished = false,
     this.matches,
+    this.refereeId,
   });
 
   @override
@@ -52,5 +54,6 @@ class Tournament extends Equatable {
         points,
         places,
         isFinished,
+        refereeId,
       ];
 }

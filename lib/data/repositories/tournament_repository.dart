@@ -371,6 +371,7 @@ class TournamentRepository {
       places: places,
       isFinished: dto.status == 'FINISHED',
       matches: matches,
+      refereeId: dto.refereeId != 0 ? dto.refereeId : null,
     );
   }
 }
