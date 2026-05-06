@@ -59,6 +59,68 @@ class RestMatchService implements IMatchService {
   Stream<void> watchMatchChanges(String matchId) => const Stream.empty();
 
   @override
+  Future<MatchDto> startMatch(int matchId) async {
+    final response = await _dio.post('/api/v1/matches/$matchId/start');
+    return MatchDto.fromJson(response.data as Map<String, dynamic>);
+  }
+
+  @override
+  Future<MatchDto> finishMatch(int matchId) async {
+    final response = await _dio.post('/api/v1/matches/$matchId/finish');
+    return MatchDto.fromJson(response.data as Map<String, dynamic>);
+  }
+
+  @override
+  Future<MatchSetDto> startSet(int matchId, int setNumber) async {
+    final response =
+        await _dio.post('/api/v1/matches/$matchId/sets/$setNumber/start');
+    return MatchSetDto.fromJson(response.data as Map<String, dynamic>);
+  }
+
+  @override
+  Future<MatchSetDto> updateScore(
+      int matchId, int setNumber, int blueScore, int redScore) async {
+    final response = await _dio.patch(
+      '/api/v1/matches/$matchId/sets/$setNumber/score',
+      data: {'bluePlayerScore': blueScore, 'redPlayerScore': redScore},
+    );
+    return MatchSetDto.fromJson(response.data as Map<String, dynamic>);
+  }
+
+  @override
+  Future<MatchSetDto> finishSet(int matchId, int setNumber) async {
+    final response =
+        await _dio.post('/api/v1/matches/$matchId/sets/$setNumber/finish');
+    return MatchSetDto.fromJson(response.data as Map<String, dynamic>);
+  }
+
+  @override
+  Future<MatchDto> technicalDefeatMatch(int matchId, int loserId,
+      {String? reason}) async {
+    final response = await _dio.post(
+      '/api/v1/matches/$matchId/technical-defeat',
+      data: {
+        'loserId': loserId,
+        if (reason != null) 'reason': reason,
+      },
+    );
+    return MatchDto.fromJson(response.data as Map<String, dynamic>);
+  }
+
+  @override
+  Future<MatchSetDto> technicalDefeatSet(int matchId, int setNumber,
+      int loserId, {String? reason}) async {
+    final response = await _dio.post(
+      '/api/v1/matches/$matchId/sets/$setNumber/technical-defeat',
+      data: {
+        'loserId': loserId,
+        if (reason != null) 'reason': reason,
+      },
+    );
+    return MatchSetDto.fromJson(response.data as Map<String, dynamic>);
+  }
+
+  @override
   Future<PageResult<MatchDto>> fetchPlayersMatches({
     required String playerId,
     String? player2Id,

@@ -42,6 +42,7 @@ class RestAuthService {
   Future<void> register({
     required String login,
     required String password,
+    required String role,
     required String firstName,
     required String lastName,
     String? patronymicName,
@@ -53,7 +54,7 @@ class RestAuthService {
     await _dio.post('/api/v1/auth/register', data: {
       'login': login,
       'password': password,
-      'role': 'PLAYER',
+      'role': role,
       'firstName': firstName,
       'lastName': lastName,
       if (patronymicName != null) 'patronymicName': patronymicName,

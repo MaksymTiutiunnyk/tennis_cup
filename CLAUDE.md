@@ -104,9 +104,11 @@ Any cubit needed by a pushed route (`/players/:id`, `/comparison/...`) **must** 
 
 Models in `lib/data/models/` are pure data classes — no factory methods. Services parse API responses into DTOs (`lib/data/services/dto/`); repositories map DTOs to domain models via private static methods. Shared string→value helpers (e.g. `arenaColorFromString`, `timeFromString`) live as top-level functions in the relevant DTO file.
 
-`Player` has a `hasDetailedStats` flag (`false` for REST-sourced players). Widgets check this before rendering stats fields (wins/losses/medals/rankUTTF) and show `–` when false.
+`Player` built from full REST responses has all stats fields populated. `Player` built from brief API responses (e.g. `PlayerBriefDto` used by the home dashboard) has stats fields zeroed (`year`, `wins`, `loses`, `gold`, `silver`, `bronze`, `rankTennis`, `rankUTTF` all `0`). Widgets that render stats should guard against zero values and show `–` when appropriate.
 
 `Player.imageUrl` is `''` for REST-sourced players (no image API yet). Use `PlayerAvatar` widget instead of `FadeInImage.assetNetwork` directly — it guards against the empty URL.
+
+`MatchView` and `WinnerView` (`lib/data/models/`) are lightweight view models for the home dashboard — they carry only what those widgets need and are mapped directly from the dashboard DTOs in `TournamentRepository`. They are not general-purpose replacements for `Tournament` or `Match`.
 
 ### Partially implemented features
 
@@ -117,7 +119,7 @@ All services are on REST. The following behaviours are still incomplete:
 - Player avatars — shows default asset (`imageUrl` is always `''` from REST)
 - News images are served from a local GCS-compatible storage emulator at `localhost:4443`. On Android emulator, `localhost` resolves to the emulator's own loopback — replace it with `10.0.2.2`. The `SingleInterestingNews` widget falls back to `default_image.jpg` on any load failure.
 
-Home screen widgets (`LiveStreamMatches`, `UpcomingMatches`, `Winners`) fetch real tournament data from the REST API. They fall back to "No matches found" / "No winners found" when `tournament.matches` is `null` or `tournament.players`/`places` are empty.
+Home screen widgets (`LiveStreamMatches`, `UpcomingMatches`, `Winners`) use dedicated dashboard endpoints (`GET /api/v1/dashboard/arenas/current-matches`, `/dashboard/tournaments/upcoming-matches`, `/dashboard/arenas/last-winners`) that return pre-aggregated data. `TournamentRepository` maps these to `MatchView` / `WinnerView` and resolves arena color via `fetchArenaById`. Widgets fall back to "No matches found" / "No winners found" on empty results.
 
 ### HTTP client
 

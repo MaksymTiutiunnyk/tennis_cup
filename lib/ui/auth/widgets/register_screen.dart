@@ -22,6 +22,7 @@ class _RegisterContentState extends State<RegisterContent> {
   final _cityCtrl = TextEditingController();
   DateTime? _birthDate;
   String? _gender;
+  String _role = 'PLAYER';
 
   @override
   void dispose() {
@@ -50,6 +51,7 @@ class _RegisterContentState extends State<RegisterContent> {
     context.read<AuthCubit>().register(
           login: _loginCtrl.text.trim(),
           password: _passwordCtrl.text,
+          role: _role,
           firstName: _firstNameCtrl.text.trim(),
           lastName: _lastNameCtrl.text.trim(),
           patronymicName: _patronymicCtrl.text.trim().isEmpty
@@ -93,7 +95,16 @@ class _RegisterContentState extends State<RegisterContent> {
                   'Create account',
                   style: Theme.of(context).textTheme.headlineLarge,
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: 16),
+                SegmentedButton<String>(
+                  segments: const [
+                    ButtonSegment(value: 'PLAYER', label: Text('Player')),
+                    ButtonSegment(value: 'REFEREE', label: Text('Referee')),
+                  ],
+                  selected: {_role},
+                  onSelectionChanged: (s) => setState(() => _role = s.first),
+                ),
+                const SizedBox(height: 16),
                 TextFormField(
                   controller: _loginCtrl,
                   decoration: const InputDecoration(labelText: 'Login *'),
