@@ -7,12 +7,12 @@ import 'package:tennis_cup/data/models/arena.dart';
 import 'package:tennis_cup/data/models/match.dart';
 import 'package:tennis_cup/data/models/match_view.dart';
 import 'package:tennis_cup/routing/app_router.dart';
-import 'package:tennis_cup/ui/view_only/schedule/view_models/arena_filter_cubit.dart';
 import 'package:tennis_cup/ui/view_only/home/view_models/live_match_cubit.dart';
-import 'package:tennis_cup/ui/view_only/schedule/view_models/schedule_date_cubit.dart';
-import 'package:tennis_cup/ui/view_only/schedule/view_models/time_filter_cubit.dart';
 import 'package:tennis_cup/ui/view_only/home/view_models/video_player_cubit.dart';
 import 'package:tennis_cup/ui/view_only/home/widgets/live_stream_match_player.dart';
+import 'package:tennis_cup/ui/view_only/schedule/view_models/arena_filter_cubit.dart';
+import 'package:tennis_cup/ui/view_only/schedule/view_models/schedule_date_cubit.dart';
+import 'package:tennis_cup/ui/view_only/schedule/view_models/time_filter_cubit.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 final _dateFormatter = DateFormat('yyyy-MM-dd');
@@ -78,8 +78,7 @@ class LiveStreamMatch extends StatelessWidget {
                                 const SizedBox(width: 8),
                                 Text(
                                   'Arena: ${match.arenaName}',
-                                  style:
-                                      Theme.of(context).textTheme.bodyMedium,
+                                  style: Theme.of(context).textTheme.bodyMedium,
                                 ),
                               ],
                             ),
@@ -127,8 +126,8 @@ class LiveStreamMatch extends StatelessWidget {
                                 .read<VideoPlayerCubit>()
                                 .runFullScreenPlayer(
                                   match,
-                                  state.youtubePlayerController!.value
-                                      .position.inSeconds,
+                                  state.youtubePlayerController!.value.position
+                                      .inSeconds,
                                 );
                           },
                         )
@@ -144,8 +143,7 @@ class LiveStreamMatch extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 LiveStreamMatchPlayer(
-                                  player:
-                                      state?.bluePlayer ?? match.bluePlayer,
+                                  player: state?.bluePlayer ?? match.bluePlayer,
                                   score: state?.blueScore ?? match.blueScore,
                                 ),
                                 const SizedBox(height: 16),

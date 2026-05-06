@@ -46,7 +46,7 @@ class _TournamentFormState extends State<TournamentForm> {
     if (e != null) {
       _type = e.time.name.toUpperCase();
       if (e.gender.isNotEmpty) _gender = e.gender;
-      _arenaId = int.tryParse(e.arena.id ?? '');
+      _arenaId = int.tryParse(e.arena.id);
       _startTime = e.date;
       _refereeId = e.refereeId;
       _selectedPlayers = e.players
@@ -73,8 +73,7 @@ class _TournamentFormState extends State<TournamentForm> {
       if (mounted) {
         setState(() {
           _arenas = arenas;
-          _arenaId ??=
-              arenas.isNotEmpty ? int.tryParse(arenas.first.id ?? '') : null;
+          _arenaId ??= arenas.isNotEmpty ? int.tryParse(arenas.first.id) : null;
           _loadingArenas = false;
         });
       }
@@ -198,7 +197,7 @@ class _TournamentFormState extends State<TournamentForm> {
                       decoration: const InputDecoration(labelText: 'Arena'),
                       items: _arenas
                           .map((a) => DropdownMenuItem(
-                              value: int.tryParse(a.id ?? ''),
+                              value: int.tryParse(a.id),
                               child:
                                   Text('${a.title} (${a.city ?? ''})'.trim())))
                           .toList(),

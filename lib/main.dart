@@ -8,8 +8,8 @@ import 'package:tennis_cup/data/models/tournament.dart';
 import 'package:tennis_cup/routing/app_router.dart';
 import 'package:tennis_cup/ui/auth/view_models/auth_cubit.dart';
 import 'package:tennis_cup/ui/core/themes/app_theme.dart';
-import 'package:tennis_cup/ui/user/core/view_models/active_role_cubit.dart';
 import 'package:tennis_cup/ui/core/widgets/connection_monitor.dart';
+import 'package:tennis_cup/ui/user/core/view_models/active_role_cubit.dart';
 import 'package:tennis_cup/ui/view_only/home/view_models/live_stream_match_index_cubit.dart';
 import 'package:tennis_cup/ui/view_only/home/view_models/video_player_cubit.dart';
 import 'package:tennis_cup/ui/view_only/news/view_models/news_cubit.dart';
@@ -73,7 +73,11 @@ class _TennisCupState extends State<TennisCup> {
         ),
         BlocProvider(
           create: (_) => ArenaFilterCubit(
-            const Arena(title: '', color: Colors.grey),
+            const Arena(
+                id: '1',
+                title: 'Kyiv Yellow Arena',
+                color: Colors.yellow,
+                city: 'Kyiv'),
           ),
         ),
         BlocProvider(

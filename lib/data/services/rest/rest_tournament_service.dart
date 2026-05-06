@@ -1,8 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:intl/intl.dart';
-import 'package:tennis_cup/data/models/arena.dart';
 import 'package:tennis_cup/core/pagination/page_request.dart';
 import 'package:tennis_cup/core/pagination/page_result.dart';
+import 'package:tennis_cup/data/models/arena.dart';
 import 'package:tennis_cup/data/models/tournament.dart';
 import 'package:tennis_cup/data/services/abstract/i_tournament_service.dart';
 import 'package:tennis_cup/data/services/dto/dashboard_dto.dart';
@@ -39,8 +39,7 @@ class RestTournamentService implements ITournamentService {
         continue;
       }
       if (player2Id != null &&
-          !dto.participants
-              .any((p) => p.playerId.toString() == player2Id)) {
+          !dto.participants.any((p) => p.playerId.toString() == player2Id)) {
         continue;
       }
       dtos.add(dto);
@@ -67,7 +66,7 @@ class RestTournamentService implements ITournamentService {
     final queryParams = <String, dynamic>{
       'start': _dateFormat.format(date),
     };
-    if (arena.id != null) queryParams['arenaId'] = arena.id;
+    if (arena.id.isNotEmpty) queryParams['arenaId'] = arena.id;
 
     final response =
         await _dio.get('/api/v1/tournaments', queryParameters: queryParams);
@@ -110,8 +109,8 @@ class RestTournamentService implements ITournamentService {
 
   @override
   Future<List<ArenaMatchViewDto>> fetchCurrentMatches() async {
-    final response = await _dio.get<List<dynamic>>(
-        '/api/v1/dashboard/arenas/current-matches');
+    final response = await _dio
+        .get<List<dynamic>>('/api/v1/dashboard/arenas/current-matches');
     return (response.data ?? [])
         .map((e) => ArenaMatchViewDto.fromJson(e as Map<String, dynamic>))
         .toList();
@@ -119,8 +118,8 @@ class RestTournamentService implements ITournamentService {
 
   @override
   Future<List<ArenaMatchViewDto>> fetchDashboardUpcomingMatches() async {
-    final response = await _dio.get<List<dynamic>>(
-        '/api/v1/dashboard/tournaments/upcoming-matches');
+    final response = await _dio
+        .get<List<dynamic>>('/api/v1/dashboard/tournaments/upcoming-matches');
     return (response.data ?? [])
         .map((e) => ArenaMatchViewDto.fromJson(e as Map<String, dynamic>))
         .toList();
@@ -128,8 +127,8 @@ class RestTournamentService implements ITournamentService {
 
   @override
   Future<List<ArenaLastWinnerDto>> fetchLastWinners() async {
-    final response = await _dio
-        .get<List<dynamic>>('/api/v1/dashboard/arenas/last-winners');
+    final response =
+        await _dio.get<List<dynamic>>('/api/v1/dashboard/arenas/last-winners');
     return (response.data ?? [])
         .map((e) => ArenaLastWinnerDto.fromJson(e as Map<String, dynamic>))
         .toList();
@@ -227,15 +226,15 @@ class RestTournamentService implements ITournamentService {
 
   @override
   Future<TournamentDto> startTournament(int id) async {
-    final response = await _dio
-        .post<Map<String, dynamic>>('/api/v1/tournaments/$id/start');
+    final response =
+        await _dio.post<Map<String, dynamic>>('/api/v1/tournaments/$id/start');
     return TournamentDto.fromJson(response.data!);
   }
 
   @override
   Future<TournamentDto> finishTournament(int id) async {
-    final response = await _dio
-        .post<Map<String, dynamic>>('/api/v1/tournaments/$id/finish');
+    final response =
+        await _dio.post<Map<String, dynamic>>('/api/v1/tournaments/$id/finish');
     return TournamentDto.fromJson(response.data!);
   }
 

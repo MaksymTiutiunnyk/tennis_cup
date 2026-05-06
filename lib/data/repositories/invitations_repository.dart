@@ -16,8 +16,7 @@ class InvitationsRepository {
   Future<List<TournamentInvitation>> fetchInvitations({
     required String playerId,
   }) async {
-    final dtos =
-        await _tournamentService.fetchInvitations(playerId: playerId);
+    final dtos = await _tournamentService.fetchInvitations(playerId: playerId);
     if (dtos.isEmpty) return const [];
 
     final tournamentIds = dtos.map((d) => d.tournamentId).toSet();
@@ -54,7 +53,7 @@ class InvitationsRepository {
     ArenaDto? arenaDto,
   ) {
     final arena = Arena(
-      id: arenaDto?.id.toString(),
+      id: arenaDto?.id.toString() ?? '',
       title: arenaDto?.name ?? '',
       color: arenaColorFromString(arenaDto?.color ?? ''),
       city: arenaDto?.city,
