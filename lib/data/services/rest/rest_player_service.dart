@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:dio/dio.dart';
 import 'package:tennis_cup/core/pagination/page_request.dart';
 import 'package:tennis_cup/core/pagination/page_result.dart';
@@ -60,8 +62,24 @@ class RestPlayerService implements IPlayerService {
 
   @override
   Future<void> updatePlayerProfileById(
-      int playerId, Map<String, dynamic> fields) {
-    throw UnimplementedError('Admin player edit endpoint not yet available');
+      int playerId, Map<String, dynamic> fields) async {
+    await _dio.put<void>('/api/v1/players/$playerId', data: fields);
+  }
+
+  @override
+  Future<String> uploadPlayerAvatar(int playerId, Uint8List bytes) async {
+    final formData = FormData.fromMap({
+      'file': MultipartFile.fromBytes(
+        bytes,
+        filename: 'avatar.jpg',
+        contentType: DioMediaType('image', 'jpeg'),
+      ),
+    });
+    final response = await _dio.put<Map<String, dynamic>>(
+      '/api/v1/players/$playerId/avatar',
+      data: formData,
+    );
+    return response.data!['avatarUrl'] as String;
   }
 
   static Player _playerFromRatingRecord(Map<String, dynamic> json) {
@@ -95,6 +113,7 @@ class RestPlayerService implements IPlayerService {
     final place = [city, country].where((s) => s.isNotEmpty).join(', ');
     return Player(
       playerId: json['id']?.toString() ?? '',
+      userId: (json['userId'] as num?)?.toInt(),
       name: json['firstName'] as String? ?? '',
       surname: json['lastName'] as String? ?? '',
       sex: gender == 'MALE'

@@ -38,7 +38,11 @@ class OrganizerTournamentsTab extends StatelessWidget {
         BlocProvider(create: (_) => ScheduleDateCubit(DateTime.now())),
         BlocProvider(
           create: (_) => ArenaFilterCubit(
-            const Arena(title: '', color: Colors.grey),
+            const Arena(
+                id: '1',
+                title: 'Kyiv Yellow Arena',
+                color: Colors.yellow,
+                city: 'Kyiv'),
           ),
         ),
         BlocProvider(create: (_) => TimeFilterCubit(Time.Evening)),

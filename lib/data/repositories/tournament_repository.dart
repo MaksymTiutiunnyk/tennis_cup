@@ -1,8 +1,8 @@
+import 'package:tennis_cup/core/pagination/page_request.dart';
+import 'package:tennis_cup/core/pagination/page_result.dart';
 import 'package:tennis_cup/data/models/arena.dart';
 import 'package:tennis_cup/data/models/match.dart';
 import 'package:tennis_cup/data/models/match_view.dart';
-import 'package:tennis_cup/core/pagination/page_request.dart';
-import 'package:tennis_cup/core/pagination/page_result.dart';
 import 'package:tennis_cup/data/models/player.dart';
 import 'package:tennis_cup/data/models/tournament.dart';
 import 'package:tennis_cup/data/models/tournament_request.dart';
@@ -166,7 +166,7 @@ class TournamentRepository {
       name: request.name,
       type: request.type,
       gender: request.gender,
-      startTime: request.startTime.toIso8601String(),
+      startTime: request.startTime.toUtc().toIso8601String(),
       arenaId: request.arenaId,
       refereeId: request.refereeId,
       matchDurationMinutes: request.matchDurationMinutes,
@@ -181,7 +181,7 @@ class TournamentRepository {
         name: request.name,
         type: request.type,
         gender: request.gender,
-        startTime: request.startTime?.toIso8601String(),
+        startTime: request.startTime?.toUtc().toIso8601String(),
         arenaId: request.arenaId,
         refereeId: request.refereeId,
         playerIds: request.playerIds,
@@ -371,6 +371,7 @@ class TournamentRepository {
       places: places,
       isFinished: dto.status == 'FINISHED',
       matches: matches,
+      refereeId: dto.refereeId != 0 ? dto.refereeId : null,
     );
   }
 }

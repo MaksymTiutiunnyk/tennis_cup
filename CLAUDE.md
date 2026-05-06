@@ -110,6 +110,10 @@ Models in `lib/data/models/` are pure data classes — no factory methods. Servi
 
 `MatchView` and `WinnerView` (`lib/data/models/`) are lightweight view models for the home dashboard — they carry only what those widgets need and are mapped directly from the dashboard DTOs in `TournamentRepository`. They are not general-purpose replacements for `Tournament` or `Match`.
 
+`Tournament.refereeId` is `int?` and is mapped from `TournamentDto.refereeId` (stored as `0` when absent in the DTO — the repository converts `0` → `null`). In the organizer tournament form, edit mode shows "Referee #ID" as a placeholder because the current API has no endpoint to look up a user's name by ID (`GET /api/v1/users/{id}` returns `login`/`status`/`roles` only, no name fields).
+
+`AdminRepository.searchReferees` calls `GET /api/v1/admin/search?roles=REFEREE`. The endpoint is accessible to both ADMIN and ORGANIZER roles (backend was incorrectly restricting it to ADMIN only; that has been corrected on the backend).
+
 ### Partially implemented features
 
 All services are on REST. The following behaviours are still incomplete:

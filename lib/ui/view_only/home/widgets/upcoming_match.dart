@@ -24,7 +24,7 @@ class UpcomingMatch extends StatelessWidget {
         context.read<ArenaFilterCubit>().selectArena(Arena(
               id: match.arenaId,
               title: match.arenaName,
-              color: Colors.grey,
+              color: match.arenaColor,
             ));
         context.go(AppRoutes.viewSchedule);
       },
@@ -41,7 +41,7 @@ class UpcomingMatch extends StatelessWidget {
                   style: Theme.of(context).textTheme.bodySmall,
                 ),
                 const SizedBox(width: 8),
-                const Icon(Icons.circle, color: Colors.grey, size: 8),
+                Icon(Icons.circle, color: match.arenaColor, size: 8),
                 const SizedBox(width: 8),
                 Text(
                   match.arenaName,

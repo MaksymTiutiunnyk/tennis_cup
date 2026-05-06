@@ -6,6 +6,8 @@ import 'package:tennis_cup/data/models/arena.dart';
 import 'package:tennis_cup/data/models/tournament.dart';
 import 'package:tennis_cup/data/models/tournament_request.dart';
 import 'package:tennis_cup/ui/user/organizer/view_models/organizer_tournaments_cubit.dart';
+import 'package:tennis_cup/ui/user/organizer/widgets/player_picker.dart';
+import 'package:tennis_cup/ui/user/organizer/widgets/referee_search_field.dart';
 
 final _displayFmt = DateFormat('dd MMM yyyy HH:mm');
 
@@ -21,7 +23,6 @@ class TournamentForm extends StatefulWidget {
 class _TournamentFormState extends State<TournamentForm> {
   final _formKey = GlobalKey<FormState>();
   late final TextEditingController _nameCtrl;
-  late final TextEditingController _refereeCtrl;
   late final TextEditingController _durationCtrl;
 
   String _type = 'MORNING';
@@ -31,6 +32,9 @@ class _TournamentFormState extends State<TournamentForm> {
   List<Arena> _arenas = [];
   bool _loadingArenas = true;
 
+  int? _refereeId;
+  List<SelectedPlayer> _selectedPlayers = [];
+
   bool get _isEdit => widget.existing != null;
 
   @override
@@ -38,13 +42,20 @@ class _TournamentFormState extends State<TournamentForm> {
     super.initState();
     final e = widget.existing;
     _nameCtrl = TextEditingController(text: e?.name ?? '');
-    _refereeCtrl = TextEditingController();
     _durationCtrl = TextEditingController(text: '30');
     if (e != null) {
       _type = e.time.name.toUpperCase();
       if (e.gender.isNotEmpty) _gender = e.gender;
-      _arenaId = int.tryParse(e.arena.id ?? '');
+      _arenaId = int.tryParse(e.arena.id);
       _startTime = e.date;
+      _refereeId = e.refereeId;
+      _selectedPlayers = e.players
+          .map((p) => SelectedPlayer(
+                id: int.tryParse(p.playerId) ?? -1,
+                name: p.fullName,
+              ))
+          .where((entry) => entry.id != -1)
+          .toList();
     }
     _loadArenas();
   }
@@ -52,7 +63,6 @@ class _TournamentFormState extends State<TournamentForm> {
   @override
   void dispose() {
     _nameCtrl.dispose();
-    _refereeCtrl.dispose();
     _durationCtrl.dispose();
     super.dispose();
   }
@@ -63,9 +73,7 @@ class _TournamentFormState extends State<TournamentForm> {
       if (mounted) {
         setState(() {
           _arenas = arenas;
-          _arenaId ??= arenas.isNotEmpty
-              ? int.tryParse(arenas.first.id ?? '')
-              : null;
+          _arenaId ??= arenas.isNotEmpty ? int.tryParse(arenas.first.id) : null;
           _loadingArenas = false;
         });
       }
@@ -95,7 +103,18 @@ class _TournamentFormState extends State<TournamentForm> {
 
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
+
+    if (!_isEdit && _refereeId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please select a referee')),
+      );
+      return;
+    }
+
     final cubit = context.read<OrganizerTournamentsCubit>();
+    final playerIds = _selectedPlayers.isEmpty
+        ? null
+        : _selectedPlayers.map((p) => p.id).toList();
 
     if (_isEdit) {
       await cubit.update(
@@ -106,28 +125,20 @@ class _TournamentFormState extends State<TournamentForm> {
           gender: _gender,
           startTime: _startTime,
           arenaId: _arenaId,
-          refereeId: _refereeCtrl.text.isNotEmpty
-              ? int.tryParse(_refereeCtrl.text.trim())
-              : null,
+          refereeId: _refereeId,
+          playerIds: playerIds,
         ),
       );
     } else {
-      final refereeId = int.tryParse(_refereeCtrl.text.trim());
-      if (refereeId == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Enter a valid referee ID')),
-        );
-        return;
-      }
       await cubit.create(CreateTournamentRequest(
         name: _nameCtrl.text.trim(),
         type: _type,
         gender: _gender,
         startTime: _startTime,
         arenaId: _arenaId ?? 0,
-        refereeId: refereeId,
-        matchDurationMinutes:
-            int.tryParse(_durationCtrl.text.trim()) ?? 30,
+        refereeId: _refereeId!,
+        matchDurationMinutes: int.tryParse(_durationCtrl.text.trim()) ?? 30,
+        playerIds: playerIds,
       ));
     }
 
@@ -159,9 +170,14 @@ class _TournamentFormState extends State<TournamentForm> {
                   DropdownButtonFormField<String>(
                     value: _type,
                     decoration: const InputDecoration(labelText: 'Type'),
-                    items: const ['MORNING', 'DAY', 'EVENING', 'NIGHT', 'MIDNIGHT']
-                        .map((t) =>
-                            DropdownMenuItem(value: t, child: Text(t)))
+                    items: const [
+                      'MORNING',
+                      'DAY',
+                      'EVENING',
+                      'NIGHT',
+                      'MIDNIGHT'
+                    ]
+                        .map((t) => DropdownMenuItem(value: t, child: Text(t)))
                         .toList(),
                     onChanged: (v) => setState(() => _type = v!),
                   ),
@@ -170,8 +186,7 @@ class _TournamentFormState extends State<TournamentForm> {
                     value: _gender,
                     decoration: const InputDecoration(labelText: 'Gender'),
                     items: const ['MALE', 'FEMALE']
-                        .map((g) =>
-                            DropdownMenuItem(value: g, child: Text(g)))
+                        .map((g) => DropdownMenuItem(value: g, child: Text(g)))
                         .toList(),
                     onChanged: (v) => setState(() => _gender = v!),
                   ),
@@ -182,17 +197,16 @@ class _TournamentFormState extends State<TournamentForm> {
                       decoration: const InputDecoration(labelText: 'Arena'),
                       items: _arenas
                           .map((a) => DropdownMenuItem(
-                              value: int.tryParse(a.id ?? ''),
-                              child: Text(
-                                  '${a.title} (${a.city ?? ''})'.trim())))
+                              value: int.tryParse(a.id),
+                              child:
+                                  Text('${a.title} (${a.city ?? ''})'.trim())))
                           .toList(),
                       onChanged: (v) => setState(() => _arenaId = v),
                       validator: (v) => v == null ? 'Required' : null,
                     )
                   else
                     TextFormField(
-                      decoration:
-                          const InputDecoration(labelText: 'Arena ID'),
+                      decoration: const InputDecoration(labelText: 'Arena ID'),
                       keyboardType: TextInputType.number,
                       initialValue: _arenaId?.toString(),
                       onChanged: (v) => _arenaId = int.tryParse(v),
@@ -200,18 +214,10 @@ class _TournamentFormState extends State<TournamentForm> {
                           (v == null || v.isEmpty) ? 'Required' : null,
                     ),
                   const SizedBox(height: 12),
-                  TextFormField(
-                    controller: _refereeCtrl,
-                    decoration: const InputDecoration(
-                      labelText: 'Referee ID',
-                      helperText: 'Enter the referee\'s user ID',
-                    ),
-                    keyboardType: TextInputType.number,
-                    validator: _isEdit
-                        ? null
-                        : (v) => (v == null || v.trim().isEmpty)
-                            ? 'Required for new tournament'
-                            : null,
+                  RefereeSearchField(
+                    initialRefereeId: widget.existing?.refereeId,
+                    onChanged: (result) =>
+                        setState(() => _refereeId = result?.userId),
                   ),
                   const SizedBox(height: 12),
                   if (!_isEdit)
@@ -223,13 +229,19 @@ class _TournamentFormState extends State<TournamentForm> {
                       validator: (v) =>
                           (int.tryParse(v ?? '') ?? 0) <= 0 ? 'Required' : null,
                     ),
-                  const SizedBox(height: 12),
+                  if (!_isEdit) const SizedBox(height: 12),
                   ListTile(
                     contentPadding: EdgeInsets.zero,
                     title: const Text('Start time'),
                     subtitle: Text(_displayFmt.format(_startTime)),
                     trailing: const Icon(Icons.calendar_today),
                     onTap: _pickDateTime,
+                  ),
+                  const SizedBox(height: 12),
+                  PlayerPicker(
+                    initialPlayers: _selectedPlayers,
+                    onChanged: (players) =>
+                        setState(() => _selectedPlayers = players),
                   ),
                   const SizedBox(height: 24),
                   BlocConsumer<OrganizerTournamentsCubit,

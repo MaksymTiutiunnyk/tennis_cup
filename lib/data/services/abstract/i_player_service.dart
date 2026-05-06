@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:tennis_cup/core/pagination/page_request.dart';
 import 'package:tennis_cup/core/pagination/page_result.dart';
 import 'package:tennis_cup/data/models/player.dart';
@@ -16,4 +18,6 @@ abstract interface class IPlayerService {
   Future<Player> fetchPlayerById(String id);
 
   Future<void> updatePlayerProfileById(int playerId, Map<String, dynamic> fields);
+
+  Future<String> uploadPlayerAvatar(int playerId, Uint8List bytes);
 }
