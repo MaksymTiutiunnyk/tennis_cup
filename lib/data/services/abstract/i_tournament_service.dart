@@ -32,6 +32,11 @@ abstract interface class ITournamentService {
 
   Future<List<ArenaLastWinnerDto>> fetchLastWinners();
 
+  Future<PageResult<TournamentDto>> fetchActiveTournamentsForReferee(
+    PageRequest page,
+    String refereeId,
+  );
+
   Future<PageResult<TournamentDto>> fetchTournamentsPaged(
     PageRequest page, {
     String? status,

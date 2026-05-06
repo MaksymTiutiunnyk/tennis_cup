@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:tennis_cup/data/models/arena.dart';
 import 'package:tennis_cup/core/pagination/page_request.dart';
 import 'package:tennis_cup/core/pagination/page_result.dart';
+import 'package:tennis_cup/data/models/arena.dart';
 import 'package:tennis_cup/data/models/tournament.dart';
 import 'package:tennis_cup/data/services/abstract/i_tournament_service.dart';
 import 'package:tennis_cup/data/services/dto/dashboard_dto.dart';
@@ -251,4 +251,11 @@ class FirebaseTournamentService implements ITournamentService {
 
   @override
   Future<List<ArenaLastWinnerDto>> fetchLastWinners() async => const [];
+
+  @override
+  Future<PageResult<TournamentDto>> fetchActiveTournamentsForReferee(
+      PageRequest page, String refereeId) {
+    throw UnimplementedError(
+        'fetchActiveTournamentsForReferee not implemented for Firebase');
+  }
 }

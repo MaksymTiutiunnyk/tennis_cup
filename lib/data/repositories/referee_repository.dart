@@ -17,13 +17,11 @@ class RefereeRepository {
   Future<List<TournamentDto>> fetchActiveTournamentsForReferee(
       String userId) async {
     final refereeId = int.tryParse(userId) ?? -1;
-    final result = await _tournamentService.fetchTournamentsPaged(
+    final result = await _tournamentService.fetchActiveTournamentsForReferee(
       const PageRequest(page: 0, size: 100),
-      status: 'ACTIVE',
+      refereeId.toString(),
     );
-    return result.items
-        .where((dto) => dto.refereeId == refereeId)
-        .toList();
+    return result.items.where((dto) => dto.refereeId == refereeId).toList();
   }
 
   Future<List<MatchDto>> fetchMatchesForTournament(int tournamentId) =>
@@ -38,8 +36,7 @@ class RefereeRepository {
     return (match: dto, blue: await blueF, red: await redF);
   }
 
-  Future<MatchDto> startMatch(int matchId) =>
-      _matchService.startMatch(matchId);
+  Future<MatchDto> startMatch(int matchId) => _matchService.startMatch(matchId);
 
   Future<MatchDto> finishMatch(int matchId) =>
       _matchService.finishMatch(matchId);
