@@ -174,7 +174,6 @@ class _TournamentManagementScreenState
             state: matchState,
             onStartMatch: () async {
               await context.read<RefereeMatchCubit>().startMatch();
-              _loadMatches();
             },
           );
         }

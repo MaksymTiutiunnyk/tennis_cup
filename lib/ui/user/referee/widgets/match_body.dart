@@ -18,18 +18,14 @@ class MatchBody extends StatelessWidget {
         match.sets.where((s) => s.status == 'PENDING').firstOrNull;
 
     final blueSetsWon = match.sets
-        .where(
-          (s) =>
-              (s.status == 'FINISHED' || s.status == 'TECHNICAL_DEFEAT') &&
-              s.winnerId == match.bluePlayerId,
-        )
+        .where((s) =>
+            (s.status == 'FINISHED' || s.status == 'TECHNICAL_DEFEAT') &&
+            s.winnerId == match.bluePlayerId)
         .length;
     final redSetsWon = match.sets
-        .where(
-          (s) =>
-              (s.status == 'FINISHED' || s.status == 'TECHNICAL_DEFEAT') &&
-              s.winnerId == match.redPlayerId,
-        )
+        .where((s) =>
+            (s.status == 'FINISHED' || s.status == 'TECHNICAL_DEFEAT') &&
+            s.winnerId == match.redPlayerId)
         .length;
 
     if (activeSet == null && pendingSet == null) {
@@ -73,66 +69,64 @@ class MatchBody extends StatelessWidget {
         leftIsBlue ? state.redIssuedCards : state.blueIssuedCards;
 
     return Column(
-        children: [
-          Padding(
-            padding: EdgeInsets.symmetric(vertical: compact ? 4 : 8),
-            child: Text(
-              'Set $setNum  ·  $blueSetsWon – $redSetsWon',
-              style: compact
-                  ? Theme.of(context).textTheme.titleSmall
-                  : Theme.of(context).textTheme.titleMedium,
-            ),
+      children: [
+        Padding(
+          padding: EdgeInsets.symmetric(vertical: compact ? 4 : 8),
+          child: Text(
+            'Set $setNum  ·  $blueSetsWon – $redSetsWon',
+            style: compact
+                ? Theme.of(context).textTheme.titleSmall
+                : Theme.of(context).textTheme.titleMedium,
           ),
-          Expanded(
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Expanded(
-                  child: PlayerColumn(
-                    key: const ValueKey('left-score'),
-                    player: leftPlayer,
-                    score: leftScore,
-                    isServing: serverId != null &&
-                        serverId.toString() == leftPlayer.playerId,
-                    issuedCards: leftIssuedCards,
-                    bgColor: leftIsBlue
-                        ? const Color(0xFF1565C0)
-                        : const Color(0xFFC62828),
-                    onScore:
-                        leftIsBlue ? cubit.addPointBlue : cubit.addPointRed,
-                    onToggleCard: (card) => cubit.toggleCard(leftIsBlue, card),
-                    compact: compact,
-                  ),
+        ),
+        Expanded(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Expanded(
+                child: PlayerColumn(
+                  key: const ValueKey('left-score'),
+                  player: leftPlayer,
+                  score: leftScore,
+                  isServing: serverId != null &&
+                      serverId.toString() == leftPlayer.playerId,
+                  issuedCards: leftIssuedCards,
+                  bgColor: leftIsBlue
+                      ? const Color(0xFF1565C0)
+                      : const Color(0xFFC62828),
+                  onScore: leftIsBlue ? cubit.addPointBlue : cubit.addPointRed,
+                  onToggleCard: (card) => cubit.toggleCard(leftIsBlue, card),
+                  compact: compact,
                 ),
-                const VerticalDivider(width: 1),
-                Expanded(
-                  child: PlayerColumn(
-                    key: const ValueKey('right-score'),
-                    player: rightPlayer,
-                    score: rightScore,
-                    isServing: serverId != null &&
-                        serverId.toString() == rightPlayer.playerId,
-                    issuedCards: rightIssuedCards,
-                    bgColor: leftIsBlue
-                        ? const Color(0xFFC62828)
-                        : const Color(0xFF1565C0),
-                    onScore:
-                        leftIsBlue ? cubit.addPointRed : cubit.addPointBlue,
-                    onToggleCard: (card) => cubit.toggleCard(!leftIsBlue, card),
-                    compact: compact,
-                  ),
+              ),
+              const VerticalDivider(width: 1),
+              Expanded(
+                child: PlayerColumn(
+                  key: const ValueKey('right-score'),
+                  player: rightPlayer,
+                  score: rightScore,
+                  isServing: serverId != null &&
+                      serverId.toString() == rightPlayer.playerId,
+                  issuedCards: rightIssuedCards,
+                  bgColor: leftIsBlue
+                      ? const Color(0xFFC62828)
+                      : const Color(0xFF1565C0),
+                  onScore: leftIsBlue ? cubit.addPointRed : cubit.addPointBlue,
+                  onToggleCard: (card) => cubit.toggleCard(!leftIsBlue, card),
+                  compact: compact,
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-          ActionBar(
-            state: state,
-            activeSet: activeSet,
-            blueSetsWon: blueSetsWon,
-            redSetsWon: redSetsWon,
-            compact: compact,
-          ),
-        ],
+        ),
+        ActionBar(
+          state: state,
+          activeSet: activeSet,
+          blueSetsWon: blueSetsWon,
+          redSetsWon: redSetsWon,
+          compact: compact,
+        ),
+      ],
     );
   }
 }

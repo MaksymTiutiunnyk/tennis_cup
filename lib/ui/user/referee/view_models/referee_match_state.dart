@@ -17,7 +17,6 @@ class RefereeMatchReady extends RefereeMatchState {
   final MatchDto match;
   final Player bluePlayer;
   final Player redPlayer;
-  final bool initialBlueOnLeft;
   final int? firstServerPlayerId;
   final CardState blueIssuedCards;
   final CardState redIssuedCards;
@@ -29,7 +28,6 @@ class RefereeMatchReady extends RefereeMatchState {
     required this.match,
     required this.bluePlayer,
     required this.redPlayer,
-    required this.initialBlueOnLeft,
     required this.blueIssuedCards,
     required this.redIssuedCards,
     required this.scoreUndoStack,
@@ -37,8 +35,7 @@ class RefereeMatchReady extends RefereeMatchState {
     this.notification,
   });
 
-  bool isDisplaySwapped(int setNumber) =>
-      (setNumber % 2 == 0) != initialBlueOnLeft;
+  bool isDisplaySwapped(int setNumber) => setNumber.isEven;
 
   int? currentServerId() {
     if (firstServerPlayerId == null) return null;
@@ -61,7 +58,6 @@ class RefereeMatchReady extends RefereeMatchState {
 
   RefereeMatchReady copyWith({
     MatchDto? match,
-    bool? initialBlueOnLeft,
     int? firstServerPlayerId,
     CardState? blueIssuedCards,
     CardState? redIssuedCards,
@@ -72,7 +68,6 @@ class RefereeMatchReady extends RefereeMatchState {
         match: match ?? this.match,
         bluePlayer: bluePlayer,
         redPlayer: redPlayer,
-        initialBlueOnLeft: initialBlueOnLeft ?? this.initialBlueOnLeft,
         firstServerPlayerId: firstServerPlayerId ?? this.firstServerPlayerId,
         blueIssuedCards: blueIssuedCards ?? this.blueIssuedCards,
         redIssuedCards: redIssuedCards ?? this.redIssuedCards,

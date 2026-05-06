@@ -21,7 +21,6 @@ class RefereeMatchCubit extends Cubit<RefereeMatchState> {
         match: match,
         bluePlayer: blue,
         redPlayer: red,
-        initialBlueOnLeft: true,
         blueIssuedCards: const {},
         redIssuedCards: const {},
         scoreUndoStack: const [],
@@ -35,19 +34,12 @@ class RefereeMatchCubit extends Cubit<RefereeMatchState> {
     final current = state;
     if (current is! RefereeMatchReady) return;
     try {
-      final (:match, :blue, :red) = await _repository
-          .fetchMatchWithPlayers(current.match.id);
+      final (:match, :blue, :red) =
+          await _repository.fetchMatchWithPlayers(current.match.id);
       emit(current.copyWith(match: match, scoreUndoStack: const []));
     } catch (e) {
       emit(RefereeMatchError(e.toString()));
     }
-  }
-
-  void toggleInitialSide() {
-    final s = state;
-    if (s is! RefereeMatchReady) return;
-    if (s.match.status != 'PENDING') return;
-    emit(s.copyWith(initialBlueOnLeft: !s.initialBlueOnLeft));
   }
 
   void setFirstServer(int playerId) {
@@ -59,9 +51,51 @@ class RefereeMatchCubit extends Cubit<RefereeMatchState> {
   Future<void> startMatch() async {
     final s = state;
     if (s is! RefereeMatchReady) return;
+    if (s.firstServerPlayerId == null) {
+      emit(s.copyWith(notification: 'Select the first server before starting'));
+      return;
+    }
+
     try {
-      await _repository.startMatch(s.match.id);
-      await _reload();
+      final startedMatch = await _repository.startMatch(s.match.id);
+      var current = s.copyWith(
+        match: startedMatch,
+        scoreUndoStack: const [],
+      );
+      emit(current);
+
+      final firstPendingSet = startedMatch.sets
+              .where((set) => set.status == 'PENDING')
+              .firstOrNull
+              ?.number ??
+          1;
+
+      MatchSetDto? startedSet;
+      for (var attempt = 0; attempt < 2; attempt++) {
+        try {
+          startedSet = await _repository.startSet(s.match.id, firstPendingSet);
+          break;
+        } catch (e) {
+          await Future<void>.delayed(const Duration(milliseconds: 250));
+        }
+      }
+
+      if (startedSet != null) {
+        final updatedSets = current.match.sets
+            .map((set) => set.number == startedSet!.number ? startedSet : set)
+            .toList();
+        current = current.copyWith(
+          match: _matchWithSets(current.match, updatedSets),
+        );
+        emit(current);
+        await _reload();
+        return;
+      }
+
+      emit(current.copyWith(
+        notification:
+            'Match started, but the first set did not start automatically. Start it manually.',
+      ));
     } catch (e) {
       emit(RefereeMatchError(e.toString()));
     }
@@ -87,10 +121,8 @@ class RefereeMatchCubit extends Cubit<RefereeMatchState> {
     final activeSet =
         s.match.sets.where((st) => st.status == 'ACTIVE').firstOrNull;
     if (activeSet == null) return;
-    final newBlue =
-        activeSet.bluePlayerScore + (isBlue ? 1 : 0);
-    final newRed =
-        activeSet.redPlayerScore + (isBlue ? 0 : 1);
+    final newBlue = activeSet.bluePlayerScore + (isBlue ? 1 : 0);
+    final newRed = activeSet.redPlayerScore + (isBlue ? 0 : 1);
     final newStack = [
       ...s.scoreUndoStack,
       (blue: activeSet.bluePlayerScore, red: activeSet.redPlayerScore),
