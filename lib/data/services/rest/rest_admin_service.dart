@@ -51,4 +51,23 @@ class RestAdminService implements IAdminService {
   Future<void> deleteOrganizer(int organizerId) async {
     await _dio.delete<void>('/api/v1/admin/organizers/$organizerId');
   }
+
+  @override
+  Future<List<UserSearchDto>> searchUsers({
+    required String query,
+    List<String>? roles,
+  }) async {
+    final response = await _dio.get<Map<String, dynamic>>(
+      '/api/v1/admin/search',
+      queryParameters: {
+        'query': query,
+        'size': 20,
+        if (roles != null && roles.isNotEmpty) 'roles': roles,
+      },
+    );
+    final content = (response.data!['content'] as List<dynamic>);
+    return content
+        .map((e) => UserSearchDto.fromJson(e as Map<String, dynamic>))
+        .toList();
+  }
 }

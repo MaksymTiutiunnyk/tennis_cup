@@ -1,3 +1,27 @@
+class UserSearchDto {
+  final int userId;
+  final String firstName;
+  final String lastName;
+  final List<String> roles;
+
+  const UserSearchDto({
+    required this.userId,
+    required this.firstName,
+    required this.lastName,
+    required this.roles,
+  });
+
+  factory UserSearchDto.fromJson(Map<String, dynamic> json) => UserSearchDto(
+        userId: (json['userId'] as num).toInt(),
+        firstName: json['firstName'] as String? ?? '',
+        lastName: json['lastName'] as String? ?? '',
+        roles: (json['roles'] as List<dynamic>?)
+                ?.map((e) => e.toString())
+                .toList() ??
+            [],
+      );
+}
+
 class PendingUserDto {
   final int id;
   final String login;

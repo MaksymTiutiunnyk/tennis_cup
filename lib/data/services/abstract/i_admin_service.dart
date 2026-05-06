@@ -8,4 +8,8 @@ abstract interface class IAdminService {
   Future<void> rejectUser(int userId, {String? reason});
   Future<void> createOrganizer(CreateOrganizerRequestDto dto);
   Future<void> deleteOrganizer(int organizerId);
+  Future<List<UserSearchDto>> searchUsers({
+    required String query,
+    List<String>? roles,
+  });
 }

@@ -2,6 +2,7 @@ import 'package:tennis_cup/core/pagination/page_request.dart';
 import 'package:tennis_cup/core/pagination/page_result.dart';
 import 'package:tennis_cup/data/models/pending_user.dart';
 import 'package:tennis_cup/data/models/user_role.dart';
+import 'package:tennis_cup/data/models/user_search_result.dart';
 import 'package:tennis_cup/data/services/abstract/i_admin_service.dart';
 import 'package:tennis_cup/data/services/dto/admin_dto.dart';
 
@@ -38,6 +39,18 @@ class AdminRepository {
 
   Future<void> deleteOrganizer(int organizerId) =>
       _service.deleteOrganizer(organizerId);
+
+  Future<List<UserSearchResult>> searchReferees(String query) async {
+    final dtos = await _service.searchUsers(query: query);
+    return dtos
+        .where((d) => d.roles.contains('REFEREE'))
+        .map((d) => UserSearchResult(
+              userId: d.userId,
+              firstName: d.firstName,
+              lastName: d.lastName,
+            ))
+        .toList();
+  }
 
   static PendingUser _toPendingUser(PendingUserDto dto) {
     final roles = dto.roles
