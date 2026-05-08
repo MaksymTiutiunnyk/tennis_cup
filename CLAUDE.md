@@ -61,8 +61,8 @@ lib/
     └── user/                      # login-gated screens
         ├── core/                  # shared user widgets (ChangePassword, SettingsTab)
         ├── player/                # player invitations, tournaments tab
-        ├── referee/               # placeholder
-        └── organizer/             # placeholder
+        ├── referee/               # referee tournaments + invitations tabs
+        └── organizer/             # user management, tournament management, news
 ```
 
 ### Routing
@@ -70,7 +70,7 @@ lib/
 `lib/routing/app_router.dart` defines all routes. `AppRoutes` holds path constants.
 
 - **Two `StatefulShellRoute.indexedStack`**: one for view-only mode (`/view/*`), one for user mode (`/user/*`). Each wraps its tabs in a shell widget (`ViewShell` / `UserShell`) that provides the `AppBar` and `BottomNavigationBar`.
-- **Top-level `GoRoute`s** for pushed screens (`/players/:id`, `/comparison/:p1Id/:p2Id`) — these render over the root Navigator so the bottom nav disappears.
+- **Top-level `GoRoute`s** for pushed screens (`/players/:id`, `/comparison/:p1Id/:p2Id`, `/organizer/create-user`, `/organizer/edit-user/:userId`) — these render over the root Navigator so the bottom nav disappears.
 - App mode is URL-driven: `/view/*` = view-only, `/user/*` = user mode. No cubit needed; `ModeSwitcher` reads `GoRouterState.of(context).matchedLocation`.
 - Use `context.go()` to switch tabs or modes (replaces the stack). Use `context.push()` only for top-level pushed routes that need a back button. **Never `context.push()` a shell branch route** — it causes duplicate Navigator page keys.
 - `UserShell` shows `AuthGate` inline when unauthenticated instead of redirecting, preserving the soft-auth UX.
@@ -116,13 +116,21 @@ Thin `Player` objects (built by `_playerFromRatingRecord` from the rating endpoi
 
 `AdminRepository.searchReferees` calls `GET /api/v1/users/search?roles=REFEREE`. `AdminRepository.searchAllUsers` calls `GET /api/v1/users/search` (no role filter). Both are accessible to ADMIN and ORGANIZER roles.
 
+`CombinedUser` (`lib/data/models/combined_user.dart`) is the user model used in search results — carries `userId`, name, `avatarUrl`, and `roles: List<UserRole>`. `isDeletable` is true for organizers and admins. It is passed as a GoRouter route `extra` when navigating to `EditUserScreen` so the initial role set is available without an extra API call.
+
+`PlayerRepository.updateProfile` calls `PATCH /api/v1/admin/users/{id}` (admin endpoint, works for any role). The same PATCH accepts a `roles` array to replace the user's role set (must have at least one role per API spec). Role updates are included in the same PATCH body as profile field changes — no separate endpoint exists.
+
+`UserRegistrationFormBody` (`lib/ui/core/widgets/`) is a shared form widget used by `RegisterScreen` (self-registration), `CreateUserScreen` (admin creates user), and `EditUserScreen` (admin edits user). Edit mode is activated by passing `UserProfileInitialValues`; in edit mode the login/password/role fields are hidden and profile fields are pre-filled. The submit callback typedef makes `role`/`login`/`password` nullable — create callers use `role!`/`login!`/`password!`, edit callers ignore them.
+
+`UsersSearchCubit` implements a soft-delete pattern: `softDelete` removes the item from the list and starts a 4-second commit timer. When `search()` or `refresh()` is called while a delete is pending, the timer is cancelled and the delete is committed immediately (fire-and-forget), and the pending user ID is filtered out of the fresh server results to handle the race. Commit failures restore the item to the list and set `deleteError: true` on the state (shown as a snackbar, not a full-screen error).
+
 ### Partially implemented features
 
 All services are on REST. The following behaviours are still incomplete:
 
 - Real-time updates — no auto-refresh (`watchMatchChanges` / `watchTournamentChanges` return `Stream.empty()`; manual pull-to-refresh only)
 - Player ratings (`rankTennis`, `rankUTTF`) — always `0` in `PlayerDetails` because `GET /api/v1/users/{id}` does not include rating; only the rating-service endpoint (`GET /api/v1/ratings`) returns `ratingValue`, and that is used for ranking list display only
-- Player avatars — shows default asset (`imageUrl` is always `''` from REST for ranking/search; `avatarUrl` is returned by the user profile endpoint)
+- Player avatars — `imageUrl` is always `''` for ranking/search results; `avatarUrl` is returned by `GET /api/v1/users/{id}` and stored in `Player.imageUrl`. Avatar upload (`PUT /api/v1/users/{id}/avatar`) and removal (send `avatarUrl: null` in profile PATCH) are implemented in `EditUserScreen` with deferred upload — bytes are held in cubit state and only sent to the server when the user taps Save.
 - News images are served from a local GCS-compatible storage emulator at `localhost:4443`. On Android emulator, `localhost` resolves to the emulator's own loopback — replace it with `10.0.2.2`. The `SingleInterestingNews` widget falls back to `default_image.jpg` on any load failure.
 
 Home screen widgets (`LiveStreamMatches`, `UpcomingMatches`, `Winners`) use dedicated dashboard endpoints (`GET /api/v1/dashboard/arenas/current-matches`, `/dashboard/tournaments/upcoming-matches`, `/dashboard/arenas/last-winners`) that return pre-aggregated data. `TournamentRepository` maps these to `MatchView` / `WinnerView` and resolves arena color via `fetchArenaById`. Widgets fall back to "No matches found" / "No winners found" on empty results.
@@ -151,7 +159,8 @@ All `DioClient` instances in `ServiceLocator` currently use `gatewayUrl` as thei
 
 - `AuthCubit` is provided at app root
 - Auth does **not** hard-redirect — `UserShell` shows `AuthGate` inline when unauthenticated
-- Registration creates PLAYER accounts only; new accounts are `PENDING_APPROVAL` until an admin approves them
+- Self-registration (`/api/v1/auth/register`) creates PLAYER or REFEREE accounts; new accounts are `PENDING_APPROVAL` until an organizer/admin approves them
+- Admin/organizer can create active accounts of any role directly via `POST /api/v1/admin/users` (`CreateUserScreen`)
 - JWT tokens are stored in `flutter_secure_storage` via `AuthTokenStore`
 
 ### Connectivity
