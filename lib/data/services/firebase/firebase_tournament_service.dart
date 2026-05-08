@@ -106,43 +106,6 @@ class FirebaseTournamentService implements ITournamentService {
   }
 
   @override
-  Future<List<TournamentDto>> fetchRecentTournaments({int limit = 10}) async {
-    final snapshot = await FirebaseFirestore.instance
-        .collection('tournaments')
-        .orderBy('date', descending: true)
-        .limit(limit)
-        .get();
-
-    return snapshot.docs.map((doc) {
-      final data = doc.data();
-      final playerIds = (data['players'] as List<dynamic>?)
-              ?.map((e) => int.tryParse(e.toString()) ?? 0)
-              .toList() ??
-          [];
-      return _dtoFromDoc(doc.id, data, playerIds);
-    }).toList();
-  }
-
-  @override
-  Future<List<TournamentDto>> fetchUpcomingTournaments({int limit = 10}) async {
-    final snapshot = await FirebaseFirestore.instance
-        .collection('tournaments')
-        .where('isFinished', isNotEqualTo: true)
-        .orderBy('date', descending: true)
-        .limit(limit)
-        .get();
-
-    return snapshot.docs.map((doc) {
-      final data = doc.data();
-      final playerIds = (data['players'] as List<dynamic>?)
-              ?.map((e) => int.tryParse(e.toString()) ?? 0)
-              .toList() ??
-          [];
-      return _dtoFromDoc(doc.id, data, playerIds);
-    }).toList();
-  }
-
-  @override
   Stream<void> watchTournamentChanges(String tournamentId) {
     return FirebaseFirestore.instance
         .collectionGroup('matches')
@@ -193,13 +156,6 @@ class FirebaseTournamentService implements ITournamentService {
         return 'MORNING';
     }
   }
-
-  @override
-  Future<PageResult<TournamentDto>> fetchTournamentsPaged(
-    PageRequest page, {
-    String? status,
-  }) async =>
-      const PageResult(items: [], hasMore: false);
 
   @override
   Future<TournamentDto> createTournament(CreateTournamentRequestDto dto) =>

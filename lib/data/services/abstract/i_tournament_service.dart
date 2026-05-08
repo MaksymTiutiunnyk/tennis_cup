@@ -22,10 +22,6 @@ abstract interface class ITournamentService {
     required Time time,
   });
 
-  Future<List<TournamentDto>> fetchRecentTournaments({int limit = 10});
-
-  Future<List<TournamentDto>> fetchUpcomingTournaments({int limit = 10});
-
   Future<List<ArenaMatchViewDto>> fetchCurrentMatches();
 
   Future<List<ArenaMatchViewDto>> fetchDashboardUpcomingMatches();
@@ -36,11 +32,6 @@ abstract interface class ITournamentService {
     PageRequest page,
     String refereeId,
   );
-
-  Future<PageResult<TournamentDto>> fetchTournamentsPaged(
-    PageRequest page, {
-    String? status,
-  });
 
   Stream<void> watchTournamentChanges(String tournamentId);
 

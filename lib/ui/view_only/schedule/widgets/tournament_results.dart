@@ -97,12 +97,13 @@ class TournamentResults extends StatelessWidget {
                       ),
                     );
                   } else {
+                    // TODO: add fallback if nothing is found
                     Match match = tournament.matches!.firstWhere(
                       (m) =>
-                          (m.bluePlayer.fullName == player.fullName &&
-                              m.redPlayer.fullName == opponent.fullName) ||
-                          (m.bluePlayer.fullName == opponent.fullName &&
-                              m.redPlayer.fullName == player.fullName),
+                          (m.bluePlayer.userId == player.userId &&
+                              m.redPlayer.userId == opponent.userId) ||
+                          (m.bluePlayer.userId == opponent.userId &&
+                              m.redPlayer.userId == player.userId),
                     );
 
                     return DataCell(
@@ -110,7 +111,7 @@ class TournamentResults extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            '${match.bluePlayer.fullName == player.fullName ? match.blueScore : match.redScore} : ${match.bluePlayer.fullName == player.fullName ? match.redScore : match.blueScore}',
+                            '${match.bluePlayer.userId == player.userId ? match.blueScore : match.redScore} : ${match.bluePlayer.userId == player.userId ? match.redScore : match.blueScore}',
                             style: Theme.of(context).textTheme.labelLarge,
                           ),
                         ],

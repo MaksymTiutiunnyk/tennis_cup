@@ -72,34 +72,6 @@ class RestTournamentService implements ITournamentService {
   }
 
   @override
-  Future<List<TournamentDto>> fetchRecentTournaments({int limit = 10}) async {
-    final response = await _dio.get('/api/v1/tournaments', queryParameters: {
-      'status': 'FINISHED',
-      'size': limit,
-      'sortDirection': 'DESC',
-    });
-    final body = response.data as Map<String, dynamic>;
-    final content = body['content'] as List<dynamic>;
-    return content
-        .map((json) => TournamentDto.fromJson(json as Map<String, dynamic>))
-        .toList();
-  }
-
-  @override
-  Future<List<TournamentDto>> fetchUpcomingTournaments({int limit = 10}) async {
-    final response = await _dio.get('/api/v1/tournaments', queryParameters: {
-      'status': 'PENDING',
-      'size': limit,
-      'sortDirection': 'ASC',
-    });
-    final body = response.data as Map<String, dynamic>;
-    final content = body['content'] as List<dynamic>;
-    return content
-        .map((json) => TournamentDto.fromJson(json as Map<String, dynamic>))
-        .toList();
-  }
-
-  @override
   Future<List<ArenaMatchViewDto>> fetchCurrentMatches() async {
     final response = await _dio
         .get<List<dynamic>>('/api/v1/dashboard/arenas/current-matches');
@@ -124,27 +96,6 @@ class RestTournamentService implements ITournamentService {
     return (response.data ?? [])
         .map((e) => ArenaLastWinnerDto.fromJson(e as Map<String, dynamic>))
         .toList();
-  }
-
-  @override
-  Future<PageResult<TournamentDto>> fetchTournamentsPaged(
-    PageRequest page, {
-    String? status,
-  }) async {
-    final response = await _dio.get<Map<String, dynamic>>(
-      '/api/v1/tournaments',
-      queryParameters: {
-        'page': page.page,
-        'size': page.size,
-        if (status != null) 'status': status,
-      },
-    );
-    final body = response.data!;
-    final content = (body['content'] as List<dynamic>)
-        .map((e) => TournamentDto.fromJson(e as Map<String, dynamic>))
-        .toList();
-    final totalPages = (body['totalPages'] as num?)?.toInt() ?? 1;
-    return PageResult(items: content, hasMore: page.page + 1 < totalPages);
   }
 
   @override
