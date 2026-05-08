@@ -38,9 +38,9 @@ class RegisterContent extends StatelessWidget {
                 isLoading: state is AuthLoading,
                 submitLabel: 'Register',
                 onSubmit: ({
-                  required role,
-                  required login,
-                  required password,
+                  role,
+                  login,
+                  password,
                   required firstName,
                   required lastName,
                   patronymicName,
@@ -50,9 +50,9 @@ class RegisterContent extends StatelessWidget {
                   required city,
                 }) {
                   context.read<AuthCubit>().register(
-                        login: login,
-                        password: password,
-                        role: role,
+                        login: login!,
+                        password: password!,
+                        role: role!,
                         firstName: firstName,
                         lastName: lastName,
                         patronymicName: patronymicName,

@@ -47,9 +47,9 @@ class CreateUserScreen extends StatelessWidget {
                   availableRoles: availableRoles,
                   isLoading: state is UserCreationLoading,
                   onSubmit: ({
-                    required role,
-                    required login,
-                    required password,
+                    role,
+                    login,
+                    password,
                     required firstName,
                     required lastName,
                     patronymicName,
@@ -59,9 +59,9 @@ class CreateUserScreen extends StatelessWidget {
                     required city,
                   }) {
                     context.read<UserCreationCubit>().createUser(
-                          role: role,
-                          login: login,
-                          password: password,
+                          role: role!,
+                          login: login!,
+                          password: password!,
                           firstName: firstName,
                           lastName: lastName,
                           patronymicName: patronymicName,

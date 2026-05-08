@@ -14,6 +14,7 @@ import 'package:tennis_cup/ui/user/referee/widgets/referee_tournaments_tab.dart'
 import 'package:tennis_cup/ui/view_only/home/widgets/home.dart';
 import 'package:tennis_cup/ui/view_only/news/widgets/news.dart';
 import 'package:tennis_cup/ui/user/organizer/widgets/create_user_screen.dart';
+import 'package:tennis_cup/ui/user/organizer/widgets/edit_user_screen.dart';
 import 'package:tennis_cup/ui/view_only/player_comparison/widgets/players_comparison_route.dart';
 import 'package:tennis_cup/ui/view_only/player_details/widgets/player_details_route.dart';
 
@@ -41,6 +42,7 @@ class AppRoutes {
   static String playerDetails(String id) => '/players/$id';
   static String playersComparison(String p1Id, String p2Id) =>
       '/comparison/$p1Id/$p2Id';
+  static String editUser(String id) => '/organizer/edit-user/$id';
 }
 
 GoRouter buildAppRouter({GlobalKey<NavigatorState>? navigatorKey}) {
@@ -193,6 +195,12 @@ GoRouter buildAppRouter({GlobalKey<NavigatorState>? navigatorKey}) {
       GoRoute(
         path: AppRoutes.createUser,
         builder: (context, state) => const CreateUserScreen(),
+      ),
+      GoRoute(
+        path: '/organizer/edit-user/:userId',
+        builder: (context, state) => EditUserScreen(
+          userId: int.parse(state.pathParameters['userId']!),
+        ),
       ),
     ],
   );

@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 typedef UserRegistrationSubmitCallback = void Function({
-  required String role,
-  required String login,
-  required String password,
+  String? role,
+  String? login,
+  String? password,
   required String firstName,
   required String lastName,
   String? patronymicName,
@@ -14,20 +14,44 @@ typedef UserRegistrationSubmitCallback = void Function({
   required String city,
 });
 
+class UserProfileInitialValues {
+  final String firstName;
+  final String lastName;
+  final String? patronymicName;
+  final String? birthDate;
+  final String? gender;
+  final String? country;
+  final String? city;
+
+  const UserProfileInitialValues({
+    required this.firstName,
+    required this.lastName,
+    this.patronymicName,
+    this.birthDate,
+    this.gender,
+    this.country,
+    this.city,
+  });
+}
+
 class UserRegistrationFormBody extends StatefulWidget {
   final List<String> availableRoles;
   final bool isLoading;
   final UserRegistrationSubmitCallback onSubmit;
   final String submitLabel;
   final Widget? footer;
+  final UserProfileInitialValues? initialValues;
+  final VoidCallback? onAvatarUpload;
 
   const UserRegistrationFormBody({
     super.key,
-    required this.availableRoles,
+    this.availableRoles = const [],
     required this.isLoading,
     required this.onSubmit,
     this.submitLabel = 'Create',
     this.footer,
+    this.initialValues,
+    this.onAvatarUpload,
   });
 
   @override
@@ -45,15 +69,34 @@ class _UserRegistrationFormBodyState extends State<UserRegistrationFormBody> {
   final _birthCtrl = TextEditingController();
   final _countryCtrl = TextEditingController();
   final _cityCtrl = TextEditingController();
-  late String _role;
+  String _role = '';
   DateTime? _birthDate;
   String? _gender;
   bool _obscure = true;
 
+  bool get _isEditMode => widget.initialValues != null;
+
   @override
   void initState() {
     super.initState();
-    _role = widget.availableRoles.first;
+    if (!_isEditMode && widget.availableRoles.isNotEmpty) {
+      _role = widget.availableRoles.first;
+    }
+    final v = widget.initialValues;
+    if (v != null) {
+      _firstNameCtrl.text = v.firstName;
+      _lastNameCtrl.text = v.lastName;
+      _patronymicCtrl.text = v.patronymicName ?? '';
+      _countryCtrl.text = v.country ?? '';
+      _cityCtrl.text = v.city ?? '';
+      if (v.birthDate != null && v.birthDate!.isNotEmpty) {
+        _birthCtrl.text = v.birthDate!;
+        _birthDate = DateTime.tryParse(v.birthDate!);
+      }
+      if (v.gender != null && v.gender!.isNotEmpty) {
+        _gender = v.gender;
+      }
+    }
   }
 
   @override
@@ -87,9 +130,9 @@ class _UserRegistrationFormBodyState extends State<UserRegistrationFormBody> {
   void _submit() {
     if (!_formKey.currentState!.validate()) return;
     widget.onSubmit(
-      role: _role,
-      login: _loginCtrl.text.trim(),
-      password: _passwordCtrl.text,
+      role: _isEditMode ? null : _role,
+      login: _isEditMode ? null : _loginCtrl.text.trim(),
+      password: _isEditMode ? null : _passwordCtrl.text,
       firstName: _firstNameCtrl.text.trim(),
       lastName: _lastNameCtrl.text.trim(),
       patronymicName: _patronymicCtrl.text.trim().isEmpty
@@ -110,7 +153,7 @@ class _UserRegistrationFormBodyState extends State<UserRegistrationFormBody> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          if (widget.availableRoles.length > 1) ...[
+          if (!_isEditMode && widget.availableRoles.length > 1) ...[
             SegmentedButton<String>(
               segments: widget.availableRoles
                   .map((r) => ButtonSegment(
@@ -123,27 +166,37 @@ class _UserRegistrationFormBodyState extends State<UserRegistrationFormBody> {
             ),
             const SizedBox(height: 16),
           ],
-          TextFormField(
-            controller: _loginCtrl,
-            decoration: const InputDecoration(labelText: 'Login *'),
-            validator: (v) =>
-                (v == null || v.trim().isEmpty) ? 'Required' : null,
-          ),
-          const SizedBox(height: 12),
-          TextFormField(
-            controller: _passwordCtrl,
-            obscureText: _obscure,
-            decoration: InputDecoration(
-              labelText: 'Password *',
-              suffixIcon: IconButton(
-                icon: Icon(_obscure ? Icons.visibility : Icons.visibility_off),
-                onPressed: () => setState(() => _obscure = !_obscure),
-              ),
+          if (!_isEditMode) ...[
+            TextFormField(
+              controller: _loginCtrl,
+              decoration: const InputDecoration(labelText: 'Login *'),
+              validator: (v) =>
+                  (v == null || v.trim().isEmpty) ? 'Required' : null,
             ),
-            validator: (v) =>
-                (v == null || v.length < 8) ? 'At least 8 characters' : null,
-          ),
-          const SizedBox(height: 12),
+            const SizedBox(height: 12),
+            TextFormField(
+              controller: _passwordCtrl,
+              obscureText: _obscure,
+              decoration: InputDecoration(
+                labelText: 'Password *',
+                suffixIcon: IconButton(
+                  icon: Icon(_obscure ? Icons.visibility : Icons.visibility_off),
+                  onPressed: () => setState(() => _obscure = !_obscure),
+                ),
+              ),
+              validator: (v) =>
+                  (v == null || v.length < 8) ? 'At least 8 characters' : null,
+            ),
+            const SizedBox(height: 12),
+          ],
+          if (_isEditMode && widget.onAvatarUpload != null) ...[
+            OutlinedButton.icon(
+              onPressed: widget.isLoading ? null : widget.onAvatarUpload,
+              icon: const Icon(Icons.photo_camera, size: 18),
+              label: const Text('Upload avatar'),
+            ),
+            const SizedBox(height: 12),
+          ],
           TextFormField(
             controller: _firstNameCtrl,
             textCapitalization: TextCapitalization.words,
@@ -177,8 +230,7 @@ class _UserRegistrationFormBodyState extends State<UserRegistrationFormBody> {
               ),
             ),
             onTap: _pickDate,
-            validator: (v) =>
-                (v == null || v.isEmpty) ? 'Required' : null,
+            validator: (v) => (v == null || v.isEmpty) ? 'Required' : null,
           ),
           const SizedBox(height: 12),
           DropdownButtonFormField<String>(

@@ -16,8 +16,9 @@ class CombinedUser {
   });
 
   String get fullName => '$firstName $lastName';
-  bool get isPlayer => roles.contains(UserRole.player);
-  bool get isDeletable => roles.contains(UserRole.organizer);
+
+  bool get isDeletable =>
+      roles.contains(UserRole.organizer) || roles.contains(UserRole.admin);
 
   CombinedUser copyWith({String? avatarUrl}) => CombinedUser(
         userId: userId,

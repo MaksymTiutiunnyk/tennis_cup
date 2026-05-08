@@ -1,27 +1,20 @@
 import 'dart:async';
-import 'dart:typed_data';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:tennis_cup/data/models/combined_user.dart';
-import 'package:tennis_cup/data/models/player.dart';
 import 'package:tennis_cup/data/models/user_search_result.dart';
 import 'package:tennis_cup/data/repositories/admin_repository.dart';
-import 'package:tennis_cup/data/repositories/player_repository.dart';
 import 'package:tennis_cup/ui/user/organizer/view_models/users_search_state.dart';
 
 class UsersSearchCubit extends Cubit<UsersSearchState> {
   final AdminRepository _adminRepository;
-  final PlayerRepository _playerRepository;
 
   CombinedUser? _deletedUser;
   Timer? _deleteTimer;
+  String _lastQuery = '';
 
-  UsersSearchCubit({
-    required AdminRepository adminRepository,
-    required PlayerRepository playerRepository,
-  })  : _adminRepository = adminRepository,
-        _playerRepository = playerRepository,
+  UsersSearchCubit({required AdminRepository adminRepository})
+      : _adminRepository = adminRepository,
         super(UsersSearchIdle());
 
   @override
@@ -35,13 +28,19 @@ class UsersSearchCubit extends Cubit<UsersSearchState> {
       emit(UsersSearchIdle());
       return;
     }
+    _lastQuery = query.trim();
     emit(UsersSearchLoading());
     try {
-      final users = await _adminRepository.searchAllUsers(query.trim());
+      final users = await _adminRepository.searchAllUsers(_lastQuery);
       emit(UsersSearchLoaded(users: users.map(_toCombinedUser).toList()));
     } catch (e) {
       emit(UsersSearchError('Failed to search users'));
     }
+  }
+
+  Future<void> refresh() async {
+    if (_lastQuery.isEmpty) return;
+    await search(_lastQuery);
   }
 
   static CombinedUser _toCombinedUser(UserSearchResult user) => CombinedUser(
@@ -87,46 +86,5 @@ class UsersSearchCubit extends Cubit<UsersSearchState> {
     } catch (_) {
       // Silently ignore — user already removed from UI
     }
-  }
-
-  Future<Player> fetchUserForEdit(int userId) =>
-      _playerRepository.fetchPlayerById(userId);
-
-  Future<void> updateUser(int id, Map<String, dynamic> fields) async {
-    await _playerRepository.updateProfile(id, fields);
-    final current = state;
-    if (current is UsersSearchLoaded) {
-      final updated = current.users.map((u) {
-        return CombinedUser(
-          userId: u.userId,
-          firstName: fields['firstName'] as String? ?? u.firstName,
-          lastName: fields['lastName'] as String? ?? u.lastName,
-          avatarUrl: u.avatarUrl,
-          roles: u.roles,
-        );
-      }).toList();
-      emit(UsersSearchLoaded(
-          users: updated, pendingDelete: current.pendingDelete));
-    }
-  }
-
-  Future<String?> uploadAvatar(int id) async {
-    final picker = ImagePicker();
-    final picked =
-        await picker.pickImage(source: ImageSource.gallery, imageQuality: 85);
-    if (picked == null) return null;
-
-    final bytes = Uint8List.fromList(await picked.readAsBytes());
-    final avatarUrl = await _playerRepository.uploadAvatar(id, bytes);
-
-    final current = state;
-    if (current is UsersSearchLoaded) {
-      final updated = current.users.map((u) {
-        return u.userId == id ? u.copyWith(avatarUrl: avatarUrl) : u;
-      }).toList();
-      emit(UsersSearchLoaded(
-          users: updated, pendingDelete: current.pendingDelete));
-    }
-    return avatarUrl;
   }
 }

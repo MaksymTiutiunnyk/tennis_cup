@@ -16,7 +16,6 @@ class OrganizerUsersTab extends StatelessWidget {
     return BlocProvider(
       create: (_) => UsersSearchCubit(
         adminRepository: ServiceLocator.adminRepository,
-        playerRepository: ServiceLocator.playerRepository,
       ),
       child: const _OrganizerUsersTabBody(),
     );
