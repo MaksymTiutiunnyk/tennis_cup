@@ -52,7 +52,7 @@ class PendingUserDto {
       );
 }
 
-class RegisterUserRequestDto {
+class CreateUserRequestDto {
   final String login;
   final String password;
   final String role;
@@ -64,7 +64,7 @@ class RegisterUserRequestDto {
   final String? country;
   final String? city;
 
-  const RegisterUserRequestDto({
+  const CreateUserRequestDto({
     required this.login,
     required this.password,
     required this.role,
@@ -88,27 +88,5 @@ class RegisterUserRequestDto {
         if (gender != null) 'gender': gender,
         if (country != null) 'country': country,
         if (city != null) 'city': city,
-      };
-}
-
-class CreateOrganizerRequestDto {
-  final String login;
-  final String password;
-  final String firstName;
-  final String lastName;
-
-  const CreateOrganizerRequestDto({
-    required this.login,
-    required this.password,
-    required this.firstName,
-    required this.lastName,
-  });
-
-  Map<String, dynamic> toJson() => {
-        'login': login,
-        'password': password,
-        'role': 'ORGANIZER',
-        'firstName': firstName,
-        'lastName': lastName,
       };
 }

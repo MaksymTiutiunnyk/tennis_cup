@@ -24,26 +24,10 @@ class AdminRepository {
   Future<void> rejectUser(int userId, {String? reason}) =>
       _service.rejectUser(userId, reason: reason);
 
-  Future<void> createOrganizer({
-    required String login,
-    required String password,
-    required String firstName,
-    required String lastName,
-  }) =>
-      _service.createOrganizer(CreateOrganizerRequestDto(
-        login: login,
-        password: password,
-        firstName: firstName,
-        lastName: lastName,
-      ));
-
-  Future<void> deleteOrganizer(int organizerId) =>
-      _service.deleteOrganizer(organizerId);
-
-  Future<void> registerUser({
-    required String login,
-    required String password,
+  Future<void> createUser({
     required String role,
+    required String login,
+    required String password,
     required String firstName,
     required String lastName,
     String? patronymicName,
@@ -52,10 +36,10 @@ class AdminRepository {
     String? country,
     String? city,
   }) =>
-      _service.registerUser(RegisterUserRequestDto(
+      _service.createUser(CreateUserRequestDto(
+        role: role,
         login: login,
         password: password,
-        role: role,
         firstName: firstName,
         lastName: lastName,
         patronymicName: patronymicName,
@@ -64,6 +48,10 @@ class AdminRepository {
         country: country,
         city: city,
       ));
+
+  Future<void> deleteOrganizer(int organizerId) =>
+      _service.deleteOrganizer(organizerId);
+
 
   Future<List<UserSearchResult>> searchReferees(String query) async {
     final dtos = await _service.searchUsers(query: query, roles: ['REFEREE']);

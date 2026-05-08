@@ -17,14 +17,25 @@ class OrganizerManagementCubit extends Cubit<OrganizerManagementState> {
     required String password,
     required String firstName,
     required String lastName,
+    String? patronymicName,
+    String? birthDate,
+    String? gender,
+    String? country,
+    String? city,
   }) async {
     emit(OrgManagementLoading());
     try {
-      await _repository.createOrganizer(
+      await _repository.createUser(
+        role: 'ORGANIZER',
         login: login,
         password: password,
         firstName: firstName,
         lastName: lastName,
+        patronymicName: patronymicName,
+        birthDate: birthDate,
+        gender: gender,
+        country: country,
+        city: city,
       );
       emit(OrgManagementSuccess('Organizer created successfully'));
     } catch (e) {

@@ -13,6 +13,7 @@ import 'package:tennis_cup/ui/user/referee/widgets/referee_invitations_tab.dart'
 import 'package:tennis_cup/ui/user/referee/widgets/referee_tournaments_tab.dart';
 import 'package:tennis_cup/ui/view_only/home/widgets/home.dart';
 import 'package:tennis_cup/ui/view_only/news/widgets/news.dart';
+import 'package:tennis_cup/ui/user/organizer/widgets/create_user_screen.dart';
 import 'package:tennis_cup/ui/view_only/player_comparison/widgets/players_comparison_route.dart';
 import 'package:tennis_cup/ui/view_only/player_details/widgets/player_details_route.dart';
 
@@ -34,6 +35,8 @@ class AppRoutes {
   static const organizerPendingUsers = '/user/organizer/pending';
   static const organizerNews = '/user/organizer/news';
   static const userSettings = '/user/settings';
+
+  static const createUser = '/organizer/create-user';
 
   static String playerDetails(String id) => '/players/$id';
   static String playersComparison(String p1Id, String p2Id) =>
@@ -186,6 +189,10 @@ GoRouter buildAppRouter({GlobalKey<NavigatorState>? navigatorKey}) {
           userId1: state.pathParameters['p1Id']!,
           userId2: state.pathParameters['p2Id']!,
         ),
+      ),
+      GoRoute(
+        path: AppRoutes.createUser,
+        builder: (context, state) => const CreateUserScreen(),
       ),
     ],
   );

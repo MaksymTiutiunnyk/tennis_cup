@@ -40,7 +40,7 @@ class RestAdminService implements IAdminService {
   }
 
   @override
-  Future<void> createOrganizer(CreateOrganizerRequestDto dto) async {
+  Future<void> createUser(CreateUserRequestDto dto) async {
     await _dio.post<void>(
       '/api/v1/admin/users',
       data: dto.toJson(),
@@ -71,8 +71,4 @@ class RestAdminService implements IAdminService {
         .toList();
   }
 
-  @override
-  Future<void> registerUser(RegisterUserRequestDto dto) async {
-    await _dio.post<void>('/api/v1/auth/register', data: dto.toJson());
-  }
 }

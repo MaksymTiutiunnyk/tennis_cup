@@ -3,8 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tennis_cup/core/di/service_locator.dart';
-import 'package:tennis_cup/ui/user/organizer/view_models/user_creation_cubit.dart';
-import 'package:tennis_cup/ui/user/organizer/view_models/user_creation_state.dart';
 import 'package:tennis_cup/ui/user/organizer/view_models/users_search_cubit.dart';
 import 'package:tennis_cup/ui/user/organizer/view_models/users_search_state.dart';
 import 'package:tennis_cup/ui/user/organizer/widgets/create_user_fab.dart';
@@ -15,20 +13,11 @@ class OrganizerUsersTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(
-          create: (_) => UsersSearchCubit(
-            adminRepository: ServiceLocator.adminRepository,
-            playerRepository: ServiceLocator.playerRepository,
-          ),
-        ),
-        BlocProvider(
-          create: (_) => UserCreationCubit(
-            adminRepository: ServiceLocator.adminRepository,
-          ),
-        ),
-      ],
+    return BlocProvider(
+      create: (_) => UsersSearchCubit(
+        adminRepository: ServiceLocator.adminRepository,
+        playerRepository: ServiceLocator.playerRepository,
+      ),
       child: const _OrganizerUsersTabBody(),
     );
   }
@@ -61,44 +50,25 @@ class _OrganizerUsersTabBodyState extends State<_OrganizerUsersTabBody> {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocListener(
-      listeners: [
-        BlocListener<UsersSearchCubit, UsersSearchState>(
-          listener: (context, state) {
-            if (state is UsersSearchLoaded && state.pendingDelete != null) {
-              final user = state.pendingDelete!;
-              ScaffoldMessenger.of(context).clearSnackBars();
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('${user.fullName} removed'),
-                  duration: const Duration(seconds: 4),
-                  action: SnackBarAction(
-                    label: 'Undo',
-                    onPressed: () {
-                      context.read<UsersSearchCubit>().undoDelete();
-                    },
-                  ),
-                ),
-              );
-            }
-          },
-        ),
-        BlocListener<UserCreationCubit, UserCreationState>(
-          listener: (context, state) {
-            if (state is UserCreationSuccess) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(state.message)),
-              );
-              context.read<UserCreationCubit>().reset();
-            } else if (state is UserCreationError) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(state.message)),
-              );
-              context.read<UserCreationCubit>().reset();
-            }
-          },
-        ),
-      ],
+    return BlocListener<UsersSearchCubit, UsersSearchState>(
+      listener: (context, state) {
+        if (state is UsersSearchLoaded && state.pendingDelete != null) {
+          final user = state.pendingDelete!;
+          ScaffoldMessenger.of(context).clearSnackBars();
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('${user.fullName} removed'),
+              duration: const Duration(seconds: 4),
+              action: SnackBarAction(
+                label: 'Undo',
+                onPressed: () {
+                  context.read<UsersSearchCubit>().undoDelete();
+                },
+              ),
+            ),
+          );
+        }
+      },
       child: Scaffold(
         body: Column(
           children: [
