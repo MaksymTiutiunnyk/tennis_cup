@@ -104,23 +104,25 @@ Any cubit needed by a pushed route (`/players/:id`, `/comparison/...`) **must** 
 
 Models in `lib/data/models/` are pure data classes — no factory methods. Services parse API responses into DTOs (`lib/data/services/dto/`); repositories map DTOs to domain models via private static methods. Shared string→value helpers (e.g. `arenaColorFromString`, `timeFromString`) live as top-level functions in the relevant DTO file.
 
-`Player` built from full REST responses has all stats fields populated. `Player` built from brief API responses (e.g. `PlayerBriefDto` used by the home dashboard) has stats fields zeroed (`year`, `wins`, `loses`, `gold`, `silver`, `bronze`, `rankTennis`, `rankUTTF` all `0`). Widgets that render stats should guard against zero values and show `–` when appropriate.
+`Player` is always constructed from `GET /api/v1/users/{id}` via `_playerFromProfileJson` when full profile data is needed. It carries raw editable fields: `birthDate: String?` (ISO date), `city: String`, `country: String`, `patronymicName: String`. `year: int` and `place: String` are computed getters derived from these. `genderString: String?` returns `'MALE'`/`'FEMALE'`/`null` from the `Sex` enum.
+
+Thin `Player` objects (built by `_playerFromRatingRecord` from the rating endpoint, or `_playerFromSearchResult` from the search endpoint) have zeroed stats and are used **only for list display** (ranking cards, search results). They are never passed as route extras. `PlayerDetailsRoute` and `PlayersComparisonRoute` always fetch fresh via `fetchPlayerById` — there is no cache optimisation. Widgets that render stats should guard against zero values and show `–` when appropriate.
 
 `Player.imageUrl` is `''` for REST-sourced players (no image API yet). Use `PlayerAvatar` widget instead of `FadeInImage.assetNetwork` directly — it guards against the empty URL.
 
 `MatchView` and `WinnerView` (`lib/data/models/`) are lightweight view models for the home dashboard — they carry only what those widgets need and are mapped directly from the dashboard DTOs in `TournamentRepository`. They are not general-purpose replacements for `Tournament` or `Match`.
 
-`Tournament.refereeId` is `int?` and is mapped from `TournamentDto.refereeId` (stored as `0` when absent in the DTO — the repository converts `0` → `null`). In the organizer tournament form, edit mode shows "Referee #ID" as a placeholder because the current API has no endpoint to look up a user's name by ID (`GET /api/v1/users/{id}` returns `login`/`status`/`roles` only, no name fields).
+`Tournament.refereeId` is `int?` and is mapped from `TournamentDto.refereeId` (stored as `0` when absent in the DTO — the repository converts `0` → `null`). In the organizer tournament form, edit mode shows "Referee #ID" as a placeholder because there is no convenient search-by-ID-to-name flow surfaced in the UI yet.
 
-`AdminRepository.searchReferees` calls `GET /api/v1/admin/search?roles=REFEREE`. The endpoint is accessible to both ADMIN and ORGANIZER roles (backend was incorrectly restricting it to ADMIN only; that has been corrected on the backend).
+`AdminRepository.searchReferees` calls `GET /api/v1/users/search?roles=REFEREE`. `AdminRepository.searchAllUsers` calls `GET /api/v1/users/search` (no role filter). Both are accessible to ADMIN and ORGANIZER roles.
 
 ### Partially implemented features
 
 All services are on REST. The following behaviours are still incomplete:
 
 - Real-time updates — no auto-refresh (`watchMatchChanges` / `watchTournamentChanges` return `Stream.empty()`; manual pull-to-refresh only)
-- Player stats: wins, losses, medals, rankUTTF, year, place — shows `–` (`hasDetailedStats = false` for REST-sourced players)
-- Player avatars — shows default asset (`imageUrl` is always `''` from REST)
+- Player ratings (`rankTennis`, `rankUTTF`) — always `0` in `PlayerDetails` because `GET /api/v1/users/{id}` does not include rating; only the rating-service endpoint (`GET /api/v1/ratings`) returns `ratingValue`, and that is used for ranking list display only
+- Player avatars — shows default asset (`imageUrl` is always `''` from REST for ranking/search; `avatarUrl` is returned by the user profile endpoint)
 - News images are served from a local GCS-compatible storage emulator at `localhost:4443`. On Android emulator, `localhost` resolves to the emulator's own loopback — replace it with `10.0.2.2`. The `SingleInterestingNews` widget falls back to `default_image.jpg` on any load failure.
 
 Home screen widgets (`LiveStreamMatches`, `UpcomingMatches`, `Winners`) use dedicated dashboard endpoints (`GET /api/v1/dashboard/arenas/current-matches`, `/dashboard/tournaments/upcoming-matches`, `/dashboard/arenas/last-winners`) that return pre-aggregated data. `TournamentRepository` maps these to `MatchView` / `WinnerView` and resolves arena color via `fetchArenaById`. Widgets fall back to "No matches found" / "No winners found" on empty results.
