@@ -73,4 +73,12 @@ class FirebaseMatchService implements IMatchService {
   Future<MatchSetDto> technicalDefeatSet(
           int matchId, int setNumber, int loserId, {String? reason}) =>
       throw UnimplementedError('FirebaseMatchService is deprecated; use RestMatchService.');
+
+  @override
+  Future<MatchDto> issueCard(int matchId, int playerId, String cardType) =>
+      throw UnimplementedError('FirebaseMatchService is deprecated; use RestMatchService.');
+
+  @override
+  Future<MatchDto> revokeCard(int matchId, int cardId) =>
+      throw UnimplementedError('FirebaseMatchService is deprecated; use RestMatchService.');
 }

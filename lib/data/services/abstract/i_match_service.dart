@@ -28,4 +28,6 @@ abstract interface class IMatchService {
       {String? reason});
   Future<MatchSetDto> technicalDefeatSet(int matchId, int setNumber,
       int loserId, {String? reason});
+  Future<MatchDto> issueCard(int matchId, int playerId, String cardType);
+  Future<MatchDto> revokeCard(int matchId, int cardId);
 }

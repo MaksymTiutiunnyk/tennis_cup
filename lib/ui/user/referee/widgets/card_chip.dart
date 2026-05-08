@@ -1,33 +1,35 @@
 import 'package:flutter/material.dart';
-import 'package:tennis_cup/ui/user/referee/view_models/referee_match_cubit.dart';
 
 class CardChip extends StatelessWidget {
-  final MatchCard card;
-  final bool issued;
+  final String cardType; // 'WHITE', 'YELLOW', 'RED'
+  final bool enabled;
 
-  const CardChip({super.key, required this.card, required this.issued});
+  const CardChip({
+    super.key,
+    required this.cardType,
+    this.enabled = true,
+  });
+
+  Color get _color => switch (cardType) {
+        'YELLOW' => Colors.yellow.shade600,
+        'RED' => Colors.red.shade700,
+        _ => Colors.grey.shade200, // WHITE
+      };
 
   @override
   Widget build(BuildContext context) {
-    final color = switch (card) {
-      MatchCard.yellow => Colors.yellow.shade600,
-      MatchCard.red1 || MatchCard.red2 => Colors.red.shade700,
-      MatchCard.whiteTimeout => Colors.white,
-    };
-    return Container(
-      width: 22,
-      height: 32,
-      margin: const EdgeInsets.symmetric(horizontal: 2),
-      decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(3),
-        border: Border.all(
-          color: issued ? Colors.black87 : Colors.black26,
-          width: issued ? 2 : 1,
+    return Opacity(
+      opacity: enabled ? 1.0 : 0.35,
+      child: Container(
+        width: 22,
+        height: 32,
+        margin: const EdgeInsets.symmetric(horizontal: 2),
+        decoration: BoxDecoration(
+          color: _color,
+          borderRadius: BorderRadius.circular(3),
+          border: Border.all(color: Colors.black54, width: 1.5),
+          boxShadow: const [BoxShadow(color: Colors.black26, blurRadius: 2)],
         ),
-        boxShadow: issued
-            ? [const BoxShadow(color: Colors.black38, blurRadius: 3)]
-            : null,
       ),
     );
   }

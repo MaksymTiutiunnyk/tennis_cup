@@ -21,8 +21,6 @@ class RefereeMatchCubit extends Cubit<RefereeMatchState> {
         match: match,
         bluePlayer: blue,
         redPlayer: red,
-        blueIssuedCards: const {},
-        redIssuedCards: const {},
         scoreUndoStack: const [],
       ));
     } catch (e) {
@@ -30,13 +28,16 @@ class RefereeMatchCubit extends Cubit<RefereeMatchState> {
     }
   }
 
-  Future<void> _reload() async {
+  Future<void> _reload({List<({int blue, int red})>? preserveUndoStack}) async {
     final current = state;
     if (current is! RefereeMatchReady) return;
     try {
       final (:match, :blue, :red) =
           await _repository.fetchMatchWithPlayers(current.match.id);
-      emit(current.copyWith(match: match, scoreUndoStack: const []));
+      emit(current.copyWith(
+        match: match,
+        scoreUndoStack: preserveUndoStack ?? const [],
+      ));
     } catch (e) {
       emit(RefereeMatchError(e.toString()));
     }
@@ -55,47 +56,19 @@ class RefereeMatchCubit extends Cubit<RefereeMatchState> {
       emit(s.copyWith(notification: 'Select the first server before starting'));
       return;
     }
-
     try {
       final startedMatch = await _repository.startMatch(s.match.id);
-      var current = s.copyWith(
-        match: startedMatch,
-        scoreUndoStack: const [],
-      );
-      emit(current);
-
-      final firstPendingSet = startedMatch.sets
+      final firstPendingSetNumber = startedMatch.sets
               .where((set) => set.status == 'PENDING')
               .firstOrNull
               ?.number ??
           1;
-
-      MatchSetDto? startedSet;
-      for (var attempt = 0; attempt < 2; attempt++) {
-        try {
-          startedSet = await _repository.startSet(s.match.id, firstPendingSet);
-          break;
-        } catch (e) {
-          await Future<void>.delayed(const Duration(milliseconds: 250));
-        }
+      try {
+        await _repository.startSet(s.match.id, firstPendingSetNumber);
+      } catch (_) {
+        // startSet may fail if server needs a moment; _reload will show the pending set
       }
-
-      if (startedSet != null) {
-        final updatedSets = current.match.sets
-            .map((set) => set.number == startedSet!.number ? startedSet : set)
-            .toList();
-        current = current.copyWith(
-          match: _matchWithSets(current.match, updatedSets),
-        );
-        emit(current);
-        await _reload();
-        return;
-      }
-
-      emit(current.copyWith(
-        notification:
-            'Match started, but the first set did not start automatically. Start it manually.',
-      ));
+      await _reload();
     } catch (e) {
       emit(RefereeMatchError(e.toString()));
     }
@@ -128,15 +101,11 @@ class RefereeMatchCubit extends Cubit<RefereeMatchState> {
       (blue: activeSet.bluePlayerScore, red: activeSet.redPlayerScore),
     ];
     try {
-      final updatedSet = await _repository.updateScore(
+      await _repository.updateScore(
           s.match.id, activeSet.number, newBlue, newRed);
-      final updatedSets = s.match.sets
-          .map((st) => st.number == updatedSet.number ? updatedSet : st)
-          .toList();
-      emit(s.copyWith(
-        match: _matchWithSets(s.match, updatedSets),
-        scoreUndoStack: newStack,
-      ));
+      // Reload to pick up any server-side side effects (e.g. red-card score penalty).
+      // Preserve the undo stack so the revert button stays enabled.
+      await _reload(preserveUndoStack: newStack);
     } catch (e) {
       emit(RefereeMatchError(e.toString()));
     }
@@ -152,15 +121,9 @@ class RefereeMatchCubit extends Cubit<RefereeMatchState> {
     final prev = s.scoreUndoStack.last;
     final newStack = s.scoreUndoStack.sublist(0, s.scoreUndoStack.length - 1);
     try {
-      final updatedSet = await _repository.updateScore(
+      await _repository.updateScore(
           s.match.id, activeSet.number, prev.blue, prev.red);
-      final updatedSets = s.match.sets
-          .map((st) => st.number == updatedSet.number ? updatedSet : st)
-          .toList();
-      emit(s.copyWith(
-        match: _matchWithSets(s.match, updatedSets),
-        scoreUndoStack: newStack,
-      ));
+      await _reload(preserveUndoStack: newStack);
     } catch (e) {
       emit(RefereeMatchError(e.toString()));
     }
@@ -181,6 +144,18 @@ class RefereeMatchCubit extends Cubit<RefereeMatchState> {
     final s = state;
     if (s is! RefereeMatchReady) return;
     try {
+      await _repository.finishMatch(s.match.id);
+      await _reload();
+    } catch (e) {
+      emit(RefereeMatchError(e.toString()));
+    }
+  }
+
+  Future<void> finishSetAndMatch(int setNumber) async {
+    final s = state;
+    if (s is! RefereeMatchReady) return;
+    try {
+      await _repository.finishSet(s.match.id, setNumber);
       await _repository.finishMatch(s.match.id);
       await _reload();
     } catch (e) {
@@ -213,46 +188,26 @@ class RefereeMatchCubit extends Cubit<RefereeMatchState> {
     }
   }
 
-  void toggleCard(bool isBlue, MatchCard card) {
+  Future<void> issueCard(int playerId, String cardType) async {
     final s = state;
     if (s is! RefereeMatchReady) return;
-    if (isBlue) {
-      final updated = Set<MatchCard>.from(s.blueIssuedCards);
-      updated.contains(card) ? updated.remove(card) : updated.add(card);
-      emit(s.copyWith(blueIssuedCards: updated));
-    } else {
-      final updated = Set<MatchCard>.from(s.redIssuedCards);
-      updated.contains(card) ? updated.remove(card) : updated.add(card);
-      emit(s.copyWith(redIssuedCards: updated));
+    try {
+      await _repository.issueCard(s.match.id, playerId, cardType);
+      await _reload();
+    } catch (e) {
+      emit(RefereeMatchError(e.toString()));
     }
   }
 
-  void medicalTimeout() {
+  Future<void> revokeCard(int cardId) async {
     final s = state;
     if (s is! RefereeMatchReady) return;
-    emit(s.copyWith(notification: 'Medical timeout: not implemented yet'));
+    try {
+      await _repository.revokeCard(s.match.id, cardId);
+      await _reload();
+    } catch (e) {
+      emit(RefereeMatchError(e.toString()));
+    }
   }
 
-  void technicalPause() {
-    final s = state;
-    if (s is! RefereeMatchReady) return;
-    emit(s.copyWith(notification: 'Technical pause: not implemented yet'));
-  }
-
-  // Rebuilds a MatchDto with a replaced sets list.
-  static MatchDto _matchWithSets(MatchDto match, List<MatchSetDto> sets) =>
-      MatchDto(
-        id: match.id,
-        tournamentId: match.tournamentId,
-        refereeId: match.refereeId,
-        status: match.status,
-        bluePlayerId: match.bluePlayerId,
-        redPlayerId: match.redPlayerId,
-        winnerId: match.winnerId,
-        scheduledStart: match.scheduledStart,
-        scheduledEnd: match.scheduledEnd,
-        actualStart: match.actualStart,
-        actualEnd: match.actualEnd,
-        sets: sets,
-      );
 }

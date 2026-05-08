@@ -59,4 +59,10 @@ class RefereeRepository {
           int matchId, int setNumber, int loserId, {String? reason}) =>
       _matchService.technicalDefeatSet(matchId, setNumber, loserId,
           reason: reason);
+
+  Future<MatchDto> issueCard(int matchId, int playerId, String cardType) =>
+      _matchService.issueCard(matchId, playerId, cardType);
+
+  Future<MatchDto> revokeCard(int matchId, int cardId) =>
+      _matchService.revokeCard(matchId, cardId);
 }

@@ -121,6 +121,22 @@ class RestMatchService implements IMatchService {
   }
 
   @override
+  Future<MatchDto> issueCard(int matchId, int playerId, String cardType) async {
+    final response = await _dio.post(
+      '/api/v1/matches/$matchId/cards',
+      data: {'playerId': playerId, 'cardType': cardType},
+    );
+    return MatchDto.fromJson(response.data as Map<String, dynamic>);
+  }
+
+  @override
+  Future<MatchDto> revokeCard(int matchId, int cardId) async {
+    final response =
+        await _dio.delete('/api/v1/matches/$matchId/cards/$cardId');
+    return MatchDto.fromJson(response.data as Map<String, dynamic>);
+  }
+
+  @override
   Future<PageResult<MatchDto>> fetchPlayersMatches({
     required String playerId,
     String? player2Id,

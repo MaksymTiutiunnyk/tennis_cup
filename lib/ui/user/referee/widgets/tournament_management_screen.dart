@@ -162,7 +162,16 @@ class _TournamentManagementScreenState
       return const Center(child: Text('Tournament complete'));
     }
 
-    return BlocBuilder<RefereeMatchCubit, RefereeMatchState>(
+    return BlocConsumer<RefereeMatchCubit, RefereeMatchState>(
+      listenWhen: (prev, curr) {
+        if (curr is! RefereeMatchReady) return false;
+        final done = curr.match.status == 'FINISHED' ||
+            curr.match.status == 'TECHNICAL_DEFEAT';
+        if (!done) return false;
+        if (prev is! RefereeMatchReady) return true;
+        return prev.match.status != curr.match.status;
+      },
+      listener: (context, state) => _loadMatches(),
       builder: (context, matchState) {
         if (matchState is RefereeMatchLoading) {
           return const Center(child: CircularProgressIndicator());
@@ -187,6 +196,7 @@ class _TournamentManagementScreenState
           return Center(child: Text(matchState.message));
         }
 
+        // Match just finished — listener will reload; show spinner while transitioning.
         return const Center(child: CircularProgressIndicator());
       },
     );
