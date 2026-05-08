@@ -52,7 +52,6 @@ class AdminRepository {
   Future<void> deleteOrganizer(int organizerId) =>
       _service.deleteOrganizer(organizerId);
 
-
   Future<List<UserSearchResult>> searchReferees(String query) async {
     final dtos = await _service.searchUsers(query: query, roles: ['REFEREE']);
     return dtos.map(_toUserSearchResult).toList();

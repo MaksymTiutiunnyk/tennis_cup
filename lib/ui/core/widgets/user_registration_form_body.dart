@@ -41,7 +41,6 @@ class UserRegistrationFormBody extends StatefulWidget {
   final String submitLabel;
   final Widget? footer;
   final UserProfileInitialValues? initialValues;
-  final VoidCallback? onAvatarUpload;
 
   const UserRegistrationFormBody({
     super.key,
@@ -51,7 +50,6 @@ class UserRegistrationFormBody extends StatefulWidget {
     this.submitLabel = 'Create',
     this.footer,
     this.initialValues,
-    this.onAvatarUpload,
   });
 
   @override
@@ -186,14 +184,6 @@ class _UserRegistrationFormBodyState extends State<UserRegistrationFormBody> {
               ),
               validator: (v) =>
                   (v == null || v.length < 8) ? 'At least 8 characters' : null,
-            ),
-            const SizedBox(height: 12),
-          ],
-          if (_isEditMode && widget.onAvatarUpload != null) ...[
-            OutlinedButton.icon(
-              onPressed: widget.isLoading ? null : widget.onAvatarUpload,
-              icon: const Icon(Icons.photo_camera, size: 18),
-              label: const Text('Upload avatar'),
             ),
             const SizedBox(height: 12),
           ],

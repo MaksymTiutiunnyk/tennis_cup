@@ -46,7 +46,7 @@ class UserSearchTile extends StatelessWidget {
 
   Future<void> _navigateToEdit(BuildContext context) async {
     final cubit = context.read<UsersSearchCubit>();
-    await context.push(AppRoutes.editUser(user.userId.toString()));
+    await context.push(AppRoutes.editUser(user.userId.toString()), extra: user);
     if (context.mounted) cubit.refresh();
   }
 }
