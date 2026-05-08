@@ -34,12 +34,19 @@ class MatchBody extends StatelessWidget {
         .lastOrNull;
 
     if (activeSet == null) {
+      // Between-sets side arrangement mirrors the last finished set.
+      // Odd set just finished → red was on left → keep red on left.
+      // Even set just finished → blue was on left → keep blue on left.
+      final lastSetNum = lastFinishedSet?.number ?? 1;
+      final betweenSetsLeftIsRed = lastSetNum.isOdd;
+
       return NoActiveSetView(
         bluePlayer: state.bluePlayer,
         redPlayer: state.redPlayer,
         blueSetsWon: blueSetsWon,
         redSetsWon: redSetsWon,
         lastSet: lastFinishedSet,
+        leftIsRed: betweenSetsLeftIsRed,
         pendingSetNumber: pendingSet?.number,
         canFinish: pendingSet == null,
         onStartSet: pendingSet != null
@@ -89,10 +96,10 @@ class MatchBody extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        // Left player column
+        // Left player column — key encodes the player so Flutter rebuilds on swap
         Expanded(
           child: PlayerColumn(
-            key: const ValueKey('left-score'),
+            key: ValueKey('player-${leftPlayer.userId}'),
             player: leftPlayer,
             score: leftScore,
             isServing: serverId != null && serverId == leftPlayer.userId,
@@ -115,15 +122,17 @@ class MatchBody extends StatelessWidget {
             activeSet: activeSet,
             blueSetsWon: blueSetsWon,
             redSetsWon: redSetsWon,
+            scoringLocked: scoringLocked,
+            leftIsRed: leftIsRed,
           ),
         ),
 
         const VerticalDivider(width: 1),
 
-        // Right player column
+        // Right player column — key encodes the player so Flutter rebuilds on swap
         Expanded(
           child: PlayerColumn(
-            key: const ValueKey('right-score'),
+            key: ValueKey('player-${rightPlayer.userId}'),
             player: rightPlayer,
             score: rightScore,
             isServing: serverId != null && serverId == rightPlayer.userId,

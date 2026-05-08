@@ -11,6 +11,8 @@ class CenterActionPanel extends StatelessWidget {
   final MatchSetDto activeSet;
   final int blueSetsWon;
   final int redSetsWon;
+  final bool scoringLocked;
+  final bool leftIsRed;
 
   const CenterActionPanel({
     super.key,
@@ -18,6 +20,8 @@ class CenterActionPanel extends StatelessWidget {
     required this.activeSet,
     required this.blueSetsWon,
     required this.redSetsWon,
+    required this.scoringLocked,
+    required this.leftIsRed,
   });
 
   // ── Helpers ──────────────────────────────────────────────────────────────
@@ -230,7 +234,7 @@ class CenterActionPanel extends StatelessWidget {
               style: Theme.of(context).textTheme.labelMedium,
             ),
             Text(
-              '$blueSetsWon – $redSetsWon',
+              '${leftIsRed ? redSetsWon : blueSetsWon} – ${leftIsRed ? blueSetsWon : redSetsWon}',
               style: Theme.of(context)
                   .textTheme
                   .titleLarge
@@ -238,23 +242,24 @@ class CenterActionPanel extends StatelessWidget {
             ),
             const SizedBox(height: 8),
 
-            // Medical timeout
+            // Medical timeout — disabled when set/match can be finished
             ActionButton(
               icon: Icons.medical_services_outlined,
               label: 'Medical',
-              onPressed: () => _onMedicalTimeout(context),
+              onPressed:
+                  scoringLocked ? null : () => _onMedicalTimeout(context),
             ),
             const SizedBox(height: 4),
 
-            // Tech pause
+            // Tech pause — disabled when set/match can be finished
             ActionButton(
               icon: Icons.pause_circle_outline,
               label: 'Tech Pause',
-              onPressed: () => _onTechPause(context),
+              onPressed: scoringLocked ? null : () => _onTechPause(context),
             ),
             const SizedBox(height: 4),
 
-            // Undo — big centered button
+            // Undo — always available when stack is non-empty
             SizedBox(
               width: double.infinity,
               child: IconButton.outlined(
@@ -265,11 +270,12 @@ class CenterActionPanel extends StatelessWidget {
             ),
             const SizedBox(height: 8),
 
-            // Tech defeat match
+            // Tech defeat match — disabled when set/match can be finished
             ActionButton(
               icon: Icons.close,
               label: 'TD Match',
-              onPressed: () => _onTechDefeatMatch(context),
+              onPressed:
+                  scoringLocked ? null : () => _onTechDefeatMatch(context),
               outlined: true,
             ),
             const SizedBox(height: 4),
@@ -298,34 +304,38 @@ class CenterActionPanel extends StatelessWidget {
               ),
             const SizedBox(height: 8),
 
-            // Cards row
+            // Cards row — disabled when set/match can be finished
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 GestureDetector(
-                  onTap: state.canIssueWhite
+                  onTap: (!scoringLocked && state.canIssueWhite)
                       ? () => _onIssueCard(
                           context, 'WHITE', state.eligibleWhitePlayers)
                       : null,
-                  child:
-                      CardChip(cardType: 'WHITE', enabled: state.canIssueWhite),
+                  child: CardChip(
+                      cardType: 'WHITE',
+                      enabled: !scoringLocked && state.canIssueWhite),
                 ),
                 const SizedBox(width: 8),
                 GestureDetector(
-                  onTap: state.canIssueYellow
+                  onTap: (!scoringLocked && state.canIssueYellow)
                       ? () => _onIssueCard(
                           context, 'YELLOW', state.eligibleYellowPlayers)
                       : null,
                   child: CardChip(
-                      cardType: 'YELLOW', enabled: state.canIssueYellow),
+                      cardType: 'YELLOW',
+                      enabled: !scoringLocked && state.canIssueYellow),
                 ),
                 const SizedBox(width: 8),
                 GestureDetector(
-                  onTap: state.canIssueRed
-                      ? () =>
-                          _onIssueCard(context, 'RED', state.eligibleRedPlayers)
+                  onTap: (!scoringLocked && state.canIssueRed)
+                      ? () => _onIssueCard(
+                          context, 'RED', state.eligibleRedPlayers)
                       : null,
-                  child: CardChip(cardType: 'RED', enabled: state.canIssueRed),
+                  child: CardChip(
+                      cardType: 'RED',
+                      enabled: !scoringLocked && state.canIssueRed),
                 ),
               ],
             ),

@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:tennis_cup/data/models/player.dart';
 import 'package:tennis_cup/data/services/dto/match_dto.dart';
-import 'package:tennis_cup/ui/user/referee/widgets/no_active_set_player_side.dart';
 
 class NoActiveSetView extends StatelessWidget {
   final Player bluePlayer;
   final Player redPlayer;
   final int blueSetsWon;
   final int redSetsWon;
-
-  /// The most recently finished set (null when no set has been played yet).
   final MatchSetDto? lastSet;
+  /// Which player is on the left — mirrors the side layout of the last finished set.
+  final bool leftIsRed;
   final int? pendingSetNumber;
   final bool canFinish;
   final VoidCallback? onStartSet;
@@ -22,6 +21,7 @@ class NoActiveSetView extends StatelessWidget {
     required this.redPlayer,
     required this.blueSetsWon,
     required this.redSetsWon,
+    required this.leftIsRed,
     required this.canFinish,
     required this.onFinish,
     this.lastSet,
@@ -32,7 +32,7 @@ class NoActiveSetView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (pendingSetNumber == null) {
-      // Match is decided — simple finish view
+      // Match decided — simple centred finish view.
       return Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -54,24 +54,45 @@ class NoActiveSetView extends StatelessWidget {
       );
     }
 
-    // Between sets — 3-column layout showing last set score
-    final lastBlueScore = lastSet?.bluePlayerScore;
-    final lastRedScore = lastSet?.redPlayerScore;
+    // Between sets — same 3-column layout as during play but with the last set
+    // score shown instead of a live score, and no tap-to-score interactivity.
+    final leftPlayer = leftIsRed ? redPlayer : bluePlayer;
+    final rightPlayer = leftIsRed ? bluePlayer : redPlayer;
+    final leftBg = leftIsRed ? const Color(0xFFC62828) : const Color(0xFF1565C0);
+    final rightBg = leftIsRed ? const Color(0xFF1565C0) : const Color(0xFFC62828);
+
+    // Map MatchSetDto scores (blue/red) to left/right positions.
+    final leftScore = lastSet == null
+        ? 0
+        : (leftIsRed ? lastSet!.redPlayerScore : lastSet!.bluePlayerScore);
+    final rightScore = lastSet == null
+        ? 0
+        : (leftIsRed ? lastSet!.bluePlayerScore : lastSet!.redPlayerScore);
+
+    // Show sets won BEFORE the just-finished set — subtract the winner's point.
+    final lastWinnerId = lastSet?.winnerId;
+    final displayBlueSets =
+        blueSetsWon - (lastWinnerId == bluePlayer.userId ? 1 : 0);
+    final displayRedSets =
+        redSetsWon - (lastWinnerId == redPlayer.userId ? 1 : 0);
 
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        // Red player
+        // Left score panel
         Expanded(
-          child: NoActiveSetPlayerSide(
-            player: redPlayer,
-            color: const Color(0xFFC62828),
-            label: 'Red',
+          child: _ScorePanel(
+            player: leftPlayer,
+            score: leftScore,
+            bgColor: leftBg,
           ),
         ),
 
-        // Center: last set result + start next set
+        const VerticalDivider(width: 1),
+
+        // Center: sets tally + start next set
         SizedBox(
-          width: 200,
+          width: 168,
           child: Container(
             color: Theme.of(context).colorScheme.surfaceContainerHighest,
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
@@ -79,26 +100,22 @@ class NoActiveSetView extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Text(
-                  'Sets: $blueSetsWon – $redSetsWon',
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-                if (lastBlueScore != null && lastRedScore != null) ...[
-                  const SizedBox(height: 8),
+                if (lastSet != null) ...[
                   Text(
-                    '$lastBlueScore – $lastRedScore',
+                    'Set ${lastSet!.number} finished',
                     textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                    style: Theme.of(context).textTheme.labelMedium,
                   ),
-                  Text(
-                    'Set ${lastSet!.number} score',
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.bodySmall,
-                  ),
+                  const SizedBox(height: 4),
                 ],
+                Text(
+                  '${leftIsRed ? displayRedSets : displayBlueSets} – ${leftIsRed ? displayBlueSets : displayRedSets}',
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context)
+                      .textTheme
+                      .headlineSmall
+                      ?.copyWith(fontWeight: FontWeight.bold),
+                ),
                 const SizedBox(height: 24),
                 FilledButton.icon(
                   onPressed: onStartSet,
@@ -110,12 +127,61 @@ class NoActiveSetView extends StatelessWidget {
           ),
         ),
 
-        // Blue player
+        const VerticalDivider(width: 1),
+
+        // Right score panel
         Expanded(
-          child: NoActiveSetPlayerSide(
-            player: bluePlayer,
-            color: const Color(0xFF1565C0),
-            label: 'Blue',
+          child: _ScorePanel(
+            player: rightPlayer,
+            score: rightScore,
+            bgColor: rightBg,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _ScorePanel extends StatelessWidget {
+  final Player player;
+  final int score;
+  final Color bgColor;
+
+  const _ScorePanel({
+    required this.player,
+    required this.score,
+    required this.bgColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
+          child: Text(
+            '${player.name} ${player.surname}',
+            textAlign: TextAlign.center,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
+        ),
+        Expanded(
+          child: Container(
+            color: bgColor,
+            alignment: Alignment.center,
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                '$score',
+                style: const TextStyle(
+                  fontSize: 72,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+            ),
           ),
         ),
       ],
