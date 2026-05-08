@@ -12,6 +12,7 @@ abstract interface class IPlayerService {
 
   Future<List<Player>> searchPlayersByName({
     required String query,
+    String? gender,
   });
 
   Future<Player> fetchPlayerById(int id);

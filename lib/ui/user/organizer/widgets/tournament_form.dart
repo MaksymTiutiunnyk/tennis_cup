@@ -240,6 +240,7 @@ class _TournamentFormState extends State<TournamentForm> {
                   const SizedBox(height: 12),
                   PlayerPicker(
                     initialPlayers: _selectedPlayers,
+                    gender: _gender,
                     onChanged: (players) =>
                         setState(() => _selectedPlayers = players),
                   ),

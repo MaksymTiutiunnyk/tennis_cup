@@ -48,10 +48,16 @@ class RestPlayerService implements IPlayerService {
   @override
   Future<List<Player>> searchPlayersByName({
     required String query,
+    String? gender,
   }) async {
     final response = await _dio.get<Map<String, dynamic>>(
       '/api/v1/users/search',
-      queryParameters: {'query': query, 'size': 20, 'roles': ['PLAYER']},
+      queryParameters: {
+        'query': query,
+        'size': 20,
+        'roles': ['PLAYER'],
+        if (gender != null) 'gender': gender,
+      },
     );
     final content = (response.data!['content'] as List<dynamic>);
     return content

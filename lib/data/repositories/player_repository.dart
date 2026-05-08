@@ -17,8 +17,11 @@ class PlayerRepository {
     return _service.fetchRankingPlayers(page: page, sexFilter: sexFilter);
   }
 
-  Future<List<Player>> fetchPlayersBySubstring({required String query}) {
-    return _service.searchPlayersByName(query: query);
+  Future<List<Player>> fetchPlayersBySubstring({
+    required String query,
+    String? gender,
+  }) {
+    return _service.searchPlayersByName(query: query, gender: gender);
   }
 
   Future<Player> fetchPlayerById(int id) {

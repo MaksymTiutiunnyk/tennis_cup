@@ -14,11 +14,13 @@ class SelectedPlayer {
 class PlayerPicker extends StatefulWidget {
   final List<SelectedPlayer> initialPlayers;
   final ValueChanged<List<SelectedPlayer>> onChanged;
+  final String? gender;
 
   const PlayerPicker({
     super.key,
     this.initialPlayers = const [],
     required this.onChanged,
+    this.gender,
   });
 
   @override
@@ -58,6 +60,7 @@ class _PlayerPickerState extends State<PlayerPicker> {
         final players =
             await ServiceLocator.playerRepository.fetchPlayersBySubstring(
           query: query.trim(),
+          gender: widget.gender,
         );
         if (mounted) {
           setState(() => _results = players

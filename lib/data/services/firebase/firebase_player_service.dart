@@ -52,6 +52,7 @@ class FirebasePlayerService implements IPlayerService {
   @override
   Future<List<Player>> searchPlayersByName({
     required String query,
+    String? gender,
   }) async {
     final snapshot = await FirebaseFirestore.instance
         .collection('players')
