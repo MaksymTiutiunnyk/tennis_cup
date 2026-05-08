@@ -43,17 +43,17 @@ class MatchRepository {
   }
 
   Future<PageResult<Match>> fetchHeadToHead({
-    required int player1Id,
-    required int player2Id,
+    required int userId1,
+    required int userId2,
     required PageRequest page,
   }) async {
     final resultFuture = _service.fetchHeadToHead(
-      player1Id: player1Id,
-      player2Id: player2Id,
+      userId1: userId1,
+      userId2: userId2,
       page: page,
     );
-    final p1Future = _playerService.fetchPlayerById(player1Id.toString());
-    final p2Future = _playerService.fetchPlayerById(player2Id.toString());
+    final p1Future = _playerService.fetchPlayerById(userId1);
+    final p2Future = _playerService.fetchPlayerById(userId2);
 
     final result = await resultFuture;
     final player1 = await p1Future;
@@ -86,7 +86,7 @@ class MatchRepository {
     if (ids.isEmpty) return const {};
     final entries = await Future.wait(ids.map((id) async {
       try {
-        final p = await _playerService.fetchPlayerById(id.toString());
+        final p = await _playerService.fetchPlayerById(id);
         return MapEntry<int, Player?>(id, p);
       } catch (_) {
         return MapEntry<int, Player?>(id, null);

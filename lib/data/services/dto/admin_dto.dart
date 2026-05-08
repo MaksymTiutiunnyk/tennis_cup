@@ -3,12 +3,14 @@ class UserSearchDto {
   final String firstName;
   final String lastName;
   final List<String> roles;
+  final String? avatarUrl;
 
   const UserSearchDto({
     required this.userId,
     required this.firstName,
     required this.lastName,
     required this.roles,
+    this.avatarUrl,
   });
 
   factory UserSearchDto.fromJson(Map<String, dynamic> json) => UserSearchDto(
@@ -19,6 +21,7 @@ class UserSearchDto {
                 ?.map((e) => e.toString())
                 .toList() ??
             [],
+        avatarUrl: json['avatarUrl'] as String?,
       );
 }
 
@@ -104,6 +107,7 @@ class CreateOrganizerRequestDto {
   Map<String, dynamic> toJson() => {
         'login': login,
         'password': password,
+        'role': 'ORGANIZER',
         'firstName': firstName,
         'lastName': lastName,
       };

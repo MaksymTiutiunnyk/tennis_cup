@@ -15,7 +15,7 @@ class RefereeInvitationsTab extends StatelessWidget {
     return BlocProvider(
       create: (_) => InvitationsCubit(
         repository: ServiceLocator.invitationsRepository,
-        playerId: userId,
+        userId: userId,
       ),
       child: BlocBuilder<InvitationsCubit, InvitationsState>(
         builder: (context, state) => switch (state) {

@@ -10,7 +10,7 @@ abstract interface class ITournamentService {
   // ---- Read ----
 
   Future<PageResult<TournamentDto>> fetchPlayerTournaments({
-    required String playerId,
+    required String userId,
     required PageRequest page,
   });
 
@@ -45,7 +45,7 @@ abstract interface class ITournamentService {
   Stream<void> watchTournamentChanges(String tournamentId);
 
   Future<List<TournamentInvitationDto>> fetchInvitations({
-    required String playerId,
+    required String userId,
   });
 
   Future<void> acceptInvitation(String invitationId);

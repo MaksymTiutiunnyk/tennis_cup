@@ -3,9 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tennis_cup/data/models/player.dart';
 import 'package:tennis_cup/routing/app_router.dart';
+import 'package:tennis_cup/ui/view_only/player_search/widgets/player_search.dart';
 import 'package:tennis_cup/ui/view_only/ranking/view_models/sex_filter_cubit.dart';
 import 'package:tennis_cup/ui/view_only/ranking/widgets/ranking_filters.dart';
-import 'package:tennis_cup/ui/view_only/player_search/widgets/player_search.dart';
 
 class RankingPanel extends StatelessWidget {
   const RankingPanel({super.key});
@@ -25,7 +25,7 @@ class RankingPanel extends StatelessWidget {
   void _showPlayerDetails(BuildContext context, Player player) {
     Navigator.of(context).pop();
     context.push(
-      AppRoutes.playerDetails(player.playerId),
+      AppRoutes.playerDetails(player.userId.toString()),
       extra: player,
     );
   }

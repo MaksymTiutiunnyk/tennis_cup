@@ -21,9 +21,7 @@ class UserSearchTile extends StatelessWidget {
         runSpacing: 2,
         children: user.roles.map((r) => RoleChip(role: r)).toList(),
       ),
-      onTap: user.isPlayer && user.playerId != null
-          ? () => _showEditDialog(context)
-          : null,
+      onTap: user.isPlayer ? () => _showEditDialog(context) : null,
     );
 
     if (!user.isDeletable) return tile;

@@ -15,7 +15,7 @@ class LiveStreamMatchPlayer extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () => context.push(
-        AppRoutes.playerDetails(player.playerId),
+        AppRoutes.playerDetails(player.userId.toString()),
         extra: player,
       ),
       child: Row(

@@ -42,10 +42,10 @@ class RefereeMatchCubit extends Cubit<RefereeMatchState> {
     }
   }
 
-  void setFirstServer(int playerId) {
+  void setFirstServer(int id) {
     final s = state;
     if (s is! RefereeMatchReady) return;
-    emit(s.copyWith(firstServerPlayerId: playerId));
+    emit(s.copyWith(firstServerPlayerId: id));
   }
 
   Future<void> startMatch() async {

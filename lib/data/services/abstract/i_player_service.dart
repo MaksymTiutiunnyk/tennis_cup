@@ -12,12 +12,11 @@ abstract interface class IPlayerService {
 
   Future<List<Player>> searchPlayersByName({
     required String query,
-    bool isSurname = false,
   });
 
-  Future<Player> fetchPlayerById(String id);
+  Future<Player> fetchPlayerById(int id);
 
-  Future<void> updatePlayerProfileById(int playerId, Map<String, dynamic> fields);
+  Future<void> updateProfile(int id, Map<String, dynamic> fields);
 
-  Future<String> uploadPlayerAvatar(int playerId, Uint8List bytes);
+  Future<String> uploadAvatar(int id, Uint8List bytes);
 }

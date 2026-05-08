@@ -4,10 +4,10 @@ import 'package:tennis_cup/data/models/player.dart';
 import 'package:tennis_cup/ui/view_only/player_details/widgets/player_details.dart';
 
 class PlayerDetailsRoute extends StatefulWidget {
-  final String playerId;
+  final String userId;
   final Player? cached;
 
-  const PlayerDetailsRoute({super.key, required this.playerId, this.cached});
+  const PlayerDetailsRoute({super.key, required this.userId, this.cached});
 
   @override
   State<PlayerDetailsRoute> createState() => _PlayerDetailsRouteState();
@@ -20,12 +20,12 @@ class _PlayerDetailsRouteState extends State<PlayerDetailsRoute> {
   void initState() {
     super.initState();
     final cached = widget.cached;
-    if (cached != null && cached.playerId == widget.playerId) {
+    if (cached != null && cached.userId.toString() == widget.userId) {
       _future = Future.value(cached);
     } else {
       // TODO: replace with cubit
-      _future =
-          ServiceLocator.playerRepository.fetchPlayerById(widget.playerId);
+      _future = ServiceLocator.playerRepository
+          .fetchPlayerById(int.parse(widget.userId));
     }
   }
 

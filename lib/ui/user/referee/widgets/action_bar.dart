@@ -40,7 +40,7 @@ class ActionBar extends StatelessWidget {
                   title: Text(
                     '${state.bluePlayer.name} ${state.bluePlayer.surname}',
                   ),
-                  value: int.tryParse(state.bluePlayer.playerId) ?? -1,
+                  value: state.bluePlayer.userId,
                   groupValue: selectedLoserId,
                   onChanged: (v) => setDialogState(() => selectedLoserId = v),
                 ),
@@ -50,7 +50,7 @@ class ActionBar extends StatelessWidget {
                   title: Text(
                     '${state.redPlayer.name} ${state.redPlayer.surname}',
                   ),
-                  value: int.tryParse(state.redPlayer.playerId) ?? -1,
+                  value: state.redPlayer.userId,
                   groupValue: selectedLoserId,
                   onChanged: (v) => setDialogState(() => selectedLoserId = v),
                 ),
@@ -72,8 +72,9 @@ class ActionBar extends StatelessWidget {
               child: const Text('Cancel'),
             ),
             FilledButton(
-              onPressed:
-                  selectedLoserId == null ? null : () => Navigator.of(ctx).pop(true),
+              onPressed: selectedLoserId == null
+                  ? null
+                  : () => Navigator.of(ctx).pop(true),
               child: const Text('Confirm'),
             ),
           ],

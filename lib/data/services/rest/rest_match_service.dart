@@ -34,15 +34,15 @@ class RestMatchService implements IMatchService {
 
   @override
   Future<PageResult<HeadToHeadMatchDto>> fetchHeadToHead({
-    required int player1Id,
-    required int player2Id,
+    required int userId1,
+    required int userId2,
     required PageRequest page,
   }) async {
     final response = await _dio.get<Map<String, dynamic>>(
       '/api/v1/matches/head-to-head',
       queryParameters: {
-        'player1Id': player1Id,
-        'player2Id': player2Id,
+        'player1Id': userId1,
+        'player2Id': userId2,
         'page': page.page,
         'size': page.size,
       },

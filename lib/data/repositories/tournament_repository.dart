@@ -109,7 +109,7 @@ class TournamentRepository {
       );
 
   static Player _playerFromBrief(PlayerBriefDto dto) => Player(
-        playerId: dto.id.toString(),
+        userId: dto.id,
         name: dto.firstName,
         surname: dto.lastName,
         sex: Sex.All,
@@ -132,11 +132,11 @@ class TournamentRepository {
   }
 
   Future<PageResult<Tournament>> fetchPlayersTournaments({
-    required String player1Id,
+    required String userId,
     required PageRequest page,
   }) async {
     final result = await _service.fetchPlayerTournaments(
-      playerId: player1Id,
+      userId: userId,
       page: page,
     );
     final tournaments = await _buildTournaments(result.items);
@@ -295,7 +295,7 @@ class TournamentRepository {
     if (ids.isEmpty) return const {};
     final entries = await Future.wait(ids.map((id) async {
       try {
-        final p = await _playerService.fetchPlayerById(id.toString());
+        final p = await _playerService.fetchPlayerById(id);
         return MapEntry<int, Player?>(id, p);
       } catch (_) {
         return MapEntry<int, Player?>(id, null);

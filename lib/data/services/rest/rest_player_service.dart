@@ -40,34 +40,32 @@ class RestPlayerService implements IPlayerService {
   }
 
   @override
-  Future<Player> fetchPlayerById(String id) async {
-    final response = await _dio.get('/api/v1/players/$id');
+  Future<Player> fetchPlayerById(int id) async {
+    final response = await _dio.get('/api/v1/users/$id');
     return _playerFromProfileJson(response.data as Map<String, dynamic>);
   }
 
   @override
   Future<List<Player>> searchPlayersByName({
     required String query,
-    bool isSurname = false,
   }) async {
     final response = await _dio.get<Map<String, dynamic>>(
-      '/api/v1/players/search',
-      queryParameters: {'query': query, 'size': 20},
+      '/api/v1/users/search',
+      queryParameters: {'query': query, 'size': 20, 'roles': ['PLAYER']},
     );
     final content = (response.data!['content'] as List<dynamic>);
     return content
-        .map((e) => _playerFromProfileJson(e as Map<String, dynamic>))
+        .map((e) => _playerFromSearchResult(e as Map<String, dynamic>))
         .toList();
   }
 
   @override
-  Future<void> updatePlayerProfileById(
-      int playerId, Map<String, dynamic> fields) async {
-    await _dio.put<void>('/api/v1/players/$playerId', data: fields);
+  Future<void> updateProfile(int id, Map<String, dynamic> fields) async {
+    await _dio.patch<void>('/api/v1/admin/users/$id', data: fields);
   }
 
   @override
-  Future<String> uploadPlayerAvatar(int playerId, Uint8List bytes) async {
+  Future<String> uploadAvatar(int id, Uint8List bytes) async {
     final formData = FormData.fromMap({
       'file': MultipartFile.fromBytes(
         bytes,
@@ -76,7 +74,7 @@ class RestPlayerService implements IPlayerService {
       ),
     });
     final response = await _dio.put<Map<String, dynamic>>(
-      '/api/v1/players/$playerId/avatar',
+      '/api/v1/users/$id/avatar',
       data: formData,
     );
     return response.data!['avatarUrl'] as String;
@@ -84,7 +82,7 @@ class RestPlayerService implements IPlayerService {
 
   static Player _playerFromRatingRecord(Map<String, dynamic> json) {
     return Player(
-      playerId: json['playerId']?.toString() ?? '',
+      userId: (json['userId'] as num).toInt(),
       name: json['firstName'] as String? ?? '',
       surname: json['lastName'] as String? ?? '',
       sex: Sex.All,
@@ -112,8 +110,7 @@ class RestPlayerService implements IPlayerService {
     final country = json['country'] as String? ?? '';
     final place = [city, country].where((s) => s.isNotEmpty).join(', ');
     return Player(
-      playerId: json['id']?.toString() ?? '',
-      userId: (json['userId'] as num?)?.toInt(),
+      userId: (json['id'] as num).toInt(),
       name: json['firstName'] as String? ?? '',
       surname: json['lastName'] as String? ?? '',
       sex: gender == 'MALE'
@@ -128,6 +125,30 @@ class RestPlayerService implements IPlayerService {
       gold: (stats?['firstPlaceCount'] as num?)?.toInt() ?? 0,
       silver: (stats?['secondPlaceCount'] as num?)?.toInt() ?? 0,
       bronze: (stats?['thirdPlaceCount'] as num?)?.toInt() ?? 0,
+      rankTennis: 0,
+      rankUTTF: 0,
+      imageUrl: json['avatarUrl'] as String? ?? '',
+    );
+  }
+
+  static Player _playerFromSearchResult(Map<String, dynamic> json) {
+    final city = json['city'] as String? ?? '';
+    final country = json['country'] as String? ?? '';
+    final place = [city, country].where((s) => s.isNotEmpty).join(', ');
+    return Player(
+      userId: (json['userId'] as num).toInt(),
+      name: json['firstName'] as String? ?? '',
+      surname: json['lastName'] as String? ?? '',
+      sex: Sex.All,
+      year: 0,
+      tournaments: 0,
+      matches: 0,
+      wins: 0,
+      loses: 0,
+      place: place,
+      gold: 0,
+      silver: 0,
+      bronze: 0,
       rankTennis: 0,
       rankUTTF: 0,
       imageUrl: json['avatarUrl'] as String? ?? '',

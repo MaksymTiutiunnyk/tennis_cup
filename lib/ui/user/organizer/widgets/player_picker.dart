@@ -57,12 +57,11 @@ class _PlayerPickerState extends State<PlayerPicker> {
       try {
         final players =
             await ServiceLocator.playerRepository.fetchPlayersBySubstring(
-          substring: query.trim(),
+          query: query.trim(),
         );
         if (mounted) {
           setState(() => _results = players
-              .where((p) =>
-                  !_selected.any((s) => s.id.toString() == p.playerId))
+              .where((p) => !_selected.any((s) => s.id == p.userId))
               .toList());
         }
       } catch (_) {
@@ -74,8 +73,8 @@ class _PlayerPickerState extends State<PlayerPicker> {
   }
 
   void _add(Player player) {
-    final id = int.tryParse(player.playerId);
-    if (id == null || _selected.any((s) => s.id == id)) return;
+    final id = player.userId;
+    if (_selected.any((s) => s.id == id)) return;
     setState(() {
       _selected.add(SelectedPlayer(id: id, name: player.fullName));
       _results = [];

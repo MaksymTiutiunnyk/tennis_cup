@@ -16,7 +16,7 @@ class FirebaseTournamentService implements ITournamentService {
 
   @override
   Future<PageResult<TournamentDto>> fetchPlayerTournaments({
-    required String playerId,
+    required String userId,
     String? player2Id,
     required PageRequest page,
   }) async {
@@ -24,7 +24,7 @@ class FirebaseTournamentService implements ITournamentService {
 
     Query<Map<String, dynamic>> query = FirebaseFirestore.instance
         .collection('tournaments')
-        .where('players', arrayContains: playerId)
+        .where('players', arrayContains: userId)
         .orderBy('date', descending: true)
         .limit(page.size);
 
@@ -232,7 +232,7 @@ class FirebaseTournamentService implements ITournamentService {
 
   @override
   Future<List<TournamentInvitationDto>> fetchInvitations({
-    required String playerId,
+    required String userId,
   }) async =>
       const [];
 

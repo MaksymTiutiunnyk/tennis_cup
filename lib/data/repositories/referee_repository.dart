@@ -31,8 +31,8 @@ class RefereeRepository {
       int matchId) async {
     final dto = await _matchService.fetchMatchById(matchId.toString());
     if (dto == null) throw Exception('Match $matchId not found');
-    final blueF = _playerService.fetchPlayerById(dto.bluePlayerId.toString());
-    final redF = _playerService.fetchPlayerById(dto.redPlayerId.toString());
+    final blueF = _playerService.fetchPlayerById(dto.bluePlayerId);
+    final redF = _playerService.fetchPlayerById(dto.redPlayerId);
     return (match: dto, blue: await blueF, red: await redF);
   }
 

@@ -5,8 +5,7 @@ import 'package:equatable/equatable.dart';
 enum Sex { All, Men, Women }
 
 class Player extends Equatable {
-  final String playerId;
-  final int? userId;
+  final int userId;
   final String name;
   final String surname;
   final Sex sex;
@@ -24,8 +23,7 @@ class Player extends Equatable {
   final String imageUrl;
 
   const Player({
-    required this.playerId,
-    this.userId,
+    required this.userId,
     required this.year,
     required this.tournaments,
     required this.matches,
@@ -47,7 +45,6 @@ class Player extends Equatable {
 
   @override
   List<Object?> get props => [
-        playerId,
         userId,
         name,
         surname,

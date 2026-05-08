@@ -177,15 +177,15 @@ GoRouter buildAppRouter({GlobalKey<NavigatorState>? navigatorKey}) {
       GoRoute(
         path: '/players/:id',
         builder: (context, state) => PlayerDetailsRoute(
-          playerId: state.pathParameters['id']!,
+          userId: state.pathParameters['id']!,
           cached: state.extra as Player?,
         ),
       ),
       GoRoute(
         path: '/comparison/:p1Id/:p2Id',
         builder: (context, state) => PlayersComparisonRoute(
-          player1Id: state.pathParameters['p1Id']!,
-          player2Id: state.pathParameters['p2Id']!,
+          userId1: state.pathParameters['p1Id']!,
+          userId2: state.pathParameters['p2Id']!,
           cached: state.extra as PlayersComparisonExtra?,
         ),
       ),

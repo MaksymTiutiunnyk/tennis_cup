@@ -28,8 +28,8 @@ class ScheduledMatch extends StatelessWidget {
                   IconButton(
                     onPressed: () => context.push(
                       AppRoutes.playersComparison(
-                        match.bluePlayer.playerId,
-                        match.redPlayer.playerId,
+                        match.bluePlayer.userId.toString(),
+                        match.redPlayer.userId.toString(),
                       ),
                       extra: (p1: match.bluePlayer, p2: match.redPlayer),
                     ),
@@ -42,7 +42,8 @@ class ScheduledMatch extends StatelessWidget {
                 children: [
                   InkWell(
                     onTap: () => context.push(
-                      AppRoutes.playerDetails(match.bluePlayer.playerId),
+                      AppRoutes.playerDetails(
+                          match.bluePlayer.userId.toString()),
                       extra: match.bluePlayer,
                     ),
                     child: Text(
@@ -67,7 +68,8 @@ class ScheduledMatch extends StatelessWidget {
                 children: [
                   InkWell(
                     onTap: () => context.push(
-                      AppRoutes.playerDetails(match.redPlayer.playerId),
+                      AppRoutes.playerDetails(
+                          match.redPlayer.userId.toString()),
                       extra: match.redPlayer,
                     ),
                     child: Text(

@@ -42,7 +42,7 @@ class RestAdminService implements IAdminService {
   @override
   Future<void> createOrganizer(CreateOrganizerRequestDto dto) async {
     await _dio.post<void>(
-      '/api/v1/admin/organizers',
+      '/api/v1/admin/users',
       data: dto.toJson(),
     );
   }
@@ -58,7 +58,7 @@ class RestAdminService implements IAdminService {
     List<String>? roles,
   }) async {
     final response = await _dio.get<Map<String, dynamic>>(
-      '/api/v1/admin/search',
+      '/api/v1/users/search',
       queryParameters: {
         'query': query,
         'size': 20,

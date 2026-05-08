@@ -18,13 +18,13 @@ class RestTournamentService implements ITournamentService {
 
   @override
   Future<PageResult<TournamentDto>> fetchPlayerTournaments({
-    required String playerId,
+    required String userId,
     required PageRequest page,
   }) async {
     final response = await _dio.get('/api/v1/tournaments', queryParameters: {
       'page': page.page,
       'size': page.size,
-      'playerId': playerId,
+      'playerId': userId,
     });
 
     final body = response.data as Map<String, dynamic>;
@@ -177,10 +177,10 @@ class RestTournamentService implements ITournamentService {
   // endpoint when the backend exposes it (e.g. GET /api/v1/invitations).
   @override
   Future<List<TournamentInvitationDto>> fetchInvitations({
-    required String playerId,
+    required String userId,
   }) async {
     return _stubInvitations
-        .where((dto) => dto.playerId.toString() == playerId)
+        .where((dto) => dto.playerId.toString() == userId)
         .toList();
   }
 

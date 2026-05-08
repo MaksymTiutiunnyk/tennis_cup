@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:tennis_cup/data/models/tournament.dart';
 import 'package:tennis_cup/data/models/match.dart';
+import 'package:tennis_cup/data/models/tournament.dart';
 import 'package:tennis_cup/routing/app_router.dart';
 
 class TournamentResults extends StatelessWidget {
@@ -73,7 +73,7 @@ class TournamentResults extends StatelessWidget {
                 DataCell(
                   InkWell(
                     onTap: () => context.push(
-                      AppRoutes.playerDetails(player.playerId),
+                      AppRoutes.playerDetails(player.userId.toString()),
                       extra: player,
                     ),
                     child: Text(

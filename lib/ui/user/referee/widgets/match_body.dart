@@ -88,8 +88,7 @@ class MatchBody extends StatelessWidget {
                   key: const ValueKey('left-score'),
                   player: leftPlayer,
                   score: leftScore,
-                  isServing: serverId != null &&
-                      serverId.toString() == leftPlayer.playerId,
+                  isServing: serverId != null && serverId == leftPlayer.userId,
                   issuedCards: leftIssuedCards,
                   bgColor: leftIsBlue
                       ? const Color(0xFF1565C0)
@@ -105,8 +104,7 @@ class MatchBody extends StatelessWidget {
                   key: const ValueKey('right-score'),
                   player: rightPlayer,
                   score: rightScore,
-                  isServing: serverId != null &&
-                      serverId.toString() == rightPlayer.playerId,
+                  isServing: serverId != null && serverId == rightPlayer.userId,
                   issuedCards: rightIssuedCards,
                   bgColor: leftIsBlue
                       ? const Color(0xFFC62828)

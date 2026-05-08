@@ -51,7 +51,7 @@ class _TournamentFormState extends State<TournamentForm> {
       _refereeId = e.refereeId;
       _selectedPlayers = e.players
           .map((p) => SelectedPlayer(
-                id: int.tryParse(p.playerId) ?? -1,
+                id: p.userId,
                 name: p.fullName,
               ))
           .where((entry) => entry.id != -1)

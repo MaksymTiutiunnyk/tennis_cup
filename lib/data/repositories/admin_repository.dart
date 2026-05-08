@@ -70,7 +70,7 @@ class AdminRepository {
     return dtos.map(_toUserSearchResult).toList();
   }
 
-  Future<List<UserSearchResult>> searchAllNonPlayerUsers(String query) async {
+  Future<List<UserSearchResult>> searchAllUsers(String query) async {
     final dtos = await _service.searchUsers(query: query);
     return dtos.map(_toUserSearchResult).toList();
   }
@@ -85,6 +85,7 @@ class AdminRepository {
       firstName: d.firstName,
       lastName: d.lastName,
       roles: roles,
+      avatarUrl: d.avatarUrl,
     );
   }
 

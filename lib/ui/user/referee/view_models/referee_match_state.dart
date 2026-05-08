@@ -39,12 +39,11 @@ class RefereeMatchReady extends RefereeMatchState {
 
   int? currentServerId() {
     if (firstServerPlayerId == null) return null;
-    final activeSet =
-        match.sets.where((s) => s.status == 'ACTIVE').firstOrNull;
+    final activeSet = match.sets.where((s) => s.status == 'ACTIVE').firstOrNull;
     if (activeSet == null) return null;
     final setIndex = activeSet.number - 1;
-    final blueId = int.tryParse(bluePlayer.playerId) ?? -1;
-    final redId = int.tryParse(redPlayer.playerId) ?? -1;
+    final blueId = bluePlayer.userId;
+    final redId = redPlayer.userId;
     final otherServerId = firstServerPlayerId == blueId ? redId : blueId;
     final gameFirstServer =
         (setIndex % 2 == 0) ? firstServerPlayerId! : otherServerId;

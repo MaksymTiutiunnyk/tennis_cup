@@ -4,8 +4,6 @@ import 'dart:typed_data';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:tennis_cup/data/models/combined_user.dart';
-import 'package:tennis_cup/data/models/player.dart';
-import 'package:tennis_cup/data/models/user_role.dart';
 import 'package:tennis_cup/data/models/user_search_result.dart';
 import 'package:tennis_cup/data/repositories/admin_repository.dart';
 import 'package:tennis_cup/data/repositories/player_repository.dart';
@@ -38,60 +36,20 @@ class UsersSearchCubit extends Cubit<UsersSearchState> {
     }
     emit(UsersSearchLoading());
     try {
-      final (nonPlayerUsers, players) = await (
-        _adminRepository.searchAllNonPlayerUsers(query.trim()),
-        _playerRepository.fetchPlayersBySubstring(substring: query.trim()),
-      ).wait;
-
-      emit(UsersSearchLoaded(users: _merge(nonPlayerUsers, players)));
+      final users = await _adminRepository.searchAllUsers(query.trim());
+      emit(UsersSearchLoaded(users: users.map(_toCombinedUser).toList()));
     } catch (e) {
       emit(UsersSearchError('Failed to search users'));
     }
   }
 
-  static List<CombinedUser> _merge(
-    List<UserSearchResult> nonPlayers,
-    List<Player> players,
-  ) {
-    final playerByUserId = <int, Player>{
-      for (final p in players)
-        if (p.userId != null) p.userId!: p,
-    };
-
-    final combined = <CombinedUser>[];
-    final seenIds = <int>{};
-
-    for (final user in nonPlayers) {
-      final player = playerByUserId[user.userId];
-      combined.add(CombinedUser(
+  static CombinedUser _toCombinedUser(UserSearchResult user) => CombinedUser(
         userId: user.userId,
-        playerId: player != null ? int.tryParse(player.playerId) : null,
-        firstName: player?.name ?? user.firstName,
-        lastName: player?.surname ?? user.lastName,
-        avatarUrl: player?.imageUrl ?? '',
-        roles: [
-          ...user.roles,
-          if (player != null) UserRole.player,
-        ],
-      ));
-      seenIds.add(user.userId);
-    }
-
-    for (final player in players) {
-      if (player.userId != null && !seenIds.contains(player.userId)) {
-        combined.add(CombinedUser(
-          userId: player.userId!,
-          playerId: int.tryParse(player.playerId),
-          firstName: player.name,
-          lastName: player.surname,
-          avatarUrl: player.imageUrl,
-          roles: const [UserRole.player],
-        ));
-      }
-    }
-
-    return combined;
-  }
+        firstName: user.firstName,
+        lastName: user.lastName,
+        avatarUrl: user.avatarUrl ?? '',
+        roles: user.roles,
+      );
 
   void softDelete(CombinedUser user) {
     final current = state;
@@ -100,7 +58,8 @@ class UsersSearchCubit extends Cubit<UsersSearchState> {
     _deletedUser = user;
     _deleteTimer?.cancel();
 
-    final updated = current.users.where((u) => u.userId != user.userId).toList();
+    final updated =
+        current.users.where((u) => u.userId != user.userId).toList();
     emit(UsersSearchLoaded(users: updated, pendingDelete: user));
 
     _deleteTimer = Timer(const Duration(seconds: 4), _commitDelete);
@@ -129,39 +88,40 @@ class UsersSearchCubit extends Cubit<UsersSearchState> {
     }
   }
 
-  Future<void> updatePlayer(int playerId, Map<String, dynamic> fields) async {
-    await _playerRepository.updatePlayerProfileById(playerId, fields);
+  Future<void> updateUser(int id, Map<String, dynamic> fields) async {
+    await _playerRepository.updateProfile(id, fields);
     final current = state;
     if (current is UsersSearchLoaded) {
       final updated = current.users.map((u) {
-        if (u.playerId != playerId) return u;
         return CombinedUser(
           userId: u.userId,
-          playerId: u.playerId,
           firstName: fields['firstName'] as String? ?? u.firstName,
           lastName: fields['lastName'] as String? ?? u.lastName,
           avatarUrl: u.avatarUrl,
           roles: u.roles,
         );
       }).toList();
-      emit(UsersSearchLoaded(users: updated, pendingDelete: current.pendingDelete));
+      emit(UsersSearchLoaded(
+          users: updated, pendingDelete: current.pendingDelete));
     }
   }
 
-  Future<String?> uploadAvatar(int playerId) async {
+  Future<String?> uploadAvatar(int id) async {
     final picker = ImagePicker();
-    final picked = await picker.pickImage(source: ImageSource.gallery, imageQuality: 85);
+    final picked =
+        await picker.pickImage(source: ImageSource.gallery, imageQuality: 85);
     if (picked == null) return null;
 
     final bytes = Uint8List.fromList(await picked.readAsBytes());
-    final avatarUrl = await _playerRepository.uploadPlayerAvatar(playerId, bytes);
+    final avatarUrl = await _playerRepository.uploadAvatar(id, bytes);
 
     final current = state;
     if (current is UsersSearchLoaded) {
       final updated = current.users.map((u) {
-        return u.playerId == playerId ? u.copyWith(avatarUrl: avatarUrl) : u;
+        return u.userId == id ? u.copyWith(avatarUrl: avatarUrl) : u;
       }).toList();
-      emit(UsersSearchLoaded(users: updated, pendingDelete: current.pendingDelete));
+      emit(UsersSearchLoaded(
+          users: updated, pendingDelete: current.pendingDelete));
     }
     return avatarUrl;
   }

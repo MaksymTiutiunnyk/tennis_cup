@@ -21,7 +21,7 @@ class Winner extends StatelessWidget {
 
     return InkWell(
       onTap: () => context.push(
-        AppRoutes.playerDetails(winner.playerId),
+        AppRoutes.playerDetails(winner.userId.toString()),
       ),
       child: Container(
         margin: const EdgeInsets.fromLTRB(8, 0, 8, 8),

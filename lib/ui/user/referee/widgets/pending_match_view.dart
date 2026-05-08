@@ -68,8 +68,8 @@ class PendingMatchView extends StatelessWidget {
     final cubit = context.read<RefereeMatchCubit>();
     final blue = state.bluePlayer;
     final red = state.redPlayer;
-    final blueId = int.tryParse(blue.playerId) ?? -1;
-    final redId = int.tryParse(red.playerId) ?? -1;
+    final blueId = blue.userId;
+    final redId = red.userId;
 
     return LayoutBuilder(
       builder: (context, constraints) {

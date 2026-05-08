@@ -6,20 +6,20 @@ part 'invitations_state.dart';
 
 class InvitationsCubit extends Cubit<InvitationsState> {
   final InvitationsRepository _repository;
-  final String _playerId;
+  final String _userId;
 
   InvitationsCubit({
     required InvitationsRepository repository,
-    required String playerId,
+    required String userId,
   })  : _repository = repository,
-        _playerId = playerId,
+        _userId = userId,
         super(InvitationsLoading()) {
     _load();
   }
 
   Future<void> _load() async {
     try {
-      final items = await _repository.fetchInvitations(playerId: _playerId);
+      final items = await _repository.fetchInvitations(userId: _userId);
       emit(InvitationsLoaded(items));
     } catch (_) {
       emit(InvitationsError('Failed to load invitations'));

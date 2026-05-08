@@ -160,7 +160,7 @@ class _EditPlayerDialogState extends State<EditPlayerDialog> {
   Future<void> _uploadAvatar() async {
     setState(() => _loading = true);
     try {
-      await context.read<UsersSearchCubit>().uploadAvatar(widget.user.playerId!);
+      await context.read<UsersSearchCubit>().uploadAvatar(widget.user.userId);
     } catch (_) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -189,7 +189,7 @@ class _EditPlayerDialogState extends State<EditPlayerDialog> {
       };
       await context
           .read<UsersSearchCubit>()
-          .updatePlayer(widget.user.playerId!, fields);
+          .updateUser(widget.user.userId, fields);
       if (mounted) Navigator.of(context).pop();
     } catch (_) {
       if (mounted) {
