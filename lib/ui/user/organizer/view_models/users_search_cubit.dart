@@ -10,6 +10,7 @@ class UsersSearchCubit extends Cubit<UsersSearchState> {
   final AdminRepository _adminRepository;
 
   CombinedUser? _deletedUser;
+  int? _deletedIndex;
   Timer? _deleteTimer;
   String _lastQuery = '';
 
@@ -24,6 +25,9 @@ class UsersSearchCubit extends Cubit<UsersSearchState> {
   }
 
   Future<void> search(String query) async {
+    // Flush pending delete before loading fresh results so it can't reappear.
+    final pendingId = _flushPendingDelete();
+
     if (query.trim().length < 2) {
       emit(UsersSearchIdle());
       return;
@@ -32,7 +36,13 @@ class UsersSearchCubit extends Cubit<UsersSearchState> {
     emit(UsersSearchLoading());
     try {
       final users = await _adminRepository.searchAllUsers(_lastQuery);
-      emit(UsersSearchLoaded(users: users.map(_toCombinedUser).toList()));
+      var combined = users.map(_toCombinedUser).toList();
+      // Filter out the item that was just committed but may not yet be gone
+      // from the server response (race between our delete call and the search).
+      if (pendingId != null) {
+        combined = combined.where((u) => u.userId != pendingId).toList();
+      }
+      emit(UsersSearchLoaded(users: combined));
     } catch (e) {
       emit(UsersSearchError('Failed to search users'));
     }
@@ -56,6 +66,7 @@ class UsersSearchCubit extends Cubit<UsersSearchState> {
     if (current is! UsersSearchLoaded) return;
 
     _deletedUser = user;
+    _deletedIndex = current.users.indexWhere((u) => u.userId == user.userId);
     _deleteTimer?.cancel();
 
     final updated =
@@ -72,19 +83,40 @@ class UsersSearchCubit extends Cubit<UsersSearchState> {
     final current = state;
     if (current is! UsersSearchLoaded || _deletedUser == null) return;
 
-    final restored = [...current.users, _deletedUser!];
+    final restored = List<CombinedUser>.from(current.users);
+    final index = _deletedIndex ?? restored.length;
+    restored.insert(index.clamp(0, restored.length), _deletedUser!);
     _deletedUser = null;
+    _deletedIndex = null;
     emit(UsersSearchLoaded(users: restored));
+  }
+
+  /// Cancels the pending-delete timer and fires the API call immediately.
+  /// Returns the ID of the user being deleted (for filtering from search results).
+  int? _flushPendingDelete() {
+    if (_deletedUser == null) return null;
+    _deleteTimer?.cancel();
+    _deleteTimer = null;
+    final id = _deletedUser!.userId;
+    _commitDelete(); // fire and forget — errors handled inside
+    return id;
   }
 
   Future<void> _commitDelete() async {
     final user = _deletedUser;
     _deletedUser = null;
+    _deletedIndex = null;
     if (user == null) return;
     try {
       await _adminRepository.deleteOrganizer(user.userId);
-    } catch (_) {
-      // Silently ignore — user already removed from UI
+    } catch (e) {
+      final current = state;
+      if (current is UsersSearchLoaded) {
+        emit(UsersSearchLoaded(
+          users: [...current.users, user],
+          deleteError: true,
+        ));
+      }
     }
   }
 }

@@ -66,6 +66,11 @@ class _OrganizerUsersTabBodyState extends State<_OrganizerUsersTabBody> {
               ),
             ),
           );
+        } else if (state is UsersSearchLoaded && state.deleteError) {
+          ScaffoldMessenger.of(context).clearSnackBars();
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Failed to delete user')),
+          );
         }
       },
       child: Scaffold(
