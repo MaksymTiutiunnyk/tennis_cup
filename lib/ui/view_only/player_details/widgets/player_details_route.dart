@@ -5,9 +5,8 @@ import 'package:tennis_cup/ui/view_only/player_details/widgets/player_details.da
 
 class PlayerDetailsRoute extends StatefulWidget {
   final String userId;
-  final Player? cached;
 
-  const PlayerDetailsRoute({super.key, required this.userId, this.cached});
+  const PlayerDetailsRoute({super.key, required this.userId});
 
   @override
   State<PlayerDetailsRoute> createState() => _PlayerDetailsRouteState();
@@ -19,14 +18,8 @@ class _PlayerDetailsRouteState extends State<PlayerDetailsRoute> {
   @override
   void initState() {
     super.initState();
-    final cached = widget.cached;
-    if (cached != null && cached.userId.toString() == widget.userId) {
-      _future = Future.value(cached);
-    } else {
-      // TODO: replace with cubit
-      _future = ServiceLocator.playerRepository
-          .fetchPlayerById(int.parse(widget.userId));
-    }
+    _future = ServiceLocator.playerRepository
+        .fetchPlayerById(int.parse(widget.userId));
   }
 
   @override

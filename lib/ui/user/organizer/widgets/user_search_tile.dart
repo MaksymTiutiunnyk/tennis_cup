@@ -43,14 +43,24 @@ class UserSearchTile extends StatelessWidget {
     );
   }
 
-  void _showEditDialog(BuildContext context) {
+  Future<void> _showEditDialog(BuildContext context) async {
     final cubit = context.read<UsersSearchCubit>();
-    showDialog<void>(
-      context: context,
-      builder: (dialogCtx) => BlocProvider.value(
-        value: cubit,
-        child: EditPlayerDialog(user: user),
-      ),
-    );
+    try {
+      final player = await cubit.fetchUserForEdit(user.userId);
+      if (!context.mounted) return;
+      showDialog<void>(
+        context: context,
+        builder: (dialogCtx) => BlocProvider.value(
+          value: cubit,
+          child: EditPlayerDialog(user: player),
+        ),
+      );
+    } catch (_) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to load user profile')),
+        );
+      }
+    }
   }
 }

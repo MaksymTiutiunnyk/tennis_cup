@@ -86,12 +86,10 @@ class RestPlayerService implements IPlayerService {
       name: json['firstName'] as String? ?? '',
       surname: json['lastName'] as String? ?? '',
       sex: Sex.All,
-      year: 0,
       tournaments: 0,
       matches: 0,
       wins: 0,
       loses: 0,
-      place: '',
       gold: 0,
       silver: 0,
       bronze: 0,
@@ -104,11 +102,6 @@ class RestPlayerService implements IPlayerService {
   static Player _playerFromProfileJson(Map<String, dynamic> json) {
     final gender = json['gender'] as String? ?? '';
     final stats = json['statistics'] as Map<String, dynamic>?;
-    final birthDate = json['birthDate'] as String?;
-    final year = birthDate != null ? DateTime.parse(birthDate).year : 0;
-    final city = json['city'] as String? ?? '';
-    final country = json['country'] as String? ?? '';
-    final place = [city, country].where((s) => s.isNotEmpty).join(', ');
     return Player(
       userId: (json['id'] as num).toInt(),
       name: json['firstName'] as String? ?? '',
@@ -116,12 +109,14 @@ class RestPlayerService implements IPlayerService {
       sex: gender == 'MALE'
           ? Sex.Men
           : (gender == 'FEMALE' ? Sex.Women : Sex.All),
-      year: year,
+      birthDate: json['birthDate'] as String?,
+      city: json['city'] as String? ?? '',
+      country: json['country'] as String? ?? '',
+      patronymicName: json['patronymicName'] as String? ?? '',
       tournaments: (stats?['totalFinishedTournaments'] as num?)?.toInt() ?? 0,
       matches: (stats?['totalMatches'] as num?)?.toInt() ?? 0,
       wins: (stats?['wins'] as num?)?.toInt() ?? 0,
       loses: (stats?['losses'] as num?)?.toInt() ?? 0,
-      place: place,
       gold: (stats?['firstPlaceCount'] as num?)?.toInt() ?? 0,
       silver: (stats?['secondPlaceCount'] as num?)?.toInt() ?? 0,
       bronze: (stats?['thirdPlaceCount'] as num?)?.toInt() ?? 0,
@@ -132,20 +127,17 @@ class RestPlayerService implements IPlayerService {
   }
 
   static Player _playerFromSearchResult(Map<String, dynamic> json) {
-    final city = json['city'] as String? ?? '';
-    final country = json['country'] as String? ?? '';
-    final place = [city, country].where((s) => s.isNotEmpty).join(', ');
     return Player(
       userId: (json['userId'] as num).toInt(),
       name: json['firstName'] as String? ?? '',
       surname: json['lastName'] as String? ?? '',
       sex: Sex.All,
-      year: 0,
+      city: json['city'] as String? ?? '',
+      country: json['country'] as String? ?? '',
       tournaments: 0,
       matches: 0,
       wins: 0,
       loses: 0,
-      place: place,
       gold: 0,
       silver: 0,
       bronze: 0,

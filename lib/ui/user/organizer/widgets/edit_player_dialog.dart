@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tennis_cup/data/models/combined_user.dart';
+import 'package:tennis_cup/data/models/player.dart';
 import 'package:tennis_cup/ui/user/organizer/view_models/users_search_cubit.dart';
 
 class EditPlayerDialog extends StatefulWidget {
-  final CombinedUser user;
+  final Player user;
 
   const EditPlayerDialog({super.key, required this.user});
 
@@ -27,11 +27,16 @@ class _EditPlayerDialogState extends State<EditPlayerDialog> {
   @override
   void initState() {
     super.initState();
-    _firstNameCtrl = TextEditingController(text: widget.user.firstName);
-    _lastNameCtrl = TextEditingController(text: widget.user.lastName);
-    _patronymicCtrl = TextEditingController();
-    _countryCtrl = TextEditingController();
-    _cityCtrl = TextEditingController();
+    _firstNameCtrl = TextEditingController(text: widget.user.name);
+    _lastNameCtrl = TextEditingController(text: widget.user.surname);
+    _patronymicCtrl =
+        TextEditingController(text: widget.user.patronymicName);
+    _countryCtrl = TextEditingController(text: widget.user.country);
+    _cityCtrl = TextEditingController(text: widget.user.city);
+    _birthDate = widget.user.birthDate != null
+        ? DateTime.tryParse(widget.user.birthDate!)
+        : null;
+    _gender = widget.user.genderString;
   }
 
   @override

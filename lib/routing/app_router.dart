@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:tennis_cup/data/models/player.dart';
 import 'package:tennis_cup/ui/core/widgets/custom_navigator_observer.dart';
 import 'package:tennis_cup/ui/shell/widgets/user_shell.dart';
 import 'package:tennis_cup/ui/shell/widgets/view_shell.dart';
@@ -16,6 +15,7 @@ import 'package:tennis_cup/ui/view_only/home/widgets/home.dart';
 import 'package:tennis_cup/ui/view_only/news/widgets/news.dart';
 import 'package:tennis_cup/ui/view_only/player_comparison/widgets/players_comparison_route.dart';
 import 'package:tennis_cup/ui/view_only/player_details/widgets/player_details_route.dart';
+
 import 'package:tennis_cup/ui/view_only/ranking/widgets/ranking.dart';
 import 'package:tennis_cup/ui/view_only/schedule/widgets/schedule.dart';
 
@@ -178,7 +178,6 @@ GoRouter buildAppRouter({GlobalKey<NavigatorState>? navigatorKey}) {
         path: '/players/:id',
         builder: (context, state) => PlayerDetailsRoute(
           userId: state.pathParameters['id']!,
-          cached: state.extra as Player?,
         ),
       ),
       GoRoute(
@@ -186,7 +185,6 @@ GoRouter buildAppRouter({GlobalKey<NavigatorState>? navigatorKey}) {
         builder: (context, state) => PlayersComparisonRoute(
           userId1: state.pathParameters['p1Id']!,
           userId2: state.pathParameters['p2Id']!,
-          cached: state.extra as PlayersComparisonExtra?,
         ),
       ),
     ],

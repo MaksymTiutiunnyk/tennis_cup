@@ -91,6 +91,7 @@ class FirebasePlayerService implements IPlayerService {
     if (data == null) return null;
 
     final sexStr = data['sex'] as String? ?? '';
+    final year = (data['year'] as num?)?.toInt() ?? 0;
     return Player(
       userId: int.tryParse(doc.id) ?? 0,
       name: data['name'] as String? ?? '',
@@ -100,12 +101,14 @@ class FirebasePlayerService implements IPlayerService {
           : sexStr == 'Women'
               ? Sex.Women
               : Sex.All,
-      year: (data['year'] as num?)?.toInt() ?? 0,
+      birthDate: year != 0 ? '$year-01-01' : null,
+      city: data['city'] as String? ?? '',
+      country: data['country'] as String? ?? '',
+      patronymicName: '',
       tournaments: (data['tournaments'] as num?)?.toInt() ?? 0,
       matches: (data['matches'] as num?)?.toInt() ?? 0,
       wins: (data['wins'] as num?)?.toInt() ?? 0,
       loses: (data['loses'] as num?)?.toInt() ?? 0,
-      place: data['place'] as String? ?? '',
       gold: (data['gold'] as num?)?.toInt() ?? 0,
       silver: (data['silver'] as num?)?.toInt() ?? 0,
       bronze: (data['bronze'] as num?)?.toInt() ?? 0,

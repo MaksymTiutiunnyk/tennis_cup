@@ -15,7 +15,6 @@ class PlayerIntro extends StatelessWidget {
       child: InkWell(
         onTap: () => context.push(
           AppRoutes.playerDetails(player.userId.toString()),
-          extra: player,
         ),
         child: Card(
           margin: const EdgeInsets.all(8),

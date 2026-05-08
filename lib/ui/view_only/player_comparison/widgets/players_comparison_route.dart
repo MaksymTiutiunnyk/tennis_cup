@@ -3,18 +3,14 @@ import 'package:tennis_cup/core/di/service_locator.dart';
 import 'package:tennis_cup/data/models/player.dart';
 import 'package:tennis_cup/ui/view_only/player_comparison/widgets/players_comparison.dart';
 
-typedef PlayersComparisonExtra = ({Player p1, Player p2});
-
 class PlayersComparisonRoute extends StatefulWidget {
   final String userId1;
   final String userId2;
-  final PlayersComparisonExtra? cached;
 
   const PlayersComparisonRoute({
     super.key,
     required this.userId1,
     required this.userId2,
-    this.cached,
   });
 
   @override
@@ -27,19 +23,12 @@ class _PlayersComparisonRouteState extends State<PlayersComparisonRoute> {
   @override
   void initState() {
     super.initState();
-    final cached = widget.cached;
-    if (cached != null &&
-        cached.p1.userId.toString() == widget.userId1 &&
-        cached.p2.userId.toString() == widget.userId2) {
-      _future = Future.value((cached.p1, cached.p2));
-    } else {
-      _future = Future.wait([
-        ServiceLocator.playerRepository
-            .fetchPlayerById(int.parse(widget.userId1)),
-        ServiceLocator.playerRepository
-            .fetchPlayerById(int.parse(widget.userId2)),
-      ]).then((list) => (list[0], list[1]));
-    }
+    _future = Future.wait([
+      ServiceLocator.playerRepository
+          .fetchPlayerById(int.parse(widget.userId1)),
+      ServiceLocator.playerRepository
+          .fetchPlayerById(int.parse(widget.userId2)),
+    ]).then((list) => (list[0], list[1]));
   }
 
   @override

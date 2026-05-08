@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:tennis_cup/data/models/combined_user.dart';
+import 'package:tennis_cup/data/models/player.dart';
 import 'package:tennis_cup/data/models/user_search_result.dart';
 import 'package:tennis_cup/data/repositories/admin_repository.dart';
 import 'package:tennis_cup/data/repositories/player_repository.dart';
@@ -87,6 +88,9 @@ class UsersSearchCubit extends Cubit<UsersSearchState> {
       // Silently ignore — user already removed from UI
     }
   }
+
+  Future<Player> fetchUserForEdit(int userId) =>
+      _playerRepository.fetchPlayerById(userId);
 
   Future<void> updateUser(int id, Map<String, dynamic> fields) async {
     await _playerRepository.updateProfile(id, fields);

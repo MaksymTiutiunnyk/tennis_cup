@@ -9,12 +9,14 @@ class Player extends Equatable {
   final String name;
   final String surname;
   final Sex sex;
-  final int year;
+  final String? birthDate;
+  final String city;
+  final String country;
+  final String patronymicName;
   final int tournaments;
   final int matches;
   final int wins;
   final int loses;
-  final String place;
   final int gold;
   final int silver;
   final int bronze;
@@ -24,22 +26,33 @@ class Player extends Equatable {
 
   const Player({
     required this.userId,
-    required this.year,
+    required this.name,
+    required this.surname,
+    required this.sex,
+    this.birthDate,
+    this.city = '',
+    this.country = '',
+    this.patronymicName = '',
     required this.tournaments,
     required this.matches,
     required this.wins,
     required this.loses,
-    required this.place,
     required this.gold,
     required this.silver,
     required this.bronze,
     required this.rankTennis,
     required this.rankUTTF,
     required this.imageUrl,
-    required this.name,
-    required this.surname,
-    required this.sex,
   });
+
+  int get year =>
+      birthDate != null ? DateTime.tryParse(birthDate!)?.year ?? 0 : 0;
+
+  String get place =>
+      [city, country].where((s) => s.isNotEmpty).join(', ');
+
+  String? get genderString =>
+      sex == Sex.Men ? 'MALE' : sex == Sex.Women ? 'FEMALE' : null;
 
   String get fullName => '$surname $name';
 
@@ -49,12 +62,14 @@ class Player extends Equatable {
         name,
         surname,
         sex,
-        year,
+        birthDate,
+        city,
+        country,
+        patronymicName,
         tournaments,
         matches,
         wins,
         loses,
-        place,
         gold,
         silver,
         bronze,
