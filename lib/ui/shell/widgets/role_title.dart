@@ -21,7 +21,10 @@ class RoleTitle extends StatelessWidget {
                 value: role,
                 child: Text(
                   _roleName(role),
-                  style: Theme.of(context).textTheme.titleLarge,
+                  style: Theme.of(context)
+                      .textTheme
+                      .titleLarge
+                      ?.copyWith(color: Colors.grey),
                 ),
               ))
           .toList(),
