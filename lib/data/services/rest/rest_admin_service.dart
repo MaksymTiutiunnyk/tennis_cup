@@ -71,4 +71,10 @@ class RestAdminService implements IAdminService {
         .toList();
   }
 
+  @override
+  Future<UserProfileDto> getUserById(int userId) async {
+    final response = await _dio.get<Map<String, dynamic>>('/api/v1/users/$userId');
+    return UserProfileDto.fromJson(response.data!);
+  }
+
 }

@@ -12,4 +12,6 @@ abstract interface class IAdminService {
     required String query,
     List<String>? roles,
   });
+
+  Future<UserProfileDto> getUserById(int userId);
 }

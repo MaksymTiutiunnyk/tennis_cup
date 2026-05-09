@@ -1,3 +1,42 @@
+class UserProfileDto {
+  final int userId;
+  final String firstName;
+  final String lastName;
+  final String? patronymicName;
+  final List<String> roles;
+  final String? birthDate;
+  final String? country;
+  final String? city;
+  final String? gender;
+  final String? avatarUrl;
+
+  const UserProfileDto({
+    required this.userId,
+    required this.firstName,
+    required this.lastName,
+    this.patronymicName,
+    required this.roles,
+    this.birthDate,
+    this.country,
+    this.city,
+    this.gender,
+    this.avatarUrl,
+  });
+
+  factory UserProfileDto.fromJson(Map<String, dynamic> json) => UserProfileDto(
+        userId: (json['id'] as num).toInt(),
+        firstName: json['firstName'] as String? ?? '',
+        lastName: json['lastName'] as String? ?? '',
+        patronymicName: json['patronymicName'] as String?,
+        roles: (json['roles'] as List<dynamic>?)?.map((e) => e.toString()).toList() ?? [],
+        birthDate: json['birthDate'] as String?,
+        country: json['country'] as String?,
+        city: json['city'] as String?,
+        gender: json['gender'] as String?,
+        avatarUrl: json['avatarUrl'] as String?,
+      );
+}
+
 class UserSearchDto {
   final int userId;
   final String firstName;

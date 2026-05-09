@@ -1,6 +1,7 @@
 import 'package:tennis_cup/core/pagination/page_request.dart';
 import 'package:tennis_cup/core/pagination/page_result.dart';
 import 'package:tennis_cup/data/models/pending_user.dart';
+import 'package:tennis_cup/data/models/user_profile.dart';
 import 'package:tennis_cup/data/models/user_role.dart';
 import 'package:tennis_cup/data/models/user_search_result.dart';
 import 'package:tennis_cup/data/services/abstract/i_admin_service.dart';
@@ -55,6 +56,23 @@ class AdminRepository {
   Future<List<UserSearchResult>> searchReferees(String query) async {
     final dtos = await _service.searchUsers(query: query, roles: ['REFEREE']);
     return dtos.map(_toUserSearchResult).toList();
+  }
+
+  Future<UserProfile> getUserById(int userId) async {
+    final dto = await _service.getUserById(userId);
+    final roles = dto.roles.map(userRoleFromString).whereType<UserRole>().toList();
+    return UserProfile(
+      userId: dto.userId,
+      firstName: dto.firstName,
+      lastName: dto.lastName,
+      patronymicName: dto.patronymicName,
+      roles: roles,
+      birthDate: dto.birthDate,
+      country: dto.country,
+      city: dto.city,
+      gender: dto.gender,
+      avatarUrl: dto.avatarUrl,
+    );
   }
 
   Future<List<UserSearchResult>> searchAllUsers(String query) async {
