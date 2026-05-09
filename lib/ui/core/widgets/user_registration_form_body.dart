@@ -153,10 +153,20 @@ class _UserRegistrationFormBodyState extends State<UserRegistrationFormBody> {
         children: [
           if (!_isEditMode && widget.availableRoles.length > 1) ...[
             SegmentedButton<String>(
+              style: SegmentedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 0),
+                textStyle: const TextStyle(fontSize: 12),
+              ).copyWith(
+                minimumSize: const WidgetStatePropertyAll(Size.zero),
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              ),
               segments: widget.availableRoles
                   .map((r) => ButtonSegment(
                         value: r,
-                        label: Text(r[0] + r.substring(1).toLowerCase()),
+                        label: Text(
+                          r[0] + r.substring(1).toLowerCase(),
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ))
                   .toList(),
               selected: {_role},
@@ -178,7 +188,8 @@ class _UserRegistrationFormBodyState extends State<UserRegistrationFormBody> {
               decoration: InputDecoration(
                 labelText: 'Password *',
                 suffixIcon: IconButton(
-                  icon: Icon(_obscure ? Icons.visibility : Icons.visibility_off),
+                  icon:
+                      Icon(_obscure ? Icons.visibility : Icons.visibility_off),
                   onPressed: () => setState(() => _obscure = !_obscure),
                 ),
               ),
@@ -206,7 +217,8 @@ class _UserRegistrationFormBodyState extends State<UserRegistrationFormBody> {
           TextFormField(
             controller: _patronymicCtrl,
             textCapitalization: TextCapitalization.words,
-            decoration: const InputDecoration(labelText: 'Patronymic (optional)'),
+            decoration:
+                const InputDecoration(labelText: 'Patronymic (optional)'),
           ),
           const SizedBox(height: 12),
           TextFormField(

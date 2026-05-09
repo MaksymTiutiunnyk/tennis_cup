@@ -15,17 +15,21 @@ class CreateUserScreen extends StatelessWidget {
     final authState = context.read<AuthCubit>().state;
     final isAdmin = authState is AuthAuthenticated &&
         authState.roles.contains(UserRole.admin);
+    final isOrganizer = authState is AuthAuthenticated &&
+        authState.roles.contains(UserRole.organizer);
     final availableRoles = [
       'PLAYER',
       'REFEREE',
-      if (isAdmin) 'ORGANIZER',
+      if (isOrganizer && !isAdmin) ...['ORGANIZER'],
+      if (isAdmin) ...['ORGANIZER', 'ADMIN'],
     ];
 
     return BlocProvider(
       create: (_) =>
           UserCreationCubit(adminRepository: ServiceLocator.adminRepository),
       child: Builder(
-        builder: (context) => BlocListener<UserCreationCubit, UserCreationState>(
+        builder: (context) =>
+            BlocListener<UserCreationCubit, UserCreationState>(
           listener: (context, state) {
             if (state is UserCreationSuccess) {
               Navigator.of(context).pop();
