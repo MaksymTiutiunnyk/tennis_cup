@@ -124,6 +124,35 @@ Thin `Player` objects (built by `_playerFromRatingRecord` from the rating endpoi
 
 `UsersSearchCubit` implements a soft-delete pattern: `softDelete` removes the item from the list and starts a 4-second commit timer. When `search()` or `refresh()` is called while a delete is pending, the timer is cancelled and the delete is committed immediately (fire-and-forget), and the pending user ID is filtered out of the fresh server results to handle the race. Commit failures restore the item to the list and set `deleteError: true` on the state (shown as a snackbar, not a full-screen error).
 
+### Referee match conducting
+
+`lib/ui/user/referee/` — referee's live scoring UI for an active match.
+
+**State pattern**: every mutation (add point, issue card, finish set, etc.) calls the API and then `_reload()` (full `GET /matches/{id}`). There is no partial local-state patching. The only exception is the score undo stack, which is a client-side `List<({int blue, int red})>` maintained across reloads via `_reload({preserveUndoStack})`.
+
+**Layout**: all match states use a 3-column `Row` — left player panel | center controls | right player panel. Side assignment:
+- Odd sets: red on left, blue on right.
+- Even sets: blue on left, red on right (sides swap).
+- Set 5: extra swap when either player reaches 5 points in that set.
+- `RefereeMatchReady.isDisplaySwapped(setNum, {blueScore, redScore})` encapsulates this rule.
+- Between-sets view mirrors the just-finished set's side arrangement.
+- Player column widgets use `ValueKey('player-${player.userId}')` (not position-based) so Flutter rebuilds correctly on swap.
+
+**Cards**: `MatchCardDto` (in `match_dto.dart`) carries `id, matchId, playerId, cardType, issuedAt, setNumber?`. Card rules enforced client-side:
+- WHITE and YELLOW: max 1 per player (`canIssueWhite`, `canIssueYellow` computed on `RefereeMatchReady`).
+- RED: only available after the player already has a YELLOW (`canIssueRed`, `eligibleRedPlayers`).
+- Issuing a WHITE card triggers a 1-minute `TimeoutOverlay` after the backend confirms.
+- Tapping an issued card in the player column → revoke confirm → `cubit.revokeCard(card.id)`.
+
+**Scoring lock**: `scoringLocked = setFinishable || matchFinishable`. When locked, score taps and all non-essential buttons (medical, tech pause, TD match, cards) are disabled; only undo and the finish button remain active.
+
+**Timeout overlays** (`timeout_overlay.dart`): full-screen modal, tap anywhere to dismiss.
+- Medical: red bg, 10-min countdown, auto-dismisses at 0.
+- Tech pause: blue bg, counts up, never auto-dismisses.
+- General (white card): amber bg, 1-min countdown, auto-dismisses at 0.
+
+**Sets score display**: the center panel shows `leftSetsWon – rightSetsWon` (side-aware, not always blue–red). Between sets, the score shown reflects sets won *before* the just-finished set (the last set's result is revealed once the next set starts).
+
 ### Partially implemented features
 
 All services are on REST. The following behaviours are still incomplete:
