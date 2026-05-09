@@ -32,14 +32,14 @@ class TournamentCard extends StatelessWidget {
         trailing: PopupMenuButton<_Action>(
           onSelected: (action) => _handleAction(context, cubit, action),
           itemBuilder: (_) => [
-            const PopupMenuItem(
-              value: _Action.edit,
-              child: Text('Edit'),
-            ),
             if (tournament.status == 'PENDING') ...[
               const PopupMenuItem(
                 value: _Action.start,
                 child: Text('Start'),
+              ),
+              const PopupMenuItem(
+                value: _Action.edit,
+                child: Text('Edit'),
               ),
               const PopupMenuItem(
                 value: _Action.delete,
