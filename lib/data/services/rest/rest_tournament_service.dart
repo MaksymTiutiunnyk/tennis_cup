@@ -124,24 +124,28 @@ class RestTournamentService implements ITournamentService {
   Stream<void> watchTournamentChanges(String tournamentId) =>
       const Stream.empty();
 
-  // TODO: replace stub with real call to tournament-service invitations
-  // endpoint when the backend exposes it (e.g. GET /api/v1/invitations).
   @override
-  Future<List<TournamentInvitationDto>> fetchInvitations({
-    required String userId,
-  }) async {
-    return _stubInvitations
-        .where((dto) => dto.playerId.toString() == userId)
+  Future<List<MyInvitationDto>> fetchInvitations() async {
+    final response = await _dio.get<Map<String, dynamic>>(
+      '/api/v1/tournaments/my-invitations',
+    );
+    final content = (response.data!['content'] as List<dynamic>?) ?? [];
+    return content
+        .map((e) => MyInvitationDto.fromJson(e as Map<String, dynamic>))
         .toList();
   }
 
-  // TODO: replace with POST /api/v1/invitations/{id}/accept once available.
   @override
-  Future<void> acceptInvitation(String invitationId) async {}
+  Future<void> acceptInvitation(String tournamentId) async {
+    await _dio.post<void>(
+        '/api/v1/tournaments/$tournamentId/invitations/accept');
+  }
 
-  // TODO: replace with POST /api/v1/invitations/{id}/decline once available.
   @override
-  Future<void> declineInvitation(String invitationId) async {}
+  Future<void> declineInvitation(String tournamentId) async {
+    await _dio.post<void>(
+        '/api/v1/tournaments/$tournamentId/invitations/decline');
+  }
 
   // ---- Write operations ----
 
@@ -202,51 +206,4 @@ class RestTournamentService implements ITournamentService {
         await _dio.post<Map<String, dynamic>>('/api/v1/tournaments/$id/finish');
     return TournamentDto.fromJson(response.data!);
   }
-
-  static const _stubPlayerId = 1;
-  // TODO: tournamentIds reference real tournaments in the dev backend so the
-  // repository's fetchTournamentById call resolves. Drop this stub once the
-  // invitations endpoint exists.
-  static const List<TournamentInvitationDto> _stubInvitations = [
-    TournamentInvitationDto(
-      id: 1,
-      tournamentId: 47,
-      playerId: _stubPlayerId,
-      playerNumber: 3,
-      startTime: '2026-05-12T09:00:00',
-      endTime: '2026-05-12T12:30:00',
-      deadline: '2026-05-08T23:59:59',
-      status: 'PENDING',
-    ),
-    TournamentInvitationDto(
-      id: 2,
-      tournamentId: 68,
-      playerId: _stubPlayerId,
-      playerNumber: 1,
-      startTime: '2026-05-18T18:00:00',
-      endTime: '2026-05-18T21:00:00',
-      deadline: '2026-05-15T23:59:59',
-      status: 'PENDING',
-    ),
-    TournamentInvitationDto(
-      id: 3,
-      tournamentId: 48,
-      playerId: _stubPlayerId,
-      playerNumber: 7,
-      startTime: '2026-06-02T13:30:00',
-      endTime: '2026-06-02T17:00:00',
-      deadline: '2026-05-30T23:59:59',
-      status: 'PENDING',
-    ),
-    TournamentInvitationDto(
-      id: 4,
-      tournamentId: 83,
-      playerId: _stubPlayerId,
-      playerNumber: 5,
-      startTime: '2026-06-14T20:00:00',
-      endTime: '2026-06-14T23:30:00',
-      deadline: '2026-06-10T23:59:59',
-      status: 'PENDING',
-    ),
-  ];
 }

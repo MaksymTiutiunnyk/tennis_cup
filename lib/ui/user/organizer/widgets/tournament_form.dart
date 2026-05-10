@@ -7,7 +7,7 @@ import 'package:tennis_cup/data/models/tournament.dart';
 import 'package:tennis_cup/data/models/tournament_request.dart';
 import 'package:tennis_cup/ui/user/organizer/view_models/organizer_tournaments_cubit.dart';
 import 'package:tennis_cup/ui/user/organizer/widgets/player_picker.dart';
-import 'package:tennis_cup/ui/user/organizer/widgets/referee_search_field.dart';
+import 'package:tennis_cup/ui/user/organizer/widgets/referee_picker.dart';
 
 final _displayFmt = DateFormat('dd MMM yyyy HH:mm');
 
@@ -24,6 +24,8 @@ class _TournamentFormState extends State<TournamentForm> {
   final _formKey = GlobalKey<FormState>();
   late final TextEditingController _nameCtrl;
   late final TextEditingController _durationCtrl;
+  late final TextEditingController _requiredPlayersCtrl;
+  late final TextEditingController _setsToWinCtrl;
 
   String _type = 'MORNING';
   String _gender = 'MALE';
@@ -32,10 +34,11 @@ class _TournamentFormState extends State<TournamentForm> {
   List<Arena> _arenas = [];
   bool _loadingArenas = true;
 
-  int? _refereeId;
+  List<SelectedReferee> _selectedReferees = [];
   List<SelectedPlayer> _selectedPlayers = [];
 
   bool get _isEdit => widget.existing != null;
+
 
   @override
   void initState() {
@@ -43,27 +46,85 @@ class _TournamentFormState extends State<TournamentForm> {
     final e = widget.existing;
     _nameCtrl = TextEditingController(text: e?.name ?? '');
     _durationCtrl = TextEditingController(text: '30');
+    _requiredPlayersCtrl = TextEditingController(text: '8');
+    _setsToWinCtrl = TextEditingController(text: '2');
     if (e != null) {
       _type = e.time.name.toUpperCase();
       if (e.gender.isNotEmpty) _gender = e.gender;
       _arenaId = int.tryParse(e.arena.id);
       _startTime = e.date;
-      _refereeId = e.refereeId;
-      _selectedPlayers = e.players
-          .map((p) => SelectedPlayer(
-                id: p.userId,
-                name: p.fullName,
+
+      // Populate referee invitations (exclude DECLINED/CANCELLED)
+      _selectedReferees = e.refereeInvitations
+          .where((r) =>
+              r.status.toUpperCase() != 'DECLINED' &&
+              r.status.toUpperCase() != 'CANCELLED')
+          .map((r) => SelectedReferee(
+                id: r.refereeId,
+                name: 'Referee #${r.refereeId}',
+                status: r.status,
               ))
-          .where((entry) => entry.id != -1)
           .toList();
+      _resolveRefereeNames();
+
+      // Populate player invitations (exclude CANCELLED)
+      _selectedPlayers = e.participantInvitations
+          .where((p) => p.status.toUpperCase() != 'CANCELLED')
+          .map((p) => SelectedPlayer(
+                id: p.playerId,
+                name: 'Player #${p.playerId}',
+                status: p.status,
+              ))
+          .toList();
+      _resolvePlayerNames();
     }
     _loadArenas();
+  }
+
+  Future<void> _resolveRefereeNames() async {
+    final resolved = await Future.wait(
+      _selectedReferees.map((r) async {
+        try {
+          final profile =
+              await ServiceLocator.adminRepository.getUserById(r.id);
+          return SelectedReferee(
+            id: r.id,
+            name: '${profile.firstName} ${profile.lastName}',
+            status: r.status,
+          );
+        } catch (_) {
+          return r;
+        }
+      }),
+    );
+    if (mounted) setState(() => _selectedReferees = resolved);
+  }
+
+  Future<void> _resolvePlayerNames() async {
+    final resolved = await Future.wait(
+      _selectedPlayers.map((p) async {
+        try {
+          final player =
+              await ServiceLocator.playerRepository.fetchPlayerById(p.id);
+          return SelectedPlayer(
+            id: p.id,
+            name: player.fullName,
+            status: p.status,
+          );
+        } catch (_) {
+          return p;
+        }
+      }),
+    );
+    if (mounted) setState(() => _selectedPlayers = resolved);
   }
 
   @override
   void dispose() {
     _nameCtrl.dispose();
     _durationCtrl.dispose();
+    _requiredPlayersCtrl.dispose();
+    _setsToWinCtrl.dispose();
     super.dispose();
   }
 
@@ -104,9 +165,9 @@ class _TournamentFormState extends State<TournamentForm> {
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
 
-    if (!_isEdit && _refereeId == null) {
+    if (!_isEdit && _selectedReferees.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please select a referee')),
+        const SnackBar(content: Text('Please add at least one referee')),
       );
       return;
     }
@@ -115,6 +176,7 @@ class _TournamentFormState extends State<TournamentForm> {
     final playerIds = _selectedPlayers.isEmpty
         ? null
         : _selectedPlayers.map((p) => p.id).toList();
+    final refereeIds = _selectedReferees.map((r) => r.id).toList();
 
     if (_isEdit) {
       await cubit.update(
@@ -125,7 +187,7 @@ class _TournamentFormState extends State<TournamentForm> {
           gender: _gender,
           startTime: _startTime,
           arenaId: _arenaId,
-          refereeId: _refereeId,
+          refereeIds: refereeIds.isEmpty ? null : refereeIds,
           playerIds: playerIds,
         ),
       );
@@ -136,8 +198,11 @@ class _TournamentFormState extends State<TournamentForm> {
         gender: _gender,
         startTime: _startTime,
         arenaId: _arenaId ?? 0,
-        refereeId: _refereeId!,
+        refereeIds: refereeIds,
         matchDurationMinutes: int.tryParse(_durationCtrl.text.trim()) ?? 30,
+        requiredPlayersCount:
+            int.tryParse(_requiredPlayersCtrl.text.trim()) ?? 8,
+        setsToWin: int.tryParse(_setsToWinCtrl.text.trim()) ?? 2,
         playerIds: playerIds,
       ));
     }
@@ -214,13 +279,13 @@ class _TournamentFormState extends State<TournamentForm> {
                           (v == null || v.isEmpty) ? 'Required' : null,
                     ),
                   const SizedBox(height: 12),
-                  RefereeSearchField(
-                    initialRefereeId: widget.existing?.refereeId,
-                    onChanged: (result) =>
-                        setState(() => _refereeId = result?.userId),
+                  RefereePicker(
+                    initialReferees: _selectedReferees,
+                    onChanged: (refs) =>
+                        setState(() => _selectedReferees = refs),
                   ),
                   const SizedBox(height: 12),
-                  if (!_isEdit)
+                  if (!_isEdit) ...[
                     TextFormField(
                       controller: _durationCtrl,
                       decoration: const InputDecoration(
@@ -229,7 +294,34 @@ class _TournamentFormState extends State<TournamentForm> {
                       validator: (v) =>
                           (int.tryParse(v ?? '') ?? 0) <= 0 ? 'Required' : null,
                     ),
-                  if (!_isEdit) const SizedBox(height: 12),
+                    const SizedBox(height: 12),
+                    TextFormField(
+                      controller: _requiredPlayersCtrl,
+                      decoration: const InputDecoration(
+                          labelText: 'Required players count'),
+                      keyboardType: TextInputType.number,
+                      validator: (v) {
+                        final n = int.tryParse(v ?? '');
+                        if (n == null || n < 2) return 'Min 2 players';
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 12),
+                    TextFormField(
+                      controller: _setsToWinCtrl,
+                      decoration:
+                          const InputDecoration(labelText: 'Sets to win'),
+                      keyboardType: TextInputType.number,
+                      validator: (v) {
+                        final n = int.tryParse(v ?? '');
+                        if (n == null || n < 1 || n > 4) {
+                          return 'Must be 1–4';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 12),
+                  ],
                   ListTile(
                     contentPadding: EdgeInsets.zero,
                     title: const Text('Start time'),
@@ -241,6 +333,8 @@ class _TournamentFormState extends State<TournamentForm> {
                   PlayerPicker(
                     initialPlayers: _selectedPlayers,
                     gender: _gender,
+                    requiredPlayersCount:
+                        widget.existing?.requiredPlayersCount,
                     onChanged: (players) =>
                         setState(() => _selectedPlayers = players),
                   ),

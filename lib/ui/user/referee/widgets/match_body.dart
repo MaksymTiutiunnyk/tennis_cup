@@ -20,12 +20,12 @@ class MatchBody extends StatelessWidget {
     final blueSetsWon = match.sets
         .where((s) =>
             (s.status == 'FINISHED' || s.status == 'TECHNICAL_DEFEAT') &&
-            s.winnerId == match.bluePlayerId)
+            s.winnerId == match.bluePlayerId!)
         .length;
     final redSetsWon = match.sets
         .where((s) =>
             (s.status == 'FINISHED' || s.status == 'TECHNICAL_DEFEAT') &&
-            s.winnerId == match.redPlayerId)
+            s.winnerId == match.redPlayerId!)
         .length;
 
     // Last completed set (for between-sets view)

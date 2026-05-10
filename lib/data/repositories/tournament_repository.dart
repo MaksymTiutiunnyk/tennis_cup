@@ -164,8 +164,10 @@ class TournamentRepository {
       gender: request.gender,
       startTime: request.startTime.toUtc().toIso8601String(),
       arenaId: request.arenaId,
-      refereeId: request.refereeId,
+      refereeIds: request.refereeIds,
       matchDurationMinutes: request.matchDurationMinutes,
+      requiredPlayersCount: request.requiredPlayersCount,
+      setsToWin: request.setsToWin,
       playerIds: request.playerIds,
     ));
   }
@@ -179,7 +181,7 @@ class TournamentRepository {
         gender: request.gender,
         startTime: request.startTime?.toUtc().toIso8601String(),
         arenaId: request.arenaId,
-        refereeId: request.refereeId,
+        refereeIds: request.refereeIds,
         playerIds: request.playerIds,
       ),
     );
@@ -224,8 +226,8 @@ class TournamentRepository {
     }
     for (final matches in matchDtosByTournament.values) {
       for (final m in matches) {
-        neededPlayerIds.add(m.bluePlayerId);
-        neededPlayerIds.add(m.redPlayerId);
+        if (m.bluePlayerId != null) neededPlayerIds.add(m.bluePlayerId!);
+        if (m.redPlayerId != null) neededPlayerIds.add(m.redPlayerId!);
       }
     }
 
@@ -270,8 +272,10 @@ class TournamentRepository {
     for (final match in matches) {
       final winner = match.winnerId;
       if (winner == null) continue;
-      final loser =
-          winner == match.bluePlayerId ? match.redPlayerId : match.bluePlayerId;
+      if (match.bluePlayerId == null || match.redPlayerId == null) continue;
+      final loser = winner == match.bluePlayerId
+          ? match.redPlayerId!
+          : match.bluePlayerId!;
       pointsByPlayer.update(winner, (v) => v + 2, ifAbsent: () => 2);
       pointsByPlayer.update(loser, (v) => v + 1, ifAbsent: () => 1);
     }
@@ -367,7 +371,17 @@ class TournamentRepository {
       places: places,
       isFinished: dto.status == 'FINISHED',
       matches: matches,
-      refereeId: dto.refereeId != 0 ? dto.refereeId : null,
+      refereeId: dto.refereeId,
+      setsToWin: dto.setsToWin,
+      requiredPlayersCount: dto.requiredPlayersCount,
+      participantInvitations: dto.participants
+          .map((p) => TournamentParticipant(
+              playerId: p.playerId, status: p.invitationStatus))
+          .toList(),
+      refereeInvitations: dto.refereeInvitations
+          .map((r) => TournamentRefereeInvitation(
+              refereeId: r.refereeId, status: r.status))
+          .toList(),
     );
   }
 }

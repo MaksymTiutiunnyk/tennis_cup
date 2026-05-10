@@ -9,6 +9,21 @@ DateFormat formatter = DateFormat('yyyy-MM-dd');
 // ignore: constant_identifier_names
 enum Time { Morning, Evening, Day, Midnight, Night }
 
+class TournamentParticipant {
+  final int playerId;
+  final String status;
+
+  const TournamentParticipant({required this.playerId, required this.status});
+}
+
+class TournamentRefereeInvitation {
+  final int refereeId;
+  final String status;
+
+  const TournamentRefereeInvitation(
+      {required this.refereeId, required this.status});
+}
+
 class Tournament extends Equatable {
   final String tournamentId;
   final String name;
@@ -23,6 +38,10 @@ class Tournament extends Equatable {
   final List<int> places;
   final bool isFinished;
   final int? refereeId;
+  final int? setsToWin;
+  final int? requiredPlayersCount;
+  final List<TournamentParticipant> participantInvitations;
+  final List<TournamentRefereeInvitation> refereeInvitations;
 
   const Tournament({
     required this.tournamentId,
@@ -38,6 +57,10 @@ class Tournament extends Equatable {
     this.isFinished = false,
     this.matches,
     this.refereeId,
+    this.setsToWin,
+    this.requiredPlayersCount,
+    this.participantInvitations = const [],
+    this.refereeInvitations = const [],
   });
 
   @override
@@ -55,5 +78,7 @@ class Tournament extends Equatable {
         places,
         isFinished,
         refereeId,
+        participantInvitations,
+        refereeInvitations,
       ];
 }

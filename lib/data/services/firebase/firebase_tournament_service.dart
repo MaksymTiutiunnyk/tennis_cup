@@ -7,7 +7,6 @@ import 'package:tennis_cup/data/services/abstract/i_tournament_service.dart';
 import 'package:tennis_cup/data/services/dto/dashboard_dto.dart';
 import 'package:tennis_cup/data/services/dto/tournament_dto.dart';
 import 'package:tennis_cup/data/services/dto/tournament_invitation_dto.dart';
-
 // Note: fetchPlayerTournaments filters by player1Id via Firestore arrayContains.
 // player2Id filtering is applied client-side — Firestore only supports one
 // arrayContains per query.
@@ -132,13 +131,15 @@ class FirebaseTournamentService implements ITournamentService {
       startTime: dateTime.toIso8601String(),
       arenaId: 0,
       gender: 'MALE',
-      refereeId: 0,
+      requiredPlayersCount: 0,
+      setsToWin: 1,
       participants: playerIds
           .map((id) => TournamentParticipantDto(
                 playerId: id,
                 invitationStatus: 'ACCEPTED',
               ))
           .toList(),
+      refereeInvitations: const [],
     );
   }
 
@@ -187,16 +188,13 @@ class FirebaseTournamentService implements ITournamentService {
       throw UnimplementedError('finishTournament not implemented for Firebase');
 
   @override
-  Future<List<TournamentInvitationDto>> fetchInvitations({
-    required String userId,
-  }) async =>
-      const [];
+  Future<List<MyInvitationDto>> fetchInvitations() async => const [];
 
   @override
-  Future<void> acceptInvitation(String invitationId) async {}
+  Future<void> acceptInvitation(String tournamentId) async {}
 
   @override
-  Future<void> declineInvitation(String invitationId) async {}
+  Future<void> declineInvitation(String tournamentId) async {}
 
   @override
   Future<List<ArenaMatchViewDto>> fetchCurrentMatches() async => const [];

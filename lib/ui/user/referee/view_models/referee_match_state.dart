@@ -29,10 +29,10 @@ class RefereeMatchReady extends RefereeMatchState {
 
   // Cards derived from backend state
   List<MatchCardDto> get blueCards =>
-      match.cards.where((c) => c.playerId == match.bluePlayerId).toList();
+      match.cards.where((c) => c.playerId == match.bluePlayerId!).toList();
 
   List<MatchCardDto> get redCards =>
-      match.cards.where((c) => c.playerId == match.redPlayerId).toList();
+      match.cards.where((c) => c.playerId == match.redPlayerId!).toList();
 
   bool get canIssueWhite =>
       !blueCards.any((c) => c.cardType == 'WHITE') ||
@@ -43,13 +43,13 @@ class RefereeMatchReady extends RefereeMatchState {
       !redCards.any((c) => c.cardType == 'YELLOW');
 
   List<int> get eligibleWhitePlayers => [
-        if (!blueCards.any((c) => c.cardType == 'WHITE')) match.bluePlayerId,
-        if (!redCards.any((c) => c.cardType == 'WHITE')) match.redPlayerId,
+        if (!blueCards.any((c) => c.cardType == 'WHITE')) match.bluePlayerId!,
+        if (!redCards.any((c) => c.cardType == 'WHITE')) match.redPlayerId!,
       ];
 
   List<int> get eligibleYellowPlayers => [
-        if (!blueCards.any((c) => c.cardType == 'YELLOW')) match.bluePlayerId,
-        if (!redCards.any((c) => c.cardType == 'YELLOW')) match.redPlayerId,
+        if (!blueCards.any((c) => c.cardType == 'YELLOW')) match.bluePlayerId!,
+        if (!redCards.any((c) => c.cardType == 'YELLOW')) match.redPlayerId!,
       ];
 
   // Red card requires yellow first. Only players who already have yellow are eligible.
@@ -58,8 +58,8 @@ class RefereeMatchReady extends RefereeMatchState {
       redCards.any((c) => c.cardType == 'YELLOW');
 
   List<int> get eligibleRedPlayers => [
-        if (blueCards.any((c) => c.cardType == 'YELLOW')) match.bluePlayerId,
-        if (redCards.any((c) => c.cardType == 'YELLOW')) match.redPlayerId,
+        if (blueCards.any((c) => c.cardType == 'YELLOW')) match.bluePlayerId!,
+        if (redCards.any((c) => c.cardType == 'YELLOW')) match.redPlayerId!,
       ];
 
   // Odd sets: red on left (not swapped). Even sets: blue on left (swapped).

@@ -35,13 +35,11 @@ abstract interface class ITournamentService {
 
   Stream<void> watchTournamentChanges(String tournamentId);
 
-  Future<List<TournamentInvitationDto>> fetchInvitations({
-    required String userId,
-  });
+  Future<List<MyInvitationDto>> fetchInvitations();
 
-  Future<void> acceptInvitation(String invitationId);
+  Future<void> acceptInvitation(String tournamentId);
 
-  Future<void> declineInvitation(String invitationId);
+  Future<void> declineInvitation(String tournamentId);
 
   // ---- Write ----
 

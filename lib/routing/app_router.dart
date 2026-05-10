@@ -11,7 +11,7 @@ import 'package:tennis_cup/ui/user/organizer/widgets/organizer_news_tab.dart';
 import 'package:tennis_cup/ui/user/organizer/widgets/organizer_tournaments_tab.dart';
 import 'package:tennis_cup/ui/user/organizer/widgets/organizer_users_tab.dart';
 import 'package:tennis_cup/ui/user/organizer/widgets/pending_users_tab.dart';
-import 'package:tennis_cup/ui/user/player/widgets/tournaments_tab.dart';
+import 'package:tennis_cup/ui/user/player/widgets/player_invitations_tab.dart';
 import 'package:tennis_cup/ui/user/referee/widgets/referee_invitations_tab.dart';
 import 'package:tennis_cup/ui/user/referee/widgets/referee_tournaments_tab.dart';
 import 'package:tennis_cup/ui/view_only/home/widgets/home.dart';
@@ -101,7 +101,7 @@ GoRouter buildAppRouter({GlobalKey<NavigatorState>? navigatorKey}) {
             routes: [
               GoRoute(
                 path: AppRoutes.userInvitations,
-                builder: (context, state) => const TournamentsTab(),
+                builder: (context, state) => const PlayerInvitationsTab(),
               ),
             ],
           ),

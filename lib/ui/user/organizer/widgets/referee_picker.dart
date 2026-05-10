@@ -2,58 +2,51 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:tennis_cup/core/di/service_locator.dart';
-import 'package:tennis_cup/data/models/player.dart';
+import 'package:tennis_cup/data/models/user_search_result.dart';
 
-class SelectedPlayer {
+class SelectedReferee {
   final int id;
   final String name;
   // null = newly added candidate, 'ACCEPTED'/'PENDING' = existing invitation
   final String? status;
 
-  const SelectedPlayer({required this.id, required this.name, this.status});
+  const SelectedReferee({required this.id, required this.name, this.status});
 }
 
-class PlayerPicker extends StatefulWidget {
-  final List<SelectedPlayer> initialPlayers;
-  final ValueChanged<List<SelectedPlayer>> onChanged;
-  final String? gender;
-  /// When set, search is disabled once accepted players reach this count.
-  final int? requiredPlayersCount;
+class RefereePicker extends StatefulWidget {
+  final List<SelectedReferee> initialReferees;
+  final ValueChanged<List<SelectedReferee>> onChanged;
 
-  const PlayerPicker({
+  const RefereePicker({
     super.key,
-    this.initialPlayers = const [],
+    this.initialReferees = const [],
     required this.onChanged,
-    this.gender,
-    this.requiredPlayersCount,
   });
 
   @override
-  State<PlayerPicker> createState() => _PlayerPickerState();
+  State<RefereePicker> createState() => _RefereePickerState();
 }
 
-class _PlayerPickerState extends State<PlayerPicker> {
+class _RefereePickerState extends State<RefereePicker> {
   final _ctrl = TextEditingController();
-  late List<SelectedPlayer> _selected;
-  List<Player> _results = [];
+  late List<SelectedReferee> _selected;
+  List<UserSearchResult> _results = [];
   bool _loading = false;
   Timer? _debounce;
 
   @override
   void initState() {
     super.initState();
-    _selected = List.of(widget.initialPlayers);
+    _selected = List.of(widget.initialReferees);
   }
 
   @override
-  void didUpdateWidget(PlayerPicker oldWidget) {
+  void didUpdateWidget(RefereePicker oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.initialPlayers != widget.initialPlayers) {
-      // Sync updated names/statuses for IDs already in _selected.
-      // Preserve items the user added during this session (not in initialPlayers).
+    if (oldWidget.initialReferees != widget.initialReferees) {
       _selected = _selected.map((s) {
-        final updated = widget.initialPlayers
-            .where((p) => p.id == s.id)
+        final updated = widget.initialReferees
+            .where((r) => r.id == s.id)
             .firstOrNull;
         return updated ?? s;
       }).toList();
@@ -77,14 +70,11 @@ class _PlayerPickerState extends State<PlayerPicker> {
       if (!mounted) return;
       setState(() => _loading = true);
       try {
-        final players =
-            await ServiceLocator.playerRepository.fetchPlayersBySubstring(
-          query: query.trim(),
-          gender: widget.gender,
-        );
+        final results =
+            await ServiceLocator.adminRepository.searchReferees(query.trim());
         if (mounted) {
-          setState(() => _results = players
-              .where((p) => !_selected.any((s) => s.id == p.userId))
+          setState(() => _results = results
+              .where((r) => !_selected.any((s) => s.id == r.userId))
               .toList());
         }
       } catch (_) {
@@ -95,18 +85,17 @@ class _PlayerPickerState extends State<PlayerPicker> {
     });
   }
 
-  void _add(Player player) {
-    final id = player.userId;
-    if (_selected.any((s) => s.id == id)) return;
+  void _add(UserSearchResult result) {
+    if (_selected.any((s) => s.id == result.userId)) return;
     setState(() {
-      _selected.add(SelectedPlayer(id: id, name: player.fullName));
+      _selected.add(SelectedReferee(id: result.userId, name: result.fullName));
       _results = [];
       _ctrl.clear();
     });
     widget.onChanged(List.of(_selected));
   }
 
-  void _remove(SelectedPlayer entry) {
+  void _remove(SelectedReferee entry) {
     setState(() => _selected.removeWhere((s) => s.id == entry.id));
     widget.onChanged(List.of(_selected));
   }
@@ -119,18 +108,14 @@ class _PlayerPickerState extends State<PlayerPicker> {
     };
   }
 
-  bool get _searchDisabled {
-    final required = widget.requiredPlayersCount;
-    if (required == null) return false;
-    final acceptedCount =
-        _selected.where((p) => p.status?.toUpperCase() == 'ACCEPTED').length;
-    return acceptedCount >= required;
-  }
+  bool get _hasAccepted =>
+      _selected.any((r) => r.status?.toUpperCase() == 'ACCEPTED');
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final searchDisabled = _searchDisabled;
+    final searchDisabled = _hasAccepted;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -139,13 +124,11 @@ class _PlayerPickerState extends State<PlayerPicker> {
             spacing: 8,
             runSpacing: 4,
             children: _selected
-                .map((p) => Chip(
-                      label: Text(
-                        p.name,
-                        style: const TextStyle(color: Colors.white),
-                      ),
-                      backgroundColor: _chipColor(context, p.status),
-                      onDeleted: () => _remove(p),
+                .map((r) => Chip(
+                      label: Text(r.name,
+                          style: const TextStyle(color: Colors.white)),
+                      backgroundColor: _chipColor(context, r.status),
+                      onDeleted: () => _remove(r),
                       deleteIconColor: Colors.white,
                     ))
                 .toList(),
@@ -156,9 +139,8 @@ class _PlayerPickerState extends State<PlayerPicker> {
           controller: _ctrl,
           enabled: !searchDisabled,
           decoration: InputDecoration(
-            labelText: 'Add players',
-            hintText:
-                searchDisabled ? 'Player slots are full' : 'Search by name…',
+            labelText: 'Add referee',
+            hintText: searchDisabled ? 'Referee already accepted' : 'Search by name…',
             suffixIcon: _loading
                 ? const Padding(
                     padding: EdgeInsets.all(12),
@@ -178,12 +160,13 @@ class _PlayerPickerState extends State<PlayerPicker> {
             elevation: 4,
             child: Column(
               children: _results
-                  .map((p) => ListTile(
+                  .map((r) => ListTile(
                         dense: true,
-                        title: Text(p.fullName),
+                        title: Text(r.fullName),
+                        subtitle: Text('ID: ${r.userId}'),
                         trailing: Icon(Icons.add_circle_outline,
                             color: colorScheme.primary),
-                        onTap: () => _add(p),
+                        onTap: () => _add(r),
                       ))
                   .toList(),
             ),

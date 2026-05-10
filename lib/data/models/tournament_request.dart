@@ -4,8 +4,10 @@ class CreateTournamentRequest {
   final String gender;
   final DateTime startTime;
   final int arenaId;
-  final int refereeId;
+  final List<int> refereeIds;
   final int matchDurationMinutes;
+  final int requiredPlayersCount;
+  final int setsToWin;
   final List<int>? playerIds;
 
   const CreateTournamentRequest({
@@ -14,8 +16,10 @@ class CreateTournamentRequest {
     required this.gender,
     required this.startTime,
     required this.arenaId,
-    required this.refereeId,
+    required this.refereeIds,
     required this.matchDurationMinutes,
+    required this.requiredPlayersCount,
+    required this.setsToWin,
     this.playerIds,
   });
 }
@@ -26,7 +30,7 @@ class UpdateTournamentRequest {
   final String? gender;
   final DateTime? startTime;
   final int? arenaId;
-  final int? refereeId;
+  final List<int>? refereeIds;
   final List<int>? playerIds;
 
   const UpdateTournamentRequest({
@@ -35,7 +39,7 @@ class UpdateTournamentRequest {
     this.gender,
     this.startTime,
     this.arenaId,
-    this.refereeId,
+    this.refereeIds,
     this.playerIds,
   });
 }

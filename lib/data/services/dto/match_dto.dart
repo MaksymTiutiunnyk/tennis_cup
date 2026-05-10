@@ -81,8 +81,8 @@ class HeadToHeadMatchDto {
         winnerId: (json['winnerId'] as num?)?.toInt(),
         technicalDefeat: json['technicalDefeat'] as bool? ?? false,
         sets: (json['sets'] as List<dynamic>?)
-                ?.map((e) =>
-                    HeadToHeadSetDto.fromJson(e as Map<String, dynamic>))
+                ?.map(
+                    (e) => HeadToHeadSetDto.fromJson(e as Map<String, dynamic>))
                 .toList() ??
             const [],
       );
@@ -123,8 +123,8 @@ class MatchDto {
   final int tournamentId;
   final int refereeId;
   final String status;
-  final int bluePlayerId;
-  final int redPlayerId;
+  final int? bluePlayerId;
+  final int? redPlayerId;
   final int? winnerId;
   final String scheduledStart;
   final String scheduledEnd;
@@ -154,8 +154,8 @@ class MatchDto {
         tournamentId: (json['tournamentId'] as num).toInt(),
         refereeId: (json['refereeId'] as num?)?.toInt() ?? 0,
         status: json['status'] as String? ?? '',
-        bluePlayerId: (json['bluePlayerId'] as num).toInt(),
-        redPlayerId: (json['redPlayerId'] as num).toInt(),
+        bluePlayerId: (json['bluePlayerId'] as num?)?.toInt(),
+        redPlayerId: (json['redPlayerId'] as num?)?.toInt(),
         winnerId: (json['winnerId'] as num?)?.toInt(),
         scheduledStart: json['scheduledStart'] as String? ?? '',
         scheduledEnd: json['scheduledEnd'] as String? ?? '',

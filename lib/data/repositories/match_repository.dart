@@ -15,7 +15,8 @@ class MatchRepository {
   Future<Match?> fetchMatchById({required String matchId}) async {
     final dto = await _service.fetchMatchById(matchId);
     if (dto == null) return null;
-    final players = await _fetchPlayers({dto.bluePlayerId, dto.redPlayerId});
+    final players = await _fetchPlayers(
+        {if (dto.bluePlayerId != null) dto.bluePlayerId!, if (dto.redPlayerId != null) dto.redPlayerId!});
     return _toMatch(dto, players);
   }
 
@@ -31,8 +32,8 @@ class MatchRepository {
     );
     final ids = <int>{};
     for (final dto in result.items) {
-      ids.add(dto.bluePlayerId);
-      ids.add(dto.redPlayerId);
+      if (dto.bluePlayerId != null) ids.add(dto.bluePlayerId!);
+      if (dto.redPlayerId != null) ids.add(dto.redPlayerId!);
     }
     final players = await _fetchPlayers(ids);
     final matches = result.items

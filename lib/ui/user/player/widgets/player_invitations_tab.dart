@@ -5,8 +5,8 @@ import 'package:tennis_cup/data/models/tournament_invitation.dart';
 import 'package:tennis_cup/ui/user/player/view_models/invitations_cubit.dart';
 import 'package:tennis_cup/ui/user/player/widgets/tournament_invitation_card.dart';
 
-class RefereeInvitationsTab extends StatelessWidget {
-  const RefereeInvitationsTab({super.key});
+class PlayerInvitationsTab extends StatelessWidget {
+  const PlayerInvitationsTab({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -57,6 +57,7 @@ class _InvitationsListViewState extends State<_InvitationsListView> {
   }
 
   void _syncList(List<TournamentInvitation> newItems) {
+    // Remove items that are no longer present
     for (var i = _items.length - 1; i >= 0; i--) {
       if (!newItems.any((n) => n.id == _items[i].id)) {
         final removed = _items[i];
@@ -68,6 +69,7 @@ class _InvitationsListViewState extends State<_InvitationsListView> {
         );
       }
     }
+    // Add new items
     for (final item in newItems) {
       if (!_items.any((e) => e.id == item.id)) {
         _items.add(item);
