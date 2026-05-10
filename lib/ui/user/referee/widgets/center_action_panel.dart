@@ -218,8 +218,8 @@ class _CenterActionPanelState extends State<CenterActionPanel> {
     final blueLeads =
         widget.activeSet.bluePlayerScore > widget.activeSet.redPlayerScore;
     return blueLeads
-        ? (widget.blueSetsWon + 1 >= 3)
-        : (widget.redSetsWon + 1 >= 3);
+        ? (widget.blueSetsWon + 1 >= widget.state.match.setsToWin)
+        : (widget.redSetsWon + 1 >= widget.state.match.setsToWin);
   }
 
   // ── Build ─────────────────────────────────────────────────────────────────

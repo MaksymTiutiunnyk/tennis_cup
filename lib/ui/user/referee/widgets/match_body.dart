@@ -95,7 +95,8 @@ class MatchBody extends StatelessWidget {
     final b = activeSet.bluePlayerScore;
     final r = activeSet.redPlayerScore;
     final setFinishable = _canFinishSet(b, r);
-    final matchFinishable = blueSetsWon >= 3 || redSetsWon >= 3;
+    final matchFinishable =
+        blueSetsWon >= match.setsToWin || redSetsWon >= match.setsToWin;
     final scoringLocked = setFinishable || matchFinishable;
 
     return Row(

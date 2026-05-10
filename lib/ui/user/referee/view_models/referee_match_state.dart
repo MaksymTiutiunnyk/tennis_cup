@@ -64,7 +64,8 @@ class RefereeMatchReady extends RefereeMatchState {
   // 5th set extra swap when either player reaches 5 points.
   bool isDisplaySwapped(int setNumber, {int blueScore = 0, int redScore = 0}) {
     bool swapped = setNumber.isEven;
-    if (setNumber == 5 && (blueScore >= 5 || redScore >= 5)) {
+    final decidingSet = match.setsToWin * 2 - 1;
+    if (setNumber == decidingSet && (blueScore >= 5 || redScore >= 5)) {
       swapped = !swapped;
     }
     return swapped;
