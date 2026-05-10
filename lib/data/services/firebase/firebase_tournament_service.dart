@@ -19,6 +19,7 @@ class FirebaseTournamentService implements ITournamentService {
     required String userId,
     String? player2Id,
     required PageRequest page,
+    required List<String> statuses,
   }) async {
     if (page.page == 0) _tournamentCursor = null;
 

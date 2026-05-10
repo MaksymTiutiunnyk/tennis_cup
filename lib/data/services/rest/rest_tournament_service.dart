@@ -20,11 +20,13 @@ class RestTournamentService implements ITournamentService {
   Future<PageResult<TournamentDto>> fetchPlayerTournaments({
     required String userId,
     required PageRequest page,
+    required List<String> statuses,
   }) async {
     final response = await _dio.get('/api/v1/tournaments', queryParameters: {
       'page': page.page,
       'size': page.size,
       'playerId': userId,
+      'statuses': statuses
     });
 
     final body = response.data as Map<String, dynamic>;

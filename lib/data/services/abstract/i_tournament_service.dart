@@ -12,6 +12,7 @@ abstract interface class ITournamentService {
   Future<PageResult<TournamentDto>> fetchPlayerTournaments({
     required String userId,
     required PageRequest page,
+    required List<String> statuses,
   });
 
   Future<TournamentDto> fetchTournamentById(String id);
