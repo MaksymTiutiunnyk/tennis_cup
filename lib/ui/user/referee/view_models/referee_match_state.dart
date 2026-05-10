@@ -72,22 +72,27 @@ class RefereeMatchReady extends RefereeMatchState {
     return swapped;
   }
 
+  /// Single source of truth for current server.
+  /// Uses backend-confirmed firstServerId once match is active; falls back to
+  /// locally-selected firstServerPlayerId before the match starts.
   int? currentServerId() {
-    if (firstServerPlayerId == null) return null;
+    final firstServer = match.firstServerId ?? firstServerPlayerId;
+    if (firstServer == null) return null;
     final activeSet = match.sets.where((s) => s.status == 'ACTIVE').firstOrNull;
     if (activeSet == null) return null;
-    final setIndex = activeSet.number - 1;
     final blueId = bluePlayer.userId;
     final redId = redPlayer.userId;
-    final otherServerId = firstServerPlayerId == blueId ? redId : blueId;
-    final gameFirstServer =
-        (setIndex % 2 == 0) ? firstServerPlayerId! : otherServerId;
+    final otherServer = firstServer == blueId ? redId : blueId;
+    // Set starter alternates each set: odd sets (1,3,5) → firstServer, even → other.
+    final setStarter = (activeSet.number % 2 == 1) ? firstServer : otherServer;
+    final setOther = setStarter == blueId ? redId : blueId;
     final total = activeSet.bluePlayerScore + activeSet.redPlayerScore;
+    // Before deuce (< 10-10): serve changes every 2 points.
+    // At deuce (both ≥ 10): serve changes every point.
     final isDeuce =
         activeSet.bluePlayerScore >= 10 && activeSet.redPlayerScore >= 10;
-    final pointsPerServe = isDeuce ? 1 : 2;
-    final changes = total ~/ pointsPerServe;
-    return (changes % 2 == 0) ? gameFirstServer : otherServerId;
+    final changes = isDeuce ? (10 + (total - 20)) : (total ~/ 2);
+    return (changes % 2 == 0) ? setStarter : setOther;
   }
 
   RefereeMatchReady copyWith({

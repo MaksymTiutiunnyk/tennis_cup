@@ -57,7 +57,8 @@ class RefereeMatchCubit extends Cubit<RefereeMatchState> {
       return;
     }
     try {
-      final startedMatch = await _repository.startMatch(s.match.id);
+      final startedMatch =
+          await _repository.startMatch(s.match.id, s.firstServerPlayerId!);
       final firstPendingSetNumber = startedMatch.sets
               .where((set) => set.status == 'PENDING')
               .firstOrNull
@@ -209,5 +210,4 @@ class RefereeMatchCubit extends Cubit<RefereeMatchState> {
       emit(RefereeMatchError(e.toString()));
     }
   }
-
 }

@@ -59,8 +59,10 @@ class RestMatchService implements IMatchService {
   Stream<void> watchMatchChanges(String matchId) => const Stream.empty();
 
   @override
-  Future<MatchDto> startMatch(int matchId) async {
-    final response = await _dio.post('/api/v1/matches/$matchId/start');
+  Future<MatchDto> startMatch(int matchId, int firstServerId) async {
+    final response = await _dio.post('/api/v1/matches/$matchId/start', data: {
+      'firstServerId': firstServerId,
+    });
     return MatchDto.fromJson(response.data as Map<String, dynamic>);
   }
 
@@ -108,8 +110,9 @@ class RestMatchService implements IMatchService {
   }
 
   @override
-  Future<MatchSetDto> technicalDefeatSet(int matchId, int setNumber,
-      int loserId, {String? reason}) async {
+  Future<MatchSetDto> technicalDefeatSet(
+      int matchId, int setNumber, int loserId,
+      {String? reason}) async {
     final response = await _dio.post(
       '/api/v1/matches/$matchId/sets/$setNumber/technical-defeat',
       data: {

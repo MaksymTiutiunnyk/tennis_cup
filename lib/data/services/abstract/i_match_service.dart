@@ -18,7 +18,7 @@ abstract interface class IMatchService {
   });
 
   // Referee match lifecycle
-  Future<MatchDto> startMatch(int matchId);
+  Future<MatchDto> startMatch(int matchId, int firstServerId);
   Future<MatchDto> finishMatch(int matchId);
   Future<MatchSetDto> startSet(int matchId, int setNumber);
   Future<MatchSetDto> updateScore(
@@ -26,8 +26,9 @@ abstract interface class IMatchService {
   Future<MatchSetDto> finishSet(int matchId, int setNumber);
   Future<MatchDto> technicalDefeatMatch(int matchId, int loserId,
       {String? reason});
-  Future<MatchSetDto> technicalDefeatSet(int matchId, int setNumber,
-      int loserId, {String? reason});
+  Future<MatchSetDto> technicalDefeatSet(
+      int matchId, int setNumber, int loserId,
+      {String? reason});
   Future<MatchDto> issueCard(int matchId, int playerId, String cardType);
   Future<MatchDto> revokeCard(int matchId, int cardId);
 }

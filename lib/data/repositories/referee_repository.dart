@@ -36,7 +36,8 @@ class RefereeRepository {
     return (match: dto, blue: await blueF, red: await redF);
   }
 
-  Future<MatchDto> startMatch(int matchId) => _matchService.startMatch(matchId);
+  Future<MatchDto> startMatch(int matchId, int firstServerId) =>
+      _matchService.startMatch(matchId, firstServerId);
 
   Future<MatchDto> finishMatch(int matchId) =>
       _matchService.finishMatch(matchId);

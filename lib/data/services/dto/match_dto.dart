@@ -126,6 +126,7 @@ class MatchDto {
   final int? bluePlayerId;
   final int? redPlayerId;
   final int? winnerId;
+  final int? firstServerId;
   final String scheduledStart;
   final String scheduledEnd;
   final String? actualStart;
@@ -144,6 +145,7 @@ class MatchDto {
     required this.scheduledEnd,
     required this.sets,
     this.winnerId,
+    this.firstServerId,
     this.actualStart,
     this.actualEnd,
     this.cards = const [],
@@ -157,6 +159,7 @@ class MatchDto {
         bluePlayerId: (json['bluePlayerId'] as num?)?.toInt(),
         redPlayerId: (json['redPlayerId'] as num?)?.toInt(),
         winnerId: (json['winnerId'] as num?)?.toInt(),
+        firstServerId: (json['firstServerId'] as num?)?.toInt(),
         scheduledStart: json['scheduledStart'] as String? ?? '',
         scheduledEnd: json['scheduledEnd'] as String? ?? '',
         actualStart: json['actualStart'] as String?,

@@ -34,6 +34,7 @@ class TournamentRepository {
     required Arena tournamentArena,
     required Time tournamentTime,
     required List<String> statuses,
+    required bool onlyAccepted,
   }) async {
     final dtos = await _service.fetchScheduledTournaments(
       date: tournamentDate,
@@ -41,7 +42,7 @@ class TournamentRepository {
       time: tournamentTime,
       statuses: statuses,
     );
-    return _buildTournaments(dtos);
+    return _buildTournaments(dtos, onlyAccepted: onlyAccepted);
   }
 
   Future<List<MatchView>> fetchLiveStreamMatches() async {
@@ -139,7 +140,8 @@ class TournamentRepository {
       userId: userId,
       page: page,
     );
-    final tournaments = await _buildTournaments(result.items);
+    final tournaments =
+        await _buildTournaments(result.items, onlyAccepted: true);
     return PageResult(items: tournaments, hasMore: result.hasMore);
   }
 
@@ -147,12 +149,14 @@ class TournamentRepository {
     required String tournamentId,
     bool withPlayers = true,
     bool withMatches = true,
+    required bool onlyAccepted,
   }) async {
     final dto = await _service.fetchTournamentById(tournamentId);
     final results = await _buildTournaments(
       [dto],
       withPlayers: withPlayers,
       withMatches: withMatches,
+      onlyAccepted: onlyAccepted,
     );
     return results.first;
   }
@@ -211,6 +215,7 @@ class TournamentRepository {
     List<TournamentDto> dtos, {
     bool withPlayers = true,
     bool withMatches = true,
+    required bool onlyAccepted,
   }) async {
     if (dtos.isEmpty) return const [];
 
@@ -249,6 +254,9 @@ class TournamentRepository {
         for (final participant in dto.participants) {
           final p = playerMap[participant.playerId];
           if (p == null) continue;
+          if (onlyAccepted && participant.invitationStatus != 'ACCEPTED') {
+            continue;
+          }
           players.add(p);
           if (withMatches) points.add(pointsById[participant.playerId] ?? 0);
           if (dto.status == 'FINISHED') places.add(participant.place ?? 0);

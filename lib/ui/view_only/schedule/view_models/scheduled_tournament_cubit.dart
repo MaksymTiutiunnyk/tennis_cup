@@ -23,6 +23,7 @@ class ScheduledTournamentCubit extends Cubit<ScheduledTournamentState> {
         tournamentArena: arena,
         tournamentTime: time,
         statuses: ['ACTIVE', 'FINISHED'],
+        onlyAccepted: true,
       );
       if (tournaments.isEmpty) {
         emit(TournamentNotFound());
@@ -45,6 +46,7 @@ class ScheduledTournamentCubit extends Cubit<ScheduledTournamentState> {
         tournamentArena: arena,
         tournamentTime: time,
         statuses: ['ACTIVE', 'FINISHED'],
+        onlyAccepted: true,
       );
       if (tournaments.isEmpty) return;
       emit(ScheduledTournamentFetched(tournaments.first));
