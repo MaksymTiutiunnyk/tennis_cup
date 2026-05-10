@@ -13,6 +13,12 @@ class TournamentCard extends StatelessWidget {
 
   const TournamentCard({super.key, required this.tournament});
 
+  bool get canBeStarted {
+    return tournament.status == 'PENDING' &&
+        tournament.refereeId != null &&
+        tournament.players.length == tournament.requiredPlayersCount;
+  }
+
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<OrganizerTournamentsCubit>();
@@ -33,10 +39,11 @@ class TournamentCard extends StatelessWidget {
           onSelected: (action) => _handleAction(context, cubit, action),
           itemBuilder: (_) => [
             if (tournament.status == 'PENDING') ...[
-              const PopupMenuItem(
-                value: _Action.start,
-                child: Text('Start'),
-              ),
+              if (canBeStarted)
+                const PopupMenuItem(
+                  value: _Action.start,
+                  child: Text('Start'),
+                ),
               const PopupMenuItem(
                 value: _Action.edit,
                 child: Text('Edit'),
