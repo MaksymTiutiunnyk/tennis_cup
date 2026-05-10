@@ -21,23 +21,19 @@ class RefereeMatchCubit extends Cubit<RefereeMatchState> {
         match: match,
         bluePlayer: blue,
         redPlayer: red,
-        scoreUndoStack: const [],
       ));
     } catch (e) {
       emit(RefereeMatchError(e.toString()));
     }
   }
 
-  Future<void> _reload({List<({int blue, int red})>? preserveUndoStack}) async {
+  Future<void> _reload() async {
     final current = state;
     if (current is! RefereeMatchReady) return;
     try {
       final (:match, :blue, :red) =
           await _repository.fetchMatchWithPlayers(current.match.id);
-      emit(current.copyWith(
-        match: match,
-        scoreUndoStack: preserveUndoStack ?? const [],
-      ));
+      emit(current.copyWith(match: match));
     } catch (e) {
       emit(RefereeMatchError(e.toString()));
     }
@@ -97,34 +93,31 @@ class RefereeMatchCubit extends Cubit<RefereeMatchState> {
     if (activeSet == null) return;
     final newBlue = activeSet.bluePlayerScore + (isBlue ? 1 : 0);
     final newRed = activeSet.redPlayerScore + (isBlue ? 0 : 1);
-    final newStack = [
-      ...s.scoreUndoStack,
-      (blue: activeSet.bluePlayerScore, red: activeSet.redPlayerScore),
-    ];
     try {
       await _repository.updateScore(
           s.match.id, activeSet.number, newBlue, newRed);
-      // Reload to pick up any server-side side effects (e.g. red-card score penalty).
-      // Preserve the undo stack so the revert button stays enabled.
-      await _reload(preserveUndoStack: newStack);
+      await _reload();
     } catch (e) {
       emit(RefereeMatchError(e.toString()));
     }
   }
 
-  Future<void> undoLastScore() async {
+  Future<void> subtractPointBlue() => _subtractPoint(isBlue: true);
+  Future<void> subtractPointRed() => _subtractPoint(isBlue: false);
+
+  Future<void> _subtractPoint({required bool isBlue}) async {
     final s = state;
     if (s is! RefereeMatchReady) return;
-    if (s.scoreUndoStack.isEmpty) return;
     final activeSet =
         s.match.sets.where((st) => st.status == 'ACTIVE').firstOrNull;
     if (activeSet == null) return;
-    final prev = s.scoreUndoStack.last;
-    final newStack = s.scoreUndoStack.sublist(0, s.scoreUndoStack.length - 1);
+    final newBlue =
+        (activeSet.bluePlayerScore - (isBlue ? 1 : 0)).clamp(0, 999);
+    final newRed = (activeSet.redPlayerScore - (isBlue ? 0 : 1)).clamp(0, 999);
     try {
       await _repository.updateScore(
-          s.match.id, activeSet.number, prev.blue, prev.red);
-      await _reload(preserveUndoStack: newStack);
+          s.match.id, activeSet.number, newBlue, newRed);
+      await _reload();
     } catch (e) {
       emit(RefereeMatchError(e.toString()));
     }

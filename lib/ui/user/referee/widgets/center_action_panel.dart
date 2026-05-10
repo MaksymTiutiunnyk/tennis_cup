@@ -13,6 +13,8 @@ class CenterActionPanel extends StatelessWidget {
   final int redSetsWon;
   final bool scoringLocked;
   final bool leftIsRed;
+  final bool canFinishSet;
+  final bool canFinishMatch;
 
   const CenterActionPanel({
     super.key,
@@ -22,6 +24,8 @@ class CenterActionPanel extends StatelessWidget {
     required this.redSetsWon,
     required this.scoringLocked,
     required this.leftIsRed,
+    required this.canFinishSet,
+    required this.canFinishMatch,
   });
 
   // ── Helpers ──────────────────────────────────────────────────────────────
@@ -199,17 +203,9 @@ class CenterActionPanel extends StatelessWidget {
 
   // ── Finish button logic ───────────────────────────────────────────────────
 
-  bool get _canFinishSet {
-    final b = activeSet.bluePlayerScore;
-    final r = activeSet.redPlayerScore;
-    return (b >= 11 || r >= 11) && (b - r).abs() >= 2;
-  }
-
-  bool get _canFinishMatch => blueSetsWon >= 3 || redSetsWon >= 3;
-
   // True when finishing this set would also decide the match (best of 5).
   bool get _wouldFinishMatch {
-    if (!_canFinishSet) return false;
+    if (!canFinishSet) return false;
     final blueLeads = activeSet.bluePlayerScore > activeSet.redPlayerScore;
     return blueLeads ? (blueSetsWon + 1 >= 3) : (redSetsWon + 1 >= 3);
   }
@@ -219,7 +215,6 @@ class CenterActionPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<RefereeMatchCubit>();
-    final canUndo = state.scoreUndoStack.isNotEmpty;
 
     return Container(
       color: Theme.of(context).colorScheme.surfaceContainerHighest,
@@ -259,14 +254,37 @@ class CenterActionPanel extends StatelessWidget {
             ),
             const SizedBox(height: 4),
 
-            // Undo — always available when stack is non-empty
-            SizedBox(
-              width: double.infinity,
-              child: IconButton.outlined(
-                onPressed: canUndo ? cubit.undoLastScore : null,
-                icon: const Icon(Icons.undo, size: 28),
-                tooltip: 'Undo last point',
-              ),
+            // –1 point buttons (left player / right player)
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: (leftIsRed
+                                ? activeSet.redPlayerScore
+                                : activeSet.bluePlayerScore) >
+                            0
+                        ? (leftIsRed
+                            ? cubit.subtractPointRed
+                            : cubit.subtractPointBlue)
+                        : null,
+                    child: const Text('–1'),
+                  ),
+                ),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: (leftIsRed
+                                ? activeSet.bluePlayerScore
+                                : activeSet.redPlayerScore) >
+                            0
+                        ? (leftIsRed
+                            ? cubit.subtractPointBlue
+                            : cubit.subtractPointRed)
+                        : null,
+                    child: const Text('–1'),
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 8),
 
@@ -281,7 +299,7 @@ class CenterActionPanel extends StatelessWidget {
             const SizedBox(height: 4),
 
             // Finish Set / Finish Match (contextual)
-            if (_canFinishMatch)
+            if (canFinishMatch)
               ActionButton(
                 icon: Icons.emoji_events,
                 label: 'Finish Match',
@@ -299,7 +317,7 @@ class CenterActionPanel extends StatelessWidget {
               ActionButton(
                 icon: Icons.check_circle_outline,
                 label: 'Finish Set',
-                onPressed: _canFinishSet ? () => _onFinishSet(context) : null,
+                onPressed: canFinishSet ? () => _onFinishSet(context) : null,
                 filled: true,
               ),
             const SizedBox(height: 8),
@@ -330,8 +348,8 @@ class CenterActionPanel extends StatelessWidget {
                 const SizedBox(width: 8),
                 GestureDetector(
                   onTap: (!scoringLocked && state.canIssueRed)
-                      ? () => _onIssueCard(
-                          context, 'RED', state.eligibleRedPlayers)
+                      ? () =>
+                          _onIssueCard(context, 'RED', state.eligibleRedPlayers)
                       : null,
                   child: CardChip(
                       cardType: 'RED',

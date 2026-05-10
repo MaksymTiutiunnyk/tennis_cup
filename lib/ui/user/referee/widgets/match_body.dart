@@ -9,6 +9,12 @@ class MatchBody extends StatelessWidget {
   final RefereeMatchReady state;
   const MatchBody({super.key, required this.state});
 
+  bool _canFinishSet(int b, int r) {
+    final diff = (b - r).abs();
+    if (b >= 10 && r >= 10) return diff == 2;
+    return (b == 11 || r == 11) && diff <= 11 && diff >= 2;
+  }
+
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<RefereeMatchCubit>();
@@ -49,9 +55,8 @@ class MatchBody extends StatelessWidget {
         leftIsRed: betweenSetsLeftIsRed,
         pendingSetNumber: pendingSet?.number,
         canFinish: pendingSet == null,
-        onStartSet: pendingSet != null
-            ? () => cubit.startSet(pendingSet.number)
-            : null,
+        onStartSet:
+            pendingSet != null ? () => cubit.startSet(pendingSet.number) : null,
         onFinish: cubit.finishMatch,
       );
     }
@@ -89,7 +94,7 @@ class MatchBody extends StatelessWidget {
     // the score can't legally advance past this point.
     final b = activeSet.bluePlayerScore;
     final r = activeSet.redPlayerScore;
-    final setFinishable = (b >= 11 || r >= 11) && (b - r).abs() >= 2;
+    final setFinishable = _canFinishSet(b, r);
     final matchFinishable = blueSetsWon >= 3 || redSetsWon >= 3;
     final scoringLocked = setFinishable || matchFinishable;
 
@@ -124,6 +129,8 @@ class MatchBody extends StatelessWidget {
             redSetsWon: redSetsWon,
             scoringLocked: scoringLocked,
             leftIsRed: leftIsRed,
+            canFinishSet: setFinishable,
+            canFinishMatch: matchFinishable,
           ),
         ),
 

@@ -14,7 +14,6 @@ class RefereeMatchReady extends RefereeMatchState {
   final Player bluePlayer;
   final Player redPlayer;
   final int? firstServerPlayerId;
-  final List<({int blue, int red})> scoreUndoStack;
   // Transient message shown as SnackBar; cleared on the next meaningful action.
   final String? notification;
 
@@ -22,7 +21,6 @@ class RefereeMatchReady extends RefereeMatchState {
     required this.match,
     required this.bluePlayer,
     required this.redPlayer,
-    required this.scoreUndoStack,
     this.firstServerPlayerId,
     this.notification,
   });
@@ -98,7 +96,6 @@ class RefereeMatchReady extends RefereeMatchState {
   RefereeMatchReady copyWith({
     MatchDto? match,
     int? firstServerPlayerId,
-    List<({int blue, int red})>? scoreUndoStack,
     String? notification,
   }) =>
       RefereeMatchReady(
@@ -106,7 +103,6 @@ class RefereeMatchReady extends RefereeMatchState {
         bluePlayer: bluePlayer,
         redPlayer: redPlayer,
         firstServerPlayerId: firstServerPlayerId ?? this.firstServerPlayerId,
-        scoreUndoStack: scoreUndoStack ?? this.scoreUndoStack,
         // notification defaults to null so it clears on every normal action
         notification: notification,
       );
