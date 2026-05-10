@@ -81,6 +81,7 @@ class FirebaseTournamentService implements ITournamentService {
     required DateTime date,
     required Arena arena,
     required Time time,
+    required List<String> statuses,
   }) async {
     final start =
         Timestamp.fromDate(DateTime(date.year, date.month, date.day, 0, 0, 0));

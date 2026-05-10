@@ -31,6 +31,7 @@ class OrganizerTournamentsCubit extends Cubit<OrganizerTournamentsState> {
         tournamentDate: date,
         tournamentArena: arena,
         tournamentTime: time,
+        statuses: ['PENDING', 'ACTIVE', 'FINISHED', 'CANCELLED'],
       );
       emit(OrgTournamentsLoaded(tournaments));
     } catch (e) {

@@ -54,9 +54,12 @@ class RestTournamentService implements ITournamentService {
     required DateTime date,
     required Arena arena,
     required Time time,
+    required List<String> statuses,
   }) async {
     final queryParams = <String, dynamic>{
       'start': _dateFormat.format(date),
+      'type': time.name.toUpperCase(),
+      'statuses': statuses,
     };
     if (arena.id.isNotEmpty) queryParams['arenaId'] = arena.id;
 
@@ -67,7 +70,6 @@ class RestTournamentService implements ITournamentService {
 
     return content
         .map((json) => TournamentDto.fromJson(json as Map<String, dynamic>))
-        .where((dto) => timeFromString(dto.type) == time)
         .toList();
   }
 
@@ -109,7 +111,7 @@ class RestTournamentService implements ITournamentService {
         'page': page.page,
         'size': page.size,
         'refereeId': refereeId,
-        'status': 'ACTIVE'
+        'statuses': ['ACTIVE']
       },
     );
     final body = response.data!;

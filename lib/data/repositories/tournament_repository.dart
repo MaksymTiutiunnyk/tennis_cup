@@ -33,11 +33,13 @@ class TournamentRepository {
     required DateTime tournamentDate,
     required Arena tournamentArena,
     required Time tournamentTime,
+    required List<String> statuses,
   }) async {
     final dtos = await _service.fetchScheduledTournaments(
       date: tournamentDate,
       arena: tournamentArena,
       time: tournamentTime,
+      statuses: statuses,
     );
     return _buildTournaments(dtos);
   }

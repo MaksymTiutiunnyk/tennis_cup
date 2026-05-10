@@ -20,6 +20,7 @@ abstract interface class ITournamentService {
     required DateTime date,
     required Arena arena,
     required Time time,
+    required List<String> statuses,
   });
 
   Future<List<ArenaMatchViewDto>> fetchCurrentMatches();
