@@ -6,7 +6,7 @@ import 'package:tennis_cup/ui/user/referee/widgets/action_button.dart';
 import 'package:tennis_cup/ui/user/referee/widgets/card_chip.dart';
 import 'package:tennis_cup/ui/user/referee/widgets/timeout_overlay.dart';
 
-class CenterActionPanel extends StatelessWidget {
+class CenterActionPanel extends StatefulWidget {
   final RefereeMatchReady state;
   final MatchSetDto activeSet;
   final int blueSetsWon;
@@ -28,8 +28,20 @@ class CenterActionPanel extends StatelessWidget {
     required this.canFinishMatch,
   });
 
-  // ── Helpers ──────────────────────────────────────────────────────────────
+  @override
+  State<CenterActionPanel> createState() => _CenterActionPanelState();
+}
 
+class _CenterActionPanelState extends State<CenterActionPanel> {
+  late final TextEditingController reasonCtrl;
+
+  @override
+  void initState() {
+    super.initState();
+    reasonCtrl = TextEditingController();
+  }
+
+  // ── Helpers ──────────────────────────────────────────────────────────────
   Future<bool> _confirm(BuildContext context, String title, String body) async {
     final result = await showDialog<bool>(
       context: context,
@@ -58,10 +70,11 @@ class CenterActionPanel extends StatelessWidget {
     List<int> eligibleIds, {
     bool withReason = false,
   }) async {
-    final blue = state.bluePlayer;
-    final red = state.redPlayer;
+    final blue = widget.state.bluePlayer;
+    final red = widget.state.redPlayer;
     int? selectedId;
-    final reasonCtrl = TextEditingController();
+
+    reasonCtrl.text = '';
 
     final confirmed = await showDialog<bool>(
       context: context,
@@ -110,7 +123,6 @@ class CenterActionPanel extends StatelessWidget {
       ),
     );
 
-    reasonCtrl.dispose();
     if (confirmed != true || selectedId == null) return null;
     return (
       selectedId!,
@@ -119,7 +131,6 @@ class CenterActionPanel extends StatelessWidget {
   }
 
   // ── Action handlers ───────────────────────────────────────────────────────
-
   Future<void> _onMedicalTimeout(BuildContext context) async {
     final ok = await _confirm(
         context, 'Medical Timeout', 'Start a 10-minute medical timeout?');
@@ -141,7 +152,7 @@ class CenterActionPanel extends StatelessWidget {
     final result = await _selectPlayer(
       context,
       'Technical Defeat — Match',
-      [state.bluePlayer.userId, state.redPlayer.userId],
+      [widget.state.bluePlayer.userId, widget.state.redPlayer.userId],
       withReason: true,
     );
     if (result != null && context.mounted) {
@@ -153,18 +164,18 @@ class CenterActionPanel extends StatelessWidget {
   Future<void> _onFinishSet(BuildContext context) async {
     final cubit = context.read<RefereeMatchCubit>();
     final ok = await _confirm(
-        context, 'Finish Set', 'Finish set ${activeSet.number}?');
+        context, 'Finish Set', 'Finish set ${widget.activeSet.number}?');
     if (ok && context.mounted) {
-      cubit.finishSet(activeSet.number);
+      cubit.finishSet(widget.activeSet.number);
     }
   }
 
   Future<void> _onFinishSetAndMatch(BuildContext context) async {
     final cubit = context.read<RefereeMatchCubit>();
     final ok = await _confirm(context, 'Finish Match',
-        'Finish set ${activeSet.number} and end the match?');
+        'Finish set ${widget.activeSet.number} and end the match?');
     if (ok && context.mounted) {
-      cubit.finishSetAndMatch(activeSet.number);
+      cubit.finishSetAndMatch(widget.activeSet.number);
     }
   }
 
@@ -202,68 +213,75 @@ class CenterActionPanel extends StatelessWidget {
       };
 
   // ── Finish button logic ───────────────────────────────────────────────────
-
-  // True when finishing this set would also decide the match (best of 5).
   bool get _wouldFinishMatch {
-    if (!canFinishSet) return false;
-    final blueLeads = activeSet.bluePlayerScore > activeSet.redPlayerScore;
-    return blueLeads ? (blueSetsWon + 1 >= 3) : (redSetsWon + 1 >= 3);
+    if (!widget.canFinishSet) return false;
+    final blueLeads =
+        widget.activeSet.bluePlayerScore > widget.activeSet.redPlayerScore;
+    return blueLeads
+        ? (widget.blueSetsWon + 1 >= 3)
+        : (widget.redSetsWon + 1 >= 3);
   }
 
   // ── Build ─────────────────────────────────────────────────────────────────
-
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<RefereeMatchCubit>();
 
     return Container(
       color: Theme.of(context).colorScheme.surfaceContainerHighest,
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+      // Reduced vertical padding significantly
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
       child: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             // Set number + match score
             Text(
-              'Set ${activeSet.number}',
+              'Set ${widget.activeSet.number}',
               style: Theme.of(context).textTheme.labelMedium,
             ),
             Text(
-              '${leftIsRed ? redSetsWon : blueSetsWon} – ${leftIsRed ? blueSetsWon : redSetsWon}',
+              '${widget.leftIsRed ? widget.redSetsWon : widget.blueSetsWon} – ${widget.leftIsRed ? widget.blueSetsWon : widget.redSetsWon}',
               style: Theme.of(context)
                   .textTheme
                   .titleLarge
                   ?.copyWith(fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 8),
+            // Halved spacer sizes
+            const SizedBox(height: 4),
 
             // Medical timeout — disabled when set/match can be finished
             ActionButton(
               icon: Icons.medical_services_outlined,
               label: 'Medical',
-              onPressed:
-                  scoringLocked ? null : () => _onMedicalTimeout(context),
+              onPressed: widget.scoringLocked
+                  ? null
+                  : () => _onMedicalTimeout(context),
             ),
-            const SizedBox(height: 4),
+            const SizedBox(height: 2),
 
             // Tech pause — disabled when set/match can be finished
             ActionButton(
               icon: Icons.pause_circle_outline,
               label: 'Tech Pause',
-              onPressed: scoringLocked ? null : () => _onTechPause(context),
+              onPressed:
+                  widget.scoringLocked ? null : () => _onTechPause(context),
             ),
-            const SizedBox(height: 4),
 
             // –1 point buttons (left player / right player)
             Row(
               children: [
                 Expanded(
                   child: OutlinedButton(
-                    onPressed: (leftIsRed
-                                ? activeSet.redPlayerScore
-                                : activeSet.bluePlayerScore) >
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.all(2),
+                      visualDensity: VisualDensity.compact,
+                    ),
+                    onPressed: (widget.leftIsRed
+                                ? widget.activeSet.redPlayerScore
+                                : widget.activeSet.bluePlayerScore) >
                             0
-                        ? (leftIsRed
+                        ? (widget.leftIsRed
                             ? cubit.subtractPointRed
                             : cubit.subtractPointBlue)
                         : null,
@@ -273,11 +291,15 @@ class CenterActionPanel extends StatelessWidget {
                 const SizedBox(width: 6),
                 Expanded(
                   child: OutlinedButton(
-                    onPressed: (leftIsRed
-                                ? activeSet.bluePlayerScore
-                                : activeSet.redPlayerScore) >
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.all(2),
+                      visualDensity: VisualDensity.compact,
+                    ),
+                    onPressed: (widget.leftIsRed
+                                ? widget.activeSet.bluePlayerScore
+                                : widget.activeSet.redPlayerScore) >
                             0
-                        ? (leftIsRed
+                        ? (widget.leftIsRed
                             ? cubit.subtractPointBlue
                             : cubit.subtractPointRed)
                         : null,
@@ -286,20 +308,21 @@ class CenterActionPanel extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 4),
 
             // Tech defeat match — disabled when set/match can be finished
             ActionButton(
               icon: Icons.close,
               label: 'TD Match',
-              onPressed:
-                  scoringLocked ? null : () => _onTechDefeatMatch(context),
+              onPressed: widget.scoringLocked
+                  ? null
+                  : () => _onTechDefeatMatch(context),
               outlined: true,
             ),
-            const SizedBox(height: 4),
+            const SizedBox(height: 8),
 
             // Finish Set / Finish Match (contextual)
-            if (canFinishMatch)
+            if (widget.canFinishMatch)
               ActionButton(
                 icon: Icons.emoji_events,
                 label: 'Finish Match',
@@ -317,43 +340,47 @@ class CenterActionPanel extends StatelessWidget {
               ActionButton(
                 icon: Icons.check_circle_outline,
                 label: 'Finish Set',
-                onPressed: canFinishSet ? () => _onFinishSet(context) : null,
+                onPressed:
+                    widget.canFinishSet ? () => _onFinishSet(context) : null,
                 filled: true,
               ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 6),
 
             // Cards row — disabled when set/match can be finished
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 GestureDetector(
-                  onTap: (!scoringLocked && state.canIssueWhite)
+                  onTap: (!widget.scoringLocked && widget.state.canIssueWhite)
                       ? () => _onIssueCard(
-                          context, 'WHITE', state.eligibleWhitePlayers)
+                          context, 'WHITE', widget.state.eligibleWhitePlayers)
                       : null,
                   child: CardChip(
                       cardType: 'WHITE',
-                      enabled: !scoringLocked && state.canIssueWhite),
+                      enabled:
+                          !widget.scoringLocked && widget.state.canIssueWhite),
                 ),
                 const SizedBox(width: 8),
                 GestureDetector(
-                  onTap: (!scoringLocked && state.canIssueYellow)
+                  onTap: (!widget.scoringLocked && widget.state.canIssueYellow)
                       ? () => _onIssueCard(
-                          context, 'YELLOW', state.eligibleYellowPlayers)
+                          context, 'YELLOW', widget.state.eligibleYellowPlayers)
                       : null,
                   child: CardChip(
                       cardType: 'YELLOW',
-                      enabled: !scoringLocked && state.canIssueYellow),
+                      enabled:
+                          !widget.scoringLocked && widget.state.canIssueYellow),
                 ),
                 const SizedBox(width: 8),
                 GestureDetector(
-                  onTap: (!scoringLocked && state.canIssueRed)
-                      ? () =>
-                          _onIssueCard(context, 'RED', state.eligibleRedPlayers)
+                  onTap: (!widget.scoringLocked && widget.state.canIssueRed)
+                      ? () => _onIssueCard(
+                          context, 'RED', widget.state.eligibleRedPlayers)
                       : null,
                   child: CardChip(
                       cardType: 'RED',
-                      enabled: !scoringLocked && state.canIssueRed),
+                      enabled:
+                          !widget.scoringLocked && widget.state.canIssueRed),
                 ),
               ],
             ),
@@ -361,5 +388,11 @@ class CenterActionPanel extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    reasonCtrl.dispose();
+    super.dispose();
   }
 }
