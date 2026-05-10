@@ -39,7 +39,6 @@ class _TournamentFormState extends State<TournamentForm> {
 
   bool get _isEdit => widget.existing != null;
 
-
   @override
   void initState() {
     super.initState();
@@ -56,9 +55,6 @@ class _TournamentFormState extends State<TournamentForm> {
 
       // Populate referee invitations (exclude DECLINED/CANCELLED)
       _selectedReferees = e.refereeInvitations
-          .where((r) =>
-              r.status.toUpperCase() != 'DECLINED' &&
-              r.status.toUpperCase() != 'CANCELLED')
           .map((r) => SelectedReferee(
                 id: r.refereeId,
                 name: 'Referee #${r.refereeId}',
@@ -69,7 +65,6 @@ class _TournamentFormState extends State<TournamentForm> {
 
       // Populate player invitations (exclude CANCELLED)
       _selectedPlayers = e.participantInvitations
-          .where((p) => p.status.toUpperCase() != 'CANCELLED')
           .map((p) => SelectedPlayer(
                 id: p.playerId,
                 name: 'Player #${p.playerId}',
@@ -187,7 +182,7 @@ class _TournamentFormState extends State<TournamentForm> {
           gender: _gender,
           startTime: _startTime,
           arenaId: _arenaId,
-          refereeIds: refereeIds.isEmpty ? null : refereeIds,
+          refereeIds: refereeIds,
           playerIds: playerIds,
         ),
       );
@@ -333,8 +328,7 @@ class _TournamentFormState extends State<TournamentForm> {
                   PlayerPicker(
                     initialPlayers: _selectedPlayers,
                     gender: _gender,
-                    requiredPlayersCount:
-                        widget.existing?.requiredPlayersCount,
+                    requiredPlayersCount: widget.existing?.requiredPlayersCount,
                     onChanged: (players) =>
                         setState(() => _selectedPlayers = players),
                   ),

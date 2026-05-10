@@ -125,9 +125,11 @@ class RestTournamentService implements ITournamentService {
       const Stream.empty();
 
   @override
-  Future<List<MyInvitationDto>> fetchInvitations() async {
+  Future<List<MyInvitationDto>> fetchInvitations(
+      {required String status}) async {
     final response = await _dio.get<Map<String, dynamic>>(
       '/api/v1/tournaments/my-invitations',
+      queryParameters: {'status': status},
     );
     final content = (response.data!['content'] as List<dynamic>?) ?? [];
     return content
@@ -137,14 +139,14 @@ class RestTournamentService implements ITournamentService {
 
   @override
   Future<void> acceptInvitation(String tournamentId) async {
-    await _dio.post<void>(
-        '/api/v1/tournaments/$tournamentId/invitations/accept');
+    await _dio
+        .post<void>('/api/v1/tournaments/$tournamentId/invitations/accept');
   }
 
   @override
   Future<void> declineInvitation(String tournamentId) async {
-    await _dio.post<void>(
-        '/api/v1/tournaments/$tournamentId/invitations/decline');
+    await _dio
+        .post<void>('/api/v1/tournaments/$tournamentId/invitations/decline');
   }
 
   // ---- Write operations ----

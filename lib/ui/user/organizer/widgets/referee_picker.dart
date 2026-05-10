@@ -7,7 +7,6 @@ import 'package:tennis_cup/data/models/user_search_result.dart';
 class SelectedReferee {
   final int id;
   final String name;
-  // null = newly added candidate, 'ACCEPTED'/'PENDING' = existing invitation
   final String? status;
 
   const SelectedReferee({required this.id, required this.name, this.status});
@@ -45,9 +44,8 @@ class _RefereePickerState extends State<RefereePicker> {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.initialReferees != widget.initialReferees) {
       _selected = _selected.map((s) {
-        final updated = widget.initialReferees
-            .where((r) => r.id == s.id)
-            .firstOrNull;
+        final updated =
+            widget.initialReferees.where((r) => r.id == s.id).firstOrNull;
         return updated ?? s;
       }).toList();
     }
@@ -104,6 +102,8 @@ class _RefereePickerState extends State<RefereePicker> {
     return switch (status?.toUpperCase()) {
       'ACCEPTED' => Colors.green[900],
       'PENDING' => Colors.blue[900],
+      'DECLINED' => Colors.red[900],
+      'CANCELLED' => Colors.grey[700],
       _ => null,
     };
   }
@@ -140,7 +140,8 @@ class _RefereePickerState extends State<RefereePicker> {
           enabled: !searchDisabled,
           decoration: InputDecoration(
             labelText: 'Add referee',
-            hintText: searchDisabled ? 'Referee already accepted' : 'Search by name…',
+            hintText:
+                searchDisabled ? 'Referee already accepted' : 'Search by name…',
             suffixIcon: _loading
                 ? const Padding(
                     padding: EdgeInsets.all(12),

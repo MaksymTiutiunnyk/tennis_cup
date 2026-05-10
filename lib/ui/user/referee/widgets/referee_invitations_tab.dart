@@ -13,6 +13,7 @@ class RefereeInvitationsTab extends StatelessWidget {
     return BlocProvider(
       create: (_) => InvitationsCubit(
         repository: ServiceLocator.invitationsRepository,
+        status: 'PENDING',
       ),
       child: const _InvitationsListView(),
     );
@@ -49,7 +50,8 @@ class _InvitationsListViewState extends State<_InvitationsListView> {
               key: _listKey,
               padding: const EdgeInsets.all(8),
               initialItemCount: _items.length,
-              itemBuilder: (_, i, animation) => _buildItem(_items[i], animation),
+              itemBuilder: (_, i, animation) =>
+                  _buildItem(_items[i], animation),
             ),
         },
       ),

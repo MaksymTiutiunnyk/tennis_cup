@@ -7,26 +7,27 @@ part 'invitations_state.dart';
 class InvitationsCubit extends Cubit<InvitationsState> {
   final InvitationsRepository _repository;
 
-  InvitationsCubit({required InvitationsRepository repository})
+  InvitationsCubit(
+      {required InvitationsRepository repository, required String status})
       : _repository = repository,
         super(InvitationsLoading()) {
-    _load();
+    _load(status);
   }
 
-  Future<void> _load() async {
+  Future<void> _load(String status) async {
     try {
-      final items = await _repository.fetchInvitations();
+      final items = await _repository.fetchInvitations(status: status);
       emit(InvitationsLoaded(items));
     } catch (_) {
       emit(InvitationsError('Failed to load invitations'));
     }
   }
 
-  Future<void> accept(String tournamentId) =>
-      _removeAfter(tournamentId, () => _repository.acceptInvitation(tournamentId));
+  Future<void> accept(String tournamentId) => _removeAfter(
+      tournamentId, () => _repository.acceptInvitation(tournamentId));
 
-  Future<void> decline(String tournamentId) =>
-      _removeAfter(tournamentId, () => _repository.declineInvitation(tournamentId));
+  Future<void> decline(String tournamentId) => _removeAfter(
+      tournamentId, () => _repository.declineInvitation(tournamentId));
 
   Future<void> _removeAfter(
       String tournamentId, Future<void> Function() action) async {

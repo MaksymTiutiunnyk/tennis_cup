@@ -7,7 +7,6 @@ import 'package:tennis_cup/data/models/player.dart';
 class SelectedPlayer {
   final int id;
   final String name;
-  // null = newly added candidate, 'ACCEPTED'/'PENDING' = existing invitation
   final String? status;
 
   const SelectedPlayer({required this.id, required this.name, this.status});
@@ -17,6 +16,7 @@ class PlayerPicker extends StatefulWidget {
   final List<SelectedPlayer> initialPlayers;
   final ValueChanged<List<SelectedPlayer>> onChanged;
   final String? gender;
+
   /// When set, search is disabled once accepted players reach this count.
   final int? requiredPlayersCount;
 
@@ -52,9 +52,8 @@ class _PlayerPickerState extends State<PlayerPicker> {
       // Sync updated names/statuses for IDs already in _selected.
       // Preserve items the user added during this session (not in initialPlayers).
       _selected = _selected.map((s) {
-        final updated = widget.initialPlayers
-            .where((p) => p.id == s.id)
-            .firstOrNull;
+        final updated =
+            widget.initialPlayers.where((p) => p.id == s.id).firstOrNull;
         return updated ?? s;
       }).toList();
     }
@@ -115,6 +114,8 @@ class _PlayerPickerState extends State<PlayerPicker> {
     return switch (status?.toUpperCase()) {
       'ACCEPTED' => Colors.green[900],
       'PENDING' => Colors.blue[900],
+      'DECLINED' => Colors.red[900],
+      'CANCELLED' => Colors.grey[700],
       _ => null,
     };
   }

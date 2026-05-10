@@ -13,8 +13,9 @@ class InvitationsRepository {
 
   const InvitationsRepository(this._tournamentService, this._arenaService);
 
-  Future<List<TournamentInvitation>> fetchInvitations() async {
-    final dtos = await _tournamentService.fetchInvitations();
+  Future<List<TournamentInvitation>> fetchInvitations(
+      {required String status}) async {
+    final dtos = await _tournamentService.fetchInvitations(status: status);
     if (dtos.isEmpty) return const [];
 
     final tournamentIds = dtos.map((d) => d.tournamentId).toSet();
