@@ -24,7 +24,7 @@ class TournamentCard extends StatelessWidget {
         title: Text(tournament.name, style: theme.textTheme.titleMedium),
         subtitle: Text(
           '${tournament.gender} · ${tournament.arena.title} · '
-          '${tournament.players.length} players\n'
+          '${tournament.requiredPlayersCount} players\n'
           '${_dateFmt.format(tournament.date)}',
         ),
         isThreeLine: true,
