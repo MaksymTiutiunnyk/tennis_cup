@@ -29,7 +29,6 @@ class PlayersMatch extends StatelessWidget {
       tournamentId: match.tournamentId,
       withPlayers: false,
       withMatches: false,
-      onlyAccepted: true,
     );
     if (!context.mounted) return;
     context.read<ScheduleDateCubit>().selectDate(tournament.date);

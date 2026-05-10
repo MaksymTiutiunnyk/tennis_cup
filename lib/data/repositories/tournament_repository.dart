@@ -34,7 +34,6 @@ class TournamentRepository {
     required Arena tournamentArena,
     required Time tournamentTime,
     required List<String> statuses,
-    required bool onlyAccepted,
   }) async {
     final dtos = await _service.fetchScheduledTournaments(
       date: tournamentDate,
@@ -42,7 +41,7 @@ class TournamentRepository {
       time: tournamentTime,
       statuses: statuses,
     );
-    return _buildTournaments(dtos, onlyAccepted: onlyAccepted);
+    return _buildTournaments(dtos);
   }
 
   Future<List<MatchView>> fetchLiveStreamMatches() async {
@@ -137,11 +136,8 @@ class TournamentRepository {
     required PageRequest page,
   }) async {
     final result = await _service.fetchPlayerTournaments(
-      userId: userId,
-      page: page,
-    );
-    final tournaments =
-        await _buildTournaments(result.items, onlyAccepted: true);
+        userId: userId, page: page, statuses: ['ACTIVE', 'FINISHED']);
+    final tournaments = await _buildTournaments(result.items);
     return PageResult(items: tournaments, hasMore: result.hasMore);
   }
 
@@ -149,14 +145,12 @@ class TournamentRepository {
     required String tournamentId,
     bool withPlayers = true,
     bool withMatches = true,
-    required bool onlyAccepted,
   }) async {
     final dto = await _service.fetchTournamentById(tournamentId);
     final results = await _buildTournaments(
       [dto],
       withPlayers: withPlayers,
       withMatches: withMatches,
-      onlyAccepted: onlyAccepted,
     );
     return results.first;
   }
@@ -215,7 +209,6 @@ class TournamentRepository {
     List<TournamentDto> dtos, {
     bool withPlayers = true,
     bool withMatches = true,
-    required bool onlyAccepted,
   }) async {
     if (dtos.isEmpty) return const [];
 
@@ -254,7 +247,7 @@ class TournamentRepository {
         for (final participant in dto.participants) {
           final p = playerMap[participant.playerId];
           if (p == null) continue;
-          if (onlyAccepted && participant.invitationStatus != 'ACCEPTED') {
+          if (participant.invitationStatus != 'ACCEPTED') {
             continue;
           }
           players.add(p);
