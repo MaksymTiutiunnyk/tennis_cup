@@ -129,6 +129,7 @@ class RestPlayerService implements IPlayerService {
       rankTennis: 0,
       rankUTTF: 0,
       imageUrl: json['avatarUrl'] as String? ?? '',
+      status: json['status'] as String? ?? 'ACTIVE',
     );
   }
 

@@ -48,11 +48,6 @@ class RestAdminService implements IAdminService {
   }
 
   @override
-  Future<void> deleteOrganizer(int organizerId) async {
-    await _dio.delete<void>('/api/v1/admin/organizers/$organizerId');
-  }
-
-  @override
   Future<List<UserSearchDto>> searchUsers({
     required String query,
     List<String>? roles,

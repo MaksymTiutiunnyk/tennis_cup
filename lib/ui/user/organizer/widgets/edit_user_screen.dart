@@ -61,6 +61,7 @@ class EditUserScreen extends StatelessWidget {
                       UserRegistrationFormBody(
                         isLoading: state.saving,
                         submitLabel: 'Save',
+                        currentStatus: state.user.status,
                         initialValues: UserProfileInitialValues(
                           firstName: user.name,
                           lastName: user.surname,
@@ -83,6 +84,7 @@ class EditUserScreen extends StatelessWidget {
                           required gender,
                           required country,
                           required city,
+                          String? status,
                         }) {
                           context.read<UserEditCubit>().saveUser(userId, {
                             'firstName': firstName,
@@ -93,6 +95,7 @@ class EditUserScreen extends StatelessWidget {
                             'gender': gender,
                             'country': country,
                             'city': city,
+                            if (status != null) 'status': status,
                           });
                         },
                       ),

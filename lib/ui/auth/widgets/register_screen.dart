@@ -48,6 +48,7 @@ class RegisterContent extends StatelessWidget {
                   required gender,
                   required country,
                   required city,
+                  String? status,
                 }) {
                   context.read<AuthCubit>().register(
                         login: login!,

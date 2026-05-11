@@ -23,6 +23,7 @@ class Player extends Equatable {
   final double rankTennis;
   final double rankUTTF;
   final String imageUrl;
+  final String status;
 
   const Player({
     required this.userId,
@@ -43,6 +44,7 @@ class Player extends Equatable {
     required this.rankTennis,
     required this.rankUTTF,
     required this.imageUrl,
+    this.status = 'ACTIVE',
   });
 
   int get year =>
@@ -76,5 +78,6 @@ class Player extends Equatable {
         rankTennis,
         rankUTTF,
         imageUrl,
+        status,
       ];
 }

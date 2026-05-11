@@ -12,6 +12,7 @@ typedef UserRegistrationSubmitCallback = void Function({
   required String gender,
   required String country,
   required String city,
+  String? status,
 });
 
 class UserProfileInitialValues {
@@ -41,6 +42,9 @@ class UserRegistrationFormBody extends StatefulWidget {
   final String submitLabel;
   final Widget? footer;
   final UserProfileInitialValues? initialValues;
+  /// When non-null, shows a block/unblock button above Save.
+  /// Pass the user's current status string (e.g. 'ACTIVE', 'BLOCKED').
+  final String? currentStatus;
 
   const UserRegistrationFormBody({
     super.key,
@@ -50,6 +54,7 @@ class UserRegistrationFormBody extends StatefulWidget {
     this.submitLabel = 'Create',
     this.footer,
     this.initialValues,
+    this.currentStatus,
   });
 
   @override
@@ -125,7 +130,7 @@ class _UserRegistrationFormBodyState extends State<UserRegistrationFormBody> {
     }
   }
 
-  void _submit() {
+  void _submit({String? status}) {
     if (!_formKey.currentState!.validate()) return;
     widget.onSubmit(
       role: _isEditMode ? null : _role,
@@ -140,7 +145,41 @@ class _UserRegistrationFormBodyState extends State<UserRegistrationFormBody> {
       gender: _gender!,
       country: _countryCtrl.text.trim(),
       city: _cityCtrl.text.trim(),
+      status: status,
     );
+  }
+
+  Future<void> _onBlockPressed() async {
+    final isBlocked = widget.currentStatus == 'BLOCKED';
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(isBlocked ? 'Unblock user?' : 'Block user?'),
+        content: Text(
+          isBlocked
+              ? 'This user will be able to log in again.'
+              : 'This user will no longer be able to log in.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            style: isBlocked
+                ? null
+                : FilledButton.styleFrom(
+                    backgroundColor: Theme.of(context).colorScheme.error,
+                  ),
+            child: Text(isBlocked ? 'Unblock' : 'Block'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed == true) {
+      _submit(status: isBlocked ? 'ACTIVE' : 'BLOCKED');
+    }
   }
 
   @override
@@ -262,6 +301,22 @@ class _UserRegistrationFormBodyState extends State<UserRegistrationFormBody> {
                 (v == null || v.trim().isEmpty) ? 'Required' : null,
           ),
           const SizedBox(height: 32),
+          if (widget.currentStatus != null) ...[
+            OutlinedButton(
+              onPressed: widget.isLoading ? null : _onBlockPressed,
+              style: widget.currentStatus == 'BLOCKED'
+                  ? null
+                  : OutlinedButton.styleFrom(
+                      foregroundColor: Theme.of(context).colorScheme.error,
+                      side: BorderSide(
+                          color: Theme.of(context).colorScheme.error),
+                    ),
+              child: Text(
+                widget.currentStatus == 'BLOCKED' ? 'Unblock user' : 'Block user',
+              ),
+            ),
+            const SizedBox(height: 12),
+          ],
           SizedBox(
             width: double.infinity,
             child: FilledButton(

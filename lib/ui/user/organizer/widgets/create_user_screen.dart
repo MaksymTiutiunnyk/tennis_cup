@@ -58,6 +58,7 @@ class CreateUserScreen extends StatelessWidget {
                     required gender,
                     required country,
                     required city,
+                    String? status,
                   }) {
                     context.read<UserCreationCubit>().createUser(
                           role: role!,

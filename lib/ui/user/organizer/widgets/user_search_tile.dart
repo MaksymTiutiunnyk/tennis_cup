@@ -14,7 +14,7 @@ class UserSearchTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tile = ListTile(
+    return ListTile(
       leading: PlayerAvatar(imageUrl: user.avatarUrl, radius: 22),
       title: Text(user.fullName),
       subtitle: Wrap(
@@ -23,24 +23,6 @@ class UserSearchTile extends StatelessWidget {
         children: user.roles.map((r) => RoleChip(role: r)).toList(),
       ),
       onTap: () => _navigateToEdit(context),
-    );
-
-    if (!user.isDeletable) return tile;
-
-    return Dismissible(
-      key: ValueKey(user.userId),
-      direction: DismissDirection.endToStart,
-      background: Container(
-        alignment: Alignment.centerRight,
-        padding: const EdgeInsets.only(right: 20),
-        color: Colors.redAccent,
-        child: const Icon(Icons.delete_outline, color: Colors.white),
-      ),
-      confirmDismiss: (_) async => true,
-      onDismissed: (_) {
-        context.read<UsersSearchCubit>().softDelete(user);
-      },
-      child: tile,
     );
   }
 

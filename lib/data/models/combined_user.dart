@@ -17,11 +17,6 @@ class CombinedUser {
 
   String get fullName => '$firstName $lastName';
 
-  bool get isDeletable =>
-      (roles.contains(UserRole.organizer) || roles.contains(UserRole.admin)) &&
-      !roles.contains(UserRole.referee) &&
-      !roles.contains(UserRole.player);
-
   CombinedUser copyWith({String? avatarUrl}) => CombinedUser(
         userId: userId,
         firstName: firstName,
