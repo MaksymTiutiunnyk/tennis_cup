@@ -1,6 +1,7 @@
 import 'package:tennis_cup/core/pagination/page_request.dart';
 import 'package:tennis_cup/core/pagination/page_result.dart';
 import 'package:tennis_cup/data/models/pending_user.dart';
+import 'package:tennis_cup/data/models/user_profile.dart';
 import 'package:tennis_cup/data/models/user_role.dart';
 import 'package:tennis_cup/data/models/user_search_result.dart';
 import 'package:tennis_cup/data/services/abstract/i_admin_service.dart';
@@ -24,26 +25,10 @@ class AdminRepository {
   Future<void> rejectUser(int userId, {String? reason}) =>
       _service.rejectUser(userId, reason: reason);
 
-  Future<void> createOrganizer({
-    required String login,
-    required String password,
-    required String firstName,
-    required String lastName,
-  }) =>
-      _service.createOrganizer(CreateOrganizerRequestDto(
-        login: login,
-        password: password,
-        firstName: firstName,
-        lastName: lastName,
-      ));
-
-  Future<void> deleteOrganizer(int organizerId) =>
-      _service.deleteOrganizer(organizerId);
-
-  Future<void> registerUser({
-    required String login,
-    required String password,
+  Future<void> createUser({
     required String role,
+    required String login,
+    required String password,
     required String firstName,
     required String lastName,
     String? patronymicName,
@@ -52,10 +37,10 @@ class AdminRepository {
     String? country,
     String? city,
   }) =>
-      _service.registerUser(RegisterUserRequestDto(
+      _service.createUser(CreateUserRequestDto(
+        role: role,
         login: login,
         password: password,
-        role: role,
         firstName: firstName,
         lastName: lastName,
         patronymicName: patronymicName,
@@ -70,7 +55,24 @@ class AdminRepository {
     return dtos.map(_toUserSearchResult).toList();
   }
 
-  Future<List<UserSearchResult>> searchAllNonPlayerUsers(String query) async {
+  Future<UserProfile> getUserById(int userId) async {
+    final dto = await _service.getUserById(userId);
+    final roles = dto.roles.map(userRoleFromString).whereType<UserRole>().toList();
+    return UserProfile(
+      userId: dto.userId,
+      firstName: dto.firstName,
+      lastName: dto.lastName,
+      patronymicName: dto.patronymicName,
+      roles: roles,
+      birthDate: dto.birthDate,
+      country: dto.country,
+      city: dto.city,
+      gender: dto.gender,
+      avatarUrl: dto.avatarUrl,
+    );
+  }
+
+  Future<List<UserSearchResult>> searchAllUsers(String query) async {
     final dtos = await _service.searchUsers(query: query);
     return dtos.map(_toUserSearchResult).toList();
   }
@@ -85,6 +87,7 @@ class AdminRepository {
       firstName: d.firstName,
       lastName: d.lastName,
       roles: roles,
+      avatarUrl: d.avatarUrl,
     );
   }
 

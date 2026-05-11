@@ -262,7 +262,23 @@ class _NetworkImagePreview extends StatelessWidget {
             height: 160,
             width: double.infinity,
             fit: BoxFit.cover,
-            errorBuilder: (_, __, ___) => const SizedBox.shrink(),
+            errorBuilder: (_, __, ___) {
+              return Image.asset(
+                'assets/default_image.jpg',
+                fit: BoxFit.cover,
+              );
+            },
+            loadingBuilder: (_, child, loadingProgress) {
+              if (loadingProgress == null) {
+                return child;
+              }
+              return Center(
+                child: CircularProgressIndicator(
+                  value: loadingProgress.cumulativeBytesLoaded /
+                      (loadingProgress.expectedTotalBytes ?? 1),
+                ),
+              );
+            },
           ),
         ),
         Positioned(

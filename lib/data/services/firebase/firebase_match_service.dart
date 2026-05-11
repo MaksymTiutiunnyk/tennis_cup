@@ -9,7 +9,8 @@ class FirebaseMatchService implements IMatchService {
 
   @override
   Future<MatchDto?> fetchMatchById(String id) async {
-    throw UnimplementedError('FirebaseMatchService is deprecated; use RestMatchService.');
+    throw UnimplementedError(
+        'FirebaseMatchService is deprecated; use RestMatchService.');
   }
 
   @override
@@ -22,7 +23,8 @@ class FirebaseMatchService implements IMatchService {
 
   @override
   Future<List<MatchDto>> fetchTournamentMatches(String tournamentId) async {
-    throw UnimplementedError('FirebaseMatchService is deprecated; use RestMatchService.');
+    throw UnimplementedError(
+        'FirebaseMatchService is deprecated; use RestMatchService.');
   }
 
   @override
@@ -31,46 +33,64 @@ class FirebaseMatchService implements IMatchService {
     String? player2Id,
     required PageRequest page,
   }) {
-    throw UnimplementedError('FirebaseMatchService is deprecated; use RestMatchService.');
+    throw UnimplementedError(
+        'FirebaseMatchService is deprecated; use RestMatchService.');
   }
 
   @override
   Future<PageResult<HeadToHeadMatchDto>> fetchHeadToHead({
-    required int player1Id,
-    required int player2Id,
+    required int userId1,
+    required int userId2,
     required PageRequest page,
   }) {
-    throw UnimplementedError('FirebaseMatchService is deprecated; use RestMatchService.');
+    throw UnimplementedError(
+        'FirebaseMatchService is deprecated; use RestMatchService.');
   }
 
   @override
-  Future<MatchDto> startMatch(int matchId) =>
-      throw UnimplementedError('FirebaseMatchService is deprecated; use RestMatchService.');
+  Future<MatchDto> startMatch(int matchId, int firstServerId) =>
+      throw UnimplementedError(
+          'FirebaseMatchService is deprecated; use RestMatchService.');
 
   @override
-  Future<MatchDto> finishMatch(int matchId) =>
-      throw UnimplementedError('FirebaseMatchService is deprecated; use RestMatchService.');
+  Future<MatchDto> finishMatch(int matchId) => throw UnimplementedError(
+      'FirebaseMatchService is deprecated; use RestMatchService.');
 
   @override
   Future<MatchSetDto> startSet(int matchId, int setNumber) =>
-      throw UnimplementedError('FirebaseMatchService is deprecated; use RestMatchService.');
+      throw UnimplementedError(
+          'FirebaseMatchService is deprecated; use RestMatchService.');
 
   @override
   Future<MatchSetDto> updateScore(
           int matchId, int setNumber, int blueScore, int redScore) =>
-      throw UnimplementedError('FirebaseMatchService is deprecated; use RestMatchService.');
+      throw UnimplementedError(
+          'FirebaseMatchService is deprecated; use RestMatchService.');
 
   @override
   Future<MatchSetDto> finishSet(int matchId, int setNumber) =>
-      throw UnimplementedError('FirebaseMatchService is deprecated; use RestMatchService.');
+      throw UnimplementedError(
+          'FirebaseMatchService is deprecated; use RestMatchService.');
 
   @override
   Future<MatchDto> technicalDefeatMatch(int matchId, int loserId,
           {String? reason}) =>
-      throw UnimplementedError('FirebaseMatchService is deprecated; use RestMatchService.');
+      throw UnimplementedError(
+          'FirebaseMatchService is deprecated; use RestMatchService.');
 
   @override
   Future<MatchSetDto> technicalDefeatSet(
           int matchId, int setNumber, int loserId, {String? reason}) =>
-      throw UnimplementedError('FirebaseMatchService is deprecated; use RestMatchService.');
+      throw UnimplementedError(
+          'FirebaseMatchService is deprecated; use RestMatchService.');
+
+  @override
+  Future<MatchDto> issueCard(int matchId, int playerId, String cardType) =>
+      throw UnimplementedError(
+          'FirebaseMatchService is deprecated; use RestMatchService.');
+
+  @override
+  Future<MatchDto> revokeCard(int matchId, int cardId) =>
+      throw UnimplementedError(
+          'FirebaseMatchService is deprecated; use RestMatchService.');
 }

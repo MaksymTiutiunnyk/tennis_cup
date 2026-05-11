@@ -18,20 +18,19 @@ class PlayerRepository {
   }
 
   Future<List<Player>> fetchPlayersBySubstring({
-    required String substring,
-    bool isSurname = false,
+    required String query,
+    String? gender,
   }) {
-    return _service.searchPlayersByName(query: substring, isSurname: isSurname);
+    return _service.searchPlayersByName(query: query, gender: gender);
   }
 
-  Future<Player> fetchPlayerById(String id) {
+  Future<Player> fetchPlayerById(int id) {
     return _service.fetchPlayerById(id);
   }
 
-  Future<void> updatePlayerProfileById(
-          int playerId, Map<String, dynamic> fields) =>
-      _service.updatePlayerProfileById(playerId, fields);
+  Future<void> updateProfile(int id, Map<String, dynamic> fields) =>
+      _service.updateProfile(id, fields);
 
-  Future<String> uploadPlayerAvatar(int playerId, Uint8List bytes) =>
-      _service.uploadPlayerAvatar(playerId, bytes);
+  Future<String> uploadAvatar(int id, Uint8List bytes) =>
+      _service.uploadAvatar(id, bytes);
 }

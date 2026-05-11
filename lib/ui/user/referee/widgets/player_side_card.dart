@@ -5,11 +5,12 @@ class PlayerSideCard extends StatelessWidget {
   final String label;
   final Color color;
 
-  const PlayerSideCard(
-      {super.key,
-      required this.player,
-      required this.label,
-      required this.color});
+  const PlayerSideCard({
+    super.key,
+    required this.player,
+    required this.label,
+    required this.color,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -21,16 +22,24 @@ class PlayerSideCard extends StatelessWidget {
         border: Border.all(color: color, width: 1.5),
       ),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Text(label,
-              style: TextStyle(
-                  color: color, fontSize: 11, fontWeight: FontWeight.w600)),
+          Text(
+            label,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: color,
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
           const SizedBox(height: 4),
           Text(
             '${player.name} ${player.surname}',
             textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.bodyMedium,
+            maxLines: 2,
             overflow: TextOverflow.ellipsis,
+            style: Theme.of(context).textTheme.bodyMedium,
           ),
         ],
       ),

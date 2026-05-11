@@ -25,13 +25,14 @@ class PlayerTournamentsCubit extends Cubit<PlayerTournamentsState> {
     _isLoading = true;
     try {
       final result = await tournamentRepository.fetchPlayersTournaments(
-        player1Id: player1.playerId,
+        userId: player1.userId.toString(),
         page: _currentPage,
       );
       if (result.hasMore) _currentPage = _currentPage.next;
 
-      final existing =
-          current is PlayerTournamentsLoaded ? current.tournaments : <Tournament>[];
+      final existing = current is PlayerTournamentsLoaded
+          ? current.tournaments
+          : <Tournament>[];
       emit(PlayerTournamentsLoaded(
         tournaments: [...existing, ...result.items],
         hasMore: result.hasMore,

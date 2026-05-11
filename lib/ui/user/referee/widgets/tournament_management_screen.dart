@@ -29,7 +29,10 @@ class _TournamentManagementScreenState
     super.initState();
     _matchCubit =
         RefereeMatchCubit(repository: ServiceLocator.refereeRepository);
-    SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft]);
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+    ]);
     _loadMatches();
   }
 
@@ -48,12 +51,8 @@ class _TournamentManagementScreenState
     try {
       final matches = await ServiceLocator.refereeRepository
           .fetchMatchesForTournament(widget.tournament.id);
-      // Sort ACTIVE first, then PENDING by scheduled time
-      int matchRank(MatchDto m) => m.status == 'ACTIVE'
-          ? 0
-          : m.status == 'PENDING'
-              ? 1
-              : 2;
+      int matchRank(MatchDto m) =>
+          m.status == 'ACTIVE' ? 0 : m.status == 'PENDING' ? 1 : 2;
       matches.sort((a, b) {
         final r = matchRank(a).compareTo(matchRank(b));
         if (r != 0) return r;
@@ -81,19 +80,58 @@ class _TournamentManagementScreenState
 
   @override
   Widget build(BuildContext context) {
+    final topInset = MediaQuery.paddingOf(context).top;
+
     return BlocProvider.value(
       value: _matchCubit,
       child: Scaffold(
-        appBar: AppBar(
-          title: Text(widget.tournament.name),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.refresh),
-              onPressed: _loadMatches,
+        body: Column(
+          children: [
+            Padding(
+              padding: EdgeInsets.fromLTRB(8, topInset + 4, 8, 4),
+              child: SizedBox(
+                height: 44,
+                child: Row(
+                  children: [
+                    IconButton(
+                      visualDensity: VisualDensity.compact,
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints.tightFor(
+                        width: 40,
+                        height: 40,
+                      ),
+                      onPressed: () => Navigator.of(context).maybePop(),
+                      icon: const Icon(Icons.arrow_back),
+                      tooltip: 'Back',
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        widget.tournament.name,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    IconButton(
+                      visualDensity: VisualDensity.compact,
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints.tightFor(
+                        width: 40,
+                        height: 40,
+                      ),
+                      onPressed: _loadMatches,
+                      icon: const Icon(Icons.refresh),
+                      tooltip: 'Refresh',
+                    ),
+                  ],
+                ),
+              ),
             ),
+            Expanded(child: _buildBody(context)),
           ],
         ),
-        body: _buildBody(context),
       ),
     );
   }
@@ -124,7 +162,16 @@ class _TournamentManagementScreenState
       return const Center(child: Text('Tournament complete'));
     }
 
-    return BlocBuilder<RefereeMatchCubit, RefereeMatchState>(
+    return BlocConsumer<RefereeMatchCubit, RefereeMatchState>(
+      listenWhen: (prev, curr) {
+        if (curr is! RefereeMatchReady) return false;
+        final done = curr.match.status == 'FINISHED' ||
+            curr.match.status == 'TECHNICAL_DEFEAT';
+        if (!done) return false;
+        if (prev is! RefereeMatchReady) return true;
+        return prev.match.status != curr.match.status;
+      },
+      listener: (context, state) => _loadMatches(),
       builder: (context, matchState) {
         if (matchState is RefereeMatchLoading) {
           return const Center(child: CircularProgressIndicator());
@@ -136,7 +183,6 @@ class _TournamentManagementScreenState
             state: matchState,
             onStartMatch: () async {
               await context.read<RefereeMatchCubit>().startMatch();
-              _loadMatches();
             },
           );
         }
@@ -150,6 +196,7 @@ class _TournamentManagementScreenState
           return Center(child: Text(matchState.message));
         }
 
+        // Match just finished — listener will reload; show spinner while transitioning.
         return const Center(child: CircularProgressIndicator());
       },
     );

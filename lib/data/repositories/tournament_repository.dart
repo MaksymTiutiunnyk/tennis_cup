@@ -33,11 +33,13 @@ class TournamentRepository {
     required DateTime tournamentDate,
     required Arena tournamentArena,
     required Time tournamentTime,
+    required List<String> statuses,
   }) async {
     final dtos = await _service.fetchScheduledTournaments(
       date: tournamentDate,
       arena: tournamentArena,
       time: tournamentTime,
+      statuses: statuses,
     );
     return _buildTournaments(dtos);
   }
@@ -109,17 +111,15 @@ class TournamentRepository {
       );
 
   static Player _playerFromBrief(PlayerBriefDto dto) => Player(
-        playerId: dto.id.toString(),
+        userId: dto.id,
         name: dto.firstName,
         surname: dto.lastName,
         sex: Sex.All,
         imageUrl: dto.avatarUrl ?? '',
-        year: 0,
         tournaments: 0,
         matches: 0,
         wins: 0,
         loses: 0,
-        place: '',
         gold: 0,
         silver: 0,
         bronze: 0,
@@ -132,15 +132,11 @@ class TournamentRepository {
   }
 
   Future<PageResult<Tournament>> fetchPlayersTournaments({
-    required String player1Id,
-    String? player2Id,
+    required String userId,
     required PageRequest page,
   }) async {
     final result = await _service.fetchPlayerTournaments(
-      playerId: player1Id,
-      player2Id: player2Id,
-      page: page,
-    );
+        userId: userId, page: page, statuses: ['ACTIVE', 'FINISHED']);
     final tournaments = await _buildTournaments(result.items);
     return PageResult(items: tournaments, hasMore: result.hasMore);
   }
@@ -161,29 +157,35 @@ class TournamentRepository {
 
   // ---- Management ----
 
-  Future<void> createTournament(CreateTournamentRequest request) async {
-    await _service.createTournament(CreateTournamentRequestDto(
+  Future<void> createTournament(CreateUpdateTournamentRequest request) async {
+    await _service.createTournament(CreateUpdateTournamentRequestDto(
       name: request.name,
       type: request.type,
       gender: request.gender,
       startTime: request.startTime.toUtc().toIso8601String(),
       arenaId: request.arenaId,
-      refereeId: request.refereeId,
+      refereeIds: request.refereeIds,
       matchDurationMinutes: request.matchDurationMinutes,
+      requiredPlayersCount: request.requiredPlayersCount,
+      setsToWin: request.setsToWin,
       playerIds: request.playerIds,
     ));
   }
 
-  Future<void> updateTournament(int id, UpdateTournamentRequest request) async {
+  Future<void> updateTournament(
+      int id, CreateUpdateTournamentRequest request) async {
     await _service.updateTournament(
       id,
-      UpdateTournamentRequestDto(
+      CreateUpdateTournamentRequestDto(
         name: request.name,
         type: request.type,
         gender: request.gender,
-        startTime: request.startTime?.toUtc().toIso8601String(),
+        startTime: request.startTime.toUtc().toIso8601String(),
         arenaId: request.arenaId,
-        refereeId: request.refereeId,
+        matchDurationMinutes: request.matchDurationMinutes,
+        requiredPlayersCount: request.requiredPlayersCount,
+        setsToWin: request.setsToWin,
+        refereeIds: request.refereeIds,
         playerIds: request.playerIds,
       ),
     );
@@ -228,8 +230,8 @@ class TournamentRepository {
     }
     for (final matches in matchDtosByTournament.values) {
       for (final m in matches) {
-        neededPlayerIds.add(m.bluePlayerId);
-        neededPlayerIds.add(m.redPlayerId);
+        if (m.bluePlayerId != null) neededPlayerIds.add(m.bluePlayerId!);
+        if (m.redPlayerId != null) neededPlayerIds.add(m.redPlayerId!);
       }
     }
 
@@ -249,6 +251,9 @@ class TournamentRepository {
         for (final participant in dto.participants) {
           final p = playerMap[participant.playerId];
           if (p == null) continue;
+          if (participant.invitationStatus != 'ACCEPTED') {
+            continue;
+          }
           players.add(p);
           if (withMatches) points.add(pointsById[participant.playerId] ?? 0);
           if (dto.status == 'FINISHED') places.add(participant.place ?? 0);
@@ -274,8 +279,10 @@ class TournamentRepository {
     for (final match in matches) {
       final winner = match.winnerId;
       if (winner == null) continue;
-      final loser =
-          winner == match.bluePlayerId ? match.redPlayerId : match.bluePlayerId;
+      if (match.bluePlayerId == null || match.redPlayerId == null) continue;
+      final loser = winner == match.bluePlayerId
+          ? match.redPlayerId!
+          : match.bluePlayerId!;
       pointsByPlayer.update(winner, (v) => v + 2, ifAbsent: () => 2);
       pointsByPlayer.update(loser, (v) => v + 1, ifAbsent: () => 1);
     }
@@ -297,7 +304,7 @@ class TournamentRepository {
     if (ids.isEmpty) return const {};
     final entries = await Future.wait(ids.map((id) async {
       try {
-        final p = await _playerService.fetchPlayerById(id.toString());
+        final p = await _playerService.fetchPlayerById(id);
         return MapEntry<int, Player?>(id, p);
       } catch (_) {
         return MapEntry<int, Player?>(id, null);
@@ -371,7 +378,18 @@ class TournamentRepository {
       places: places,
       isFinished: dto.status == 'FINISHED',
       matches: matches,
-      refereeId: dto.refereeId != 0 ? dto.refereeId : null,
+      refereeId: dto.refereeId,
+      setsToWin: dto.setsToWin,
+      matchDurationMinutes: dto.matchDurationMinutes,
+      requiredPlayersCount: dto.requiredPlayersCount,
+      participantInvitations: dto.participants
+          .map((p) => TournamentParticipant(
+              playerId: p.playerId, status: p.invitationStatus))
+          .toList(),
+      refereeInvitations: dto.refereeInvitations
+          .map((r) => TournamentRefereeInvitation(
+              refereeId: r.refereeId, status: r.status))
+          .toList(),
     );
   }
 }

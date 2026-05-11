@@ -34,15 +34,15 @@ class RestMatchService implements IMatchService {
 
   @override
   Future<PageResult<HeadToHeadMatchDto>> fetchHeadToHead({
-    required int player1Id,
-    required int player2Id,
+    required int userId1,
+    required int userId2,
     required PageRequest page,
   }) async {
     final response = await _dio.get<Map<String, dynamic>>(
       '/api/v1/matches/head-to-head',
       queryParameters: {
-        'player1Id': player1Id,
-        'player2Id': player2Id,
+        'player1Id': userId1,
+        'player2Id': userId2,
         'page': page.page,
         'size': page.size,
       },
@@ -59,8 +59,10 @@ class RestMatchService implements IMatchService {
   Stream<void> watchMatchChanges(String matchId) => const Stream.empty();
 
   @override
-  Future<MatchDto> startMatch(int matchId) async {
-    final response = await _dio.post('/api/v1/matches/$matchId/start');
+  Future<MatchDto> startMatch(int matchId, int firstServerId) async {
+    final response = await _dio.post('/api/v1/matches/$matchId/start', data: {
+      'firstServerId': firstServerId,
+    });
     return MatchDto.fromJson(response.data as Map<String, dynamic>);
   }
 
@@ -108,8 +110,9 @@ class RestMatchService implements IMatchService {
   }
 
   @override
-  Future<MatchSetDto> technicalDefeatSet(int matchId, int setNumber,
-      int loserId, {String? reason}) async {
+  Future<MatchSetDto> technicalDefeatSet(
+      int matchId, int setNumber, int loserId,
+      {String? reason}) async {
     final response = await _dio.post(
       '/api/v1/matches/$matchId/sets/$setNumber/technical-defeat',
       data: {
@@ -118,6 +121,22 @@ class RestMatchService implements IMatchService {
       },
     );
     return MatchSetDto.fromJson(response.data as Map<String, dynamic>);
+  }
+
+  @override
+  Future<MatchDto> issueCard(int matchId, int playerId, String cardType) async {
+    final response = await _dio.post(
+      '/api/v1/matches/$matchId/cards',
+      data: {'playerId': playerId, 'cardType': cardType},
+    );
+    return MatchDto.fromJson(response.data as Map<String, dynamic>);
+  }
+
+  @override
+  Future<MatchDto> revokeCard(int matchId, int cardId) async {
+    final response =
+        await _dio.delete('/api/v1/matches/$matchId/cards/$cardId');
+    return MatchDto.fromJson(response.data as Map<String, dynamic>);
   }
 
   @override

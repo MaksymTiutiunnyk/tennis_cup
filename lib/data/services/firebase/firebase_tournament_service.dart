@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:tennis_cup/data/models/arena.dart';
 import 'package:tennis_cup/core/pagination/page_request.dart';
 import 'package:tennis_cup/core/pagination/page_result.dart';
+import 'package:tennis_cup/data/models/arena.dart';
 import 'package:tennis_cup/data/models/tournament.dart';
 import 'package:tennis_cup/data/services/abstract/i_tournament_service.dart';
 import 'package:tennis_cup/data/services/dto/dashboard_dto.dart';
@@ -16,15 +16,16 @@ class FirebaseTournamentService implements ITournamentService {
 
   @override
   Future<PageResult<TournamentDto>> fetchPlayerTournaments({
-    required String playerId,
+    required String userId,
     String? player2Id,
     required PageRequest page,
+    required List<String> statuses,
   }) async {
     if (page.page == 0) _tournamentCursor = null;
 
     Query<Map<String, dynamic>> query = FirebaseFirestore.instance
         .collection('tournaments')
-        .where('players', arrayContains: playerId)
+        .where('players', arrayContains: userId)
         .orderBy('date', descending: true)
         .limit(page.size);
 
@@ -81,6 +82,7 @@ class FirebaseTournamentService implements ITournamentService {
     required DateTime date,
     required Arena arena,
     required Time time,
+    required List<String> statuses,
   }) async {
     final start =
         Timestamp.fromDate(DateTime(date.year, date.month, date.day, 0, 0, 0));
@@ -93,43 +95,6 @@ class FirebaseTournamentService implements ITournamentService {
         .where('date', isLessThanOrEqualTo: end)
         .where('time', isEqualTo: time.name)
         .where('arena', isEqualTo: arena.title)
-        .get();
-
-    return snapshot.docs.map((doc) {
-      final data = doc.data();
-      final playerIds = (data['players'] as List<dynamic>?)
-              ?.map((e) => int.tryParse(e.toString()) ?? 0)
-              .toList() ??
-          [];
-      return _dtoFromDoc(doc.id, data, playerIds);
-    }).toList();
-  }
-
-  @override
-  Future<List<TournamentDto>> fetchRecentTournaments({int limit = 10}) async {
-    final snapshot = await FirebaseFirestore.instance
-        .collection('tournaments')
-        .orderBy('date', descending: true)
-        .limit(limit)
-        .get();
-
-    return snapshot.docs.map((doc) {
-      final data = doc.data();
-      final playerIds = (data['players'] as List<dynamic>?)
-              ?.map((e) => int.tryParse(e.toString()) ?? 0)
-              .toList() ??
-          [];
-      return _dtoFromDoc(doc.id, data, playerIds);
-    }).toList();
-  }
-
-  @override
-  Future<List<TournamentDto>> fetchUpcomingTournaments({int limit = 10}) async {
-    final snapshot = await FirebaseFirestore.instance
-        .collection('tournaments')
-        .where('isFinished', isNotEqualTo: true)
-        .orderBy('date', descending: true)
-        .limit(limit)
         .get();
 
     return snapshot.docs.map((doc) {
@@ -169,13 +134,16 @@ class FirebaseTournamentService implements ITournamentService {
       startTime: dateTime.toIso8601String(),
       arenaId: 0,
       gender: 'MALE',
-      refereeId: 0,
+      requiredPlayersCount: 0,
+      setsToWin: 1,
       participants: playerIds
           .map((id) => TournamentParticipantDto(
                 playerId: id,
                 invitationStatus: 'ACCEPTED',
               ))
           .toList(),
+      refereeInvitations: const [],
+      matchDurationMinutes: 30,
     );
   }
 
@@ -195,19 +163,13 @@ class FirebaseTournamentService implements ITournamentService {
   }
 
   @override
-  Future<PageResult<TournamentDto>> fetchTournamentsPaged(
-    PageRequest page, {
-    String? status,
-  }) async =>
-      const PageResult(items: [], hasMore: false);
-
-  @override
-  Future<TournamentDto> createTournament(CreateTournamentRequestDto dto) =>
+  Future<TournamentDto> createTournament(
+          CreateUpdateTournamentRequestDto dto) =>
       throw UnimplementedError('createTournament not implemented for Firebase');
 
   @override
   Future<TournamentDto> updateTournament(
-          int id, UpdateTournamentRequestDto dto) =>
+          int id, CreateUpdateTournamentRequestDto dto) =>
       throw UnimplementedError('updateTournament not implemented for Firebase');
 
   @override
@@ -231,16 +193,15 @@ class FirebaseTournamentService implements ITournamentService {
       throw UnimplementedError('finishTournament not implemented for Firebase');
 
   @override
-  Future<List<TournamentInvitationDto>> fetchInvitations({
-    required String playerId,
-  }) async =>
+  Future<List<MyInvitationDto>> fetchInvitations(
+          {required String status}) async =>
       const [];
 
   @override
-  Future<void> acceptInvitation(String invitationId) async {}
+  Future<void> acceptInvitation(String tournamentId) async {}
 
   @override
-  Future<void> declineInvitation(String invitationId) async {}
+  Future<void> declineInvitation(String tournamentId) async {}
 
   @override
   Future<List<ArenaMatchViewDto>> fetchCurrentMatches() async => const [];
@@ -251,4 +212,11 @@ class FirebaseTournamentService implements ITournamentService {
 
   @override
   Future<List<ArenaLastWinnerDto>> fetchLastWinners() async => const [];
+
+  @override
+  Future<PageResult<TournamentDto>> fetchActiveTournamentsForReferee(
+      PageRequest page, String refereeId) {
+    throw UnimplementedError(
+        'fetchActiveTournamentsForReferee not implemented for Firebase');
+  }
 }

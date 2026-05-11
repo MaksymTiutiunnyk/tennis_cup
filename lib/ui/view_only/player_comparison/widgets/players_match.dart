@@ -24,12 +24,12 @@ class PlayersMatch extends StatelessWidget {
   });
 
   Future<void> _onTap(BuildContext context) async {
-    final tournament = await ServiceLocator.tournamentRepository
-        .fetchTournamentById(
-          tournamentId: match.tournamentId,
-          withPlayers: false,
-          withMatches: false,
-        );
+    final tournament =
+        await ServiceLocator.tournamentRepository.fetchTournamentById(
+      tournamentId: match.tournamentId,
+      withPlayers: false,
+      withMatches: false,
+    );
     if (!context.mounted) return;
     context.read<ScheduleDateCubit>().selectDate(tournament.date);
     context.read<ArenaFilterCubit>().selectArena(tournament.arena);
@@ -41,10 +41,8 @@ class PlayersMatch extends StatelessWidget {
   Widget build(BuildContext context) {
     final bool isPlayer1Blue = match.bluePlayer == player1;
 
-    final int player1Score =
-        isPlayer1Blue ? match.blueScore : match.redScore;
-    final int player2Score =
-        isPlayer1Blue ? match.redScore : match.blueScore;
+    final int player1Score = isPlayer1Blue ? match.blueScore : match.redScore;
+    final int player2Score = isPlayer1Blue ? match.redScore : match.blueScore;
 
     final List<int> player1SetScores =
         isPlayer1Blue ? match.blueSetScores : match.redSetScores;

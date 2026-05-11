@@ -12,8 +12,7 @@ class RankingPlayer extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () => context.push(
-        AppRoutes.playerDetails(player.playerId),
-        extra: player,
+        AppRoutes.playerDetails(player.userId.toString()),
       ),
       child: Card(
         child: Padding(

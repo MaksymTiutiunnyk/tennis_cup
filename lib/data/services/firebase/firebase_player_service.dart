@@ -52,13 +52,12 @@ class FirebasePlayerService implements IPlayerService {
   @override
   Future<List<Player>> searchPlayersByName({
     required String query,
-    bool isSurname = false,
+    String? gender,
   }) async {
-    final field = isSurname ? 'surname' : 'name';
     final snapshot = await FirebaseFirestore.instance
         .collection('players')
-        .where(field, isGreaterThanOrEqualTo: query)
-        .where(field, isLessThanOrEqualTo: '$query\uf8ff')
+        .where('name', isGreaterThanOrEqualTo: query)
+        .where('name', isLessThanOrEqualTo: '$query')
         .get();
 
     return snapshot.docs
@@ -68,20 +67,21 @@ class FirebasePlayerService implements IPlayerService {
   }
 
   @override
-  Future<void> updatePlayerProfileById(
-      int playerId, Map<String, dynamic> fields) {
+  Future<void> updateProfile(int id, Map<String, dynamic> fields) {
     throw UnimplementedError('Admin player edit not implemented for Firebase');
   }
 
   @override
-  Future<String> uploadPlayerAvatar(int playerId, Uint8List bytes) {
+  Future<String> uploadAvatar(int id, Uint8List bytes) {
     throw UnimplementedError('Avatar upload not implemented for Firebase');
   }
 
   @override
-  Future<Player> fetchPlayerById(String id) async {
-    final doc =
-        await FirebaseFirestore.instance.collection('players').doc(id).get();
+  Future<Player> fetchPlayerById(int id) async {
+    final doc = await FirebaseFirestore.instance
+        .collection('players')
+        .doc(id.toString())
+        .get();
     final player = _playerFromDoc(doc);
     if (player == null) throw Exception('Player $id not found');
     return player;
@@ -92,8 +92,9 @@ class FirebasePlayerService implements IPlayerService {
     if (data == null) return null;
 
     final sexStr = data['sex'] as String? ?? '';
+    final year = (data['year'] as num?)?.toInt() ?? 0;
     return Player(
-      playerId: doc.id,
+      userId: int.tryParse(doc.id) ?? 0,
       name: data['name'] as String? ?? '',
       surname: data['surname'] as String? ?? '',
       sex: sexStr == 'Men'
@@ -101,12 +102,14 @@ class FirebasePlayerService implements IPlayerService {
           : sexStr == 'Women'
               ? Sex.Women
               : Sex.All,
-      year: (data['year'] as num?)?.toInt() ?? 0,
+      birthDate: year != 0 ? '$year-01-01' : null,
+      city: data['city'] as String? ?? '',
+      country: data['country'] as String? ?? '',
+      patronymicName: '',
       tournaments: (data['tournaments'] as num?)?.toInt() ?? 0,
       matches: (data['matches'] as num?)?.toInt() ?? 0,
       wins: (data['wins'] as num?)?.toInt() ?? 0,
       loses: (data['loses'] as num?)?.toInt() ?? 0,
-      place: data['place'] as String? ?? '',
       gold: (data['gold'] as num?)?.toInt() ?? 0,
       silver: (data['silver'] as num?)?.toInt() ?? 0,
       bronze: (data['bronze'] as num?)?.toInt() ?? 0,

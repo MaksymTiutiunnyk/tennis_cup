@@ -1,41 +1,25 @@
-class CreateTournamentRequest {
+class CreateUpdateTournamentRequest {
   final String name;
   final String type;
   final String gender;
   final DateTime startTime;
   final int arenaId;
-  final int refereeId;
+  final List<int> refereeIds;
   final int matchDurationMinutes;
-  final List<int>? playerIds;
+  final int requiredPlayersCount;
+  final int setsToWin;
+  final List<int> playerIds;
 
-  const CreateTournamentRequest({
+  const CreateUpdateTournamentRequest({
     required this.name,
     required this.type,
     required this.gender,
     required this.startTime,
     required this.arenaId,
-    required this.refereeId,
+    required this.refereeIds,
     required this.matchDurationMinutes,
-    this.playerIds,
-  });
-}
-
-class UpdateTournamentRequest {
-  final String? name;
-  final String? type;
-  final String? gender;
-  final DateTime? startTime;
-  final int? arenaId;
-  final int? refereeId;
-  final List<int>? playerIds;
-
-  const UpdateTournamentRequest({
-    this.name,
-    this.type,
-    this.gender,
-    this.startTime,
-    this.arenaId,
-    this.refereeId,
-    this.playerIds,
+    required this.requiredPlayersCount,
+    required this.setsToWin,
+    required this.playerIds,
   });
 }

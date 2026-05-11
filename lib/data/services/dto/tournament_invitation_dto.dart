@@ -1,34 +1,30 @@
-class TournamentInvitationDto {
-  final int id;
+class MyInvitationDto {
+  final int invitationId;
   final int tournamentId;
-  final int playerId;
-  final int playerNumber;
+  final String tournamentName;
   final String startTime;
-  final String endTime;
-  final String deadline;
+  final String role;
   final String status;
+  final String createdAt;
 
-  const TournamentInvitationDto({
-    required this.id,
+  const MyInvitationDto({
+    required this.invitationId,
     required this.tournamentId,
-    required this.playerId,
-    required this.playerNumber,
+    required this.tournamentName,
     required this.startTime,
-    required this.endTime,
-    required this.deadline,
+    required this.role,
     required this.status,
+    required this.createdAt,
   });
 
-  factory TournamentInvitationDto.fromJson(Map<String, dynamic> json) {
-    return TournamentInvitationDto(
-      id: (json['id'] as num).toInt(),
-      tournamentId: (json['tournamentId'] as num?)?.toInt() ?? 0,
-      playerId: (json['playerId'] as num?)?.toInt() ?? 0,
-      playerNumber: (json['playerNumber'] as num?)?.toInt() ?? 0,
-      startTime: json['startTime'] as String? ?? '',
-      endTime: json['endTime'] as String? ?? '',
-      deadline: json['deadline'] as String? ?? '',
-      status: json['status'] as String? ?? 'PENDING',
-    );
-  }
+  factory MyInvitationDto.fromJson(Map<String, dynamic> json) =>
+      MyInvitationDto(
+        invitationId: (json['invitationId'] as num).toInt(),
+        tournamentId: (json['tournamentId'] as num).toInt(),
+        tournamentName: json['tournamentName'] as String? ?? '',
+        startTime: json['startTime'] as String? ?? '',
+        role: json['role'] as String? ?? 'PLAYER',
+        status: json['status'] as String? ?? 'PENDING',
+        createdAt: json['createdAt'] as String? ?? '',
+      );
 }

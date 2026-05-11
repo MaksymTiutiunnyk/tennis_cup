@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:tennis_cup/data/models/player.dart';
+import 'package:tennis_cup/data/models/combined_user.dart';
 import 'package:tennis_cup/ui/core/widgets/custom_navigator_observer.dart';
 import 'package:tennis_cup/ui/shell/widgets/user_shell.dart';
 import 'package:tennis_cup/ui/shell/widgets/view_shell.dart';
 import 'package:tennis_cup/ui/user/core/widgets/settings_tab.dart';
+import 'package:tennis_cup/ui/user/organizer/widgets/create_user_screen.dart';
+import 'package:tennis_cup/ui/user/organizer/widgets/edit_user_screen.dart';
 import 'package:tennis_cup/ui/user/organizer/widgets/organizer_news_tab.dart';
 import 'package:tennis_cup/ui/user/organizer/widgets/organizer_tournaments_tab.dart';
 import 'package:tennis_cup/ui/user/organizer/widgets/organizer_users_tab.dart';
 import 'package:tennis_cup/ui/user/organizer/widgets/pending_users_tab.dart';
-import 'package:tennis_cup/ui/user/player/widgets/tournaments_tab.dart';
+import 'package:tennis_cup/ui/user/player/widgets/player_invitations_tab.dart';
 import 'package:tennis_cup/ui/user/referee/widgets/referee_invitations_tab.dart';
 import 'package:tennis_cup/ui/user/referee/widgets/referee_tournaments_tab.dart';
 import 'package:tennis_cup/ui/view_only/home/widgets/home.dart';
@@ -35,9 +37,12 @@ class AppRoutes {
   static const organizerNews = '/user/organizer/news';
   static const userSettings = '/user/settings';
 
+  static const createUser = '/organizer/create-user';
+
   static String playerDetails(String id) => '/players/$id';
   static String playersComparison(String p1Id, String p2Id) =>
       '/comparison/$p1Id/$p2Id';
+  static String editUser(String id) => '/organizer/edit-user/$id';
 }
 
 GoRouter buildAppRouter({GlobalKey<NavigatorState>? navigatorKey}) {
@@ -96,7 +101,7 @@ GoRouter buildAppRouter({GlobalKey<NavigatorState>? navigatorKey}) {
             routes: [
               GoRoute(
                 path: AppRoutes.userInvitations,
-                builder: (context, state) => const TournamentsTab(),
+                builder: (context, state) => const PlayerInvitationsTab(),
               ),
             ],
           ),
@@ -177,17 +182,29 @@ GoRouter buildAppRouter({GlobalKey<NavigatorState>? navigatorKey}) {
       GoRoute(
         path: '/players/:id',
         builder: (context, state) => PlayerDetailsRoute(
-          playerId: state.pathParameters['id']!,
-          cached: state.extra as Player?,
+          userId: state.pathParameters['id']!,
         ),
       ),
       GoRoute(
         path: '/comparison/:p1Id/:p2Id',
         builder: (context, state) => PlayersComparisonRoute(
-          player1Id: state.pathParameters['p1Id']!,
-          player2Id: state.pathParameters['p2Id']!,
-          cached: state.extra as PlayersComparisonExtra?,
+          userId1: state.pathParameters['p1Id']!,
+          userId2: state.pathParameters['p2Id']!,
         ),
+      ),
+      GoRoute(
+        path: AppRoutes.createUser,
+        builder: (context, state) => const CreateUserScreen(),
+      ),
+      GoRoute(
+        path: '/organizer/edit-user/:userId',
+        builder: (context, state) {
+          final extra = state.extra as CombinedUser?;
+          return EditUserScreen(
+            userId: int.parse(state.pathParameters['userId']!),
+            initialRoles: extra?.roles ?? const [],
+          );
+        },
       ),
     ],
   );

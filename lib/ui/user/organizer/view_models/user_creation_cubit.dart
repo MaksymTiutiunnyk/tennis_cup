@@ -9,29 +9,8 @@ class UserCreationCubit extends Cubit<UserCreationState> {
       : _adminRepository = adminRepository,
         super(UserCreationIdle());
 
-  void reset() => emit(UserCreationIdle());
-
-  Future<void> createOrganizer({
-    required String login,
-    required String password,
-    required String firstName,
-    required String lastName,
-  }) async {
-    emit(UserCreationLoading());
-    try {
-      await _adminRepository.createOrganizer(
-        login: login,
-        password: password,
-        firstName: firstName,
-        lastName: lastName,
-      );
-      emit(UserCreationSuccess('Organizer created successfully'));
-    } catch (e) {
-      emit(UserCreationError('Failed to create organizer'));
-    }
-  }
-
-  Future<void> registerPlayer({
+  Future<void> createUser({
+    required String role,
     required String login,
     required String password,
     required String firstName,
@@ -44,10 +23,10 @@ class UserCreationCubit extends Cubit<UserCreationState> {
   }) async {
     emit(UserCreationLoading());
     try {
-      await _adminRepository.registerUser(
+      await _adminRepository.createUser(
+        role: role,
         login: login,
         password: password,
-        role: 'PLAYER',
         firstName: firstName,
         lastName: lastName,
         patronymicName: patronymicName,
@@ -56,36 +35,10 @@ class UserCreationCubit extends Cubit<UserCreationState> {
         country: country,
         city: city,
       );
-      emit(UserCreationSuccess('Player registered. Account pending approval.'));
+      final roleName = role[0] + role.substring(1).toLowerCase();
+      emit(UserCreationSuccess('$roleName created successfully'));
     } catch (e) {
-      emit(UserCreationError('Failed to register player'));
-    }
-  }
-
-  Future<void> registerReferee({
-    required String login,
-    required String password,
-    required String firstName,
-    required String lastName,
-    String? patronymicName,
-    String? birthDate,
-    String? gender,
-  }) async {
-    emit(UserCreationLoading());
-    try {
-      await _adminRepository.registerUser(
-        login: login,
-        password: password,
-        role: 'REFEREE',
-        firstName: firstName,
-        lastName: lastName,
-        patronymicName: patronymicName,
-        birthDate: birthDate,
-        gender: gender,
-      );
-      emit(UserCreationSuccess('Referee registered. Account pending approval.'));
-    } catch (e) {
-      emit(UserCreationError('Failed to register referee'));
+      emit(UserCreationError('Failed to create user'));
     }
   }
 }

@@ -22,10 +22,10 @@ class PlayerTournament extends StatelessWidget {
     int setsLost = 0;
 
     for (final match in tournament.matches!) {
-      if (match.bluePlayer == player) {
+      if (match.bluePlayer.userId == player.userId) {
         setsWon += match.blueScore;
         setsLost += match.redScore;
-      } else if (match.redPlayer == player) {
+      } else if (match.redPlayer.userId == player.userId) {
         setsWon += match.redScore;
         setsLost += match.blueScore;
       }
@@ -37,9 +37,10 @@ class PlayerTournament extends StatelessWidget {
   int _getWins() {
     int wins = 0;
     for (final match in tournament.matches!) {
-      if (match.bluePlayer == player && match.blueScore == 3) {
+      if (match.bluePlayer.userId == player.userId && match.blueScore == 3) {
         wins++;
-      } else if (match.redPlayer == player && match.redScore == 3) {
+      } else if (match.redPlayer.userId == player.userId &&
+          match.redScore == 3) {
         wins++;
       }
     }
@@ -49,9 +50,10 @@ class PlayerTournament extends StatelessWidget {
   int _getLoses() {
     int loses = 0;
     for (final match in tournament.matches!) {
-      if (match.bluePlayer == player && match.redScore == 3) {
+      if (match.bluePlayer.userId == player.userId && match.redScore == 3) {
         loses++;
-      } else if (match.redPlayer == player && match.blueScore == 3) {
+      } else if (match.redPlayer.userId == player.userId &&
+          match.blueScore == 3) {
         loses++;
       }
     }
@@ -60,7 +62,8 @@ class PlayerTournament extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    int index = tournament.players.indexOf(player);
+    final index =
+        tournament.players.indexWhere((p) => p.userId == player.userId);
 
     return InkWell(
       onTap: () {
@@ -77,15 +80,21 @@ class PlayerTournament extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  Icon(
-                    Icons.emoji_events,
-                    color: tournament.isFinished
-                        ? Colors.grey
-                        : Theme.of(context).colorScheme.onPrimaryContainer,
+                  SizedBox(
+                    width: 16,
+                    child: Icon(
+                      Icons.emoji_events,
+                      color: tournament.isFinished
+                          ? Colors.grey
+                          : Theme.of(context).colorScheme.onPrimaryContainer,
+                    ),
                   ),
-                  const SizedBox(width: 8),
-                  Text(
-                    '${formatter.format(tournament.date)} ${tournament.players[0].sex.name}, ${tournament.time.name} ${tournament.arena.title}',
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Text(
+                      // TODO: temporary fix until backend generates tournaments with accepted invitations
+                      '${formatter.format(tournament.date)} ${index >= 0 ? tournament.players.elementAt(index).sex.name : ''}, ${tournament.time.name} ${tournament.arena.title}',
+                    ),
                   ),
                 ],
               ),
@@ -98,7 +107,7 @@ class PlayerTournament extends StatelessWidget {
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                   Text(
-                    tournament.places.elementAtOrNull(index).toString(),
+                    '${index >= 0 ? tournament.places.elementAtOrNull(index) ?? '' : ''}',
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                 ],
@@ -160,7 +169,9 @@ class PlayerTournament extends StatelessWidget {
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                   Text(
-                    tournament.points.elementAtOrNull(index).toString(),
+                    index >= 0
+                        ? tournament.points.elementAtOrNull(index).toString()
+                        : '—',
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                 ],

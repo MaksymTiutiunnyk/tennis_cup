@@ -31,11 +31,28 @@ class _RefereeSearchFieldState extends State<RefereeSearchField> {
     super.initState();
     final id = widget.initialRefereeId;
     if (id != null) {
-      _selected = UserSearchResult(
-        userId: id,
-        firstName: 'Referee',
-        lastName: '#$id',
-      );
+      _loading = true;
+      ServiceLocator.adminRepository.getUserById(id).then((profile) {
+        if (mounted) {
+          setState(() {
+            _selected = UserSearchResult(
+              userId: profile.userId,
+              firstName: profile.firstName,
+              lastName: profile.lastName,
+              roles: profile.roles,
+              avatarUrl: profile.avatarUrl,
+            );
+            _loading = false;
+          });
+        }
+      }).catchError((_) {
+        if (mounted) {
+          setState(() {
+            _selected = UserSearchResult(userId: id, firstName: 'Referee', lastName: '#$id');
+            _loading = false;
+          });
+        }
+      });
     }
   }
 
@@ -54,13 +71,21 @@ class _RefereeSearchFieldState extends State<RefereeSearchField> {
     }
     _debounce = Timer(const Duration(milliseconds: 400), () async {
       if (!mounted) return;
-      setState(() { _loading = true; _error = null; });
+      setState(() {
+        _loading = true;
+        _error = null;
+      });
       try {
         final results =
             await ServiceLocator.adminRepository.searchReferees(query.trim());
         if (mounted) setState(() => _results = results);
       } catch (e) {
-        if (mounted) setState(() { _results = []; _error = e.toString(); });
+        if (mounted) {
+          setState(() {
+            _results = [];
+            _error = e.toString();
+          });
+        }
       } finally {
         if (mounted) setState(() => _loading = false);
       }

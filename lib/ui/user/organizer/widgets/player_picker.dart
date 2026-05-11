@@ -7,18 +7,25 @@ import 'package:tennis_cup/data/models/player.dart';
 class SelectedPlayer {
   final int id;
   final String name;
+  final String? status;
 
-  const SelectedPlayer({required this.id, required this.name});
+  const SelectedPlayer({required this.id, required this.name, this.status});
 }
 
 class PlayerPicker extends StatefulWidget {
   final List<SelectedPlayer> initialPlayers;
   final ValueChanged<List<SelectedPlayer>> onChanged;
+  final String? gender;
+
+  /// When set, search is disabled once accepted players reach this count.
+  final int? requiredPlayersCount;
 
   const PlayerPicker({
     super.key,
     this.initialPlayers = const [],
     required this.onChanged,
+    this.gender,
+    this.requiredPlayersCount,
   });
 
   @override
@@ -36,6 +43,20 @@ class _PlayerPickerState extends State<PlayerPicker> {
   void initState() {
     super.initState();
     _selected = List.of(widget.initialPlayers);
+  }
+
+  @override
+  void didUpdateWidget(PlayerPicker oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.initialPlayers != widget.initialPlayers) {
+      // Sync updated names/statuses for IDs already in _selected.
+      // Preserve items the user added during this session (not in initialPlayers).
+      _selected = _selected.map((s) {
+        final updated =
+            widget.initialPlayers.where((p) => p.id == s.id).firstOrNull;
+        return updated ?? s;
+      }).toList();
+    }
   }
 
   @override
@@ -57,12 +78,12 @@ class _PlayerPickerState extends State<PlayerPicker> {
       try {
         final players =
             await ServiceLocator.playerRepository.fetchPlayersBySubstring(
-          substring: query.trim(),
+          query: query.trim(),
+          gender: widget.gender,
         );
         if (mounted) {
           setState(() => _results = players
-              .where((p) =>
-                  !_selected.any((s) => s.id.toString() == p.playerId))
+              .where((p) => !_selected.any((s) => s.id == p.userId))
               .toList());
         }
       } catch (_) {
@@ -74,8 +95,8 @@ class _PlayerPickerState extends State<PlayerPicker> {
   }
 
   void _add(Player player) {
-    final id = int.tryParse(player.playerId);
-    if (id == null || _selected.any((s) => s.id == id)) return;
+    final id = player.userId;
+    if (_selected.any((s) => s.id == id)) return;
     setState(() {
       _selected.add(SelectedPlayer(id: id, name: player.fullName));
       _results = [];
@@ -89,9 +110,28 @@ class _PlayerPickerState extends State<PlayerPicker> {
     widget.onChanged(List.of(_selected));
   }
 
+  Color? _chipColor(BuildContext context, String? status) {
+    return switch (status?.toUpperCase()) {
+      'ACCEPTED' => Colors.green[900],
+      'PENDING' => Colors.blue[900],
+      'DECLINED' => Colors.red[900],
+      'CANCELLED' => Colors.grey[700],
+      _ => null,
+    };
+  }
+
+  bool get _searchDisabled {
+    final required = widget.requiredPlayersCount;
+    if (required == null) return false;
+    final acceptedCount =
+        _selected.where((p) => p.status?.toUpperCase() == 'ACCEPTED').length;
+    return acceptedCount >= required;
+  }
+
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final searchDisabled = _searchDisabled;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -101,8 +141,13 @@ class _PlayerPickerState extends State<PlayerPicker> {
             runSpacing: 4,
             children: _selected
                 .map((p) => Chip(
-                      label: Text(p.name),
+                      label: Text(
+                        p.name,
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                      backgroundColor: _chipColor(context, p.status),
                       onDeleted: () => _remove(p),
+                      deleteIconColor: Colors.white,
                     ))
                 .toList(),
           ),
@@ -110,9 +155,11 @@ class _PlayerPickerState extends State<PlayerPicker> {
         ],
         TextField(
           controller: _ctrl,
+          enabled: !searchDisabled,
           decoration: InputDecoration(
             labelText: 'Add players',
-            hintText: 'Search by name…',
+            hintText:
+                searchDisabled ? 'Player slots are full' : 'Search by name…',
             suffixIcon: _loading
                 ? const Padding(
                     padding: EdgeInsets.all(12),

@@ -1,3 +1,30 @@
+class MatchCardDto {
+  final int id;
+  final int matchId;
+  final int playerId;
+  final String cardType;
+  final String issuedAt;
+  final int? setNumber;
+
+  const MatchCardDto({
+    required this.id,
+    required this.matchId,
+    required this.playerId,
+    required this.cardType,
+    required this.issuedAt,
+    this.setNumber,
+  });
+
+  factory MatchCardDto.fromJson(Map<String, dynamic> json) => MatchCardDto(
+        id: (json['id'] as num).toInt(),
+        matchId: (json['matchId'] as num).toInt(),
+        playerId: (json['playerId'] as num).toInt(),
+        cardType: json['cardType'] as String,
+        issuedAt: json['issuedAt'] as String,
+        setNumber: (json['setNumber'] as num?)?.toInt(),
+      );
+}
+
 class HeadToHeadSetDto {
   final int setNumber;
   final int player1Score;
@@ -54,8 +81,8 @@ class HeadToHeadMatchDto {
         winnerId: (json['winnerId'] as num?)?.toInt(),
         technicalDefeat: json['technicalDefeat'] as bool? ?? false,
         sets: (json['sets'] as List<dynamic>?)
-                ?.map((e) =>
-                    HeadToHeadSetDto.fromJson(e as Map<String, dynamic>))
+                ?.map(
+                    (e) => HeadToHeadSetDto.fromJson(e as Map<String, dynamic>))
                 .toList() ??
             const [],
       );
@@ -96,14 +123,17 @@ class MatchDto {
   final int tournamentId;
   final int refereeId;
   final String status;
-  final int bluePlayerId;
-  final int redPlayerId;
+  final int? bluePlayerId;
+  final int? redPlayerId;
   final int? winnerId;
+  final int? firstServerId;
+  final int setsToWin;
   final String scheduledStart;
   final String scheduledEnd;
   final String? actualStart;
   final String? actualEnd;
   final List<MatchSetDto> sets;
+  final List<MatchCardDto> cards;
 
   const MatchDto({
     required this.id,
@@ -115,9 +145,12 @@ class MatchDto {
     required this.scheduledStart,
     required this.scheduledEnd,
     required this.sets,
+    required this.setsToWin,
     this.winnerId,
+    this.firstServerId,
     this.actualStart,
     this.actualEnd,
+    this.cards = const [],
   });
 
   factory MatchDto.fromJson(Map<String, dynamic> json) => MatchDto(
@@ -125,15 +158,21 @@ class MatchDto {
         tournamentId: (json['tournamentId'] as num).toInt(),
         refereeId: (json['refereeId'] as num?)?.toInt() ?? 0,
         status: json['status'] as String? ?? '',
-        bluePlayerId: (json['bluePlayerId'] as num).toInt(),
-        redPlayerId: (json['redPlayerId'] as num).toInt(),
+        bluePlayerId: (json['bluePlayerId'] as num?)?.toInt(),
+        redPlayerId: (json['redPlayerId'] as num?)?.toInt(),
         winnerId: (json['winnerId'] as num?)?.toInt(),
+        firstServerId: (json['firstServerId'] as num?)?.toInt(),
+        setsToWin: (json['setsToWin'] as num).toInt(),
         scheduledStart: json['scheduledStart'] as String? ?? '',
         scheduledEnd: json['scheduledEnd'] as String? ?? '',
         actualStart: json['actualStart'] as String?,
         actualEnd: json['actualEnd'] as String?,
         sets: (json['sets'] as List<dynamic>?)
                 ?.map((s) => MatchSetDto.fromJson(s as Map<String, dynamic>))
+                .toList() ??
+            const [],
+        cards: (json['cards'] as List<dynamic>?)
+                ?.map((c) => MatchCardDto.fromJson(c as Map<String, dynamic>))
                 .toList() ??
             const [],
       );

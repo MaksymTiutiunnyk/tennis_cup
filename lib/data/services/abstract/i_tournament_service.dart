@@ -1,6 +1,6 @@
-import 'package:tennis_cup/data/models/arena.dart';
 import 'package:tennis_cup/core/pagination/page_request.dart';
 import 'package:tennis_cup/core/pagination/page_result.dart';
+import 'package:tennis_cup/data/models/arena.dart';
 import 'package:tennis_cup/data/models/tournament.dart';
 import 'package:tennis_cup/data/services/dto/dashboard_dto.dart';
 import 'package:tennis_cup/data/services/dto/tournament_dto.dart';
@@ -10,9 +10,9 @@ abstract interface class ITournamentService {
   // ---- Read ----
 
   Future<PageResult<TournamentDto>> fetchPlayerTournaments({
-    required String playerId,
-    String? player2Id,
+    required String userId,
     required PageRequest page,
+    required List<String> statuses,
   });
 
   Future<TournamentDto> fetchTournamentById(String id);
@@ -21,11 +21,8 @@ abstract interface class ITournamentService {
     required DateTime date,
     required Arena arena,
     required Time time,
+    required List<String> statuses,
   });
-
-  Future<List<TournamentDto>> fetchRecentTournaments({int limit = 10});
-
-  Future<List<TournamentDto>> fetchUpcomingTournaments({int limit = 10});
 
   Future<List<ArenaMatchViewDto>> fetchCurrentMatches();
 
@@ -33,26 +30,25 @@ abstract interface class ITournamentService {
 
   Future<List<ArenaLastWinnerDto>> fetchLastWinners();
 
-  Future<PageResult<TournamentDto>> fetchTournamentsPaged(
-    PageRequest page, {
-    String? status,
-  });
+  Future<PageResult<TournamentDto>> fetchActiveTournamentsForReferee(
+    PageRequest page,
+    String refereeId,
+  );
 
   Stream<void> watchTournamentChanges(String tournamentId);
 
-  Future<List<TournamentInvitationDto>> fetchInvitations({
-    required String playerId,
-  });
+  Future<List<MyInvitationDto>> fetchInvitations({required String status});
 
-  Future<void> acceptInvitation(String invitationId);
+  Future<void> acceptInvitation(String tournamentId);
 
-  Future<void> declineInvitation(String invitationId);
+  Future<void> declineInvitation(String tournamentId);
 
   // ---- Write ----
 
-  Future<TournamentDto> createTournament(CreateTournamentRequestDto dto);
+  Future<TournamentDto> createTournament(CreateUpdateTournamentRequestDto dto);
 
-  Future<TournamentDto> updateTournament(int id, UpdateTournamentRequestDto dto);
+  Future<TournamentDto> updateTournament(
+      int id, CreateUpdateTournamentRequestDto dto);
 
   Future<void> deleteTournament(int id);
 

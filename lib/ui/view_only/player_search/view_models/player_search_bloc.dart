@@ -32,20 +32,7 @@ class PlayerSearchBloc extends Bloc<PlayerSearchEvent, PlayerSearchState> {
 
   Future<List<Player>> _searchPlayers(String value) async {
     final query = value.trim();
-
-    if (query.isEmpty) {
-      return [];
-    }
-
-    final players = <Player>{};
-    final playersByName =
-        await playerRepository.fetchPlayersBySubstring(substring: query);
-    final playersBySurname = await playerRepository.fetchPlayersBySubstring(
-        substring: query, isSurname: true);
-
-    players.addAll(playersByName);
-    players.addAll(playersBySurname);
-
-    return players.toList();
+    if (query.isEmpty) return [];
+    return playerRepository.fetchPlayersBySubstring(query: query);
   }
 }

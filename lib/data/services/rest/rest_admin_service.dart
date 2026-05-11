@@ -40,16 +40,11 @@ class RestAdminService implements IAdminService {
   }
 
   @override
-  Future<void> createOrganizer(CreateOrganizerRequestDto dto) async {
+  Future<void> createUser(CreateUserRequestDto dto) async {
     await _dio.post<void>(
-      '/api/v1/admin/organizers',
+      '/api/v1/admin/users',
       data: dto.toJson(),
     );
-  }
-
-  @override
-  Future<void> deleteOrganizer(int organizerId) async {
-    await _dio.delete<void>('/api/v1/admin/organizers/$organizerId');
   }
 
   @override
@@ -58,7 +53,7 @@ class RestAdminService implements IAdminService {
     List<String>? roles,
   }) async {
     final response = await _dio.get<Map<String, dynamic>>(
-      '/api/v1/admin/search',
+      '/api/v1/users/search',
       queryParameters: {
         'query': query,
         'size': 20,
@@ -72,7 +67,9 @@ class RestAdminService implements IAdminService {
   }
 
   @override
-  Future<void> registerUser(RegisterUserRequestDto dto) async {
-    await _dio.post<void>('/api/v1/auth/register', data: dto.toJson());
+  Future<UserProfileDto> getUserById(int userId) async {
+    final response = await _dio.get<Map<String, dynamic>>('/api/v1/users/$userId');
+    return UserProfileDto.fromJson(response.data!);
   }
+
 }

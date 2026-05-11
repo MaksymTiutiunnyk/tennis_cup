@@ -27,8 +27,8 @@ class HeadToHeadCubit extends Cubit<HeadToHeadState> {
     _isLoading = true;
     try {
       final result = await matchRepository.fetchHeadToHead(
-        player1Id: int.parse(player1.playerId),
-        player2Id: int.parse(player2.playerId),
+        userId1: player1.userId,
+        userId2: player2.userId,
         page: _currentPage,
       );
       if (result.hasMore) _currentPage = _currentPage.next;

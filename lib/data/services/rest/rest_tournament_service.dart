@@ -18,14 +18,15 @@ class RestTournamentService implements ITournamentService {
 
   @override
   Future<PageResult<TournamentDto>> fetchPlayerTournaments({
-    required String playerId,
-    String? player2Id,
+    required String userId,
     required PageRequest page,
+    required List<String> statuses,
   }) async {
     final response = await _dio.get('/api/v1/tournaments', queryParameters: {
-      // 'page': page.page,
-      // 'size': page.size,
-      // TODO: to be commented in
+      'page': page.page,
+      'size': page.size,
+      'playerId': userId,
+      'statuses': statuses
     });
 
     final body = response.data as Map<String, dynamic>;
@@ -35,13 +36,6 @@ class RestTournamentService implements ITournamentService {
     final dtos = <TournamentDto>[];
     for (final json in content) {
       final dto = TournamentDto.fromJson(json as Map<String, dynamic>);
-      if (!dto.participants.any((p) => p.playerId.toString() == playerId)) {
-        continue;
-      }
-      if (player2Id != null &&
-          !dto.participants.any((p) => p.playerId.toString() == player2Id)) {
-        continue;
-      }
       dtos.add(dto);
     }
 
@@ -62,9 +56,12 @@ class RestTournamentService implements ITournamentService {
     required DateTime date,
     required Arena arena,
     required Time time,
+    required List<String> statuses,
   }) async {
     final queryParams = <String, dynamic>{
       'start': _dateFormat.format(date),
+      'type': time.name.toUpperCase(),
+      'statuses': statuses,
     };
     if (arena.id.isNotEmpty) queryParams['arenaId'] = arena.id;
 
@@ -73,35 +70,6 @@ class RestTournamentService implements ITournamentService {
     final body = response.data as Map<String, dynamic>;
     final content = body['content'] as List<dynamic>;
 
-    return content
-        .map((json) => TournamentDto.fromJson(json as Map<String, dynamic>))
-        .where((dto) => timeFromString(dto.type) == time)
-        .toList();
-  }
-
-  @override
-  Future<List<TournamentDto>> fetchRecentTournaments({int limit = 10}) async {
-    final response = await _dio.get('/api/v1/tournaments', queryParameters: {
-      'status': 'FINISHED',
-      'size': limit,
-      'sortDirection': 'DESC',
-    });
-    final body = response.data as Map<String, dynamic>;
-    final content = body['content'] as List<dynamic>;
-    return content
-        .map((json) => TournamentDto.fromJson(json as Map<String, dynamic>))
-        .toList();
-  }
-
-  @override
-  Future<List<TournamentDto>> fetchUpcomingTournaments({int limit = 10}) async {
-    final response = await _dio.get('/api/v1/tournaments', queryParameters: {
-      'status': 'PENDING',
-      'size': limit,
-      'sortDirection': 'ASC',
-    });
-    final body = response.data as Map<String, dynamic>;
-    final content = body['content'] as List<dynamic>;
     return content
         .map((json) => TournamentDto.fromJson(json as Map<String, dynamic>))
         .toList();
@@ -135,16 +103,17 @@ class RestTournamentService implements ITournamentService {
   }
 
   @override
-  Future<PageResult<TournamentDto>> fetchTournamentsPaged(
-    PageRequest page, {
-    String? status,
-  }) async {
+  Future<PageResult<TournamentDto>> fetchActiveTournamentsForReferee(
+    PageRequest page,
+    String refereeId,
+  ) async {
     final response = await _dio.get<Map<String, dynamic>>(
       '/api/v1/tournaments',
       queryParameters: {
         'page': page.page,
         'size': page.size,
-        if (status != null) 'status': status,
+        'refereeId': refereeId,
+        'statuses': ['ACTIVE']
       },
     );
     final body = response.data!;
@@ -159,29 +128,36 @@ class RestTournamentService implements ITournamentService {
   Stream<void> watchTournamentChanges(String tournamentId) =>
       const Stream.empty();
 
-  // TODO: replace stub with real call to tournament-service invitations
-  // endpoint when the backend exposes it (e.g. GET /api/v1/invitations).
   @override
-  Future<List<TournamentInvitationDto>> fetchInvitations({
-    required String playerId,
-  }) async {
-    return _stubInvitations
-        .where((dto) => dto.playerId.toString() == playerId)
+  Future<List<MyInvitationDto>> fetchInvitations(
+      {required String status}) async {
+    final response = await _dio.get<Map<String, dynamic>>(
+      '/api/v1/tournaments/my-invitations',
+      queryParameters: {'status': status},
+    );
+    final content = (response.data!['content'] as List<dynamic>?) ?? [];
+    return content
+        .map((e) => MyInvitationDto.fromJson(e as Map<String, dynamic>))
         .toList();
   }
 
-  // TODO: replace with POST /api/v1/invitations/{id}/accept once available.
   @override
-  Future<void> acceptInvitation(String invitationId) async {}
+  Future<void> acceptInvitation(String tournamentId) async {
+    await _dio
+        .post<void>('/api/v1/tournaments/$tournamentId/invitations/accept');
+  }
 
-  // TODO: replace with POST /api/v1/invitations/{id}/decline once available.
   @override
-  Future<void> declineInvitation(String invitationId) async {}
+  Future<void> declineInvitation(String tournamentId) async {
+    await _dio
+        .post<void>('/api/v1/tournaments/$tournamentId/invitations/decline');
+  }
 
   // ---- Write operations ----
 
   @override
-  Future<TournamentDto> createTournament(CreateTournamentRequestDto dto) async {
+  Future<TournamentDto> createTournament(
+      CreateUpdateTournamentRequestDto dto) async {
     final response = await _dio.post<Map<String, dynamic>>(
       '/api/v1/tournaments',
       data: dto.toJson(),
@@ -191,7 +167,7 @@ class RestTournamentService implements ITournamentService {
 
   @override
   Future<TournamentDto> updateTournament(
-      int id, UpdateTournamentRequestDto dto) async {
+      int id, CreateUpdateTournamentRequestDto dto) async {
     final response = await _dio.put<Map<String, dynamic>>(
       '/api/v1/tournaments/$id',
       data: dto.toJson(),
@@ -237,51 +213,4 @@ class RestTournamentService implements ITournamentService {
         await _dio.post<Map<String, dynamic>>('/api/v1/tournaments/$id/finish');
     return TournamentDto.fromJson(response.data!);
   }
-
-  static const _stubPlayerId = 1;
-  // TODO: tournamentIds reference real tournaments in the dev backend so the
-  // repository's fetchTournamentById call resolves. Drop this stub once the
-  // invitations endpoint exists.
-  static const List<TournamentInvitationDto> _stubInvitations = [
-    TournamentInvitationDto(
-      id: 1,
-      tournamentId: 47,
-      playerId: _stubPlayerId,
-      playerNumber: 3,
-      startTime: '2026-05-12T09:00:00',
-      endTime: '2026-05-12T12:30:00',
-      deadline: '2026-05-08T23:59:59',
-      status: 'PENDING',
-    ),
-    TournamentInvitationDto(
-      id: 2,
-      tournamentId: 68,
-      playerId: _stubPlayerId,
-      playerNumber: 1,
-      startTime: '2026-05-18T18:00:00',
-      endTime: '2026-05-18T21:00:00',
-      deadline: '2026-05-15T23:59:59',
-      status: 'PENDING',
-    ),
-    TournamentInvitationDto(
-      id: 3,
-      tournamentId: 48,
-      playerId: _stubPlayerId,
-      playerNumber: 7,
-      startTime: '2026-06-02T13:30:00',
-      endTime: '2026-06-02T17:00:00',
-      deadline: '2026-05-30T23:59:59',
-      status: 'PENDING',
-    ),
-    TournamentInvitationDto(
-      id: 4,
-      tournamentId: 83,
-      playerId: _stubPlayerId,
-      playerNumber: 5,
-      startTime: '2026-06-14T20:00:00',
-      endTime: '2026-06-14T23:30:00',
-      deadline: '2026-06-10T23:59:59',
-      status: 'PENDING',
-    ),
-  ];
 }

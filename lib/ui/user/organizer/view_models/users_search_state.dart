@@ -8,9 +8,8 @@ class UsersSearchLoading extends UsersSearchState {}
 
 class UsersSearchLoaded extends UsersSearchState {
   final List<CombinedUser> users;
-  final CombinedUser? pendingDelete;
 
-  UsersSearchLoaded({required this.users, this.pendingDelete});
+  UsersSearchLoaded({required this.users});
 }
 
 class UsersSearchError extends UsersSearchState {

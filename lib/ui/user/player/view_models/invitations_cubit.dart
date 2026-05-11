@@ -6,45 +6,38 @@ part 'invitations_state.dart';
 
 class InvitationsCubit extends Cubit<InvitationsState> {
   final InvitationsRepository _repository;
-  final String _playerId;
 
-  InvitationsCubit({
-    required InvitationsRepository repository,
-    required String playerId,
-  })  : _repository = repository,
-        _playerId = playerId,
+  InvitationsCubit(
+      {required InvitationsRepository repository, required String status})
+      : _repository = repository,
         super(InvitationsLoading()) {
-    _load();
+    _load(status);
   }
 
-  Future<void> _load() async {
+  Future<void> _load(String status) async {
     try {
-      final items = await _repository.fetchInvitations(playerId: _playerId);
+      final items = await _repository.fetchInvitations(status: status);
       emit(InvitationsLoaded(items));
     } catch (_) {
       emit(InvitationsError('Failed to load invitations'));
     }
   }
 
-  Future<void> accept(String id) =>
-      _updateStatus(id, InvitationStatus.accepted);
+  Future<void> accept(String tournamentId) => _removeAfter(
+      tournamentId, () => _repository.acceptInvitation(tournamentId));
 
-  Future<void> decline(String id) =>
-      _updateStatus(id, InvitationStatus.declined);
+  Future<void> decline(String tournamentId) => _removeAfter(
+      tournamentId, () => _repository.declineInvitation(tournamentId));
 
-  Future<void> _updateStatus(String id, InvitationStatus status) async {
+  Future<void> _removeAfter(
+      String tournamentId, Future<void> Function() action) async {
     final current = state;
     if (current is! InvitationsLoaded) return;
 
     try {
-      if (status == InvitationStatus.accepted) {
-        await _repository.acceptInvitation(id);
-      } else {
-        await _repository.declineInvitation(id);
-      }
-      final updated = current.items
-          .map((i) => i.id == id ? i.copyWith(status: status) : i)
-          .toList();
+      await action();
+      final updated =
+          current.items.where((i) => i.tournamentId != tournamentId).toList();
       emit(InvitationsLoaded(updated));
     } catch (_) {
       emit(InvitationsError('Failed to update invitation'));

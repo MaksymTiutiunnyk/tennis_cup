@@ -22,6 +22,7 @@ class ScheduledTournamentCubit extends Cubit<ScheduledTournamentState> {
         tournamentDate: date,
         tournamentArena: arena,
         tournamentTime: time,
+        statuses: ['ACTIVE', 'FINISHED'],
       );
       if (tournaments.isEmpty) {
         emit(TournamentNotFound());
@@ -43,6 +44,7 @@ class ScheduledTournamentCubit extends Cubit<ScheduledTournamentState> {
         tournamentDate: date,
         tournamentArena: arena,
         tournamentTime: time,
+        statuses: ['ACTIVE', 'FINISHED'],
       );
       if (tournaments.isEmpty) return;
       emit(ScheduledTournamentFetched(tournaments.first));

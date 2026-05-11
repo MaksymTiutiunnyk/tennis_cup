@@ -13,10 +13,9 @@ class InvitationsRepository {
 
   const InvitationsRepository(this._tournamentService, this._arenaService);
 
-  Future<List<TournamentInvitation>> fetchInvitations({
-    required String playerId,
-  }) async {
-    final dtos = await _tournamentService.fetchInvitations(playerId: playerId);
+  Future<List<TournamentInvitation>> fetchInvitations(
+      {required String status}) async {
+    final dtos = await _tournamentService.fetchInvitations(status: status);
     if (dtos.isEmpty) return const [];
 
     final tournamentIds = dtos.map((d) => d.tournamentId).toSet();
@@ -39,16 +38,16 @@ class InvitationsRepository {
     }).toList();
   }
 
-  Future<void> acceptInvitation(String invitationId) {
-    return _tournamentService.acceptInvitation(invitationId);
+  Future<void> acceptInvitation(String tournamentId) {
+    return _tournamentService.acceptInvitation(tournamentId);
   }
 
-  Future<void> declineInvitation(String invitationId) {
-    return _tournamentService.declineInvitation(invitationId);
+  Future<void> declineInvitation(String tournamentId) {
+    return _tournamentService.declineInvitation(tournamentId);
   }
 
   static TournamentInvitation _toDomain(
-    TournamentInvitationDto dto,
+    MyInvitationDto dto,
     TournamentDto? tournamentDto,
     ArenaDto? arenaDto,
   ) {
@@ -60,6 +59,9 @@ class InvitationsRepository {
     );
     final tournament = Tournament(
       tournamentId: dto.tournamentId.toString(),
+      name: tournamentDto?.name ?? dto.tournamentName,
+      gender: tournamentDto?.gender ?? '',
+      status: tournamentDto?.status ?? 'PENDING',
       players: const [],
       date: tournamentDto != null
           ? DateTime.parse(tournamentDto.startTime)
@@ -70,14 +72,18 @@ class InvitationsRepository {
       places: const [],
     );
     return TournamentInvitation(
-      id: dto.id.toString(),
+      id: dto.invitationId.toString(),
+      tournamentId: dto.tournamentId.toString(),
       tournament: tournament,
-      playerNumber: dto.playerNumber,
-      startTime: DateTime.parse(dto.startTime),
-      endTime: DateTime.parse(dto.endTime),
-      deadline: DateTime.parse(dto.deadline),
+      role: _roleFromString(dto.role),
       status: _statusFromString(dto.status),
     );
+  }
+
+  static InvitationRole _roleFromString(String value) {
+    return value.toUpperCase() == 'REFEREE'
+        ? InvitationRole.referee
+        : InvitationRole.player;
   }
 
   static InvitationStatus _statusFromString(String value) {

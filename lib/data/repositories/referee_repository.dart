@@ -17,13 +17,11 @@ class RefereeRepository {
   Future<List<TournamentDto>> fetchActiveTournamentsForReferee(
       String userId) async {
     final refereeId = int.tryParse(userId) ?? -1;
-    final result = await _tournamentService.fetchTournamentsPaged(
+    final result = await _tournamentService.fetchActiveTournamentsForReferee(
       const PageRequest(page: 0, size: 100),
-      status: 'ACTIVE',
+      refereeId.toString(),
     );
-    return result.items
-        .where((dto) => dto.refereeId == refereeId)
-        .toList();
+    return result.items.where((dto) => dto.refereeId == refereeId).toList();
   }
 
   Future<List<MatchDto>> fetchMatchesForTournament(int tournamentId) =>
@@ -33,13 +31,13 @@ class RefereeRepository {
       int matchId) async {
     final dto = await _matchService.fetchMatchById(matchId.toString());
     if (dto == null) throw Exception('Match $matchId not found');
-    final blueF = _playerService.fetchPlayerById(dto.bluePlayerId.toString());
-    final redF = _playerService.fetchPlayerById(dto.redPlayerId.toString());
+    final blueF = _playerService.fetchPlayerById(dto.bluePlayerId!);
+    final redF = _playerService.fetchPlayerById(dto.redPlayerId!);
     return (match: dto, blue: await blueF, red: await redF);
   }
 
-  Future<MatchDto> startMatch(int matchId) =>
-      _matchService.startMatch(matchId);
+  Future<MatchDto> startMatch(int matchId, int firstServerId) =>
+      _matchService.startMatch(matchId, firstServerId);
 
   Future<MatchDto> finishMatch(int matchId) =>
       _matchService.finishMatch(matchId);
@@ -62,4 +60,10 @@ class RefereeRepository {
           int matchId, int setNumber, int loserId, {String? reason}) =>
       _matchService.technicalDefeatSet(matchId, setNumber, loserId,
           reason: reason);
+
+  Future<MatchDto> issueCard(int matchId, int playerId, String cardType) =>
+      _matchService.issueCard(matchId, playerId, cardType);
+
+  Future<MatchDto> revokeCard(int matchId, int cardId) =>
+      _matchService.revokeCard(matchId, cardId);
 }
