@@ -15,12 +15,9 @@ class CreateUserScreen extends StatelessWidget {
     final authState = context.read<AuthCubit>().state;
     final isAdmin = authState is AuthAuthenticated &&
         authState.roles.contains(UserRole.admin);
-    final isOrganizer = authState is AuthAuthenticated &&
-        authState.roles.contains(UserRole.organizer);
     final availableRoles = [
       'PLAYER',
       'REFEREE',
-      if (isOrganizer && !isAdmin) ...['ORGANIZER'],
       if (isAdmin) ...['ORGANIZER', 'ADMIN'],
     ];
 
