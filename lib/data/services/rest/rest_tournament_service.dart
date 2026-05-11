@@ -156,7 +156,8 @@ class RestTournamentService implements ITournamentService {
   // ---- Write operations ----
 
   @override
-  Future<TournamentDto> createTournament(CreateTournamentRequestDto dto) async {
+  Future<TournamentDto> createTournament(
+      CreateUpdateTournamentRequestDto dto) async {
     final response = await _dio.post<Map<String, dynamic>>(
       '/api/v1/tournaments',
       data: dto.toJson(),
@@ -166,7 +167,7 @@ class RestTournamentService implements ITournamentService {
 
   @override
   Future<TournamentDto> updateTournament(
-      int id, UpdateTournamentRequestDto dto) async {
+      int id, CreateUpdateTournamentRequestDto dto) async {
     final response = await _dio.put<Map<String, dynamic>>(
       '/api/v1/tournaments/$id',
       data: dto.toJson(),

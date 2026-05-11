@@ -1,6 +1,6 @@
 import 'package:tennis_cup/data/models/tournament.dart';
 
-class CreateTournamentRequestDto {
+class CreateUpdateTournamentRequestDto {
   final String name;
   final String type;
   final String gender;
@@ -10,9 +10,9 @@ class CreateTournamentRequestDto {
   final int matchDurationMinutes;
   final int requiredPlayersCount;
   final int setsToWin;
-  final List<int>? playerIds;
+  final List<int> playerIds;
 
-  const CreateTournamentRequestDto({
+  const CreateUpdateTournamentRequestDto({
     required this.name,
     required this.type,
     required this.gender,
@@ -22,7 +22,7 @@ class CreateTournamentRequestDto {
     required this.matchDurationMinutes,
     required this.requiredPlayersCount,
     required this.setsToWin,
-    this.playerIds,
+    required this.playerIds,
   });
 
   Map<String, dynamic> toJson() => {
@@ -35,37 +35,7 @@ class CreateTournamentRequestDto {
         'matchDurationMinutes': matchDurationMinutes,
         'requiredPlayersCount': requiredPlayersCount,
         'setsToWin': setsToWin,
-        if (playerIds != null) 'playerIds': playerIds,
-      };
-}
-
-class UpdateTournamentRequestDto {
-  final String? name;
-  final String? type;
-  final String? gender;
-  final String? startTime;
-  final int? arenaId;
-  final List<int>? refereeIds;
-  final List<int>? playerIds;
-
-  const UpdateTournamentRequestDto({
-    this.name,
-    this.type,
-    this.gender,
-    this.startTime,
-    this.arenaId,
-    this.refereeIds,
-    this.playerIds,
-  });
-
-  Map<String, dynamic> toJson() => {
-        if (name != null) 'name': name,
-        if (type != null) 'type': type,
-        if (gender != null) 'gender': gender,
-        if (startTime != null) 'startTime': startTime,
-        if (arenaId != null) 'arenaId': arenaId,
-        if (refereeIds != null) 'refereeIds': refereeIds,
-        if (playerIds != null) 'playerIds': playerIds,
+        'playerIds': playerIds,
       };
 }
 
@@ -134,6 +104,7 @@ class TournamentDto {
   final int? refereeId;
   final int requiredPlayersCount;
   final int setsToWin;
+  final int matchDurationMinutes;
   final List<TournamentParticipantDto> participants;
   final List<TournamentRefereeInvitationDto> refereeInvitations;
 
@@ -148,6 +119,7 @@ class TournamentDto {
     required this.gender,
     required this.requiredPlayersCount,
     required this.setsToWin,
+    required this.matchDurationMinutes,
     required this.participants,
     required this.refereeInvitations,
     this.refereeId,
@@ -168,6 +140,8 @@ class TournamentDto {
         requiredPlayersCount:
             (json['requiredPlayersCount'] as num?)?.toInt() ?? 0,
         setsToWin: (json['setsToWin'] as num?)?.toInt() ?? 1,
+        matchDurationMinutes:
+            (json['matchDurationMinutes'] as num?)?.toInt() ?? 30,
         participants: (json['participants'] as List<dynamic>?)
                 ?.map((e) => TournamentParticipantDto.fromJson(
                     e as Map<String, dynamic>))

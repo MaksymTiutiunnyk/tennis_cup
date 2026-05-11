@@ -157,8 +157,8 @@ class TournamentRepository {
 
   // ---- Management ----
 
-  Future<void> createTournament(CreateTournamentRequest request) async {
-    await _service.createTournament(CreateTournamentRequestDto(
+  Future<void> createTournament(CreateUpdateTournamentRequest request) async {
+    await _service.createTournament(CreateUpdateTournamentRequestDto(
       name: request.name,
       type: request.type,
       gender: request.gender,
@@ -172,15 +172,19 @@ class TournamentRepository {
     ));
   }
 
-  Future<void> updateTournament(int id, UpdateTournamentRequest request) async {
+  Future<void> updateTournament(
+      int id, CreateUpdateTournamentRequest request) async {
     await _service.updateTournament(
       id,
-      UpdateTournamentRequestDto(
+      CreateUpdateTournamentRequestDto(
         name: request.name,
         type: request.type,
         gender: request.gender,
-        startTime: request.startTime?.toUtc().toIso8601String(),
+        startTime: request.startTime.toUtc().toIso8601String(),
         arenaId: request.arenaId,
+        matchDurationMinutes: request.matchDurationMinutes,
+        requiredPlayersCount: request.requiredPlayersCount,
+        setsToWin: request.setsToWin,
         refereeIds: request.refereeIds,
         playerIds: request.playerIds,
       ),
@@ -376,6 +380,7 @@ class TournamentRepository {
       matches: matches,
       refereeId: dto.refereeId,
       setsToWin: dto.setsToWin,
+      matchDurationMinutes: dto.matchDurationMinutes,
       requiredPlayersCount: dto.requiredPlayersCount,
       participantInvitations: dto.participants
           .map((p) => TournamentParticipant(

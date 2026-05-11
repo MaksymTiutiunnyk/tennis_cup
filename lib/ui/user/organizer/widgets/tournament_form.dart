@@ -30,7 +30,7 @@ class _TournamentFormState extends State<TournamentForm> {
   String _type = 'MORNING';
   String _gender = 'MALE';
   DateTime _startTime = DateTime.now().add(const Duration(days: 1));
-  int? _arenaId;
+  late int _arenaId;
   List<Arena> _arenas = [];
   bool _loadingArenas = true;
 
@@ -44,13 +44,16 @@ class _TournamentFormState extends State<TournamentForm> {
     super.initState();
     final e = widget.existing;
     _nameCtrl = TextEditingController(text: e?.name ?? '');
-    _durationCtrl = TextEditingController(text: '30');
-    _requiredPlayersCtrl = TextEditingController(text: '8');
-    _setsToWinCtrl = TextEditingController(text: '2');
+    _durationCtrl = TextEditingController(
+        text: e?.matchDurationMinutes?.toString() ?? '30');
+    _requiredPlayersCtrl =
+        TextEditingController(text: e?.requiredPlayersCount.toString() ?? '6');
+    _setsToWinCtrl =
+        TextEditingController(text: e?.setsToWin?.toString() ?? '3');
     if (e != null) {
       _type = e.time.name.toUpperCase();
       if (e.gender.isNotEmpty) _gender = e.gender;
-      _arenaId = int.tryParse(e.arena.id);
+      _arenaId = int.tryParse(e.arena.id) ?? 1;
       _startTime = e.date;
 
       // Populate referee invitations (exclude DECLINED/CANCELLED)
@@ -129,7 +132,7 @@ class _TournamentFormState extends State<TournamentForm> {
       if (mounted) {
         setState(() {
           _arenas = arenas;
-          _arenaId ??= arenas.isNotEmpty ? int.tryParse(arenas.first.id) : null;
+          _arenaId = int.tryParse(arenas.first.id) ?? 1;
           _loadingArenas = false;
         });
       }
@@ -168,15 +171,13 @@ class _TournamentFormState extends State<TournamentForm> {
     }
 
     final cubit = context.read<OrganizerTournamentsCubit>();
-    final playerIds = _selectedPlayers.isEmpty
-        ? null
-        : _selectedPlayers.map((p) => p.id).toList();
+    final playerIds = _selectedPlayers.map((p) => p.id).toList();
     final refereeIds = _selectedReferees.map((r) => r.id).toList();
 
     if (_isEdit) {
       await cubit.update(
         int.parse(widget.existing!.tournamentId),
-        UpdateTournamentRequest(
+        CreateUpdateTournamentRequest(
           name: _nameCtrl.text.trim(),
           type: _type,
           gender: _gender,
@@ -184,20 +185,24 @@ class _TournamentFormState extends State<TournamentForm> {
           arenaId: _arenaId,
           refereeIds: refereeIds,
           playerIds: playerIds,
+          matchDurationMinutes: int.tryParse(_durationCtrl.text.trim()) ?? 30,
+          requiredPlayersCount:
+              int.tryParse(_requiredPlayersCtrl.text.trim()) ?? 6,
+          setsToWin: int.tryParse(_setsToWinCtrl.text.trim()) ?? 3,
         ),
       );
     } else {
-      await cubit.create(CreateTournamentRequest(
+      await cubit.create(CreateUpdateTournamentRequest(
         name: _nameCtrl.text.trim(),
         type: _type,
         gender: _gender,
         startTime: _startTime,
-        arenaId: _arenaId ?? 0,
+        arenaId: _arenaId,
         refereeIds: refereeIds,
         matchDurationMinutes: int.tryParse(_durationCtrl.text.trim()) ?? 30,
         requiredPlayersCount:
-            int.tryParse(_requiredPlayersCtrl.text.trim()) ?? 8,
-        setsToWin: int.tryParse(_setsToWinCtrl.text.trim()) ?? 2,
+            int.tryParse(_requiredPlayersCtrl.text.trim()) ?? 6,
+        setsToWin: int.tryParse(_setsToWinCtrl.text.trim()) ?? 3,
         playerIds: playerIds,
       ));
     }
@@ -261,15 +266,15 @@ class _TournamentFormState extends State<TournamentForm> {
                               child:
                                   Text('${a.title} (${a.city ?? ''})'.trim())))
                           .toList(),
-                      onChanged: (v) => setState(() => _arenaId = v),
+                      onChanged: (v) => setState(() => _arenaId = v ?? 1),
                       validator: (v) => v == null ? 'Required' : null,
                     )
                   else
                     TextFormField(
                       decoration: const InputDecoration(labelText: 'Arena ID'),
                       keyboardType: TextInputType.number,
-                      initialValue: _arenaId?.toString(),
-                      onChanged: (v) => _arenaId = int.tryParse(v),
+                      initialValue: _arenaId.toString(),
+                      onChanged: (v) => _arenaId = int.tryParse(v) ?? 1,
                       validator: (v) =>
                           (v == null || v.isEmpty) ? 'Required' : null,
                     ),
@@ -280,43 +285,46 @@ class _TournamentFormState extends State<TournamentForm> {
                         setState(() => _selectedReferees = refs),
                   ),
                   const SizedBox(height: 12),
-                  if (!_isEdit) ...[
-                    TextFormField(
-                      controller: _durationCtrl,
-                      decoration: const InputDecoration(
-                          labelText: 'Match duration (minutes)'),
-                      keyboardType: TextInputType.number,
-                      validator: (v) =>
-                          (int.tryParse(v ?? '') ?? 0) <= 0 ? 'Required' : null,
-                    ),
-                    const SizedBox(height: 12),
-                    TextFormField(
-                      controller: _requiredPlayersCtrl,
-                      decoration: const InputDecoration(
-                          labelText: 'Required players count'),
-                      keyboardType: TextInputType.number,
-                      validator: (v) {
-                        final n = int.tryParse(v ?? '');
-                        if (n == null || n < 2) return 'Min 2 players';
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 12),
-                    TextFormField(
-                      controller: _setsToWinCtrl,
-                      decoration:
-                          const InputDecoration(labelText: 'Sets to win'),
-                      keyboardType: TextInputType.number,
-                      validator: (v) {
-                        final n = int.tryParse(v ?? '');
-                        if (n == null || n < 1 || n > 4) {
-                          return 'Must be 1–4';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 12),
-                  ],
+                  TextFormField(
+                    controller: _durationCtrl,
+                    decoration: const InputDecoration(
+                        labelText: 'Match duration (minutes)'),
+                    keyboardType: TextInputType.number,
+                    validator: (v) =>
+                        (int.tryParse(v ?? '') ?? 0) <= 0 ? 'Required' : null,
+                  ),
+                  const SizedBox(height: 12),
+                  TextFormField(
+                    controller: _requiredPlayersCtrl,
+                    decoration: const InputDecoration(
+                        labelText: 'Required players count'),
+                    keyboardType: TextInputType.number,
+                    validator: (v) {
+                      final n = int.tryParse(v ?? '');
+                      if (n == null || n < 2) {
+                        return 'Min 2 players';
+                      }
+                      if (widget.existing != null &&
+                          n < widget.existing!.players.length) {
+                        return 'Remove some accepted invitations firstly';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 12),
+                  TextFormField(
+                    controller: _setsToWinCtrl,
+                    decoration: const InputDecoration(labelText: 'Sets to win'),
+                    keyboardType: TextInputType.number,
+                    validator: (v) {
+                      final n = int.tryParse(v ?? '');
+                      if (n == null || n < 1 || n > 4) {
+                        return 'Must be 1–4';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 12),
                   ListTile(
                     contentPadding: EdgeInsets.zero,
                     title: const Text('Start time'),

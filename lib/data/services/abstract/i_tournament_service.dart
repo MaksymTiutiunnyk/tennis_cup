@@ -45,10 +45,10 @@ abstract interface class ITournamentService {
 
   // ---- Write ----
 
-  Future<TournamentDto> createTournament(CreateTournamentRequestDto dto);
+  Future<TournamentDto> createTournament(CreateUpdateTournamentRequestDto dto);
 
   Future<TournamentDto> updateTournament(
-      int id, UpdateTournamentRequestDto dto);
+      int id, CreateUpdateTournamentRequestDto dto);
 
   Future<void> deleteTournament(int id);
 

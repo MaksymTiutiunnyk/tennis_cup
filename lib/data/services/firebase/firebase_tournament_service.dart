@@ -143,6 +143,7 @@ class FirebaseTournamentService implements ITournamentService {
               ))
           .toList(),
       refereeInvitations: const [],
+      matchDurationMinutes: 30,
     );
   }
 
@@ -162,12 +163,13 @@ class FirebaseTournamentService implements ITournamentService {
   }
 
   @override
-  Future<TournamentDto> createTournament(CreateTournamentRequestDto dto) =>
+  Future<TournamentDto> createTournament(
+          CreateUpdateTournamentRequestDto dto) =>
       throw UnimplementedError('createTournament not implemented for Firebase');
 
   @override
   Future<TournamentDto> updateTournament(
-          int id, UpdateTournamentRequestDto dto) =>
+          int id, CreateUpdateTournamentRequestDto dto) =>
       throw UnimplementedError('updateTournament not implemented for Firebase');
 
   @override

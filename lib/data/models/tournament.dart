@@ -40,6 +40,7 @@ class Tournament extends Equatable {
   final int? refereeId;
   final int? setsToWin;
   final int? requiredPlayersCount;
+  final int? matchDurationMinutes;
   final List<TournamentParticipant> participantInvitations;
   final List<TournamentRefereeInvitation> refereeInvitations;
 
@@ -59,6 +60,7 @@ class Tournament extends Equatable {
     this.refereeId,
     this.setsToWin,
     this.requiredPlayersCount,
+    this.matchDurationMinutes,
     this.participantInvitations = const [],
     this.refereeInvitations = const [],
   });
@@ -80,5 +82,8 @@ class Tournament extends Equatable {
         refereeId,
         participantInvitations,
         refereeInvitations,
+        setsToWin,
+        matchDurationMinutes,
+        requiredPlayersCount
       ];
 }

@@ -1,3 +1,4 @@
+import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tennis_cup/data/models/arena.dart';
 import 'package:tennis_cup/data/models/tournament.dart';
@@ -39,7 +40,7 @@ class OrganizerTournamentsCubit extends Cubit<OrganizerTournamentsState> {
     }
   }
 
-  Future<void> create(CreateTournamentRequest request) async {
+  Future<void> create(CreateUpdateTournamentRequest request) async {
     try {
       await _repository.createTournament(request);
       await _reload();
@@ -48,7 +49,7 @@ class OrganizerTournamentsCubit extends Cubit<OrganizerTournamentsState> {
     }
   }
 
-  Future<void> update(int id, UpdateTournamentRequest request) async {
+  Future<void> update(int id, CreateUpdateTournamentRequest request) async {
     try {
       await _repository.updateTournament(id, request);
       await _reload();
