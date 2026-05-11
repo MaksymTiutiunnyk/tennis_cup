@@ -92,7 +92,8 @@ class PlayerTournament extends StatelessWidget {
                   const SizedBox(width: 16),
                   Expanded(
                     child: Text(
-                      '${formatter.format(tournament.date)} ${tournament.players[0].sex.name}, ${tournament.time.name} ${tournament.arena.title}',
+                      // TODO: temporary fix until backend generates tournaments with accepted invitations
+                      '${formatter.format(tournament.date)} ${index >= 0 ? tournament.players.elementAt(index).sex.name : ''}, ${tournament.time.name} ${tournament.arena.title}',
                     ),
                   ),
                 ],
@@ -106,9 +107,7 @@ class PlayerTournament extends StatelessWidget {
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                   Text(
-                    index >= 0
-                        ? tournament.places.elementAtOrNull(index).toString()
-                        : '—',
+                    '${index >= 0 ? tournament.places.elementAtOrNull(index) ?? '' : ''}',
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                 ],
