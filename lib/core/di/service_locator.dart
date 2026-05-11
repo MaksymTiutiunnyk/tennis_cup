@@ -21,12 +21,14 @@ import 'package:tennis_cup/data/repositories/player_repository.dart';
 import 'package:tennis_cup/data/repositories/referee_repository.dart';
 import 'package:tennis_cup/data/repositories/tournament_repository.dart';
 import 'package:tennis_cup/data/services/abstract/i_admin_service.dart';
+import 'package:tennis_cup/data/services/abstract/i_notification_service.dart';
 import 'package:tennis_cup/data/services/abstract/i_arena_service.dart';
 import 'package:tennis_cup/data/services/abstract/i_match_service.dart';
 import 'package:tennis_cup/data/services/abstract/i_news_service.dart';
 import 'package:tennis_cup/data/services/abstract/i_player_service.dart';
 import 'package:tennis_cup/data/services/abstract/i_tournament_service.dart';
 import 'package:tennis_cup/data/services/rest/rest_admin_service.dart';
+import 'package:tennis_cup/data/services/rest/rest_notification_service.dart';
 import 'package:tennis_cup/data/services/rest/rest_arena_service.dart';
 import 'package:tennis_cup/data/services/rest/rest_player_service.dart';
 import 'package:tennis_cup/data/services/rest/rest_tournament_service.dart';
@@ -44,6 +46,7 @@ class ServiceLocator {
   static late IMatchService matchService;
   static late INewsService newsService;
   static late IAdminService adminService;
+  static late INotificationService notificationService;
 
   static late PlayerRepository playerRepository;
   static late TournamentRepository tournamentRepository;
@@ -105,6 +108,13 @@ class ServiceLocator {
       refreshToken: authService.refreshAccessToken,
     );
     adminService = RestAdminService(adminDio);
+
+    final notificationDio = DioClient.create(
+      baseUrl: gatewayUrl,
+      tokenStore: tokenStore,
+      refreshToken: authService.refreshAccessToken,
+    );
+    notificationService = RestNotificationService(notificationDio);
 
     playerRepository = PlayerRepository(playerService);
     tournamentRepository = TournamentRepository(tournamentService, arenaService, playerService, matchService);

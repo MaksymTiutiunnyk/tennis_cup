@@ -33,11 +33,11 @@ dependencies:
     sdk: flutter
 
   intl: ^0.19.0
-  # Firebase packages — kept for reference Firebase service implementations.
-  # Not used at runtime (Firebase.initializeApp is not called).
-  # To activate: call Firebase.initializeApp in main.dart and swap service
-  # implementations in ServiceLocator.init().
+  # Firebase — core + messaging are active at runtime (initialized in main.dart).
+  # cloud_firestore and firebase_storage are kept for reference (legacy Firestore
+  # service implementations in lib/data/services/firebase/) but not used at runtime.
   firebase_core: ^3.4.0
+  firebase_messaging: ^15.0.0
   cloud_firestore: ^5.4.0
   firebase_storage: ^12.2.0
   connectivity_plus: ^6.1.0

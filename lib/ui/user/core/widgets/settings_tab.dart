@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tennis_cup/core/di/service_locator.dart';
 import 'package:tennis_cup/ui/auth/view_models/auth_cubit.dart';
+import 'package:tennis_cup/ui/notifications/view_models/notification_cubit.dart';
 import 'package:tennis_cup/ui/user/core/view_models/change_password_cubit.dart';
 import 'package:tennis_cup/ui/user/core/widgets/change_password_dialog.dart';
 import 'package:tennis_cup/ui/user/player/widgets/section_header.dart';
@@ -47,7 +48,8 @@ class SettingsTab extends StatelessWidget {
       ),
     );
     if (confirmed == true && context.mounted) {
-      context.read<AuthCubit>().logout();
+      await context.read<NotificationCubit>().unregisterDevice();
+      if (context.mounted) context.read<AuthCubit>().logout();
     }
   }
 
