@@ -69,6 +69,7 @@ class OrganizerNewsTab extends StatelessWidget {
             ],
           ),
           floatingActionButton: FloatingActionButton(
+            heroTag: 'organizer_news_fab',
             onPressed: () => _openForm(context, null),
             child: const Icon(Icons.add),
           ),

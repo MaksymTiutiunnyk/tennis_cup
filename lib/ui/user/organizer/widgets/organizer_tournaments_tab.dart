@@ -131,6 +131,7 @@ class OrganizerTournamentsTab extends StatelessWidget {
           ),
           floatingActionButton: Builder(
             builder: (context) => FloatingActionButton(
+              heroTag: 'organizer_tournaments_fab',
               onPressed: () => _openForm(context, null),
               child: const Icon(Icons.add),
             ),

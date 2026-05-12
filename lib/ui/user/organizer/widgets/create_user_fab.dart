@@ -8,6 +8,7 @@ class CreateUserFab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FloatingActionButton(
+      heroTag: 'create_user_fab',
       onPressed: () => context.push(AppRoutes.createUser),
       child: const Icon(Icons.person_add),
     );
