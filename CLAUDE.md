@@ -16,7 +16,7 @@ flutter analyze                    # Static analysis
 
 Flutter app following the [Flutter app architecture guide](https://docs.flutter.dev/app-architecture/guide): **Services** (API wrappers) → **Repositories** (domain model source of truth) → **Cubits/BLoC** (ViewModels) → **Widgets** (Views).
 
-State management uses **BLoC/Cubit**. Backend is a set of REST microservices (no Firebase). Routing uses **go_router**.
+State management uses **BLoC/Cubit**. Backend is a set of REST microservices. Firebase is initialized at runtime for Cloud Messaging (FCM) only — Firestore/Storage service implementations exist in `lib/data/services/firebase/` as legacy code but are not active. Routing uses **go_router**.
 
 ```
 RestService → Repository → Cubit/Bloc → UI Widget
@@ -93,6 +93,8 @@ lib/
 Provided at app root in `main.dart` (accessible to all routes including pushed screens):
 
 - `AuthCubit` — session state
+- `ActiveRoleCubit` — current user roles, synced from `AuthCubit` via `BlocListener`
+- `NotificationCubit` — FCM token lifecycle; `init()` triggered on `AuthAuthenticated`, `unregisterDevice()` called before logout in `SettingsTab`
 - `NewsCubit` — news feed
 - `ScheduleDateCubit`, `ArenaFilterCubit`, `TimeFilterCubit` — schedule filters (must be global so pushed screens like PlayerDetails can update them)
 - `SexFilterCubit` — ranking filter
@@ -191,6 +193,22 @@ All `DioClient` instances in `ServiceLocator` currently use `gatewayUrl` as thei
 - Self-registration (`/api/v1/auth/register`) creates PLAYER or REFEREE accounts; new accounts are `PENDING_APPROVAL` until an organizer/admin approves them
 - Admin/organizer can create active accounts of any role directly via `POST /api/v1/admin/users` (`CreateUserScreen`)
 - JWT tokens are stored in `flutter_secure_storage` via `AuthTokenStore`
+
+### Push notifications (Android only)
+
+`firebase_messaging` is active at runtime. Firebase is initialized in `main()` before `ServiceLocator.init()`. A top-level `_firebaseMessagingBackgroundHandler` is registered in `initState` — it must be a top-level function (FCM requirement).
+
+**Token lifecycle** (`NotificationCubit` / `INotificationService` / `RestNotificationService`):
+- `POST /api/v1/devices` — called on `AuthAuthenticated` and on every `onTokenRefresh` event
+- `DELETE /api/v1/devices/{token}` — called in `SettingsTab._confirmLogout` *before* `AuthCubit.logout()`, while the JWT is still valid
+- Android-only guard: `if (!Platform.isAndroid) return;` at the top of `init()`
+
+**Notification handling** (wired in `_TennisCupState._setupNotificationHandlers`):
+- `onMessage` (foreground) → snackbar via `ScaffoldMessenger.of(_navigatorKey.currentContext!)` with a "View" action for `TOURNAMENT_INVITATION`
+- `onMessageOpenedApp` (background tap) → `_router.go(AppRoutes.userInvitations)`
+- `getInitialMessage()` (cold-start tap) → same routing, guarded with `mounted` check
+
+**Notification routing**: `data.type == 'TOURNAMENT_INVITATION'` navigates to `AppRoutes.userInvitations`. Add new types to `_handleNotificationTap` in `main.dart`.
 
 ### Connectivity
 

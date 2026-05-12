@@ -50,11 +50,11 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyBCsiniEx1IYkkqCkWj4IHlXQhF7Z6UB0w',
-    appId: '1:75283063752:android:180a6a53c9a24bd78d56fd',
-    messagingSenderId: '75283063752',
-    projectId: 'tennis-cup-55341',
-    storageBucket: 'tennis-cup-55341.firebasestorage.app',
+    apiKey: 'AIzaSyC-fKq3lKzxdG37Y9EZMHtlEJHv1CgGPCk',
+    appId: '1:1050273358137:android:1c2234375460572ae588e8',
+    messagingSenderId: '1050273358137',
+    projectId: 'tournament-platform-495406',
+    storageBucket: 'tournament-platform-495406.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
