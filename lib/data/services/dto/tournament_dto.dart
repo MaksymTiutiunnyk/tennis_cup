@@ -67,7 +67,7 @@ class TournamentParticipantDto {
 
   factory TournamentParticipantDto.fromJson(Map<String, dynamic> json) =>
       TournamentParticipantDto(
-        playerId: (json['playerId'] as num).toInt(),
+        playerId: (json['userId'] as num).toInt(),
         invitationStatus: json['invitationStatus'] as String? ?? 'PENDING',
         place: (json['place'] as num?)?.toInt(),
       );
