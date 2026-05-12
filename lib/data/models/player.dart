@@ -21,7 +21,6 @@ class Player extends Equatable {
   final int silver;
   final int bronze;
   final double rankTennis;
-  final double rankUTTF;
   final String imageUrl;
   final String status;
 
@@ -42,7 +41,6 @@ class Player extends Equatable {
     required this.silver,
     required this.bronze,
     required this.rankTennis,
-    required this.rankUTTF,
     required this.imageUrl,
     this.status = 'ACTIVE',
   });
@@ -76,7 +74,6 @@ class Player extends Equatable {
         silver,
         bronze,
         rankTennis,
-        rankUTTF,
         imageUrl,
         status,
       ];

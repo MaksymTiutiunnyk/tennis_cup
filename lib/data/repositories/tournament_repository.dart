@@ -124,7 +124,6 @@ class TournamentRepository {
         silver: 0,
         bronze: 0,
         rankTennis: 0.0,
-        rankUTTF: 0.0,
       );
 
   Stream<void> watchTournamentChanges(String tournamentId) {

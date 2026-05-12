@@ -29,12 +29,42 @@ class RestPlayerService implements IPlayerService {
     final content = body['content'] as List<dynamic>;
     final totalPages = body['totalPages'] as int? ?? 1;
 
-    final players = content
+    final ratingRecords = content
         .map((json) => _playerFromRatingRecord(json as Map<String, dynamic>))
         .toList();
 
+    final enriched = await Future.wait(
+      ratingRecords.map((r) async {
+        try {
+          final full = await fetchPlayerById(r.userId);
+          return Player(
+            userId: full.userId,
+            name: full.name,
+            surname: full.surname,
+            sex: full.sex,
+            birthDate: full.birthDate,
+            city: full.city,
+            country: full.country,
+            patronymicName: full.patronymicName,
+            tournaments: full.tournaments,
+            matches: full.matches,
+            wins: full.wins,
+            loses: full.loses,
+            gold: full.gold,
+            silver: full.silver,
+            bronze: full.bronze,
+            rankTennis: r.rankTennis,
+            imageUrl: full.imageUrl,
+            status: full.status,
+          );
+        } catch (_) {
+          return r;
+        }
+      }),
+    );
+
     return PageResult(
-      items: players,
+      items: enriched,
       hasMore: page.page + 1 < totalPages,
     );
   }
@@ -100,7 +130,6 @@ class RestPlayerService implements IPlayerService {
       silver: 0,
       bronze: 0,
       rankTennis: (json['ratingValue'] as num?)?.toDouble() ?? 0,
-      rankUTTF: 0,
       imageUrl: '',
     );
   }
@@ -127,7 +156,6 @@ class RestPlayerService implements IPlayerService {
       silver: (stats?['secondPlaceCount'] as num?)?.toInt() ?? 0,
       bronze: (stats?['thirdPlaceCount'] as num?)?.toInt() ?? 0,
       rankTennis: 0,
-      rankUTTF: 0,
       imageUrl: json['avatarUrl'] as String? ?? '',
       status: json['status'] as String? ?? 'ACTIVE',
     );
@@ -149,7 +177,6 @@ class RestPlayerService implements IPlayerService {
       silver: 0,
       bronze: 0,
       rankTennis: 0,
-      rankUTTF: 0,
       imageUrl: json['avatarUrl'] as String? ?? '',
     );
   }
