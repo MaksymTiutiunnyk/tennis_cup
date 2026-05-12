@@ -132,28 +132,51 @@ class LiveStreamMatch extends StatelessWidget {
                           },
                         )
                       : BlocBuilder<LiveMatchCubit, Match?>(
-                          builder: (context, state) => Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 8),
-                            decoration: BoxDecoration(
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .onInverseSurface),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                LiveStreamMatchPlayer(
-                                  player: state?.bluePlayer ?? match.bluePlayer,
-                                  score: state?.blueScore ?? match.blueScore,
-                                ),
-                                const SizedBox(height: 16),
-                                LiveStreamMatchPlayer(
-                                  player: state?.redPlayer ?? match.redPlayer,
-                                  score: state?.redScore ?? match.redScore,
-                                ),
-                              ],
-                            ),
-                          ),
+                          builder: (context, state) {
+                            final bluePlayer =
+                                state?.bluePlayer ?? match.bluePlayer;
+                            final redPlayer =
+                                state?.redPlayer ?? match.redPlayer;
+                            final String blueLabel;
+                            final String redLabel;
+                            if (state != null && state.isTechnicalDefeat) {
+                              blueLabel = state.winnerId == bluePlayer.userId
+                                  ? 'W'
+                                  : 'L';
+                              redLabel = state.winnerId == redPlayer.userId
+                                  ? 'W'
+                                  : 'L';
+                            } else {
+                              blueLabel =
+                                  (state?.blueScore ?? match.blueScore)
+                                      .toString();
+                              redLabel =
+                                  (state?.redScore ?? match.redScore)
+                                      .toString();
+                            }
+                            return Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 8),
+                              decoration: BoxDecoration(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onInverseSurface),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  LiveStreamMatchPlayer(
+                                    player: bluePlayer,
+                                    label: blueLabel,
+                                  ),
+                                  const SizedBox(height: 16),
+                                  LiveStreamMatchPlayer(
+                                    player: redPlayer,
+                                    label: redLabel,
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
                         ),
                 ),
               ],

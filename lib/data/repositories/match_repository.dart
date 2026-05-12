@@ -15,8 +15,10 @@ class MatchRepository {
   Future<Match?> fetchMatchById({required String matchId}) async {
     final dto = await _service.fetchMatchById(matchId);
     if (dto == null) return null;
-    final players = await _fetchPlayers(
-        {if (dto.bluePlayerId != null) dto.bluePlayerId!, if (dto.redPlayerId != null) dto.redPlayerId!});
+    final players = await _fetchPlayers({
+      if (dto.bluePlayerId != null) dto.bluePlayerId!,
+      if (dto.redPlayerId != null) dto.redPlayerId!
+    });
     return _toMatch(dto, players);
   }
 
@@ -73,6 +75,8 @@ class MatchRepository {
         redSetScores: sortedSets.map((s) => s.player2Score).toList(),
         tournamentId: dto.tournamentId.toString(),
         dateTime: dto.matchDate,
+        isTechnicalDefeat: dto.technicalDefeat,
+        winnerId: dto.winnerId,
       );
     }).toList();
 
@@ -80,13 +84,17 @@ class MatchRepository {
   }
 
   Stream<Match> watchMatchChanges(String matchId) {
-    return _service.watchMatchChanges(matchId).asyncMap((dto) async {
-      final players = await _fetchPlayers({
-        if (dto.bluePlayerId != null) dto.bluePlayerId!,
-        if (dto.redPlayerId != null) dto.redPlayerId!,
-      });
-      return _toMatch(dto, players);
-    }).where((m) => m != null).cast<Match>();
+    return _service
+        .watchMatchChanges(matchId)
+        .asyncMap((dto) async {
+          final players = await _fetchPlayers({
+            if (dto.bluePlayerId != null) dto.bluePlayerId!,
+            if (dto.redPlayerId != null) dto.redPlayerId!,
+          });
+          return _toMatch(dto, players);
+        })
+        .where((m) => m != null)
+        .cast<Match>();
   }
 
   Future<Map<int, Player>> _fetchPlayers(Set<int> ids) async {
@@ -121,6 +129,8 @@ class MatchRepository {
       redSetScores: sortedSets.map((s) => s.redPlayerScore).toList(),
       tournamentId: dto.tournamentId.toString(),
       dateTime: DateTime.parse(dto.scheduledStart),
+      isTechnicalDefeat: dto.status == 'TECHNICAL_DEFEAT',
+      winnerId: dto.winnerId,
     );
   }
 }

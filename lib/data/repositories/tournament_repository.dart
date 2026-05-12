@@ -338,6 +338,8 @@ class TournamentRepository {
         redSetScores: sortedSets.map((s) => s.redPlayerScore).toList(),
         tournamentId: dto.tournamentId.toString(),
         dateTime: DateTime.parse(dto.scheduledStart),
+        isTechnicalDefeat: dto.status == 'TECHNICAL_DEFEAT',
+        winnerId: dto.winnerId,
       ));
     }
     return matches;

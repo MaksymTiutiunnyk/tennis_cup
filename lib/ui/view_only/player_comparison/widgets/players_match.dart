@@ -98,16 +98,19 @@ class _PlayersMatchBody extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               Text(
-                '$player1Score : $player2Score',
+                match.isTechnicalDefeat
+                    ? (match.winnerId == player1.userId ? 'W : L' : 'L : W')
+                    : '$player1Score : $player2Score',
                 style: Theme.of(context)
                     .textTheme
                     .bodyLarge!
                     .copyWith(fontWeight: FontWeight.w600),
               ),
-              Text(
-                '(${displayedSetScores.join(', ')})',
-                style: Theme.of(context).textTheme.bodySmall,
-              ),
+              if (!match.isTechnicalDefeat)
+                Text(
+                  '(${displayedSetScores.join(', ')})',
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
             ],
           ),
         ),
