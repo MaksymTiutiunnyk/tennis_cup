@@ -127,12 +127,27 @@ class _TournamentResultsBody extends StatelessWidget {
                               m.redPlayer.userId == player.userId),
                     );
 
+                    final String cellLabel;
+                    if (match.isTechnicalDefeat) {
+                      cellLabel =
+                          match.winnerId == player.userId ? 'W : L' : 'L : W';
+                    } else {
+                      final playerScore =
+                          match.bluePlayer.userId == player.userId
+                              ? match.blueScore
+                              : match.redScore;
+                      final opponentScore =
+                          match.bluePlayer.userId == player.userId
+                              ? match.redScore
+                              : match.blueScore;
+                      cellLabel = '$playerScore : $opponentScore';
+                    }
                     return DataCell(
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            '${match.bluePlayer.userId == player.userId ? match.blueScore : match.redScore} : ${match.bluePlayer.userId == player.userId ? match.redScore : match.blueScore}',
+                            cellLabel,
                             style: Theme.of(context).textTheme.labelLarge,
                           ),
                         ],

@@ -11,6 +11,8 @@ class Match extends Equatable {
   final List<int> redSetScores;
   final String tournamentId;
   final DateTime dateTime;
+  final bool isTechnicalDefeat;
+  final int? winnerId;
 
   const Match({
     required this.matchId,
@@ -22,6 +24,8 @@ class Match extends Equatable {
     required this.redSetScores,
     required this.blueScore,
     required this.redScore,
+    this.isTechnicalDefeat = false,
+    this.winnerId,
   });
 
   @override
@@ -35,5 +39,7 @@ class Match extends Equatable {
         redSetScores,
         tournamentId,
         dateTime,
+        isTechnicalDefeat,
+        winnerId,
       ];
 }

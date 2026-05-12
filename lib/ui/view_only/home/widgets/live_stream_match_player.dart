@@ -6,10 +6,10 @@ import 'package:tennis_cup/ui/core/widgets/player_avatar.dart';
 
 class LiveStreamMatchPlayer extends StatelessWidget {
   final Player player;
-  final int score;
+  final String label;
 
   const LiveStreamMatchPlayer(
-      {required this.player, required this.score, super.key});
+      {required this.player, required this.label, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +31,7 @@ class LiveStreamMatchPlayer extends StatelessWidget {
             ],
           ),
           Text(
-            score.toString(),
+            label,
             style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,

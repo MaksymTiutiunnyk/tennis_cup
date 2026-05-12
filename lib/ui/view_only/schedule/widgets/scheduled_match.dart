@@ -76,7 +76,11 @@ class _ScheduledMatchBody extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.only(right: 16.0),
                     child: Text(
-                      match.blueScore.toString(),
+                      match.isTechnicalDefeat
+                          ? (match.winnerId == match.bluePlayer.userId
+                              ? 'W'
+                              : 'L')
+                          : match.blueScore.toString(),
                       style: Theme.of(context)
                           .textTheme
                           .bodyMedium!
@@ -102,7 +106,11 @@ class _ScheduledMatchBody extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.only(right: 16.0),
                     child: Text(
-                      match.redScore.toString(),
+                      match.isTechnicalDefeat
+                          ? (match.winnerId == match.redPlayer.userId
+                              ? 'W'
+                              : 'L')
+                          : match.redScore.toString(),
                       style: Theme.of(context)
                           .textTheme
                           .bodyMedium!
