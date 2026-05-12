@@ -23,21 +23,21 @@ class InvitationsCubit extends Cubit<InvitationsState> {
     }
   }
 
-  Future<void> accept(String tournamentId) => _removeAfter(
-      tournamentId, () => _repository.acceptInvitation(tournamentId));
+  Future<void> accept(String invitationId) => _removeAfter(
+      invitationId, () => _repository.acceptInvitation(invitationId));
 
-  Future<void> decline(String tournamentId) => _removeAfter(
-      tournamentId, () => _repository.declineInvitation(tournamentId));
+  Future<void> decline(String invitationId) => _removeAfter(
+      invitationId, () => _repository.declineInvitation(invitationId));
 
   Future<void> _removeAfter(
-      String tournamentId, Future<void> Function() action) async {
+      String invitationId, Future<void> Function() action) async {
     final current = state;
     if (current is! InvitationsLoaded) return;
 
     try {
       await action();
       final updated =
-          current.items.where((i) => i.tournamentId != tournamentId).toList();
+          current.items.where((i) => i.id != invitationId).toList();
       emit(InvitationsLoaded(updated));
     } catch (_) {
       emit(InvitationsError('Failed to update invitation'));

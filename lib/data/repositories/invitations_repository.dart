@@ -38,12 +38,12 @@ class InvitationsRepository {
     }).toList();
   }
 
-  Future<void> acceptInvitation(String tournamentId) {
-    return _tournamentService.acceptInvitation(tournamentId);
+  Future<void> acceptInvitation(String invitationId) {
+    return _tournamentService.acceptInvitation(invitationId);
   }
 
-  Future<void> declineInvitation(String tournamentId) {
-    return _tournamentService.declineInvitation(tournamentId);
+  Future<void> declineInvitation(String invitationId) {
+    return _tournamentService.declineInvitation(invitationId);
   }
 
   static TournamentInvitation _toDomain(

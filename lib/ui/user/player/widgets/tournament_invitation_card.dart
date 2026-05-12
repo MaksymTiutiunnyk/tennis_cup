@@ -122,7 +122,7 @@ class TournamentInvitationCard extends StatelessWidget {
                     onPressed: () async {
                       final ok = await _confirm(context, 'Accept');
                       if (ok && context.mounted) {
-                        cubit.accept(invitation.tournamentId);
+                        cubit.accept(invitation.id);
                       }
                     },
                     icon: const Icon(Icons.check),
@@ -135,7 +135,7 @@ class TournamentInvitationCard extends StatelessWidget {
                     onPressed: () async {
                       final ok = await _confirm(context, 'Decline');
                       if (ok && context.mounted) {
-                        cubit.decline(invitation.tournamentId);
+                        cubit.decline(invitation.id);
                       }
                     },
                     icon: const Icon(Icons.close),

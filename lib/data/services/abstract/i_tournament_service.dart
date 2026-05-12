@@ -39,9 +39,9 @@ abstract interface class ITournamentService {
 
   Future<List<MyInvitationDto>> fetchInvitations({required String status});
 
-  Future<void> acceptInvitation(String tournamentId);
+  Future<void> acceptInvitation(String invitationId);
 
-  Future<void> declineInvitation(String tournamentId);
+  Future<void> declineInvitation(String invitationId);
 
   // ---- Write ----
 

@@ -142,15 +142,15 @@ class RestTournamentService implements ITournamentService {
   }
 
   @override
-  Future<void> acceptInvitation(String tournamentId) async {
+  Future<void> acceptInvitation(String invitationId) async {
     await _dio
-        .post<void>('/api/v1/tournaments/$tournamentId/invitations/accept');
+        .post<void>('/api/v1/tournaments/invitations/$invitationId/accept');
   }
 
   @override
-  Future<void> declineInvitation(String tournamentId) async {
+  Future<void> declineInvitation(String invitationId) async {
     await _dio
-        .post<void>('/api/v1/tournaments/$tournamentId/invitations/decline');
+        .post<void>('/api/v1/tournaments/invitations/$invitationId/decline');
   }
 
   // ---- Write operations ----
