@@ -3,11 +3,13 @@ import 'package:tennis_cup/core/pagination/page_request.dart';
 import 'package:tennis_cup/core/pagination/page_result.dart';
 import 'package:tennis_cup/data/services/abstract/i_match_service.dart';
 import 'package:tennis_cup/data/services/dto/match_dto.dart';
+import 'package:tennis_cup/data/services/websocket/match_websocket_service.dart';
 
 class RestMatchService implements IMatchService {
   final Dio _dio;
+  final MatchWebSocketService _ws;
 
-  const RestMatchService(this._dio);
+  const RestMatchService(this._dio, this._ws);
 
   @override
   Future<MatchDto?> fetchMatchById(String id) async {
@@ -56,7 +58,8 @@ class RestMatchService implements IMatchService {
   }
 
   @override
-  Stream<void> watchMatchChanges(String matchId) => const Stream.empty();
+  Stream<MatchDto> watchMatchChanges(String matchId) =>
+      _ws.watchMatch(matchId);
 
   @override
   Future<MatchDto> startMatch(int matchId, int firstServerId) async {

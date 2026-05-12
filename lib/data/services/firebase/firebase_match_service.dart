@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:tennis_cup/core/pagination/page_request.dart';
 import 'package:tennis_cup/core/pagination/page_result.dart';
 import 'package:tennis_cup/data/services/abstract/i_match_service.dart';
@@ -14,12 +13,7 @@ class FirebaseMatchService implements IMatchService {
   }
 
   @override
-  Stream<void> watchMatchChanges(String matchId) {
-    return FirebaseFirestore.instance
-        .collectionGroup('matches')
-        .snapshots()
-        .map((_) {});
-  }
+  Stream<MatchDto> watchMatchChanges(String matchId) => const Stream.empty();
 
   @override
   Future<List<MatchDto>> fetchTournamentMatches(String tournamentId) async {

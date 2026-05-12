@@ -79,8 +79,14 @@ class MatchRepository {
     return PageResult(items: matches, hasMore: result.hasMore);
   }
 
-  Stream<void> watchMatchChanges(String matchId) {
-    return _service.watchMatchChanges(matchId);
+  Stream<Match> watchMatchChanges(String matchId) {
+    return _service.watchMatchChanges(matchId).asyncMap((dto) async {
+      final players = await _fetchPlayers({
+        if (dto.bluePlayerId != null) dto.bluePlayerId!,
+        if (dto.redPlayerId != null) dto.redPlayerId!,
+      });
+      return _toMatch(dto, players);
+    }).where((m) => m != null).cast<Match>();
   }
 
   Future<Map<int, Player>> _fetchPlayers(Set<int> ids) async {

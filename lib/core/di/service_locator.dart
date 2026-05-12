@@ -34,6 +34,7 @@ import 'package:tennis_cup/data/services/rest/rest_player_service.dart';
 import 'package:tennis_cup/data/services/rest/rest_tournament_service.dart';
 import 'package:tennis_cup/data/services/rest/rest_match_service.dart';
 import 'package:tennis_cup/data/services/rest/rest_news_service.dart';
+import 'package:tennis_cup/data/services/websocket/match_websocket_service.dart';
 import 'package:tennis_cup/data/auth/auth_token_store.dart';
 import 'package:tennis_cup/data/services/rest/rest_auth_service.dart';
 
@@ -94,7 +95,8 @@ class ServiceLocator {
       tokenStore: tokenStore,
       refreshToken: authService.refreshAccessToken,
     );
-    matchService = RestMatchService(matchDio);
+    final matchWsService = MatchWebSocketService();
+    matchService = RestMatchService(matchDio, matchWsService);
     final newsDio = DioClient.create(
       baseUrl: gatewayUrl,
       tokenStore: tokenStore,
@@ -125,5 +127,7 @@ class ServiceLocator {
     adminRepository = AdminRepository(adminService);
     refereeRepository =
         RefereeRepository(tournamentService, matchService, playerService);
+
+    matchWsService.connect();
   }
 }
