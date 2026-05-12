@@ -19,7 +19,8 @@ Flutter app following the [Flutter app architecture guide](https://docs.flutter.
 State management uses **BLoC/Cubit**. Backend is a set of REST microservices. Firebase is initialized at runtime for Cloud Messaging (FCM) only — Firestore/Storage service implementations exist in `lib/data/services/firebase/` as legacy code but are not active. Routing uses **go_router**.
 
 ```
-RestService → Repository → Cubit/Bloc → UI Widget
+RestService        → Repository → Cubit/Bloc → UI Widget
+WebSocketService ↗
 ```
 
 ### Folder structure
@@ -41,7 +42,8 @@ lib/
 │   └── services/
 │       ├── abstract/              # interfaces (IPlayerService, etc.)
 │       ├── dto/                   # raw API data transfer objects
-│       └── rest/                  # REST implementations
+│       ├── rest/                  # REST implementations
+│       └── websocket/             # MatchWebSocketService (STOMP)
 ├── routing/app_router.dart        # GoRouter config + AppRoutes constants
 └── ui/
     ├── core/
@@ -159,7 +161,7 @@ Thin `Player` objects (built by `_playerFromRatingRecord` from the rating endpoi
 
 All services are on REST. The following behaviours are still incomplete:
 
-- Real-time updates — no auto-refresh (`watchMatchChanges` / `watchTournamentChanges` return `Stream.empty()`; manual pull-to-refresh only)
+- Real-time match updates — implemented via STOMP WebSocket (`ws://localhost:8080/ws`, topic `/topic/matches/{matchId}`). `MatchWebSocketService` (`lib/data/services/websocket/`) manages a single connection with per-matchId broadcast streams and auto-reconnect. `MatchRepository.watchMatchChanges` returns `Stream<Match>` (maps `MatchDto` internally — DTO never leaves the repository). `LiveMatchCubit` accepts an optional `initialMatch` to skip the initial REST fetch. `LiveTournamentResultsCubit` watches all matches in a tournament and patches the match list on each event. Used in: `LiveStreamMatch`, `ScheduledMatch`, `PlayersMatch`, `TournamentResults`. Tournament-level changes (`watchTournamentChanges`) are still not implemented.
 - Player ratings (`rankTennis`, `rankUTTF`) — always `0` in `PlayerDetails` because `GET /api/v1/users/{id}` does not include rating; only the rating-service endpoint (`GET /api/v1/ratings`) returns `ratingValue`, and that is used for ranking list display only
 - Player avatars — `imageUrl` is always `''` for ranking/search results; `avatarUrl` is returned by `GET /api/v1/users/{id}` and stored in `Player.imageUrl`. Avatar upload (`PUT /api/v1/users/{id}/avatar`) and removal (send `avatarUrl: null` in profile PATCH) are implemented in `EditUserScreen` with deferred upload — bytes are held in cubit state and only sent to the server when the user taps Save.
 - News images are served from a local GCS-compatible storage emulator at `localhost:4443`. On Android emulator, `localhost` resolves to the emulator's own loopback — replace it with `10.0.2.2`. The `SingleInterestingNews` widget falls back to `default_image.jpg` on any load failure.
