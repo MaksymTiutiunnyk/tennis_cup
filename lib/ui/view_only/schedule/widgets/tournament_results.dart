@@ -1,12 +1,33 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tennis_cup/core/di/service_locator.dart';
 import 'package:tennis_cup/data/models/match.dart';
 import 'package:tennis_cup/data/models/tournament.dart';
 import 'package:tennis_cup/routing/app_router.dart';
+import 'package:tennis_cup/ui/view_only/schedule/view_models/live_tournament_results_cubit.dart';
 
 class TournamentResults extends StatelessWidget {
   final Tournament tournament;
   const TournamentResults(this.tournament, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (_) => LiveTournamentResultsCubit(
+        initial: tournament,
+        matchRepository: ServiceLocator.matchRepository,
+      ),
+      child: BlocBuilder<LiveTournamentResultsCubit, Tournament>(
+        builder: (context, live) => _TournamentResultsBody(live),
+      ),
+    );
+  }
+}
+
+class _TournamentResultsBody extends StatelessWidget {
+  final Tournament tournament;
+  const _TournamentResultsBody(this.tournament);
 
   @override
   Widget build(BuildContext context) {

@@ -6,6 +6,7 @@ import 'package:tennis_cup/core/di/service_locator.dart';
 import 'package:tennis_cup/data/models/match.dart';
 import 'package:tennis_cup/data/models/player.dart';
 import 'package:tennis_cup/routing/app_router.dart';
+import 'package:tennis_cup/ui/view_only/home/view_models/live_match_cubit.dart';
 import 'package:tennis_cup/ui/view_only/schedule/view_models/arena_filter_cubit.dart';
 import 'package:tennis_cup/ui/view_only/schedule/view_models/schedule_date_cubit.dart';
 import 'package:tennis_cup/ui/view_only/schedule/view_models/time_filter_cubit.dart';
@@ -18,6 +19,35 @@ class PlayersMatch extends StatelessWidget {
 
   const PlayersMatch({
     super.key,
+    required this.player1,
+    required this.player2,
+    required this.match,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (_) => LiveMatchCubit(
+        matchId: match.matchId,
+        matchRepository: ServiceLocator.matchRepository,
+        initialMatch: match,
+      ),
+      child: BlocBuilder<LiveMatchCubit, Match?>(
+        builder: (context, live) => _PlayersMatchBody(
+          player1: player1,
+          player2: player2,
+          match: live ?? match,
+        ),
+      ),
+    );
+  }
+}
+
+class _PlayersMatchBody extends StatelessWidget {
+  final Player player1, player2;
+  final Match match;
+
+  const _PlayersMatchBody({
     required this.player1,
     required this.player2,
     required this.match,

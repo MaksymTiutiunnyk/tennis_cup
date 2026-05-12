@@ -4,7 +4,7 @@ import 'package:tennis_cup/data/services/dto/match_dto.dart';
 
 abstract interface class IMatchService {
   Future<MatchDto?> fetchMatchById(String id);
-  Stream<void> watchMatchChanges(String matchId);
+  Stream<MatchDto> watchMatchChanges(String matchId);
   Future<List<MatchDto>> fetchTournamentMatches(String tournamentId);
   Future<PageResult<MatchDto>> fetchPlayersMatches({
     required String playerId,
