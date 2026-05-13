@@ -56,7 +56,6 @@ class _TournamentFormState extends State<TournamentForm> {
       _arenaId = int.tryParse(e.arena.id) ?? 1;
       _startTime = e.date;
 
-      // Populate referee invitations (exclude DECLINED/CANCELLED)
       _selectedReferees = e.refereeInvitations
           .map((r) => SelectedReferee(
                 id: r.refereeId,
@@ -66,7 +65,6 @@ class _TournamentFormState extends State<TournamentForm> {
           .toList();
       _resolveRefereeNames();
 
-      // Populate player invitations (exclude CANCELLED)
       _selectedPlayers = e.participantInvitations
           .map((p) => SelectedPlayer(
                 id: p.playerId,

@@ -55,40 +55,24 @@ Time timeFromString(String value) {
 }
 
 class TournamentParticipantDto {
-  final int playerId;
+  final int userId;
+  final String role;
   final String invitationStatus;
   final int? place;
 
   const TournamentParticipantDto({
-    required this.playerId,
+    required this.userId,
+    required this.role,
     required this.invitationStatus,
     this.place,
   });
 
   factory TournamentParticipantDto.fromJson(Map<String, dynamic> json) =>
       TournamentParticipantDto(
-        playerId: (json['userId'] as num).toInt(),
+        userId: (json['userId'] as num).toInt(),
+        role: json['role'] as String? ?? 'PLAYER',
         invitationStatus: json['invitationStatus'] as String? ?? 'PENDING',
         place: (json['place'] as num?)?.toInt(),
-      );
-}
-
-class TournamentRefereeInvitationDto {
-  final int id;
-  final int refereeId;
-  final String status;
-
-  const TournamentRefereeInvitationDto({
-    required this.id,
-    required this.refereeId,
-    required this.status,
-  });
-
-  factory TournamentRefereeInvitationDto.fromJson(Map<String, dynamic> json) =>
-      TournamentRefereeInvitationDto(
-        id: (json['id'] as num).toInt(),
-        refereeId: (json['refereeId'] as num).toInt(),
-        status: json['status'] as String? ?? 'PENDING',
       );
 }
 
@@ -106,7 +90,6 @@ class TournamentDto {
   final int setsToWin;
   final int matchDurationMinutes;
   final List<TournamentParticipantDto> participants;
-  final List<TournamentRefereeInvitationDto> refereeInvitations;
 
   const TournamentDto({
     required this.id,
@@ -121,11 +104,8 @@ class TournamentDto {
     required this.setsToWin,
     required this.matchDurationMinutes,
     required this.participants,
-    required this.refereeInvitations,
     this.refereeId,
   });
-
-  List<int> get playerIds => participants.map((p) => p.playerId).toList();
 
   factory TournamentDto.fromJson(Map<String, dynamic> json) => TournamentDto(
         id: (json['id'] as num).toInt(),
@@ -144,11 +124,6 @@ class TournamentDto {
             (json['matchDurationMinutes'] as num?)?.toInt() ?? 30,
         participants: (json['participants'] as List<dynamic>?)
                 ?.map((e) => TournamentParticipantDto.fromJson(
-                    e as Map<String, dynamic>))
-                .toList() ??
-            [],
-        refereeInvitations: (json['refereeInvitations'] as List<dynamic>?)
-                ?.map((e) => TournamentRefereeInvitationDto.fromJson(
                     e as Map<String, dynamic>))
                 .toList() ??
             [],

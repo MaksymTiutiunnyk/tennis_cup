@@ -138,11 +138,11 @@ class FirebaseTournamentService implements ITournamentService {
       setsToWin: 1,
       participants: playerIds
           .map((id) => TournamentParticipantDto(
-                playerId: id,
+                userId: id,
+                role: 'PLAYER',
                 invitationStatus: 'ACCEPTED',
               ))
           .toList(),
-      refereeInvitations: const [],
       matchDurationMinutes: 30,
     );
   }
