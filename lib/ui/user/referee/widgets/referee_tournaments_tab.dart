@@ -37,12 +37,19 @@ class RefereeTournamentsTab extends StatelessWidget {
                 ],
               ),
             ),
-          RefereeTournamentsLoaded(:final tournaments)
-              when tournaments.isEmpty =>
-            const Center(child: Text('No active tournaments')),
           RefereeTournamentsLoaded(:final tournaments) => RefreshIndicator(
               onRefresh: () => context.read<RefereeTournamentsCubit>().reload(),
-              child: ListView.builder(
+              child: tournaments.isEmpty
+                  ? const CustomScrollView(
+                      physics: AlwaysScrollableScrollPhysics(),
+                      slivers: [
+                        SliverFillRemaining(
+                          child: Center(child: Text('No active tournaments')),
+                        ),
+                      ],
+                    )
+                  : ListView.builder(
+                physics: const AlwaysScrollableScrollPhysics(),
                 padding: const EdgeInsets.all(8),
                 itemCount: tournaments.length,
                 itemBuilder: (context, i) {

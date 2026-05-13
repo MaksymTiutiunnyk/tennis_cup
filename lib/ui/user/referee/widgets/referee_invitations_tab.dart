@@ -44,14 +44,25 @@ class _InvitationsListViewState extends State<_InvitationsListView> {
           InvitationsLoading() =>
             const Center(child: CircularProgressIndicator()),
           InvitationsError(message: final m) => Center(child: Text(m)),
-          InvitationsLoaded(items: final items) when items.isEmpty =>
-            const Center(child: Text('No invitations yet')),
-          InvitationsLoaded() => AnimatedList(
-              key: _listKey,
-              padding: const EdgeInsets.all(8),
-              initialItemCount: _items.length,
-              itemBuilder: (_, i, animation) =>
-                  _buildItem(_items[i], animation),
+          InvitationsLoaded() => RefreshIndicator(
+              onRefresh: () => context.read<InvitationsCubit>().reload(),
+              child: _items.isEmpty
+                  ? const CustomScrollView(
+                      physics: AlwaysScrollableScrollPhysics(),
+                      slivers: [
+                        SliverFillRemaining(
+                          child: Center(child: Text('No invitations yet')),
+                        ),
+                      ],
+                    )
+                  : AnimatedList(
+                      key: _listKey,
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      padding: const EdgeInsets.all(8),
+                      initialItemCount: _items.length,
+                      itemBuilder: (_, i, animation) =>
+                          _buildItem(_items[i], animation),
+                    ),
             ),
         },
       ),
