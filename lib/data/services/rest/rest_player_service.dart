@@ -116,6 +116,12 @@ class RestPlayerService implements IPlayerService {
     return response.data!['avatarUrl'] as String;
   }
 
+  @override
+  Future<void> removeAvatar(int id) async {
+    final formData = FormData.fromMap({});
+    await _dio.put<void>('/api/v1/users/$id/avatar', data: formData);
+  }
+
   static Player _playerFromRatingRecord(Map<String, dynamic> json) {
     return Player(
       userId: (json['userId'] as num).toInt(),

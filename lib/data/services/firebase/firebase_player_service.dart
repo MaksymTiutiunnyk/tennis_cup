@@ -117,4 +117,9 @@ class FirebasePlayerService implements IPlayerService {
       imageUrl: data['imageUrl'] as String? ?? '',
     );
   }
+
+  @override
+  Future<void> removeAvatar(int id) {
+    throw UnimplementedError();
+  }
 }

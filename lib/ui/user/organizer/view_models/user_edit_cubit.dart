@@ -87,10 +87,11 @@ class UserEditCubit extends Cubit<UserEditState> {
       if (current.pendingAvatarBytes != null) {
         await _playerRepository.uploadAvatar(
             userId, current.pendingAvatarBytes!);
+      } else if (current.avatarRemoved) {
+        await _playerRepository.removeAvatar(userId);
       }
 
       final fields = Map<String, dynamic>.from(profileFields);
-      if (current.avatarRemoved) fields['avatarUrl'] = null;
       fields['roles'] = current.roles.map((r) => r.name.toUpperCase()).toList();
 
       await _playerRepository.updateProfile(userId, fields);

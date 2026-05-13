@@ -33,4 +33,6 @@ class PlayerRepository {
 
   Future<String> uploadAvatar(int id, Uint8List bytes) =>
       _service.uploadAvatar(id, bytes);
+
+  Future<void> removeAvatar(int id) => _service.removeAvatar(id);
 }
