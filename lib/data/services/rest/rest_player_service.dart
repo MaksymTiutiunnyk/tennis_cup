@@ -161,7 +161,7 @@ class RestPlayerService implements IPlayerService {
       gold: (stats?['firstPlaceCount'] as num?)?.toInt() ?? 0,
       silver: (stats?['secondPlaceCount'] as num?)?.toInt() ?? 0,
       bronze: (stats?['thirdPlaceCount'] as num?)?.toInt() ?? 0,
-      rankTennis: 0,
+      rankTennis: (json['rating'] as num?)?.toDouble() ?? 0,
       imageUrl: json['avatarUrl'] as String? ?? '',
       status: json['status'] as String? ?? 'ACTIVE',
     );
