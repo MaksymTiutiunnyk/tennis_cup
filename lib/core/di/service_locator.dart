@@ -1,14 +1,3 @@
-// To switch to Firebase, replace the REST service instantiations in init()
-// with their Firebase counterparts, e.g.:
-//   playerService = FirebasePlayerService();
-//   tournamentService = FirebaseTournamentService();
-//   arenaService = FirebaseArenaService();
-//   matchService = FirebaseMatchService();
-//   newsService = FirebaseNewsService();
-// Also call Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform)
-// in main.dart before ServiceLocator.init().
-// Firebase service implementations live in lib/data/services/firebase/.
-
 import 'package:dio/dio.dart';
 import 'package:tennis_cup/config/app_config.dart';
 import 'package:tennis_cup/core/network/dio_client.dart';
