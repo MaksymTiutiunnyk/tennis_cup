@@ -16,7 +16,7 @@ flutter analyze                    # Static analysis
 
 Flutter app following the [Flutter app architecture guide](https://docs.flutter.dev/app-architecture/guide): **Services** (API wrappers) → **Repositories** (domain model source of truth) → **Cubits/BLoC** (ViewModels) → **Widgets** (Views).
 
-State management uses **BLoC/Cubit**. Backend is a set of REST microservices. Firebase is initialized at runtime for Cloud Messaging (FCM) only — Firestore/Storage service implementations exist in `lib/data/services/firebase/` as legacy code but are not active. Routing uses **go_router**.
+State management uses **BLoC/Cubit**. Backend is a set of REST microservices. Firebase (`firebase_core` + `firebase_messaging`) is used for Android push notifications only — initialized and registered exclusively under a `defaultTargetPlatform == TargetPlatform.android` guard in `main.dart`. `cloud_firestore` and `firebase_storage` have been removed. Routing uses **go_router**.
 
 ```
 RestService        → Repository → Cubit/Bloc → UI Widget
@@ -164,7 +164,7 @@ All services are on REST. The following behaviours are still incomplete:
 - Real-time match updates — implemented via STOMP WebSocket (`ws://localhost:8080/ws`, topic `/topic/matches/{matchId}`). `MatchWebSocketService` (`lib/data/services/websocket/`) manages a single connection with per-matchId broadcast streams and auto-reconnect. `MatchRepository.watchMatchChanges` returns `Stream<Match>` (maps `MatchDto` internally — DTO never leaves the repository). `LiveMatchCubit` accepts an optional `initialMatch` to skip the initial REST fetch. `LiveTournamentResultsCubit` watches all matches in a tournament and patches the match list on each event. Used in: `LiveStreamMatch`, `ScheduledMatch`, `PlayersMatch`, `TournamentResults`. Tournament-level changes (`watchTournamentChanges`) are still not implemented.
 - Player ratings (`rankTennis`, `rankUTTF`) — always `0` in `PlayerDetails` because `GET /api/v1/users/{id}` does not include rating; only the rating-service endpoint (`GET /api/v1/ratings`) returns `ratingValue`, and that is used for ranking list display only
 - Player avatars — `imageUrl` is always `''` for ranking/search results; `avatarUrl` is returned by `GET /api/v1/users/{id}` and stored in `Player.imageUrl`. Avatar upload (`PUT /api/v1/users/{id}/avatar`) and removal (send `avatarUrl: null` in profile PATCH) are implemented in `EditUserScreen` with deferred upload — bytes are held in cubit state and only sent to the server when the user taps Save.
-- News images are served from a local GCS-compatible storage emulator at `localhost:4443`. On Android emulator, `localhost` resolves to the emulator's own loopback — replace it with `10.0.2.2`. The `SingleInterestingNews` widget falls back to `default_image.jpg` on any load failure.
+- News images are served from a local GCS-compatible storage emulator at `localhost:4443`. On Android emulator, `localhost` resolves to the emulator's own loopback — replace it with `10.0.2.2`. On iOS simulator, `localhost` works as-is. On a physical iPhone, image URLs (which contain `localhost:4443` as returned by the API) cannot be resolved — use USB port forwarding (see **Local development** below) or accept that images fall back to `default_image.jpg`. The `SingleInterestingNews` widget falls back to `default_image.jpg` on any load failure.
 
 Home screen widgets (`LiveStreamMatches`, `UpcomingMatches`, `Winners`) use dedicated dashboard endpoints (`GET /api/v1/dashboard/arenas/current-matches`, `/dashboard/tournaments/upcoming-matches`, `/dashboard/arenas/last-winners`) that return pre-aggregated data. `TournamentRepository` maps these to `MatchView` / `WinnerView` and resolves arena color via `fetchArenaById`. Widgets fall back to "No matches found" / "No winners found" on empty results.
 
@@ -186,6 +186,28 @@ const matchServiceUrl      = String.fromEnvironment('MATCH_URL',      defaultVal
 
 All `DioClient` instances in `ServiceLocator` currently use `gatewayUrl` as their base URL — every service call goes through the API gateway. The individual service URL constants exist for direct-to-service access if the gateway is bypassed.
 
+### Local development
+
+**iOS Simulator** — `localhost` in the simulator resolves to the Mac's loopback. No changes needed; the default URLs work as-is.
+
+**Physical iPhone** — two options:
+
+Option A (same WiFi, simplest):
+```bash
+ipconfig getifaddr en0   # get Mac's LAN IP, e.g. 192.168.1.42
+flutter run --dart-define=GATEWAY_URL=http://192.168.1.42:8080
+```
+News images (port 4443) will still fail because those URLs are embedded in API responses and contain `localhost` — accept the fallback or also configure the GCS emulator to bind to the LAN IP.
+
+Option B (USB tunnel, works without WiFi, port 4443 included):
+```bash
+brew install libimobiledevice   # one-time
+iproxy 8080 8080 &
+iproxy 4443 4443 &
+flutter run
+```
+`iproxy` tunnels device TCP connections to the Mac's corresponding ports, so `localhost` on the device reaches the Mac.
+
 ### Auth
 
 `lib/ui/auth/` — soft auth: browsing (rankings, schedule, news) works without login; user-mode screens require authentication.
@@ -198,7 +220,7 @@ All `DioClient` instances in `ServiceLocator` currently use `gatewayUrl` as thei
 
 ### Push notifications (Android only)
 
-`firebase_messaging` is active at runtime. Firebase is initialized in `main()` before `ServiceLocator.init()`. A top-level `_firebaseMessagingBackgroundHandler` is registered in `initState` — it must be a top-level function (FCM requirement).
+`firebase_messaging` is active on Android only. Firebase initialization and the background message handler registration are guarded by `!kIsWeb && defaultTargetPlatform == TargetPlatform.android` in `main.dart` — they are no-ops on iOS and other platforms. The background handler is a top-level function (FCM requirement); the guard prevents it from being registered on non-Android.
 
 **Token lifecycle** (`NotificationCubit` / `INotificationService` / `RestNotificationService`):
 - `POST /api/v1/devices` — called on `AuthAuthenticated` and on every `onTokenRefresh` event
