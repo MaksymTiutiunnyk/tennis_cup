@@ -114,8 +114,12 @@ class FirebasePlayerService implements IPlayerService {
       silver: (data['silver'] as num?)?.toInt() ?? 0,
       bronze: (data['bronze'] as num?)?.toInt() ?? 0,
       rankTennis: (data['rank_tennis'] as num?)?.toDouble() ?? 0,
-      rankUTTF: (data['rank_uttf'] as num?)?.toDouble() ?? 0,
       imageUrl: data['imageUrl'] as String? ?? '',
     );
+  }
+
+  @override
+  Future<void> removeAvatar(int id) {
+    throw UnimplementedError();
   }
 }

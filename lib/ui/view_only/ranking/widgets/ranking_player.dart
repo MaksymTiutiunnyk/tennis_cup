@@ -48,20 +48,6 @@ class RankingPlayer extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Rank UTTF:',
-                    style: Theme.of(context).textTheme.bodySmall,
-                  ),
-                  Text(
-                    player.rankUTTF.toString(),
-                    style: Theme.of(context).textTheme.bodySmall,
-                  ),
-                ],
-              ),
-              const SizedBox(height: 4),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
                     'Tournaments:',
                     style: Theme.of(context).textTheme.bodySmall,
                   ),

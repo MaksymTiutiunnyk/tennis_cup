@@ -20,4 +20,6 @@ abstract interface class IPlayerService {
   Future<void> updateProfile(int id, Map<String, dynamic> fields);
 
   Future<String> uploadAvatar(int id, Uint8List bytes);
+
+  Future<void> removeAvatar(int id);
 }

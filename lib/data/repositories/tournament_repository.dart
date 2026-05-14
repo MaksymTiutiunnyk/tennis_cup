@@ -124,7 +124,6 @@ class TournamentRepository {
         silver: 0,
         bronze: 0,
         rankTennis: 0.0,
-        rankUTTF: 0.0,
       );
 
   Stream<void> watchTournamentChanges(String tournamentId) {
@@ -225,7 +224,9 @@ class TournamentRepository {
     final neededPlayerIds = <int>{};
     if (withPlayers) {
       for (final dto in dtos) {
-        neededPlayerIds.addAll(dto.participants.map((p) => p.playerId));
+        neededPlayerIds.addAll(dto.participants
+            .where((p) => p.role == 'PLAYER')
+            .map((p) => p.userId));
       }
     }
     for (final matches in matchDtosByTournament.values) {
@@ -249,13 +250,12 @@ class TournamentRepository {
       final places = <int>[];
       if (withPlayers) {
         for (final participant in dto.participants) {
-          final p = playerMap[participant.playerId];
+          if (participant.role != 'PLAYER') continue;
+          final p = playerMap[participant.userId];
           if (p == null) continue;
-          if (participant.invitationStatus != 'ACCEPTED') {
-            continue;
-          }
+          if (participant.invitationStatus != 'ACCEPTED') continue;
           players.add(p);
-          if (withMatches) points.add(pointsById[participant.playerId] ?? 0);
+          if (withMatches) points.add(pointsById[participant.userId] ?? 0);
           if (dto.status == 'FINISHED') places.add(participant.place ?? 0);
         }
       }
@@ -385,12 +385,14 @@ class TournamentRepository {
       matchDurationMinutes: dto.matchDurationMinutes,
       requiredPlayersCount: dto.requiredPlayersCount,
       participantInvitations: dto.participants
+          .where((p) => p.role == 'PLAYER')
           .map((p) => TournamentParticipant(
-              playerId: p.playerId, status: p.invitationStatus))
+              playerId: p.userId, status: p.invitationStatus))
           .toList(),
-      refereeInvitations: dto.refereeInvitations
-          .map((r) => TournamentRefereeInvitation(
-              refereeId: r.refereeId, status: r.status))
+      refereeInvitations: dto.participants
+          .where((p) => p.role == 'REFEREE')
+          .map((p) => TournamentRefereeInvitation(
+              refereeId: p.userId, status: p.invitationStatus))
           .toList(),
     );
   }

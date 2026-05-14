@@ -103,7 +103,7 @@ class _ScrollableBodyState extends State<ScrollableBody> {
             ],
           ),
           Positioned(
-            top: 367,
+            top: 340,
             child: Container(
               decoration: BoxDecoration(
                 shape: BoxShape.circle,

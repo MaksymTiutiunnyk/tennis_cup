@@ -6,13 +6,17 @@ part 'invitations_state.dart';
 
 class InvitationsCubit extends Cubit<InvitationsState> {
   final InvitationsRepository _repository;
+  final String _status;
 
   InvitationsCubit(
       {required InvitationsRepository repository, required String status})
       : _repository = repository,
+        _status = status,
         super(InvitationsLoading()) {
     _load(status);
   }
+
+  Future<void> reload() => _load(_status);
 
   Future<void> _load(String status) async {
     try {

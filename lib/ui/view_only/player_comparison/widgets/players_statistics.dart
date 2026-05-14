@@ -20,11 +20,6 @@ class PlayersStatistics extends StatelessWidget {
             player2: player2.rankTennis.toString(),
           ),
           PlayersStatistic(
-            label: 'UTTF Rank:',
-            player1: player1.rankUTTF.toString(),
-            player2: player2.rankUTTF.toString(),
-          ),
-          PlayersStatistic(
             label: 'City, Country:',
             player1: player1.place,
             player2: player2.place,

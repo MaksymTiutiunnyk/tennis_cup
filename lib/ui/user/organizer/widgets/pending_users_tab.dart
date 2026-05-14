@@ -30,15 +30,24 @@ class PendingUsersTab extends StatelessWidget {
                 ],
               ),
             ),
-          PendingUsersLoaded(users: final users) when users.isEmpty =>
-            const Center(child: Text('No pending registrations')),
           PendingUsersLoaded(users: final users) => RefreshIndicator(
               onRefresh: () => context.read<PendingUsersCubit>().load(),
-              child: ListView.builder(
-                padding: const EdgeInsets.all(8),
-                itemCount: users.length,
-                itemBuilder: (_, i) => PendingUserCard(user: users[i]),
-              ),
+              child: users.isEmpty
+                  ? const CustomScrollView(
+                      physics: AlwaysScrollableScrollPhysics(),
+                      slivers: [
+                        SliverFillRemaining(
+                          child: Center(
+                              child: Text('No pending registrations')),
+                        ),
+                      ],
+                    )
+                  : ListView.builder(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      padding: const EdgeInsets.all(8),
+                      itemCount: users.length,
+                      itemBuilder: (_, i) => PendingUserCard(user: users[i]),
+                    ),
             ),
         },
       ),

@@ -111,18 +111,27 @@ class OrganizerTournamentsTab extends StatelessWidget {
                           ],
                         ),
                       ),
-                    OrgTournamentsLoaded(tournaments: final list)
-                        when list.isEmpty =>
-                      const Center(child: Text('No tournaments yet')),
                     OrgTournamentsLoaded(tournaments: final list) =>
                       RefreshIndicator(
                         onRefresh: () => _reload(context),
-                        child: ListView.builder(
-                          padding: const EdgeInsets.all(8),
-                          itemCount: list.length,
-                          itemBuilder: (_, i) =>
-                              TournamentCard(tournament: list[i]),
-                        ),
+                        child: list.isEmpty
+                            ? const CustomScrollView(
+                                physics: AlwaysScrollableScrollPhysics(),
+                                slivers: [
+                                  SliverFillRemaining(
+                                    child: Center(
+                                        child: Text('No tournaments yet')),
+                                  ),
+                                ],
+                              )
+                            : ListView.builder(
+                                physics:
+                                    const AlwaysScrollableScrollPhysics(),
+                                padding: const EdgeInsets.all(8),
+                                itemCount: list.length,
+                                itemBuilder: (_, i) =>
+                                    TournamentCard(tournament: list[i]),
+                              ),
                       ),
                   },
                 ),
