@@ -8,9 +8,38 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 flutter run                        # Run the app
 flutter build apk                  # Build Android APK
 flutter build ios                  # Build iOS
-flutter test                       # Run tests
+flutter test test/data test/ui     # Run unit tests (excludes broken widget_test.dart)
+flutter test                       # Run all tests (widget_test.dart will fail — known, unrelated to our code)
 flutter analyze                    # Static analysis
 ```
+
+## Testing
+
+Unit tests live in `test/` mirroring `lib/`:
+
+```
+test/
+├── helpers/
+│   ├── mocks.dart      # all Mock classes + registerFallbackValues()
+│   └── fixtures.dart   # factory helpers (aPlayer(), aNews(), anArena(), …)
+├── data/
+│   ├── services/rest/  # one file per REST service — tests Dio interactions directly
+│   └── repositories/   # one file per repository — mocks service interfaces
+└── ui/
+    ├── auth/
+    ├── user/           # organizer/, player/, referee/, core/
+    └── view_only/      # schedule/, home/, news/, player_details/, …
+```
+
+**Stack**: `mocktail` for mocking, `bloc_test` for cubit/bloc state assertions.
+
+**Key patterns**:
+- Always call `setUpAll(registerFallbackValues)` at the top of each test file.
+- For cubits whose constructors auto-load (fire async work immediately), stall the constructor in the outer `setUp` with `Completer<T>().future` so it never completes. Re-stub inside `act:` for load tests — this avoids timing ambiguity with `skip:`.
+- For optimistic-mutation tests (delete/approve/reject), use `seed:` to set the starting state; the constructor's stalled load never completes and doesn't interfere.
+- For guard tests (wrong state type → no-op), stub the repository method anyway — if unstubbed, mocktail throws `MissingStubError`, which the cubit catches and emits an error state instead of nothing.
+- Service tests mock `Dio` directly; `Response<dynamic>(data: ..., statusCode: 200, requestOptions: RequestOptions(path: ''))` for success; `DioException` with `type: DioExceptionType.badResponse` for errors.
+- `widget_test.dart` (pre-existing, root level) fails due to Firebase initialization — ignore it; run `flutter test test/data test/ui` instead.
 
 ## Architecture
 
