@@ -2,12 +2,14 @@ import 'package:equatable/equatable.dart';
 import 'package:intl/intl.dart';
 import 'package:tennis_cup/data/models/arena.dart';
 import 'package:tennis_cup/data/models/match.dart';
-import 'package:tennis_cup/data/models/player.dart';
+import 'package:tennis_cup/data/models/tournament_time.dart';
+import 'package:tennis_cup/data/models/user.dart';
+
+export 'package:tennis_cup/data/models/tournament_time.dart';
+
+enum TournamentStatus { pending, active, finished }
 
 DateFormat formatter = DateFormat('yyyy-MM-dd');
-
-// ignore: constant_identifier_names
-enum Time { Morning, Evening, Day, Midnight, Night }
 
 class TournamentParticipant {
   final int playerId;
@@ -28,8 +30,8 @@ class Tournament extends Equatable {
   final String tournamentId;
   final String name;
   final String gender;
-  final String status;
-  final List<Player> players;
+  final TournamentStatus status;
+  final List<User> players;
   final List<Match>? matches;
   final DateTime date;
   final Arena arena;
@@ -54,7 +56,7 @@ class Tournament extends Equatable {
     required this.places,
     this.name = '',
     this.gender = '',
-    this.status = 'PENDING',
+    this.status = TournamentStatus.pending,
     this.isFinished = false,
     this.matches,
     this.refereeId,

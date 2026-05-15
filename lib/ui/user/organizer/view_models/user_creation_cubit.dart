@@ -36,8 +36,10 @@ class UserCreationCubit extends Cubit<UserCreationState> {
         city: city,
       );
       final roleName = role[0] + role.substring(1).toLowerCase();
+      if (isClosed) return;
       emit(UserCreationSuccess('$roleName created successfully'));
     } catch (e) {
+      if (isClosed) return;
       emit(UserCreationError('Failed to create user'));
     }
   }

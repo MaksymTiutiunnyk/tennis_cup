@@ -1,18 +1,21 @@
 import 'package:equatable/equatable.dart';
-import 'package:tennis_cup/data/models/player.dart';
+import 'package:tennis_cup/data/models/arena.dart';
 import 'package:tennis_cup/data/models/tournament.dart';
+import 'package:tennis_cup/data/models/user.dart';
 
-class WinnerView extends Equatable {
+class ArenaWinner extends Equatable {
   final String arenaName;
-  final String tournamentId;
+  final ArenaColor arenaColor;
+  final int tournamentId;
   final String tournamentName;
   final String tournamentGender;
   final Time tournamentTime;
   final DateTime tournamentStart;
-  final List<Player> winners;
+  final List<User> winners;
 
-  const WinnerView({
+  const ArenaWinner({
     required this.arenaName,
+    required this.arenaColor,
     required this.tournamentId,
     required this.tournamentName,
     required this.tournamentGender,
@@ -24,6 +27,7 @@ class WinnerView extends Equatable {
   @override
   List<Object?> get props => [
         arenaName,
+        arenaColor,
         tournamentId,
         tournamentName,
         tournamentGender,

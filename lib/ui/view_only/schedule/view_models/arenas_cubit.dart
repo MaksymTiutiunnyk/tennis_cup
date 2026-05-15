@@ -23,8 +23,10 @@ class ArenasCubit extends Cubit<ArenasState> {
   void _fetch() async {
     try {
       final arenas = await arenaRepository.fetchAllArenas();
+      if (isClosed) return;
       emit(ArenasLoaded(arenas));
     } catch (_) {
+      if (isClosed) return;
       emit(ArenasError());
     }
   }

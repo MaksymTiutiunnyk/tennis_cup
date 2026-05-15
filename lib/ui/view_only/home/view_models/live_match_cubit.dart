@@ -16,11 +16,14 @@ class LiveMatchCubit extends Cubit<Match?> {
   })  : _matchId = matchId,
         super(initialMatch) {
     if (initialMatch == null) _fetch();
-    _sub = matchRepository.watchMatchChanges(matchId).listen(emit);
+    _sub = matchRepository.watchMatchChanges(matchId).listen((m) {
+      if (!isClosed) emit(m);
+    });
   }
 
   void _fetch() async {
     final match = await matchRepository.fetchMatchById(matchId: _matchId);
+    if (isClosed) return;
     emit(match);
   }
 

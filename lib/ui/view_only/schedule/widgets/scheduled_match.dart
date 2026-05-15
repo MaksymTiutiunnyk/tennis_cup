@@ -17,7 +17,7 @@ class ScheduledMatch extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => LiveMatchCubit(
-        matchId: match.matchId,
+        matchId: match.id.toString(),
         matchRepository: ServiceLocator.matchRepository,
         initialMatch: match,
       ),
@@ -44,14 +44,14 @@ class _ScheduledMatchBody extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    formatter.format(match.dateTime),
+                    formatter.format(match.scheduledStart),
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                   IconButton(
                     onPressed: () => context.push(
                       AppRoutes.playersComparison(
-                        match.bluePlayer.userId.toString(),
-                        match.redPlayer.userId.toString(),
+                        match.bluePlayer.id.toString(),
+                        match.redPlayer.id.toString(),
                       ),
                       extra: (p1: match.bluePlayer, p2: match.redPlayer),
                     ),
@@ -65,7 +65,7 @@ class _ScheduledMatchBody extends StatelessWidget {
                   InkWell(
                     onTap: () => context.push(
                       AppRoutes.playerDetails(
-                          match.bluePlayer.userId.toString()),
+                          match.bluePlayer.id.toString()),
                       extra: match.bluePlayer,
                     ),
                     child: Text(
@@ -77,7 +77,7 @@ class _ScheduledMatchBody extends StatelessWidget {
                     padding: const EdgeInsets.only(right: 16.0),
                     child: Text(
                       match.isTechnicalDefeat
-                          ? (match.winnerId == match.bluePlayer.userId
+                          ? (match.winnerId == match.bluePlayer.id
                               ? 'W'
                               : 'L')
                           : match.blueScore.toString(),
@@ -95,7 +95,7 @@ class _ScheduledMatchBody extends StatelessWidget {
                   InkWell(
                     onTap: () => context.push(
                       AppRoutes.playerDetails(
-                          match.redPlayer.userId.toString()),
+                          match.redPlayer.id.toString()),
                       extra: match.redPlayer,
                     ),
                     child: Text(
@@ -107,7 +107,7 @@ class _ScheduledMatchBody extends StatelessWidget {
                     padding: const EdgeInsets.only(right: 16.0),
                     child: Text(
                       match.isTechnicalDefeat
-                          ? (match.winnerId == match.redPlayer.userId
+                          ? (match.winnerId == match.redPlayer.id
                               ? 'W'
                               : 'L')
                           : match.redScore.toString(),

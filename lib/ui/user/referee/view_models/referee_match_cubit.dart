@@ -1,28 +1,25 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tennis_cup/data/models/player.dart';
-import 'package:tennis_cup/data/repositories/referee_repository.dart';
-import 'package:tennis_cup/data/services/dto/match_dto.dart';
+import 'package:tennis_cup/data/models/match.dart';
+import 'package:tennis_cup/data/models/user.dart';
+import 'package:tennis_cup/data/repositories/match_repository.dart';
 
 part 'referee_match_state.dart';
 
 class RefereeMatchCubit extends Cubit<RefereeMatchState> {
-  final RefereeRepository _repository;
+  final MatchRepository _repository;
 
-  RefereeMatchCubit({required RefereeRepository repository})
+  RefereeMatchCubit({required MatchRepository repository})
       : _repository = repository,
         super(RefereeMatchLoading());
 
   Future<void> load(int matchId) async {
     emit(RefereeMatchLoading());
     try {
-      final (:match, :blue, :red) =
-          await _repository.fetchMatchWithPlayers(matchId);
-      emit(RefereeMatchReady(
-        match: match,
-        bluePlayer: blue,
-        redPlayer: red,
-      ));
+      final match = await _repository.fetchMatchWithPlayers(matchId);
+      if (isClosed) return;
+      emit(RefereeMatchReady(match: match));
     } catch (e) {
+      if (isClosed) return;
       emit(RefereeMatchError(e.toString()));
     }
   }
@@ -31,10 +28,11 @@ class RefereeMatchCubit extends Cubit<RefereeMatchState> {
     final current = state;
     if (current is! RefereeMatchReady) return;
     try {
-      final (:match, :blue, :red) =
-          await _repository.fetchMatchWithPlayers(current.match.id);
+      final match = await _repository.fetchMatchWithPlayers(current.match.id);
+      if (isClosed) return;
       emit(current.copyWith(match: match));
     } catch (e) {
+      if (isClosed) return;
       emit(RefereeMatchError(e.toString()));
     }
   }
@@ -56,7 +54,7 @@ class RefereeMatchCubit extends Cubit<RefereeMatchState> {
       final startedMatch =
           await _repository.startMatch(s.match.id, s.firstServerPlayerId!);
       final firstPendingSetNumber = startedMatch.sets
-              .where((set) => set.status == 'PENDING')
+              .where((set) => set.status == SetStatus.pending)
               .firstOrNull
               ?.number ??
           1;
@@ -67,6 +65,7 @@ class RefereeMatchCubit extends Cubit<RefereeMatchState> {
       }
       await _reload();
     } catch (e) {
+      if (isClosed) return;
       emit(RefereeMatchError(e.toString()));
     }
   }
@@ -78,6 +77,7 @@ class RefereeMatchCubit extends Cubit<RefereeMatchState> {
       await _repository.startSet(s.match.id, setNumber);
       await _reload();
     } catch (e) {
+      if (isClosed) return;
       emit(RefereeMatchError(e.toString()));
     }
   }
@@ -89,15 +89,16 @@ class RefereeMatchCubit extends Cubit<RefereeMatchState> {
     final s = state;
     if (s is! RefereeMatchReady) return;
     final activeSet =
-        s.match.sets.where((st) => st.status == 'ACTIVE').firstOrNull;
+        s.match.sets.where((st) => st.status == SetStatus.active).firstOrNull;
     if (activeSet == null) return;
-    final newBlue = activeSet.bluePlayerScore + (isBlue ? 1 : 0);
-    final newRed = activeSet.redPlayerScore + (isBlue ? 0 : 1);
+    final newBlue = activeSet.blueScore + (isBlue ? 1 : 0);
+    final newRed = activeSet.redScore + (isBlue ? 0 : 1);
     try {
       await _repository.updateScore(
           s.match.id, activeSet.number, newBlue, newRed);
       await _reload();
     } catch (e) {
+      if (isClosed) return;
       emit(RefereeMatchError(e.toString()));
     }
   }
@@ -109,16 +110,16 @@ class RefereeMatchCubit extends Cubit<RefereeMatchState> {
     final s = state;
     if (s is! RefereeMatchReady) return;
     final activeSet =
-        s.match.sets.where((st) => st.status == 'ACTIVE').firstOrNull;
+        s.match.sets.where((st) => st.status == SetStatus.active).firstOrNull;
     if (activeSet == null) return;
-    final newBlue =
-        (activeSet.bluePlayerScore - (isBlue ? 1 : 0)).clamp(0, 999);
-    final newRed = (activeSet.redPlayerScore - (isBlue ? 0 : 1)).clamp(0, 999);
+    final newBlue = (activeSet.blueScore - (isBlue ? 1 : 0)).clamp(0, 999);
+    final newRed = (activeSet.redScore - (isBlue ? 0 : 1)).clamp(0, 999);
     try {
       await _repository.updateScore(
           s.match.id, activeSet.number, newBlue, newRed);
       await _reload();
     } catch (e) {
+      if (isClosed) return;
       emit(RefereeMatchError(e.toString()));
     }
   }
@@ -130,6 +131,7 @@ class RefereeMatchCubit extends Cubit<RefereeMatchState> {
       await _repository.finishSet(s.match.id, setNumber);
       await _reload();
     } catch (e) {
+      if (isClosed) return;
       emit(RefereeMatchError(e.toString()));
     }
   }
@@ -141,6 +143,7 @@ class RefereeMatchCubit extends Cubit<RefereeMatchState> {
       await _repository.finishMatch(s.match.id);
       await _reload();
     } catch (e) {
+      if (isClosed) return;
       emit(RefereeMatchError(e.toString()));
     }
   }
@@ -153,6 +156,7 @@ class RefereeMatchCubit extends Cubit<RefereeMatchState> {
       await _repository.finishMatch(s.match.id);
       await _reload();
     } catch (e) {
+      if (isClosed) return;
       emit(RefereeMatchError(e.toString()));
     }
   }
@@ -165,6 +169,7 @@ class RefereeMatchCubit extends Cubit<RefereeMatchState> {
           reason: reason);
       await _reload();
     } catch (e) {
+      if (isClosed) return;
       emit(RefereeMatchError(e.toString()));
     }
   }
@@ -178,6 +183,7 @@ class RefereeMatchCubit extends Cubit<RefereeMatchState> {
           reason: reason);
       await _reload();
     } catch (e) {
+      if (isClosed) return;
       emit(RefereeMatchError(e.toString()));
     }
   }
@@ -189,6 +195,7 @@ class RefereeMatchCubit extends Cubit<RefereeMatchState> {
       await _repository.issueCard(s.match.id, playerId, cardType);
       await _reload();
     } catch (e) {
+      if (isClosed) return;
       emit(RefereeMatchError(e.toString()));
     }
   }
@@ -200,6 +207,7 @@ class RefereeMatchCubit extends Cubit<RefereeMatchState> {
       await _repository.revokeCard(s.match.id, cardId);
       await _reload();
     } catch (e) {
+      if (isClosed) return;
       emit(RefereeMatchError(e.toString()));
     }
   }

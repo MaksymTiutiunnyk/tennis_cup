@@ -25,8 +25,10 @@ class NewsCubit extends Cubit<NewsState> {
         DateTime(period.year, period.month),
         DateTime(period.year, period.month + 1),
       );
+      if (isClosed) return;
       emit(NewsFetched(selectedPeriod: period, fetchedNews: fetchedNews));
     } catch (e) {
+      if (isClosed) return;
       emit(NewsError(period, e));
     }
   }

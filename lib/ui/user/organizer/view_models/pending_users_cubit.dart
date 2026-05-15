@@ -20,8 +20,10 @@ class PendingUsersCubit extends Cubit<PendingUsersState> {
       final result = await _repository.fetchPendingUsers(
         const PageRequest(page: 0, size: 50),
       );
+      if (isClosed) return;
       emit(PendingUsersLoaded(result.items));
     } catch (e) {
+      if (isClosed) return;
       emit(PendingUsersError(_message(e)));
     }
   }
@@ -31,6 +33,7 @@ class PendingUsersCubit extends Cubit<PendingUsersState> {
     try {
       await _repository.approveUser(userId);
     } catch (e) {
+      if (isClosed) return;
       if (snapshot != null) emit(PendingUsersLoaded(snapshot));
       emit(PendingUsersError(_message(e)));
     }
@@ -41,6 +44,7 @@ class PendingUsersCubit extends Cubit<PendingUsersState> {
     try {
       await _repository.rejectUser(userId, reason: reason);
     } catch (e) {
+      if (isClosed) return;
       if (snapshot != null) emit(PendingUsersLoaded(snapshot));
       emit(PendingUsersError(_message(e)));
     }

@@ -1,9 +1,14 @@
 import 'package:equatable/equatable.dart';
-import 'package:flutter/material.dart';
+import 'package:tennis_cup/core/utils/enum_utils.dart';
+
+enum ArenaColor { red, green, blue, yellow, white, black, brown, grey }
+
+ArenaColor arenaColorFromString(String? value) =>
+    enumFromString(ArenaColor.values, value, ArenaColor.grey);
 
 class Arena extends Equatable {
   final String title;
-  final Color color;
+  final ArenaColor color;
   final String id;
   final String? city;
 

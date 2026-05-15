@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:tennis_cup/data/models/player.dart';
+import 'package:tennis_cup/data/models/user.dart';
 import 'package:tennis_cup/ui/user/referee/view_models/referee_match_cubit.dart';
 import 'package:tennis_cup/ui/user/referee/widgets/server_tile.dart';
 
 class CenterPanel extends StatelessWidget {
   final RefereeMatchReady state;
-  final Player blue;
-  final Player red;
+  final User blue;
+  final User red;
   final void Function(int) onSelectServer;
   final VoidCallback onStartMatch;
 
@@ -37,15 +37,15 @@ class CenterPanel extends StatelessWidget {
           ServerTile(
             player: red,
             color: const Color(0xFFC62828),
-            isSelected: state.firstServerPlayerId == red.userId,
-            onTap: () => onSelectServer(red.userId),
+            isSelected: state.firstServerPlayerId == red.id,
+            onTap: () => onSelectServer(red.id),
           ),
           const SizedBox(height: 8),
           ServerTile(
             player: blue,
             color: const Color(0xFF1565C0),
-            isSelected: state.firstServerPlayerId == blue.userId,
-            onTap: () => onSelectServer(blue.userId),
+            isSelected: state.firstServerPlayerId == blue.id,
+            onTap: () => onSelectServer(blue.id),
           ),
           const SizedBox(height: 24),
           FilledButton.icon(

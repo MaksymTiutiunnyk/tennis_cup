@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:tennis_cup/data/models/player.dart';
+import 'package:tennis_cup/data/models/user.dart';
 import 'package:tennis_cup/routing/app_router.dart';
 import 'package:tennis_cup/ui/core/widgets/player_avatar.dart';
 
 class LiveStreamMatchPlayer extends StatelessWidget {
-  final Player player;
+  final User player;
   final String label;
 
   const LiveStreamMatchPlayer(
@@ -15,7 +15,7 @@ class LiveStreamMatchPlayer extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () => context.push(
-        AppRoutes.playerDetails(player.userId.toString()),
+        AppRoutes.playerDetails(player.id.toString()),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,

@@ -128,7 +128,7 @@ Provided at app root in `main.dart` (accessible to all routes including pushed s
 - `NotificationCubit` — FCM token lifecycle; `init()` triggered on `AuthAuthenticated`, `unregisterDevice()` called before logout in `SettingsTab`
 - `NewsCubit` — news feed
 - `ScheduleDateCubit`, `ArenaFilterCubit`, `TimeFilterCubit` — schedule filters (must be global so pushed screens like PlayerDetails can update them)
-- `SexFilterCubit` — ranking filter
+- `GenderFilterCubit` — ranking filter
 - `VideoPlayerCubit`, `LiveStreamMatchIndexCubit` — YouTube live stream state
 
 Any cubit needed by a pushed route (`/players/:id`, `/comparison/...`) **must** be at root level — pushed routes are siblings of the shells in the Navigator tree, not descendants, so shell-level providers are invisible to them.
@@ -137,7 +137,7 @@ Any cubit needed by a pushed route (`/players/:id`, `/comparison/...`) **must** 
 
 Models in `lib/data/models/` are pure data classes — no factory methods. Services parse API responses into DTOs (`lib/data/services/dto/`); repositories map DTOs to domain models via private static methods. Shared string→value helpers (e.g. `arenaColorFromString`, `timeFromString`) live as top-level functions in the relevant DTO file.
 
-`Player` is always constructed from `GET /api/v1/users/{id}` via `_playerFromProfileJson` when full profile data is needed. It carries raw editable fields: `birthDate: String?` (ISO date), `city: String`, `country: String`, `patronymicName: String`. `year: int` and `place: String` are computed getters derived from these. `genderString: String?` returns `'MALE'`/`'FEMALE'`/`null` from the `Sex` enum.
+`Player` is always constructed from `GET /api/v1/users/{id}` via `_playerFromProfileJson` when full profile data is needed. It carries raw editable fields: `birthDate: String?` (ISO date), `city: String`, `country: String`, `patronymicName: String`. `year: int` and `place: String` are computed getters derived from these. `genderString: String?` returns `'MALE'`/`'FEMALE'`/`null` from the `Gender` enum.
 
 Thin `Player` objects (built by `_playerFromRatingRecord` from the rating endpoint, or `_playerFromSearchResult` from the search endpoint) have zeroed stats and are used **only for list display** (ranking cards, search results). They are never passed as route extras. `PlayerDetailsRoute` and `PlayersComparisonRoute` always fetch fresh via `fetchPlayerById` — there is no cache optimisation. Widgets that render stats should guard against zero values and show `–` when appropriate.
 

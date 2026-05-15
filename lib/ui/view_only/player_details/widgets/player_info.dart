@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:tennis_cup/data/models/player.dart';
+import 'package:tennis_cup/data/models/user.dart';
 import 'package:tennis_cup/ui/core/widgets/player_avatar.dart';
 
 class PlayerInfo extends StatelessWidget {
-  final Player player;
+  final User player;
   const PlayerInfo(this.player, {super.key});
 
   @override
@@ -31,7 +31,7 @@ class PlayerInfo extends StatelessWidget {
                       style: Theme.of(context).textTheme.bodySmall,
                     ),
                     Text(
-                      player.rankTennis.toString(),
+                      player.rating.toString(),
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
                   ],
@@ -104,7 +104,7 @@ class PlayerInfo extends StatelessWidget {
                       style: Theme.of(context).textTheme.bodySmall,
                     ),
                     Text(
-                      player.loses.toString(),
+                      player.losses.toString(),
                       style: Theme.of(context)
                           .textTheme
                           .bodyMedium!

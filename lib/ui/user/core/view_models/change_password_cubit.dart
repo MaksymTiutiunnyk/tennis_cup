@@ -21,10 +21,13 @@ class ChangePasswordCubit extends Cubit<ChangePasswordState> {
         currentPassword: currentPassword,
         newPassword: newPassword,
       );
+      if (isClosed) return;
       emit(ChangePasswordSuccess());
     } on DioException catch (e) {
+      if (isClosed) return;
       emit(ChangePasswordFailure(_messageFromDio(e)));
     } catch (_) {
+      if (isClosed) return;
       emit(ChangePasswordFailure('Something went wrong. Please try again.'));
     }
   }

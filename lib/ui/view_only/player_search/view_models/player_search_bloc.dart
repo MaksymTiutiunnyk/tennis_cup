@@ -1,5 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tennis_cup/data/models/player.dart';
+import 'package:tennis_cup/data/models/user.dart';
 import 'package:tennis_cup/data/repositories/player_repository.dart';
 
 part 'player_search_state.dart';
@@ -18,6 +18,7 @@ class PlayerSearchBloc extends Bloc<PlayerSearchEvent, PlayerSearchState> {
       try {
         final players = await _searchPlayers(event.value);
 
+        if (isClosed) return;
         if (players.isEmpty) {
           emit(PlayersNotFound());
           return;
@@ -25,12 +26,13 @@ class PlayerSearchBloc extends Bloc<PlayerSearchEvent, PlayerSearchState> {
 
         emit(PlayerSearchLoaded(players));
       } catch (e) {
+        if (isClosed) return;
         emit(PlayerSearchError(e));
       }
     });
   }
 
-  Future<List<Player>> _searchPlayers(String value) async {
+  Future<List<User>> _searchPlayers(String value) async {
     final query = value.trim();
     if (query.isEmpty) return [];
     return playerRepository.fetchPlayersBySubstring(query: query);

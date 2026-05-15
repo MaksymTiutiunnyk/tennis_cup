@@ -7,7 +7,6 @@ import 'package:tennis_cup/data/models/tournament.dart';
 import 'package:tennis_cup/data/services/abstract/i_tournament_service.dart';
 import 'package:tennis_cup/data/services/dto/dashboard_dto.dart';
 import 'package:tennis_cup/data/services/dto/tournament_dto.dart';
-import 'package:tennis_cup/data/services/dto/tournament_invitation_dto.dart';
 
 final _dateFormat = DateFormat('yyyy-MM-dd');
 

@@ -1,6 +1,4 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tennis_cup/data/models/combined_user.dart';
-import 'package:tennis_cup/data/models/user_search_result.dart';
 import 'package:tennis_cup/data/repositories/admin_repository.dart';
 import 'package:tennis_cup/ui/user/organizer/view_models/users_search_state.dart';
 
@@ -22,8 +20,10 @@ class UsersSearchCubit extends Cubit<UsersSearchState> {
     emit(UsersSearchLoading());
     try {
       final users = await _adminRepository.searchAllUsers(_lastQuery);
-      emit(UsersSearchLoaded(users: users.map(_toCombinedUser).toList()));
+      if (isClosed) return;
+      emit(UsersSearchLoaded(users: users));
     } catch (e) {
+      if (isClosed) return;
       emit(UsersSearchError('Failed to search users'));
     }
   }
@@ -32,12 +32,4 @@ class UsersSearchCubit extends Cubit<UsersSearchState> {
     if (_lastQuery.isEmpty) return;
     await search(_lastQuery);
   }
-
-  static CombinedUser _toCombinedUser(UserSearchResult user) => CombinedUser(
-        userId: user.userId,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        avatarUrl: user.avatarUrl ?? '',
-        roles: user.roles,
-      );
 }

@@ -21,8 +21,10 @@ class InvitationsCubit extends Cubit<InvitationsState> {
   Future<void> _load(String status) async {
     try {
       final items = await _repository.fetchInvitations(status: status);
+      if (isClosed) return;
       emit(InvitationsLoaded(items));
     } catch (_) {
+      if (isClosed) return;
       emit(InvitationsError('Failed to load invitations'));
     }
   }
@@ -40,10 +42,12 @@ class InvitationsCubit extends Cubit<InvitationsState> {
 
     try {
       await action();
+      if (isClosed) return;
       final updated =
           current.items.where((i) => i.id != invitationId).toList();
       emit(InvitationsLoaded(updated));
     } catch (_) {
+      if (isClosed) return;
       emit(InvitationsError('Failed to update invitation'));
     }
   }

@@ -3,8 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:tennis_cup/data/models/arena.dart';
-import 'package:tennis_cup/data/models/match_view.dart';
+import 'package:tennis_cup/data/models/match.dart';
 import 'package:tennis_cup/routing/app_router.dart';
+import 'package:tennis_cup/ui/core/themes/color_utils.dart';
 import 'package:tennis_cup/ui/view_only/schedule/view_models/arena_filter_cubit.dart';
 import 'package:tennis_cup/ui/view_only/schedule/view_models/schedule_date_cubit.dart';
 import 'package:tennis_cup/ui/view_only/schedule/view_models/time_filter_cubit.dart';
@@ -12,14 +13,14 @@ import 'package:tennis_cup/ui/view_only/schedule/view_models/time_filter_cubit.d
 final _formatter = DateFormat('yyyy-MM-dd, HH:mm');
 
 class UpcomingMatch extends StatelessWidget {
-  final MatchView match;
+  final Match match;
   const UpcomingMatch({super.key, required this.match});
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        context.read<ScheduleDateCubit>().selectDate(match.tournamentStart);
+        context.read<ScheduleDateCubit>().selectDate(match.scheduledStart);
         context.read<TimeFilterCubit>().selectTime(match.tournamentTime);
         context.read<ArenaFilterCubit>().selectArena(Arena(
               id: match.arenaId,
@@ -37,11 +38,11 @@ class UpcomingMatch extends StatelessWidget {
             child: Row(
               children: [
                 Text(
-                  _formatter.format(match.tournamentStart),
+                  _formatter.format(match.scheduledStart),
                   style: Theme.of(context).textTheme.bodySmall,
                 ),
                 const SizedBox(width: 8),
-                Icon(Icons.circle, color: match.arenaColor, size: 8),
+                Icon(Icons.circle, color: arenaColorToMaterial(match.arenaColor), size: 8),
                 const SizedBox(width: 8),
                 Text(
                   match.arenaName,
@@ -56,7 +57,7 @@ class UpcomingMatch extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 0, 0, 8),
             child: Text(
-              '${match.bluePlayer.surname} ${match.bluePlayer.name} - ${match.redPlayer.surname} ${match.redPlayer.name}',
+              '${match.bluePlayer.lastName} ${match.bluePlayer.firstName} - ${match.redPlayer.lastName} ${match.redPlayer.firstName}',
               style: Theme.of(context).textTheme.bodyMedium,
             ),
           ),

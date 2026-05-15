@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:tennis_cup/data/models/player.dart';
+import 'package:tennis_cup/data/models/user.dart';
 import 'package:tennis_cup/routing/app_router.dart';
 import 'package:tennis_cup/ui/view_only/player_search/widgets/player_search.dart';
-import 'package:tennis_cup/ui/view_only/ranking/view_models/sex_filter_cubit.dart';
+import 'package:tennis_cup/ui/view_only/ranking/view_models/gender_filter_cubit.dart';
 import 'package:tennis_cup/ui/view_only/ranking/widgets/ranking_filters.dart';
 
 class RankingPanel extends StatelessWidget {
@@ -16,16 +16,16 @@ class RankingPanel extends StatelessWidget {
       isScrollControlled: true,
       context: context,
       builder: (ctx) => BlocProvider.value(
-        value: BlocProvider.of<SexFilterCubit>(context),
+        value: BlocProvider.of<GenderFilterCubit>(context),
         child: const RankingFilters(),
       ),
     );
   }
 
-  void _showPlayerDetails(BuildContext context, Player player) {
+  void _showPlayerDetails(BuildContext context, User player) {
     Navigator.of(context).pop();
     context.push(
-      AppRoutes.playerDetails(player.userId.toString()),
+      AppRoutes.playerDetails(player.id.toString()),
       extra: player,
     );
   }

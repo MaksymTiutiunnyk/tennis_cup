@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:tennis_cup/data/models/player.dart';
+import 'package:tennis_cup/data/models/user.dart';
 import 'package:tennis_cup/routing/app_router.dart';
 import 'package:tennis_cup/ui/core/icons/custom_icons_icons.dart';
 import 'package:tennis_cup/ui/core/widgets/player_avatar.dart';
 
 class PlayerIntro extends StatelessWidget {
-  final Player player;
+  final User player;
   const PlayerIntro(this.player, {super.key});
 
   @override
@@ -14,7 +14,7 @@ class PlayerIntro extends StatelessWidget {
     return Expanded(
       child: InkWell(
         onTap: () => context.push(
-          AppRoutes.playerDetails(player.userId.toString()),
+          AppRoutes.playerDetails(player.id.toString()),
         ),
         child: Card(
           margin: const EdgeInsets.all(8),
@@ -45,7 +45,7 @@ class PlayerIntro extends StatelessWidget {
                             color: Colors.yellow.shade600,
                           ),
                           const SizedBox(width: 4),
-                          Text(player.gold.toString()),
+                          Text(player.goldPlaces.toString()),
                         ],
                       ),
                       const SizedBox(height: 4),
@@ -58,7 +58,7 @@ class PlayerIntro extends StatelessWidget {
                             color: Colors.grey,
                           ),
                           const SizedBox(width: 4),
-                          Text(player.silver.toString()),
+                          Text(player.silverPlaces.toString()),
                         ],
                       ),
                       const SizedBox(height: 4),
@@ -71,7 +71,7 @@ class PlayerIntro extends StatelessWidget {
                             color: Colors.yellow.shade900,
                           ),
                           const SizedBox(width: 4),
-                          Text(player.bronze.toString()),
+                          Text(player.bronzePlaces.toString()),
                         ],
                       ),
                     ],

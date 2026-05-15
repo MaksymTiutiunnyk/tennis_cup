@@ -63,8 +63,8 @@ class EditUserScreen extends StatelessWidget {
                         submitLabel: 'Save',
                         currentStatus: state.user.status,
                         initialValues: UserProfileInitialValues(
-                          firstName: user.name,
-                          lastName: user.surname,
+                          firstName: user.firstName,
+                          lastName: user.lastName,
                           patronymicName: user.patronymicName.isEmpty
                               ? null
                               : user.patronymicName,

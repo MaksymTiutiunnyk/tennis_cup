@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:tennis_cup/core/di/service_locator.dart';
 import 'package:tennis_cup/data/models/match.dart';
-import 'package:tennis_cup/data/models/player.dart';
+import 'package:tennis_cup/data/models/user.dart';
 import 'package:tennis_cup/routing/app_router.dart';
 import 'package:tennis_cup/ui/view_only/home/view_models/live_match_cubit.dart';
 import 'package:tennis_cup/ui/view_only/schedule/view_models/arena_filter_cubit.dart';
@@ -14,7 +14,7 @@ import 'package:tennis_cup/ui/view_only/schedule/view_models/time_filter_cubit.d
 final _dateTimeFormatter = DateFormat('yyyy-MM-dd, HH:mm');
 
 class PlayersMatch extends StatelessWidget {
-  final Player player1, player2;
+  final User player1, player2;
   final Match match;
 
   const PlayersMatch({
@@ -28,7 +28,7 @@ class PlayersMatch extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => LiveMatchCubit(
-        matchId: match.matchId,
+        matchId: match.id.toString(),
         matchRepository: ServiceLocator.matchRepository,
         initialMatch: match,
       ),
@@ -44,7 +44,7 @@ class PlayersMatch extends StatelessWidget {
 }
 
 class _PlayersMatchBody extends StatelessWidget {
-  final Player player1, player2;
+  final User player1, player2;
   final Match match;
 
   const _PlayersMatchBody({
@@ -56,8 +56,8 @@ class _PlayersMatchBody extends StatelessWidget {
   Future<void> _onTap(BuildContext context) async {
     final tournament =
         await ServiceLocator.tournamentRepository.fetchTournamentById(
-      tournamentId: match.tournamentId,
-      withPlayers: false,
+      tournamentId: match.tournamentId.toString(),
+      withUsers: false,
       withMatches: false,
     );
     if (!context.mounted) return;
@@ -93,13 +93,13 @@ class _PlayersMatchBody extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                _dateTimeFormatter.format(match.dateTime),
+                _dateTimeFormatter.format(match.scheduledStart),
                 style: Theme.of(context).textTheme.bodySmall,
               ),
               const SizedBox(height: 8),
               Text(
                 match.isTechnicalDefeat
-                    ? (match.winnerId == player1.userId ? 'W : L' : 'L : W')
+                    ? (match.winnerId == player1.id ? 'W : L' : 'L : W')
                     : '$player1Score : $player2Score',
                 style: Theme.of(context)
                     .textTheme

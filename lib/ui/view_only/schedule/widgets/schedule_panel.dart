@@ -7,6 +7,7 @@ import 'package:tennis_cup/ui/view_only/schedule/view_models/arena_filter_cubit.
 import 'package:tennis_cup/ui/view_only/schedule/view_models/arenas_cubit.dart';
 import 'package:tennis_cup/ui/view_only/schedule/view_models/schedule_date_cubit.dart';
 import 'package:tennis_cup/ui/view_only/schedule/view_models/time_filter_cubit.dart';
+import 'package:tennis_cup/ui/core/themes/color_utils.dart';
 import 'package:tennis_cup/ui/view_only/schedule/widgets/schedule_date_picker.dart';
 import 'package:tennis_cup/ui/view_only/schedule/widgets/schedule_filters.dart';
 
@@ -53,7 +54,7 @@ class SchedulePanel extends StatelessWidget {
                   padding: const EdgeInsets.only(top: 4.0),
                   child: CircleAvatar(
                     radius: 5,
-                    backgroundColor: state.color,
+                    backgroundColor: arenaColorToMaterial(state.color),
                   ),
                 ),
                 const SizedBox(width: 8),

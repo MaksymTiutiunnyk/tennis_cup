@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import 'package:tennis_cup/data/models/player.dart';
+import 'package:tennis_cup/data/models/user.dart';
 import 'package:tennis_cup/data/models/tournament.dart';
 import 'package:tennis_cup/routing/app_router.dart';
 import 'package:tennis_cup/ui/view_only/schedule/view_models/arena_filter_cubit.dart';
@@ -13,7 +13,7 @@ DateFormat formatter = DateFormat('yyyy-MM-dd');
 
 class PlayerTournament extends StatelessWidget {
   final Tournament tournament;
-  final Player player;
+  final User player;
   const PlayerTournament(
       {required this.player, required this.tournament, super.key});
 
@@ -22,10 +22,10 @@ class PlayerTournament extends StatelessWidget {
     int setsLost = 0;
 
     for (final match in tournament.matches!) {
-      if (match.bluePlayer.userId == player.userId) {
+      if (match.bluePlayer.id == player.id) {
         setsWon += match.blueScore;
         setsLost += match.redScore;
-      } else if (match.redPlayer.userId == player.userId) {
+      } else if (match.redPlayer.id == player.id) {
         setsWon += match.redScore;
         setsLost += match.blueScore;
       }
@@ -37,9 +37,9 @@ class PlayerTournament extends StatelessWidget {
   int _getWins() {
     int wins = 0;
     for (final match in tournament.matches!) {
-      if (match.bluePlayer.userId == player.userId && match.blueScore == 3) {
+      if (match.bluePlayer.id == player.id && match.blueScore == 3) {
         wins++;
-      } else if (match.redPlayer.userId == player.userId &&
+      } else if (match.redPlayer.id == player.id &&
           match.redScore == 3) {
         wins++;
       }
@@ -50,9 +50,9 @@ class PlayerTournament extends StatelessWidget {
   int _getLoses() {
     int loses = 0;
     for (final match in tournament.matches!) {
-      if (match.bluePlayer.userId == player.userId && match.redScore == 3) {
+      if (match.bluePlayer.id == player.id && match.redScore == 3) {
         loses++;
-      } else if (match.redPlayer.userId == player.userId &&
+      } else if (match.redPlayer.id == player.id &&
           match.blueScore == 3) {
         loses++;
       }
@@ -63,7 +63,7 @@ class PlayerTournament extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final index =
-        tournament.players.indexWhere((p) => p.userId == player.userId);
+        tournament.players.indexWhere((p) => p.id == player.id);
 
     return InkWell(
       onTap: () {
@@ -92,8 +92,7 @@ class PlayerTournament extends StatelessWidget {
                   const SizedBox(width: 16),
                   Expanded(
                     child: Text(
-                      // TODO: temporary fix until backend generates tournaments with accepted invitations
-                      '${formatter.format(tournament.date)} ${index >= 0 ? tournament.players.elementAt(index).sex.name : ''}, ${tournament.time.name} ${tournament.arena.title}',
+                      '${formatter.format(tournament.date)} ${tournament.gender}, ${tournament.time.name} ${tournament.arena.title}',
                     ),
                   ),
                 ],

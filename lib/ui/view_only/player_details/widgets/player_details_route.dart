@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tennis_cup/core/di/service_locator.dart';
-import 'package:tennis_cup/data/models/player.dart';
+import 'package:tennis_cup/data/models/user.dart';
 import 'package:tennis_cup/ui/view_only/player_details/widgets/player_details.dart';
 
 class PlayerDetailsRoute extends StatefulWidget {
@@ -13,7 +13,7 @@ class PlayerDetailsRoute extends StatefulWidget {
 }
 
 class _PlayerDetailsRouteState extends State<PlayerDetailsRoute> {
-  late Future<Player> _future;
+  late Future<User> _future;
 
   @override
   void initState() {
@@ -24,7 +24,7 @@ class _PlayerDetailsRouteState extends State<PlayerDetailsRoute> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<Player>(
+    return FutureBuilder<User>(
       future: _future,
       builder: (context, snapshot) {
         if (snapshot.connectionState != ConnectionState.done) {

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:tennis_cup/data/models/player.dart';
+import 'package:tennis_cup/data/models/user.dart';
 import 'package:tennis_cup/ui/core/widgets/player_avatar.dart';
 
 class NoActiveSetPlayerSide extends StatelessWidget {
-  final Player player;
+  final User player;
   final Color color;
   final String label;
 

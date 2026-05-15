@@ -1,15 +1,15 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tennis_cup/data/repositories/referee_repository.dart';
+import 'package:tennis_cup/data/repositories/tournament_repository.dart';
 import 'package:tennis_cup/data/services/dto/tournament_dto.dart';
 
 part 'referee_tournaments_state.dart';
 
 class RefereeTournamentsCubit extends Cubit<RefereeTournamentsState> {
-  final RefereeRepository _repository;
+  final TournamentRepository _repository;
   final String _userId;
 
   RefereeTournamentsCubit({
-    required RefereeRepository repository,
+    required TournamentRepository repository,
     required String userId,
   })  : _repository = repository,
         _userId = userId,
@@ -26,8 +26,10 @@ class RefereeTournamentsCubit extends Cubit<RefereeTournamentsState> {
     try {
       final tournaments =
           await _repository.fetchActiveTournamentsForReferee(_userId);
+      if (isClosed) return;
       emit(RefereeTournamentsLoaded(tournaments));
     } catch (_) {
+      if (isClosed) return;
       emit(RefereeTournamentsError('Failed to load tournaments'));
     }
   }

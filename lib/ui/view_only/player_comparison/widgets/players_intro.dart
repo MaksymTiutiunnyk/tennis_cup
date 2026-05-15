@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:tennis_cup/data/models/player.dart';
+import 'package:tennis_cup/data/models/user.dart';
 import 'package:tennis_cup/ui/view_only/player_comparison/widgets/player_intro.dart';
 
 class PlayersIntro extends StatelessWidget {
-  final Player player1, player2;
+  final User player1, player2;
   const PlayersIntro({super.key, required this.player1, required this.player2});
 
   @override

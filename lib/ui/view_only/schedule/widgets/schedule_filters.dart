@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tennis_cup/data/models/arena.dart';
 import 'package:tennis_cup/data/models/tournament.dart';
+import 'package:tennis_cup/ui/core/themes/color_utils.dart';
 import 'package:tennis_cup/ui/view_only/schedule/view_models/arena_filter_cubit.dart';
 import 'package:tennis_cup/ui/view_only/schedule/view_models/arenas_cubit.dart';
 import 'package:tennis_cup/ui/view_only/schedule/view_models/time_filter_cubit.dart';
@@ -92,7 +93,7 @@ class ScheduleFilters extends StatelessWidget {
                                 children: [
                                   Icon(
                                     Icons.circle,
-                                    color: arena.color,
+                                    color: arenaColorToMaterial(arena.color),
                                     size: 10,
                                   ),
                                   const SizedBox(width: 8),

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:tennis_cup/data/models/player.dart';
+import 'package:tennis_cup/data/models/user.dart';
 
 class ServerTile extends StatelessWidget {
-  final Player player;
+  final User player;
   final Color color;
   final bool isSelected;
   final VoidCallback onTap;

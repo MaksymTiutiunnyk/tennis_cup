@@ -18,7 +18,7 @@ import 'package:tennis_cup/ui/user/core/view_models/active_role_cubit.dart';
 import 'package:tennis_cup/ui/view_only/home/view_models/live_stream_match_index_cubit.dart';
 import 'package:tennis_cup/ui/view_only/home/view_models/video_player_cubit.dart';
 import 'package:tennis_cup/ui/view_only/news/view_models/news_cubit.dart';
-import 'package:tennis_cup/ui/view_only/ranking/view_models/sex_filter_cubit.dart';
+import 'package:tennis_cup/ui/view_only/ranking/view_models/gender_filter_cubit.dart';
 import 'package:tennis_cup/ui/view_only/schedule/view_models/arena_filter_cubit.dart';
 import 'package:tennis_cup/ui/view_only/schedule/view_models/schedule_date_cubit.dart';
 import 'package:tennis_cup/ui/view_only/schedule/view_models/time_filter_cubit.dart';
@@ -136,14 +136,14 @@ class _TennisCupState extends State<TennisCup> {
             const Arena(
                 id: '1',
                 title: 'Kyiv Yellow Arena',
-                color: Colors.yellow,
+                color: ArenaColor.yellow,
                 city: 'Kyiv'),
           ),
         ),
         BlocProvider(
           create: (_) => TimeFilterCubit(Time.Evening),
         ),
-        BlocProvider(create: (_) => SexFilterCubit()),
+        BlocProvider(create: (_) => GenderFilterCubit()),
         BlocProvider(create: (_) => VideoPlayerCubit()),
         BlocProvider(create: (_) => LiveStreamMatchIndexCubit()),
       ],

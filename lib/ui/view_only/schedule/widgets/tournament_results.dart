@@ -94,7 +94,7 @@ class _TournamentResultsBody extends StatelessWidget {
                 DataCell(
                   InkWell(
                     onTap: () => context.push(
-                      AppRoutes.playerDetails(player.userId.toString()),
+                      AppRoutes.playerDetails(player.id.toString()),
                       extra: player,
                     ),
                     child: Text(
@@ -118,26 +118,28 @@ class _TournamentResultsBody extends StatelessWidget {
                       ),
                     );
                   } else {
-                    // TODO: add fallback if nothing is found
-                    Match match = tournament.matches!.firstWhere(
-                      (m) =>
-                          (m.bluePlayer.userId == player.userId &&
-                              m.redPlayer.userId == opponent.userId) ||
-                          (m.bluePlayer.userId == opponent.userId &&
-                              m.redPlayer.userId == player.userId),
-                    );
+                    final Match? match = tournament.matches
+                        ?.where((m) =>
+                            (m.bluePlayer.id == player.id &&
+                                m.redPlayer.id == opponent.id) ||
+                            (m.bluePlayer.id == opponent.id &&
+                                m.redPlayer.id == player.id))
+                        .firstOrNull;
+                    if (match == null) {
+                      return const DataCell(Text('–'));
+                    }
 
                     final String cellLabel;
                     if (match.isTechnicalDefeat) {
                       cellLabel =
-                          match.winnerId == player.userId ? 'W : L' : 'L : W';
+                          match.winnerId == player.id ? 'W : L' : 'L : W';
                     } else {
                       final playerScore =
-                          match.bluePlayer.userId == player.userId
+                          match.bluePlayer.id == player.id
                               ? match.blueScore
                               : match.redScore;
                       final opponentScore =
-                          match.bluePlayer.userId == player.userId
+                          match.bluePlayer.id == player.id
                               ? match.redScore
                               : match.blueScore;
                       cellLabel = '$playerScore : $opponentScore';

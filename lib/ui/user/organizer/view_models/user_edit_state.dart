@@ -7,7 +7,7 @@ class UserEditInitial extends UserEditState {}
 class UserEditLoading extends UserEditState {}
 
 class UserEditLoaded extends UserEditState {
-  final Player user;
+  final User user;
   final bool saving;
   final Uint8List? pendingAvatarBytes;
   final bool avatarRemoved;

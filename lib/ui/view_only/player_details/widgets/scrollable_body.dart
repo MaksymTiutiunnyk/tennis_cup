@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:tennis_cup/data/models/player.dart';
+import 'package:tennis_cup/data/models/user.dart';
 import 'package:tennis_cup/routing/app_router.dart';
 import 'package:tennis_cup/ui/view_only/player_details/view_models/player_tournaments_cubit.dart';
 import 'package:tennis_cup/ui/view_only/player_details/widgets/player_info.dart';
@@ -9,7 +9,7 @@ import 'package:tennis_cup/ui/view_only/player_details/widgets/player_tournament
 import 'package:tennis_cup/ui/view_only/player_search/widgets/player_search.dart';
 
 class ScrollableBody extends StatefulWidget {
-  final Player player;
+  final User player;
   const ScrollableBody(this.player, {super.key});
 
   @override
@@ -41,7 +41,7 @@ class _ScrollableBodyState extends State<ScrollableBody> {
     }
   }
 
-  void _comparePlayers(BuildContext context, Player player) {
+  void _comparePlayers(BuildContext context, User player) {
     ScaffoldMessenger.of(context).clearSnackBars();
     if (widget.player == player) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -54,7 +54,7 @@ class _ScrollableBodyState extends State<ScrollableBody> {
     }
     context.pushReplacement(
       AppRoutes.playersComparison(
-          widget.player.userId.toString(), player.userId.toString()),
+          widget.player.id.toString(), player.id.toString()),
       extra: (p1: widget.player, p2: player),
     );
   }

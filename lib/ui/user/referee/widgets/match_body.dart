@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tennis_cup/data/models/match.dart';
 import 'package:tennis_cup/ui/user/referee/view_models/referee_match_cubit.dart';
 import 'package:tennis_cup/ui/user/referee/widgets/center_action_panel.dart';
 import 'package:tennis_cup/ui/user/referee/widgets/no_active_set_view.dart';
@@ -19,30 +20,33 @@ class MatchBody extends StatelessWidget {
   Widget build(BuildContext context) {
     final cubit = context.read<RefereeMatchCubit>();
     final match = state.match;
-    final activeSet = match.sets.where((s) => s.status == 'ACTIVE').firstOrNull;
+    final activeSet =
+        match.sets.where((s) => s.status == SetStatus.active).firstOrNull;
     final pendingSet =
-        match.sets.where((s) => s.status == 'PENDING').firstOrNull;
+        match.sets.where((s) => s.status == SetStatus.pending).firstOrNull;
 
     final blueSetsWon = match.sets
         .where((s) =>
-            (s.status == 'FINISHED' || s.status == 'TECHNICAL_DEFEAT') &&
-            s.winnerId == match.bluePlayerId!)
+            (s.status == SetStatus.finished ||
+                s.status == SetStatus.technicalDefeat) &&
+            s.winnerId == match.bluePlayer.id)
         .length;
     final redSetsWon = match.sets
         .where((s) =>
-            (s.status == 'FINISHED' || s.status == 'TECHNICAL_DEFEAT') &&
-            s.winnerId == match.redPlayerId!)
+            (s.status == SetStatus.finished ||
+                s.status == SetStatus.technicalDefeat) &&
+            s.winnerId == match.redPlayer.id)
         .length;
 
     // Last completed set (for between-sets view)
     final lastFinishedSet = match.sets
-        .where((s) => s.status == 'FINISHED' || s.status == 'TECHNICAL_DEFEAT')
+        .where((s) =>
+            s.status == SetStatus.finished ||
+            s.status == SetStatus.technicalDefeat)
         .lastOrNull;
 
     if (activeSet == null) {
       // Between-sets side arrangement mirrors the last finished set.
-      // Odd set just finished → red was on left → keep red on left.
-      // Even set just finished → blue was on left → keep blue on left.
       final lastSetNum = lastFinishedSet?.number ?? 1;
       final betweenSetsLeftIsRed = lastSetNum.isOdd;
 
@@ -64,8 +68,8 @@ class MatchBody extends StatelessWidget {
     final setNum = activeSet.number;
     final swapped = state.isDisplaySwapped(
       setNum,
-      blueScore: activeSet.bluePlayerScore,
-      redScore: activeSet.redPlayerScore,
+      blueScore: activeSet.blueScore,
+      redScore: activeSet.redScore,
     );
     final serverId = state.currentServerId();
     final compact = MediaQuery.sizeOf(context).height < 520 ||
@@ -78,9 +82,9 @@ class MatchBody extends StatelessWidget {
     final leftIsRed = !swapped;
 
     final leftScore =
-        leftIsRed ? activeSet.redPlayerScore : activeSet.bluePlayerScore;
+        leftIsRed ? activeSet.redScore : activeSet.blueScore;
     final rightScore =
-        leftIsRed ? activeSet.bluePlayerScore : activeSet.redPlayerScore;
+        leftIsRed ? activeSet.blueScore : activeSet.redScore;
 
     final leftCards = leftIsRed ? state.redCards : state.blueCards;
     final rightCards = leftIsRed ? state.blueCards : state.redCards;
@@ -90,10 +94,8 @@ class MatchBody extends StatelessWidget {
     final rightBg =
         leftIsRed ? const Color(0xFF1565C0) : const Color(0xFFC62828);
 
-    // Lock scoring once the set (or match) is ready to be finalised —
-    // the score can't legally advance past this point.
-    final b = activeSet.bluePlayerScore;
-    final r = activeSet.redPlayerScore;
+    final b = activeSet.blueScore;
+    final r = activeSet.redScore;
     final setFinishable = _canFinishSet(b, r);
     final matchFinishable =
         blueSetsWon >= match.setsToWin || redSetsWon >= match.setsToWin;
@@ -102,13 +104,12 @@ class MatchBody extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        // Left player column — key encodes the player so Flutter rebuilds on swap
         Expanded(
           child: PlayerColumn(
-            key: ValueKey('player-${leftPlayer.userId}'),
+            key: ValueKey('player-${leftPlayer.id}'),
             player: leftPlayer,
             score: leftScore,
-            isServing: serverId != null && serverId == leftPlayer.userId,
+            isServing: serverId != null && serverId == leftPlayer.id,
             issuedCards: leftCards,
             bgColor: leftBg,
             onScore: scoringLocked
@@ -120,7 +121,6 @@ class MatchBody extends StatelessWidget {
 
         const VerticalDivider(width: 1),
 
-        // Center action panel
         SizedBox(
           width: compact ? 140 : 168,
           child: CenterActionPanel(
@@ -137,13 +137,12 @@ class MatchBody extends StatelessWidget {
 
         const VerticalDivider(width: 1),
 
-        // Right player column — key encodes the player so Flutter rebuilds on swap
         Expanded(
           child: PlayerColumn(
-            key: ValueKey('player-${rightPlayer.userId}'),
+            key: ValueKey('player-${rightPlayer.id}'),
             player: rightPlayer,
             score: rightScore,
-            isServing: serverId != null && serverId == rightPlayer.userId,
+            isServing: serverId != null && serverId == rightPlayer.id,
             issuedCards: rightCards,
             bgColor: rightBg,
             onScore: scoringLocked

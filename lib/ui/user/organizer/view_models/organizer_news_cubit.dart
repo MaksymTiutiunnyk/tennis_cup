@@ -22,8 +22,10 @@ class OrganizerNewsCubit extends Cubit<OrganizerNewsState> {
         DateTime(period.year, period.month),
         DateTime(period.year, period.month + 1),
       );
+      if (isClosed) return;
       emit(OrgNewsLoaded(period, items));
     } catch (e) {
+      if (isClosed) return;
       emit(OrgNewsError(period, _message(e)));
     }
   }
@@ -45,6 +47,7 @@ class OrganizerNewsCubit extends Cubit<OrganizerNewsState> {
       );
       await load(state.period);
     } catch (e) {
+      if (isClosed) return;
       emit(OrgNewsError(state.period, _message(e)));
     }
   }
@@ -70,6 +73,7 @@ class OrganizerNewsCubit extends Cubit<OrganizerNewsState> {
       );
       await load(state.period);
     } catch (e) {
+      if (isClosed) return;
       emit(OrgNewsError(state.period, _message(e)));
     }
   }
@@ -85,6 +89,7 @@ class OrganizerNewsCubit extends Cubit<OrganizerNewsState> {
     try {
       await _repository.deleteNews(id);
     } catch (e) {
+      if (isClosed) return;
       if (current is OrgNewsLoaded) emit(current);
       emit(OrgNewsError(state.period, _message(e)));
     }

@@ -20,7 +20,7 @@ class LiveTournamentResultsCubit extends Cubit<Tournament> {
   void _subscribeAll(Tournament tournament) {
     for (final match in tournament.matches ?? []) {
       final sub = _matchRepository
-          .watchMatchChanges(match.matchId)
+          .watchMatchChanges(match.id.toString())
           .listen(_onMatchUpdate);
       _subs.add(sub);
     }
@@ -28,7 +28,7 @@ class LiveTournamentResultsCubit extends Cubit<Tournament> {
 
   void _onMatchUpdate(Match updated) {
     final matches = state.matches?.map((m) {
-      return m.matchId == updated.matchId ? updated : m;
+      return m.id == updated.id ? updated : m;
     }).toList();
     emit(Tournament(
       tournamentId: state.tournamentId,
