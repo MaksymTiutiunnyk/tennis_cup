@@ -49,8 +49,8 @@ void main() {
   });
 
   group('search', () {
-    final user1 = aUserSearchResult(userId: 1, firstName: 'Ivan', lastName: 'Petrov');
-    final user2 = aUserSearchResult(userId: 2, firstName: 'Anna', lastName: 'Koval');
+    final user1 = aUser(id: 1, firstName: 'Ivan', lastName: 'Petrov');
+    final user2 = aUser(id: 2, firstName: 'Anna', lastName: 'Koval');
 
     blocTest<UsersSearchCubit, UsersSearchState>(
       'success emits [UsersSearchLoading, UsersSearchLoaded] with mapped users',
@@ -63,7 +63,7 @@ void main() {
       expect: () => [
         isA<UsersSearchLoading>(),
         isA<UsersSearchLoaded>().having(
-          (s) => s.users.map((u) => u.userId).toList(),
+          (s) => s.users.map((u) => u.id).toList(),
           'userIds',
           [1, 2],
         ),
@@ -107,7 +107,7 @@ void main() {
       'after prior search repeats the same query',
       setUp: () {
         when(() => mockRepo.searchAllUsers(any()))
-            .thenAnswer((_) async => [aUserSearchResult(userId: 1)]);
+            .thenAnswer((_) async => [aUser(id: 1)]);
       },
       build: buildCubit,
       act: (cubit) async {
@@ -130,15 +130,15 @@ void main() {
       'avatarUrl null in result → avatarUrl empty string in CombinedUser',
       setUp: () {
         when(() => mockRepo.searchAllUsers(any()))
-            .thenAnswer((_) async => [aUserSearchResult(avatarUrl: null)]);
+            .thenAnswer((_) async => [aUser(imageUrl: '')]);
       },
       build: buildCubit,
       act: (cubit) => cubit.search('ivan'),
       expect: () => [
         isA<UsersSearchLoading>(),
         isA<UsersSearchLoaded>().having(
-          (s) => s.users.first.avatarUrl,
-          'avatarUrl',
+          (s) => s.users.first.imageUrl,
+          'imageUrl',
           '',
         ),
       ],

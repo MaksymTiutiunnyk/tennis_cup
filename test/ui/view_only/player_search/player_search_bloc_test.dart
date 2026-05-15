@@ -11,7 +11,7 @@ void main() {
 
   late MockPlayerRepository mockRepo;
 
-  final player = aPlayer(userId: 5, name: 'Ivan');
+  final player = aUser(id: 5, firstName: 'Ivan');
 
   setUp(() {
     mockRepo = MockPlayerRepository();

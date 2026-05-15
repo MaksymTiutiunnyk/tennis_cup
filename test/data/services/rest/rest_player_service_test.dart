@@ -2,8 +2,9 @@ import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:tennis_cup/core/pagination/page_request.dart';
-import 'package:tennis_cup/data/models/player.dart';
+import 'package:tennis_cup/data/models/gender.dart';
 import 'package:tennis_cup/data/services/rest/rest_player_service.dart';
+
 import '../../../helpers/mocks.dart';
 
 Response<T> _resp<T>(T data) => Response<T>(
@@ -79,9 +80,9 @@ void main() {
 
       final player = await service.fetchPlayerById(1);
 
-      expect(player.userId, 1);
-      expect(player.name, 'Ivan');
-      expect(player.surname, 'Petrov');
+      expect(player.id, 1);
+      expect(player.firstName, 'Ivan');
+      expect(player.lastName, 'Petrov');
       expect(player.city, 'Kyiv');
       expect(player.country, 'UA');
       expect(player.birthDate, '1990-05-15');
@@ -89,11 +90,11 @@ void main() {
       expect(player.tournaments, 5);
       expect(player.matches, 10);
       expect(player.wins, 7);
-      expect(player.loses, 3);
-      expect(player.gold, 2);
-      expect(player.silver, 1);
-      expect(player.bronze, 0);
-      expect(player.rankTennis, 1500.0);
+      expect(player.losses, 3);
+      expect(player.goldPlaces, 2);
+      expect(player.silverPlaces, 1);
+      expect(player.bronzePlaces, 0);
+      expect(player.rating, 1500.0);
       expect(player.imageUrl, 'http://example.com/avatar.jpg');
       expect(player.status, 'ACTIVE');
       verify(() => mockDio.get<dynamic>(
@@ -102,7 +103,7 @@ void main() {
           )).called(1);
     });
 
-    test('maps gender MALE to Sex.Men', () async {
+    test('maps gender MALE to Gender.male', () async {
       when(() => mockDio.get<dynamic>(
             any(),
             queryParameters: any(named: 'queryParameters'),
@@ -110,10 +111,10 @@ void main() {
 
       final player = await service.fetchPlayerById(1);
 
-      expect(player.sex, Sex.Men);
+      expect(player.gender, Gender.male);
     });
 
-    test('maps gender FEMALE to Sex.Women', () async {
+    test('maps gender FEMALE to Gender.female', () async {
       final femaleJson = Map<String, dynamic>.from(_profileJson)
         ..['gender'] = 'FEMALE';
       when(() => mockDio.get<dynamic>(
@@ -123,10 +124,10 @@ void main() {
 
       final player = await service.fetchPlayerById(1);
 
-      expect(player.sex, Sex.Women);
+      expect(player.gender, Gender.female);
     });
 
-    test('maps unknown/empty gender to Sex.All', () async {
+    test('maps unknown/empty gender to null', () async {
       final noGenderJson = Map<String, dynamic>.from(_profileJson)
         ..['gender'] = '';
       when(() => mockDio.get<dynamic>(
@@ -136,7 +137,7 @@ void main() {
 
       final player = await service.fetchPlayerById(1);
 
-      expect(player.sex, Sex.All);
+      expect(player.gender, isNull);
     });
 
     test('propagates DioException on failure', () async {
@@ -162,8 +163,8 @@ void main() {
       final players = await service.searchPlayersByName(query: 'Ivan');
 
       expect(players, hasLength(1));
-      expect(players.first.userId, 1);
-      expect(players.first.name, 'Ivan');
+      expect(players.first.id, 1);
+      expect(players.first.firstName, 'Ivan');
       expect(players.first.imageUrl, 'http://example.com/avatar.jpg');
       verify(() => mockDio.get<Map<String, dynamic>>(
             '/api/v1/users/search',
@@ -202,8 +203,8 @@ void main() {
             any(),
             queryParameters: any(named: 'queryParameters'),
           )).thenAnswer((inv) async {
-        capturedParams.add(
-            inv.namedArguments[#queryParameters] as Map<String, dynamic>?);
+        capturedParams
+            .add(inv.namedArguments[#queryParameters] as Map<String, dynamic>?);
         return _resp<Map<String, dynamic>>({'content': <dynamic>[]});
       });
 
@@ -225,7 +226,7 @@ void main() {
       final p = players.first;
       expect(p.matches, 0);
       expect(p.wins, 0);
-      expect(p.loses, 0);
+      expect(p.losses, 0);
       expect(p.tournaments, 0);
     });
   });
@@ -254,11 +255,11 @@ void main() {
 
       expect(result.items, hasLength(1));
       expect(result.hasMore, isFalse);
-      // The enriched player should carry rankTennis from the rating record
-      expect(result.items.first.rankTennis, 1500.0);
+      // The enriched player should carry rating from the rating record
+      expect(result.items.first.rating, 1500.0);
     });
 
-    test('adds gender=MALE param when sexFilter is Sex.Men', () async {
+    test('adds gender=MALE param when genderFilter is Gender.male', () async {
       when(() => mockDio.get<dynamic>(
             any(),
             queryParameters: any(named: 'queryParameters'),
@@ -275,7 +276,7 @@ void main() {
 
       await service.fetchRankingPlayers(
         page: const PageRequest(page: 0, size: 10),
-        sexFilter: Sex.Men,
+        genderFilter: Gender.male,
       );
 
       verify(() => mockDio.get<dynamic>(
@@ -290,7 +291,8 @@ void main() {
           )).called(1);
     });
 
-    test('adds gender=FEMALE param when sexFilter is Sex.Women', () async {
+    test('adds gender=FEMALE param when genderFilter is Gender.female',
+        () async {
       when(() => mockDio.get<dynamic>(
             any(),
             queryParameters: any(named: 'queryParameters'),
@@ -307,7 +309,7 @@ void main() {
 
       await service.fetchRankingPlayers(
         page: const PageRequest(page: 0, size: 10),
-        sexFilter: Sex.Women,
+        genderFilter: Gender.female,
       );
 
       verify(() => mockDio.get<dynamic>(
@@ -322,7 +324,7 @@ void main() {
           )).called(1);
     });
 
-    test('omits gender param when no sex filter', () async {
+    test('omits gender param when no gender filter', () async {
       final capturedParams = <Map<String, dynamic>?>[];
       when(() => mockDio.get<dynamic>(
             any(),

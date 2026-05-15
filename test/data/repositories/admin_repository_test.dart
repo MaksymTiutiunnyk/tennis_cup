@@ -243,7 +243,7 @@ void main() {
       final result = await repository.searchReferees('Maria');
 
       expect(result, hasLength(1));
-      expect(result.first.userId, 3);
+      expect(result.first.id, 3);
       expect(result.first.firstName, 'Maria');
       expect(result.first.roles, [UserRole.referee]);
       verify(() => mockAdminService.searchUsers(
@@ -285,12 +285,12 @@ void main() {
 
       final result = await repository.getUserById(9);
 
-      expect(result.userId, 9);
+      expect(result.id, 9);
       expect(result.firstName, 'Alex');
       expect(result.lastName, 'Koval');
       expect(result.roles, [UserRole.admin]);
-      expect(result.gender, 'MALE');
-      expect(result.avatarUrl, 'https://img.example.com/9.jpg');
+      expect(result.genderString, 'MALE');
+      expect(result.imageUrl, 'https://img.example.com/9.jpg');
     });
 
     test('unknown roles in UserProfileDto are skipped', () async {
@@ -342,7 +342,7 @@ void main() {
 
       final result = await repository.searchAllUsers('');
 
-      expect(result.first.avatarUrl, 'https://cdn.example.com/avatar.jpg');
+      expect(result.first.imageUrl, 'https://cdn.example.com/avatar.jpg');
     });
 
     test('avatarUrl is null when not provided', () async {
@@ -354,7 +354,7 @@ void main() {
 
       final result = await repository.searchAllUsers('');
 
-      expect(result.first.avatarUrl, isNull);
+      expect(result.first.imageUrl, '');
     });
   });
 }

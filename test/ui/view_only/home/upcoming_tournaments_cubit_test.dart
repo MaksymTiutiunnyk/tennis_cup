@@ -1,8 +1,8 @@
 import 'package:bloc_test/bloc_test.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:tennis_cup/data/models/match_view.dart';
+import 'package:tennis_cup/data/models/arena.dart';
+import 'package:tennis_cup/data/models/match.dart';
 import 'package:tennis_cup/data/models/tournament.dart';
 import 'package:tennis_cup/ui/view_only/home/view_models/upcoming_tournaments_cubit.dart';
 
@@ -14,19 +14,17 @@ void main() {
 
   late MockTournamentRepository mockRepo;
 
-  final matchView = MatchView(
-    matchId: '1',
+  final matchView = Match(
+    id: 1,
     arenaId: '1',
     arenaName: 'Arena 1',
-    arenaColor: Colors.red,
-    tournamentId: '10',
+    arenaColor: ArenaColor.red,
+    tournamentId: 10,
     tournamentGender: 'MALE',
     tournamentTime: Time.Morning,
-    tournamentStart: DateTime(2024, 1, 15, 9),
-    bluePlayer: aPlayer(userId: 1),
-    redPlayer: aPlayer(userId: 2),
-    blueScore: 0,
-    redScore: 0,
+    scheduledStart: DateTime(2024, 1, 15, 9),
+    bluePlayer: aUser(id: 1),
+    redPlayer: aUser(id: 2),
   );
 
   setUp(() {

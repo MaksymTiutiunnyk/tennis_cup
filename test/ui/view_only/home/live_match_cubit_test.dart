@@ -13,19 +13,14 @@ void main() {
 
   late MockMatchRepository mockRepo;
 
-  final player1 = aPlayer(userId: 1);
-  final player2 = aPlayer(userId: 2);
+  final player1 = aUser(id: 1);
+  final player2 = aUser(id: 2);
 
-  Match makeMatch(String id) => Match(
-        matchId: id,
+  Match makeMatch(String label) => Match(
+        id: label.hashCode.abs(),
         bluePlayer: player1,
         redPlayer: player2,
-        blueScore: 0,
-        redScore: 0,
-        blueSetScores: const [],
-        redSetScores: const [],
-        tournamentId: '10',
-        dateTime: DateTime(2024, 1, 15),
+        scheduledStart: DateTime(2024, 1, 15),
       );
 
   setUp(() {

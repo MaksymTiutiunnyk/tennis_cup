@@ -4,6 +4,7 @@ import 'package:mocktail/mocktail.dart';
 import 'package:tennis_cup/core/pagination/page_request.dart';
 import 'package:tennis_cup/data/services/dto/match_dto.dart';
 import 'package:tennis_cup/data/services/rest/rest_match_service.dart';
+
 import '../../../helpers/mocks.dart';
 
 Response<T> _resp<T>(T data) => Response<T>(
@@ -417,7 +418,7 @@ void main() {
 
   group('watchMatchChanges', () {
     test('delegates to MatchWebSocketService.watchMatch', () {
-      final stream = Stream<MatchDto>.empty();
+      const stream = Stream<MatchDto>.empty();
       when(() => mockWs.watchMatch('42')).thenAnswer((_) => stream);
 
       final result = service.watchMatchChanges('42');

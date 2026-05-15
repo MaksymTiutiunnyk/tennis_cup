@@ -12,13 +12,13 @@ void main() {
   setUpAll(registerFallbackValues);
 
   late MockIMatchService mockMatchService;
-  late MockIPlayerService mockPlayerService;
+  late MockPlayerRepository mockPlayerRepository;
   late MatchRepository repository;
 
   setUp(() {
     mockMatchService = MockIMatchService();
-    mockPlayerService = MockIPlayerService();
-    repository = MatchRepository(mockMatchService, mockPlayerService);
+    mockPlayerRepository = MockPlayerRepository();
+    repository = MatchRepository(mockMatchService, mockPlayerRepository);
   });
 
   group('fetchMatchById', () {
@@ -29,13 +29,13 @@ void main() {
       final result = await repository.fetchMatchById(matchId: '99');
 
       expect(result, isNull);
-      verifyNever(() => mockPlayerService.fetchPlayerById(any()));
+      verifyNever(() => mockPlayerRepository.fetchPlayerById(any()));
     });
 
     test('returns Match with correct data when service returns valid MatchDto',
         () async {
-      final bluePlayer = aPlayer(userId: 1, name: 'Blue', surname: 'Player');
-      final redPlayer = aPlayer(userId: 2, name: 'Red', surname: 'Player');
+      final bluePlayer = aUser(id: 1, firstName: 'Blue', lastName: 'Player');
+      final redPlayer = aUser(id: 2, firstName: 'Red', lastName: 'Player');
       final dto = aMatchDto(
         id: 42,
         bluePlayerId: 1,
@@ -48,19 +48,19 @@ void main() {
 
       when(() => mockMatchService.fetchMatchById('42'))
           .thenAnswer((_) async => dto);
-      when(() => mockPlayerService.fetchPlayerById(1))
+      when(() => mockPlayerRepository.fetchPlayerById(1))
           .thenAnswer((_) async => bluePlayer);
-      when(() => mockPlayerService.fetchPlayerById(2))
+      when(() => mockPlayerRepository.fetchPlayerById(2))
           .thenAnswer((_) async => redPlayer);
 
       final result = await repository.fetchMatchById(matchId: '42');
 
       expect(result, isNotNull);
-      expect(result!.matchId, '42');
+      expect(result!.id, 42);
       expect(result.bluePlayer, bluePlayer);
       expect(result.redPlayer, redPlayer);
-      expect(result.tournamentId, '10');
-      expect(result.dateTime, DateTime.parse('2024-01-15T09:00:00'));
+      expect(result.tournamentId, 10);
+      expect(result.scheduledStart, DateTime.parse('2024-01-15T09:00:00'));
     });
 
     test('returns null when a player fetch throws', () async {
@@ -68,10 +68,10 @@ void main() {
 
       when(() => mockMatchService.fetchMatchById(any()))
           .thenAnswer((_) async => dto);
-      when(() => mockPlayerService.fetchPlayerById(1))
+      when(() => mockPlayerRepository.fetchPlayerById(1))
           .thenThrow(Exception('not found'));
-      when(() => mockPlayerService.fetchPlayerById(2))
-          .thenAnswer((_) async => aPlayer(userId: 2));
+      when(() => mockPlayerRepository.fetchPlayerById(2))
+          .thenAnswer((_) async => aUser(id: 2));
 
       // bluePlayer is missing from the map → _toMatch returns null
       final result = await repository.fetchMatchById(matchId: '1');
@@ -80,8 +80,8 @@ void main() {
     });
 
     test('calculates blueScore / redScore from set winners', () async {
-      final bluePlayer = aPlayer(userId: 1);
-      final redPlayer = aPlayer(userId: 2);
+      final bluePlayer = aUser(id: 1);
+      final redPlayer = aUser(id: 2);
       final sets = [
         aMatchSetDto(number: 1, winnerId: 1), // blue wins
         aMatchSetDto(id: 2, number: 2, winnerId: 2), // red wins
@@ -91,9 +91,9 @@ void main() {
 
       when(() => mockMatchService.fetchMatchById(any()))
           .thenAnswer((_) async => dto);
-      when(() => mockPlayerService.fetchPlayerById(1))
+      when(() => mockPlayerRepository.fetchPlayerById(1))
           .thenAnswer((_) async => bluePlayer);
-      when(() => mockPlayerService.fetchPlayerById(2))
+      when(() => mockPlayerRepository.fetchPlayerById(2))
           .thenAnswer((_) async => redPlayer);
 
       final result = await repository.fetchMatchById(matchId: '1');
@@ -108,10 +108,10 @@ void main() {
 
       when(() => mockMatchService.fetchMatchById(any()))
           .thenAnswer((_) async => dto);
-      when(() => mockPlayerService.fetchPlayerById(1))
-          .thenAnswer((_) async => aPlayer(userId: 1));
-      when(() => mockPlayerService.fetchPlayerById(2))
-          .thenAnswer((_) async => aPlayer(userId: 2));
+      when(() => mockPlayerRepository.fetchPlayerById(1))
+          .thenAnswer((_) async => aUser(id: 1));
+      when(() => mockPlayerRepository.fetchPlayerById(2))
+          .thenAnswer((_) async => aUser(id: 2));
 
       final result = await repository.fetchMatchById(matchId: '1');
 
@@ -124,10 +124,10 @@ void main() {
 
       when(() => mockMatchService.fetchMatchById(any()))
           .thenAnswer((_) async => dto);
-      when(() => mockPlayerService.fetchPlayerById(1))
-          .thenAnswer((_) async => aPlayer(userId: 1));
-      when(() => mockPlayerService.fetchPlayerById(2))
-          .thenAnswer((_) async => aPlayer(userId: 2));
+      when(() => mockPlayerRepository.fetchPlayerById(1))
+          .thenAnswer((_) async => aUser(id: 1));
+      when(() => mockPlayerRepository.fetchPlayerById(2))
+          .thenAnswer((_) async => aUser(id: 2));
 
       final result = await repository.fetchMatchById(matchId: '1');
 
@@ -135,8 +135,8 @@ void main() {
     });
 
     test('sets are sorted by number before computing scores', () async {
-      final bluePlayer = aPlayer(userId: 1);
-      final redPlayer = aPlayer(userId: 2);
+      final bluePlayer = aUser(id: 1);
+      final redPlayer = aUser(id: 2);
       // Provide sets out of order
       final sets = [
         aMatchSetDto(id: 3, number: 3, bluePlayerScore: 7, redPlayerScore: 5),
@@ -147,9 +147,9 @@ void main() {
 
       when(() => mockMatchService.fetchMatchById(any()))
           .thenAnswer((_) async => dto);
-      when(() => mockPlayerService.fetchPlayerById(1))
+      when(() => mockPlayerRepository.fetchPlayerById(1))
           .thenAnswer((_) async => bluePlayer);
-      when(() => mockPlayerService.fetchPlayerById(2))
+      when(() => mockPlayerRepository.fetchPlayerById(2))
           .thenAnswer((_) async => redPlayer);
 
       final result = await repository.fetchMatchById(matchId: '1');
@@ -161,8 +161,8 @@ void main() {
 
   group('fetchHeadToHead', () {
     test('maps HeadToHeadMatchDto to Match and returns PageResult', () async {
-      final player1 = aPlayer(userId: 10);
-      final player2 = aPlayer(userId: 20);
+      final player1 = aUser(id: 10);
+      final player2 = aUser(id: 20);
       final h2hDto = aHeadToHeadMatchDto(
         matchId: 5,
         tournamentId: 7,
@@ -177,33 +177,33 @@ void main() {
             userId2: 20,
             page: any(named: 'page'),
           )).thenAnswer((_) async => pageResult);
-      when(() => mockPlayerService.fetchPlayerById(10))
+      when(() => mockPlayerRepository.fetchPlayerById(10))
           .thenAnswer((_) async => player1);
-      when(() => mockPlayerService.fetchPlayerById(20))
+      when(() => mockPlayerRepository.fetchPlayerById(20))
           .thenAnswer((_) async => player2);
 
       final result = await repository.fetchHeadToHead(
-        userId1: 10,
-        userId2: 20,
+        playerId1: 10,
+        playerId2: 20,
         page: const PageRequest(page: 0, size: 10),
       );
 
       expect(result.items, hasLength(1));
       expect(result.hasMore, isTrue);
       final match = result.items.first;
-      expect(match.matchId, '5');
+      expect(match.id, 5);
       expect(match.bluePlayer, player1);
       expect(match.redPlayer, player2);
       expect(match.blueScore, 2);
       expect(match.redScore, 1);
-      expect(match.tournamentId, '7');
-      expect(match.dateTime, DateTime(2024, 3, 10));
+      expect(match.tournamentId, 7);
+      expect(match.scheduledStart, DateTime(2024, 3, 10));
     });
 
     test('maps sets scores from HeadToHeadSetDto sorted by setNumber',
         () async {
-      final player1 = aPlayer(userId: 10);
-      final player2 = aPlayer(userId: 20);
+      final player1 = aUser(id: 10);
+      final player2 = aUser(id: 20);
       final sets = [
         const HeadToHeadSetDto(
             setNumber: 2,
@@ -216,7 +216,7 @@ void main() {
             player2Score: 4,
             technicalDefeat: false),
       ];
-      final h2hDto = aHeadToHeadMatchDto(sets: sets);
+      final h2hDto = aHeadToHeadMatchDto(sets: sets, winnerId: 10);
       final pageResult = PageResult(items: [h2hDto], hasMore: false);
 
       when(() => mockMatchService.fetchHeadToHead(
@@ -224,14 +224,14 @@ void main() {
             userId2: any(named: 'userId2'),
             page: any(named: 'page'),
           )).thenAnswer((_) async => pageResult);
-      when(() => mockPlayerService.fetchPlayerById(10))
+      when(() => mockPlayerRepository.fetchPlayerById(10))
           .thenAnswer((_) async => player1);
-      when(() => mockPlayerService.fetchPlayerById(20))
+      when(() => mockPlayerRepository.fetchPlayerById(20))
           .thenAnswer((_) async => player2);
 
       final result = await repository.fetchHeadToHead(
-        userId1: 10,
-        userId2: 20,
+        playerId1: 10,
+        playerId2: 20,
         page: const PageRequest(page: 0, size: 10),
       );
 
@@ -243,8 +243,8 @@ void main() {
 
   group('fetchPlayersMatches', () {
     test('collects all player IDs and maps to Match list', () async {
-      final bluePlayer = aPlayer(userId: 1);
-      final redPlayer = aPlayer(userId: 2);
+      final bluePlayer = aUser(id: 1);
+      final redPlayer = aUser(id: 2);
       final dto = aMatchDto(bluePlayerId: 1, redPlayerId: 2);
       final pageResult = PageResult(items: [dto], hasMore: false);
 
@@ -253,9 +253,9 @@ void main() {
             player2Id: any(named: 'player2Id'),
             page: any(named: 'page'),
           )).thenAnswer((_) async => pageResult);
-      when(() => mockPlayerService.fetchPlayerById(1))
+      when(() => mockPlayerRepository.fetchPlayerById(1))
           .thenAnswer((_) async => bluePlayer);
-      when(() => mockPlayerService.fetchPlayerById(2))
+      when(() => mockPlayerRepository.fetchPlayerById(2))
           .thenAnswer((_) async => redPlayer);
 
       final result = await repository.fetchPlayersMatches(
@@ -277,9 +277,8 @@ void main() {
             player2Id: '2',
             page: const PageRequest(page: 1, size: 5),
           )).thenAnswer((_) async => pageResult);
-      when(() => mockPlayerService.fetchPlayerById(any()))
-          .thenAnswer((inv) async =>
-              aPlayer(userId: inv.positionalArguments.first as int));
+      when(() => mockPlayerRepository.fetchPlayerById(any())).thenAnswer(
+          (inv) async => aUser(id: inv.positionalArguments.first as int));
 
       await repository.fetchPlayersMatches(
         player1Id: '1',
@@ -297,15 +296,15 @@ void main() {
 
   group('watchMatchChanges', () {
     test('emits Match when stream emits MatchDto with valid players', () async {
-      final bluePlayer = aPlayer(userId: 1);
-      final redPlayer = aPlayer(userId: 2);
+      final bluePlayer = aUser(id: 1);
+      final redPlayer = aUser(id: 2);
       final dto = aMatchDto(bluePlayerId: 1, redPlayerId: 2);
 
       when(() => mockMatchService.watchMatchChanges('1'))
           .thenAnswer((_) => Stream.value(dto));
-      when(() => mockPlayerService.fetchPlayerById(1))
+      when(() => mockPlayerRepository.fetchPlayerById(1))
           .thenAnswer((_) async => bluePlayer);
-      when(() => mockPlayerService.fetchPlayerById(2))
+      when(() => mockPlayerRepository.fetchPlayerById(2))
           .thenAnswer((_) async => redPlayer);
 
       final stream = repository.watchMatchChanges('1');
@@ -319,10 +318,10 @@ void main() {
       when(() => mockMatchService.watchMatchChanges('1'))
           .thenAnswer((_) => Stream.value(dto));
       // blue player fetch fails → _toMatch returns null → filtered
-      when(() => mockPlayerService.fetchPlayerById(1))
+      when(() => mockPlayerRepository.fetchPlayerById(1))
           .thenThrow(Exception('service error'));
-      when(() => mockPlayerService.fetchPlayerById(2))
-          .thenAnswer((_) async => aPlayer(userId: 2));
+      when(() => mockPlayerRepository.fetchPlayerById(2))
+          .thenAnswer((_) async => aUser(id: 2));
 
       final stream = repository.watchMatchChanges('1');
 

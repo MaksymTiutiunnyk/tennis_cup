@@ -1,5 +1,4 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:tennis_cup/core/pagination/page_request.dart';
 import 'package:tennis_cup/data/auth/auth_token_store.dart';
@@ -12,7 +11,6 @@ import 'package:tennis_cup/data/repositories/invitations_repository.dart';
 import 'package:tennis_cup/data/repositories/match_repository.dart';
 import 'package:tennis_cup/data/repositories/news_repository.dart';
 import 'package:tennis_cup/data/repositories/player_repository.dart';
-import 'package:tennis_cup/data/repositories/referee_repository.dart';
 import 'package:tennis_cup/data/repositories/tournament_repository.dart';
 import 'package:tennis_cup/data/services/abstract/i_admin_service.dart';
 import 'package:tennis_cup/data/services/abstract/i_arena_service.dart';
@@ -67,8 +65,6 @@ class MockAdminRepository extends Mock implements AdminRepository {}
 
 class MockInvitationsRepository extends Mock implements InvitationsRepository {}
 
-class MockRefereeRepository extends Mock implements RefereeRepository {}
-
 // ---- Concrete services ----
 
 class MockRestAuthService extends Mock implements RestAuthService {}
@@ -86,7 +82,7 @@ void registerFallbackValues() {
     firstName: '',
     lastName: '',
   ));
-  registerFallbackValue(Arena(id: '1', title: 'Arena', color: Colors.red));
+  registerFallbackValue(const Arena(id: '1', title: 'Arena', color: ArenaColor.red));
   registerFallbackValue(Time.Morning);
   registerFallbackValue(CreateUpdateTournamentRequest(
     name: '',

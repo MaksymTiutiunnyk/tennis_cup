@@ -1,26 +1,25 @@
-import 'package:flutter/material.dart';
 import 'package:tennis_cup/data/models/arena.dart';
+import 'package:tennis_cup/data/models/gender.dart';
+import 'package:tennis_cup/data/models/match.dart';
 import 'package:tennis_cup/data/models/news.dart';
 import 'package:tennis_cup/data/models/pending_user.dart';
-import 'package:tennis_cup/data/models/player.dart';
 import 'package:tennis_cup/data/models/tournament.dart';
+import 'package:tennis_cup/data/models/user.dart';
 import 'package:tennis_cup/data/models/tournament_invitation.dart';
 import 'package:tennis_cup/data/models/user_role.dart';
-import 'package:tennis_cup/data/models/user_search_result.dart';
 import 'package:tennis_cup/data/services/dto/admin_dto.dart';
 import 'package:tennis_cup/data/services/dto/arena_dto.dart';
 import 'package:tennis_cup/data/services/dto/match_dto.dart';
 import 'package:tennis_cup/data/services/dto/news_dto.dart';
 import 'package:tennis_cup/data/services/dto/tournament_dto.dart';
-import 'package:tennis_cup/data/services/dto/tournament_invitation_dto.dart';
 
-// ---- Player ----
+// ---- User ----
 
-Player aPlayer({
-  int userId = 1,
-  String name = 'Ivan',
-  String surname = 'Petrov',
-  Sex sex = Sex.Men,
+User aUser({
+  int id = 1,
+  String firstName = 'Ivan',
+  String lastName = 'Petrov',
+  Gender? gender = Gender.male,
   String? birthDate,
   String city = '',
   String country = '',
@@ -28,19 +27,20 @@ Player aPlayer({
   int tournaments = 0,
   int matches = 0,
   int wins = 0,
-  int loses = 0,
-  int gold = 0,
-  int silver = 0,
-  int bronze = 0,
-  double rankTennis = 0.0,
+  int losses = 0,
+  int goldPlaces = 0,
+  int silverPlaces = 0,
+  int bronzePlaces = 0,
+  double rating = 0.0,
   String imageUrl = '',
   String status = 'ACTIVE',
+  List<UserRole> roles = const [],
 }) {
-  return Player(
-    userId: userId,
-    name: name,
-    surname: surname,
-    sex: sex,
+  return User(
+    id: id,
+    firstName: firstName,
+    lastName: lastName,
+    gender: gender,
     birthDate: birthDate,
     city: city,
     country: country,
@@ -48,13 +48,14 @@ Player aPlayer({
     tournaments: tournaments,
     matches: matches,
     wins: wins,
-    loses: loses,
-    gold: gold,
-    silver: silver,
-    bronze: bronze,
-    rankTennis: rankTennis,
+    losses: losses,
+    goldPlaces: goldPlaces,
+    silverPlaces: silverPlaces,
+    bronzePlaces: bronzePlaces,
+    rating: rating,
     imageUrl: imageUrl,
     status: status,
+    roles: roles,
   );
 }
 
@@ -138,6 +139,78 @@ MatchCardDto aMatchCardDto({
   );
 }
 
+// ---- MatchSet (domain) ----
+
+MatchSet aMatchSet({
+  int id = 1,
+  int matchId = 1,
+  int number = 1,
+  int blueScore = 0,
+  int redScore = 0,
+  SetStatus status = SetStatus.active,
+  int? winnerId,
+}) {
+  return MatchSet(
+    id: id,
+    matchId: matchId,
+    number: number,
+    blueScore: blueScore,
+    redScore: redScore,
+    status: status,
+    winnerId: winnerId,
+  );
+}
+
+// ---- MatchCard (domain) ----
+
+MatchCard aMatchCard({
+  int id = 1,
+  int matchId = 1,
+  int playerId = 1,
+  String cardType = 'YELLOW',
+  DateTime? issuedAt,
+  int? setNumber,
+}) {
+  return MatchCard(
+    id: id,
+    matchId: matchId,
+    playerId: playerId,
+    cardType: cardType,
+    issuedAt: issuedAt ?? DateTime(2024, 1, 1, 10),
+    setNumber: setNumber,
+  );
+}
+
+// ---- Match (domain) ----
+
+Match aMatch({
+  int id = 10,
+  User? bluePlayer,
+  User? redPlayer,
+  int tournamentId = 1,
+  DateTime? scheduledStart,
+  MatchStatus status = MatchStatus.active,
+  int setsToWin = 2,
+  int? firstServerId,
+  int? winnerId,
+  List<MatchSet> sets = const [],
+  List<MatchCard> cards = const [],
+}) {
+  return Match(
+    id: id,
+    bluePlayer: bluePlayer ?? aUser(id: 1),
+    redPlayer: redPlayer ?? aUser(id: 2),
+    tournamentId: tournamentId,
+    scheduledStart: scheduledStart ?? DateTime(2024, 1, 15, 9),
+    status: status,
+    setsToWin: setsToWin,
+    firstServerId: firstServerId,
+    winnerId: winnerId,
+    sets: sets,
+    cards: cards,
+  );
+}
+
 // ---- NewsDto ----
 
 NewsDto aNewsDto({
@@ -194,13 +267,13 @@ ArenaDto anArenaDto({
 Arena anArena({
   String id = '1',
   String title = 'Arena 1',
-  Color? color,
+  ArenaColor color = ArenaColor.red,
   String? city,
 }) {
   return Arena(
     id: id,
     title: title,
-    color: color ?? Colors.red,
+    color: color,
     city: city,
   );
 }
@@ -348,7 +421,7 @@ TournamentInvitation aTournamentInvitation({
       tournamentId: tournamentId,
       name: 'T1',
       gender: 'MALE',
-      status: 'ACTIVE',
+      status: TournamentStatus.active,
       players: const [],
       date: DateTime(2024, 1, 15),
       arena: anArena(),
@@ -372,8 +445,26 @@ HeadToHeadMatchDto aHeadToHeadMatchDto({
   int player2SetsWon = 1,
   int? winnerId,
   bool technicalDefeat = false,
-  List<HeadToHeadSetDto> sets = const [],
+  List<HeadToHeadSetDto>? sets,
 }) {
+  // Auto-generate TT-compliant sets when not provided explicitly so that
+  // the repository's score derivation (score >= 11, lead >= 2) produces the
+  // correct blueScore / redScore in tests.
+  final resolvedSets = sets ??
+      [
+        for (int i = 0; i < player1SetsWon; i++)
+          HeadToHeadSetDto(
+              setNumber: i + 1,
+              player1Score: 11,
+              player2Score: 5,
+              technicalDefeat: false),
+        for (int i = 0; i < player2SetsWon; i++)
+          HeadToHeadSetDto(
+              setNumber: player1SetsWon + i + 1,
+              player1Score: 5,
+              player2Score: 11,
+              technicalDefeat: false),
+      ];
   return HeadToHeadMatchDto(
     matchId: matchId,
     tournamentId: tournamentId,
@@ -383,24 +474,7 @@ HeadToHeadMatchDto aHeadToHeadMatchDto({
     player2SetsWon: player2SetsWon,
     winnerId: winnerId,
     technicalDefeat: technicalDefeat,
-    sets: sets,
+    sets: resolvedSets,
   );
 }
 
-// ---- UserSearchResult ----
-
-UserSearchResult aUserSearchResult({
-  int userId = 1,
-  String firstName = 'Ivan',
-  String lastName = 'Petrov',
-  List<UserRole> roles = const [UserRole.player],
-  String? avatarUrl,
-}) {
-  return UserSearchResult(
-    userId: userId,
-    firstName: firstName,
-    lastName: lastName,
-    roles: roles,
-    avatarUrl: avatarUrl,
-  );
-}

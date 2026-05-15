@@ -4,10 +4,12 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:tennis_cup/core/pagination/page_request.dart';
 import 'package:tennis_cup/core/pagination/page_result.dart';
-import 'package:tennis_cup/data/models/player.dart';
+import 'package:tennis_cup/data/models/gender.dart';
+import 'package:tennis_cup/data/models/user.dart';
 import 'package:tennis_cup/data/repositories/player_repository.dart';
-import '../../../test/helpers/mocks.dart';
+
 import '../../../test/helpers/fixtures.dart';
+import '../../../test/helpers/mocks.dart';
 
 void main() {
   setUpAll(registerFallbackValues);
@@ -21,56 +23,54 @@ void main() {
   });
 
   group('fetchRankingPlayers', () {
-    test('delegates to service and returns PageResult<Player>', () async {
-      final player = aPlayer(userId: 1);
+    test('delegates to service and returns PageResult<User>', () async {
+      final player = aUser(id: 1);
       const page = PageRequest(page: 0, size: 20);
       final expected = PageResult(items: [player], hasMore: false);
 
       when(() => mockPlayerService.fetchRankingPlayers(
             page: page,
-            sexFilter: null,
+            genderFilter: null,
           )).thenAnswer((_) async => expected);
 
-      final result =
-          await repository.fetchRankingPlayers(page: page);
+      final result = await repository.fetchRankingPlayers(page: page);
 
       expect(result.items, [player]);
       expect(result.hasMore, isFalse);
       verify(() => mockPlayerService.fetchRankingPlayers(
             page: page,
-            sexFilter: null,
+            genderFilter: null,
           )).called(1);
     });
 
-    test('forwards sexFilter to service', () async {
+    test('forwards genderFilter to service', () async {
       const page = PageRequest(page: 0, size: 10);
-      final expected = PageResult<Player>(items: [], hasMore: false);
+      const expected = PageResult<User>(items: [], hasMore: false);
 
       when(() => mockPlayerService.fetchRankingPlayers(
             page: page,
-            sexFilter: Sex.Women,
+            genderFilter: Gender.female,
           )).thenAnswer((_) async => expected);
 
-      await repository.fetchRankingPlayers(page: page, sexFilter: Sex.Women);
+      await repository.fetchRankingPlayers(
+          page: page, genderFilter: Gender.female);
 
       verify(() => mockPlayerService.fetchRankingPlayers(
             page: page,
-            sexFilter: Sex.Women,
+            genderFilter: Gender.female,
           )).called(1);
     });
 
     test('preserves hasMore from service result', () async {
       const page = PageRequest(page: 0, size: 10);
-      final expected =
-          PageResult<Player>(items: [aPlayer()], hasMore: true);
+      final expected = PageResult<User>(items: [aUser()], hasMore: true);
 
       when(() => mockPlayerService.fetchRankingPlayers(
             page: any(named: 'page'),
-            sexFilter: any(named: 'sexFilter'),
+            genderFilter: any(named: 'genderFilter'),
           )).thenAnswer((_) async => expected);
 
-      final result =
-          await repository.fetchRankingPlayers(page: page);
+      final result = await repository.fetchRankingPlayers(page: page);
 
       expect(result.hasMore, isTrue);
     });
@@ -78,15 +78,14 @@ void main() {
 
   group('fetchPlayersBySubstring', () {
     test('delegates to service.searchPlayersByName', () async {
-      final player = aPlayer(userId: 3, name: 'Ivan');
+      final player = aUser(id: 3, firstName: 'Ivan');
 
       when(() => mockPlayerService.searchPlayersByName(
             query: 'Ivan',
             gender: null,
           )).thenAnswer((_) async => [player]);
 
-      final result =
-          await repository.fetchPlayersBySubstring(query: 'Ivan');
+      final result = await repository.fetchPlayersBySubstring(query: 'Ivan');
 
       expect(result, [player]);
       verify(() => mockPlayerService.searchPlayersByName(
@@ -112,7 +111,7 @@ void main() {
 
   group('fetchPlayerById', () {
     test('delegates to service.fetchPlayerById', () async {
-      final player = aPlayer(userId: 7);
+      final player = aUser(id: 7);
 
       when(() => mockPlayerService.fetchPlayerById(7))
           .thenAnswer((_) async => player);

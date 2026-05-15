@@ -1,7 +1,7 @@
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:tennis_cup/data/services/dto/match_dto.dart';
+import 'package:tennis_cup/data/models/match.dart';
 import 'package:tennis_cup/ui/user/referee/view_models/referee_match_cubit.dart';
 
 import '../../../helpers/fixtures.dart';
@@ -10,28 +10,28 @@ import '../../../helpers/mocks.dart';
 void main() {
   setUpAll(registerFallbackValues);
 
-  late MockRefereeRepository mockRepo;
+  late MockMatchRepository mockRepo;
 
-  final bluePlayer = aPlayer(userId: 1, name: 'Blue');
-  final redPlayer = aPlayer(userId: 2, name: 'Red');
-  final matchDto = aMatchDto(id: 10, bluePlayerId: 1, redPlayerId: 2);
+  final bluePlayer = aUser(id: 1, firstName: 'Blue');
+  final redPlayer = aUser(id: 2, firstName: 'Red');
+  final baseMatch = aMatch(id: 10, bluePlayer: bluePlayer, redPlayer: redPlayer);
 
   setUp(() {
-    mockRepo = MockRefereeRepository();
+    mockRepo = MockMatchRepository();
   });
 
   RefereeMatchCubit buildCubit() => RefereeMatchCubit(repository: mockRepo);
 
-  // Helper: stub fetchMatchWithPlayers to return a ready record
-  void stubFetchMatch(MatchDto dto) {
-    when(() => mockRepo.fetchMatchWithPlayers(dto.id))
-        .thenAnswer((_) async => (match: dto, blue: bluePlayer, red: redPlayer));
+  // Helper: stub fetchMatchWithPlayers to return a ready Match
+  void stubFetchMatch(Match match) {
+    when(() => mockRepo.fetchMatchWithPlayers(match.id))
+        .thenAnswer((_) async => match);
   }
 
   group('load', () {
     blocTest<RefereeMatchCubit, RefereeMatchState>(
       'success emits [RefereeMatchLoading, RefereeMatchReady]',
-      setUp: () => stubFetchMatch(matchDto),
+      setUp: () => stubFetchMatch(baseMatch),
       build: buildCubit,
       act: (cubit) => cubit.load(10),
       expect: () => [
@@ -62,7 +62,7 @@ void main() {
   group('setFirstServer', () {
     blocTest<RefereeMatchCubit, RefereeMatchState>(
       'when state is Ready emits Ready with firstServerPlayerId set',
-      setUp: () => stubFetchMatch(matchDto),
+      setUp: () => stubFetchMatch(baseMatch),
       build: buildCubit,
       act: (cubit) async {
         await cubit.load(10);
@@ -86,7 +86,7 @@ void main() {
   group('startMatch', () {
     blocTest<RefereeMatchCubit, RefereeMatchState>(
       'without firstServerPlayerId emits Ready with notification, no API calls',
-      setUp: () => stubFetchMatch(matchDto),
+      setUp: () => stubFetchMatch(baseMatch),
       build: buildCubit,
       act: (cubit) async {
         await cubit.load(10);
@@ -105,37 +105,30 @@ void main() {
     blocTest<RefereeMatchCubit, RefereeMatchState>(
       'with firstServerPlayerId calls startMatch, startSet, then reloads',
       setUp: () {
-        final pendingSet =
-            aMatchSetDto(id: 1, matchId: 10, number: 1, status: 'PENDING');
-        final startedMatchDto = aMatchDto(
+        final pendingSet = aMatchSet(
+            id: 1, matchId: 10, number: 1, status: SetStatus.pending);
+        final startedMatch = aMatch(
           id: 10,
-          bluePlayerId: 1,
-          redPlayerId: 2,
+          bluePlayer: bluePlayer,
+          redPlayer: redPlayer,
           firstServerId: 1,
           sets: [pendingSet],
         );
-        final reloadedDto = aMatchDto(
+        final reloadedMatch = aMatch(
           id: 10,
-          bluePlayerId: 1,
-          redPlayerId: 2,
+          bluePlayer: bluePlayer,
+          redPlayer: redPlayer,
           firstServerId: 1,
         );
 
-        when(() => mockRepo.fetchMatchWithPlayers(10)).thenAnswer((_) async =>
-            (match: matchDto, blue: bluePlayer, red: redPlayer));
-        when(() => mockRepo.startMatch(10, 1))
-            .thenAnswer((_) async => startedMatchDto);
-        when(() => mockRepo.startSet(10, 1))
-            .thenAnswer((_) async => pendingSet);
-        // second fetchMatchWithPlayers call (from _reload)
         var callCount = 0;
         when(() => mockRepo.fetchMatchWithPlayers(10)).thenAnswer((_) async {
           callCount++;
-          if (callCount == 1) {
-            return (match: matchDto, blue: bluePlayer, red: redPlayer);
-          }
-          return (match: reloadedDto, blue: bluePlayer, red: redPlayer);
+          return callCount == 1 ? baseMatch : reloadedMatch;
         });
+        when(() => mockRepo.startMatch(10, 1))
+            .thenAnswer((_) async => startedMatch);
+        when(() => mockRepo.startSet(10, 1)).thenAnswer((_) async {});
       },
       build: buildCubit,
       act: (cubit) async {
@@ -160,22 +153,20 @@ void main() {
     blocTest<RefereeMatchCubit, RefereeMatchState>(
       'calls updateScore with blue+1 then reloads',
       setUp: () {
-        final activeSet = aMatchSetDto(
-            id: 1, matchId: 10, number: 1, bluePlayerScore: 3, status: 'ACTIVE');
-        final dto = aMatchDto(
-            id: 10, bluePlayerId: 1, redPlayerId: 2, sets: [activeSet]);
-        final reloaded = aMatchDto(
-            id: 10, bluePlayerId: 1, redPlayerId: 2, sets: [activeSet]);
+        final activeSet = aMatchSet(
+            id: 1, matchId: 10, number: 1, blueScore: 3,
+            status: SetStatus.active);
+        final matchWithSet = aMatch(
+            id: 10, bluePlayer: bluePlayer, redPlayer: redPlayer,
+            sets: [activeSet]);
 
         var callCount = 0;
         when(() => mockRepo.fetchMatchWithPlayers(10)).thenAnswer((_) async {
           callCount++;
-          return callCount == 1
-              ? (match: dto, blue: bluePlayer, red: redPlayer)
-              : (match: reloaded, blue: bluePlayer, red: redPlayer);
+          return callCount == 1 ? matchWithSet : matchWithSet;
         });
         when(() => mockRepo.updateScore(10, 1, 4, 0))
-            .thenAnswer((_) async => activeSet);
+            .thenAnswer((_) async {});
       },
       build: buildCubit,
       act: (cubit) async {
@@ -194,15 +185,17 @@ void main() {
     blocTest<RefereeMatchCubit, RefereeMatchState>(
       'calls updateScore with red+1 then reloads',
       setUp: () {
-        final activeSet = aMatchSetDto(
-            id: 1, matchId: 10, number: 1, redPlayerScore: 2, status: 'ACTIVE');
-        final dto = aMatchDto(
-            id: 10, bluePlayerId: 1, redPlayerId: 2, sets: [activeSet]);
+        final activeSet = aMatchSet(
+            id: 1, matchId: 10, number: 1, redScore: 2,
+            status: SetStatus.active);
+        final matchWithSet = aMatch(
+            id: 10, bluePlayer: bluePlayer, redPlayer: redPlayer,
+            sets: [activeSet]);
 
         when(() => mockRepo.fetchMatchWithPlayers(10))
-            .thenAnswer((_) async => (match: dto, blue: bluePlayer, red: redPlayer));
+            .thenAnswer((_) async => matchWithSet);
         when(() => mockRepo.updateScore(10, 1, 0, 3))
-            .thenAnswer((_) async => activeSet);
+            .thenAnswer((_) async {});
       },
       build: buildCubit,
       act: (cubit) async {
@@ -221,20 +214,21 @@ void main() {
     blocTest<RefereeMatchCubit, RefereeMatchState>(
       'clamps to 0 — calls updateScore(matchId, setNum, 0, red) when blueScore is 0',
       setUp: () {
-        final activeSet = aMatchSetDto(
+        final activeSet = aMatchSet(
             id: 1,
             matchId: 10,
             number: 1,
-            bluePlayerScore: 0,
-            redPlayerScore: 5,
-            status: 'ACTIVE');
-        final dto = aMatchDto(
-            id: 10, bluePlayerId: 1, redPlayerId: 2, sets: [activeSet]);
+            blueScore: 0,
+            redScore: 5,
+            status: SetStatus.active);
+        final matchWithSet = aMatch(
+            id: 10, bluePlayer: bluePlayer, redPlayer: redPlayer,
+            sets: [activeSet]);
 
         when(() => mockRepo.fetchMatchWithPlayers(10))
-            .thenAnswer((_) async => (match: dto, blue: bluePlayer, red: redPlayer));
+            .thenAnswer((_) async => matchWithSet);
         when(() => mockRepo.updateScore(10, 1, 0, 5))
-            .thenAnswer((_) async => activeSet);
+            .thenAnswer((_) async {});
       },
       build: buildCubit,
       act: (cubit) async {
@@ -253,15 +247,15 @@ void main() {
     blocTest<RefereeMatchCubit, RefereeMatchState>(
       'calls finishSet then reloads',
       setUp: () {
-        final activeSet =
-            aMatchSetDto(id: 1, matchId: 10, number: 1, status: 'ACTIVE');
-        final dto = aMatchDto(
-            id: 10, bluePlayerId: 1, redPlayerId: 2, sets: [activeSet]);
+        final activeSet = aMatchSet(
+            id: 1, matchId: 10, number: 1, status: SetStatus.active);
+        final matchWithSet = aMatch(
+            id: 10, bluePlayer: bluePlayer, redPlayer: redPlayer,
+            sets: [activeSet]);
 
         when(() => mockRepo.fetchMatchWithPlayers(10))
-            .thenAnswer((_) async => (match: dto, blue: bluePlayer, red: redPlayer));
-        when(() => mockRepo.finishSet(10, 1))
-            .thenAnswer((_) async => activeSet);
+            .thenAnswer((_) async => matchWithSet);
+        when(() => mockRepo.finishSet(10, 1)).thenAnswer((_) async {});
       },
       build: buildCubit,
       act: (cubit) async {
@@ -281,9 +275,8 @@ void main() {
       'calls finishMatch then reloads',
       setUp: () {
         when(() => mockRepo.fetchMatchWithPlayers(10))
-            .thenAnswer((_) async => (match: matchDto, blue: bluePlayer, red: redPlayer));
-        when(() => mockRepo.finishMatch(10))
-            .thenAnswer((_) async => matchDto);
+            .thenAnswer((_) async => baseMatch);
+        when(() => mockRepo.finishMatch(10)).thenAnswer((_) async {});
       },
       build: buildCubit,
       act: (cubit) async {
@@ -302,16 +295,16 @@ void main() {
     blocTest<RefereeMatchCubit, RefereeMatchState>(
       'calls finishSet then finishMatch then reloads',
       setUp: () {
-        final activeSet =
-            aMatchSetDto(id: 1, matchId: 10, number: 1, status: 'ACTIVE');
-        final dto = aMatchDto(
-            id: 10, bluePlayerId: 1, redPlayerId: 2, sets: [activeSet]);
+        final activeSet = aMatchSet(
+            id: 1, matchId: 10, number: 1, status: SetStatus.active);
+        final matchWithSet = aMatch(
+            id: 10, bluePlayer: bluePlayer, redPlayer: redPlayer,
+            sets: [activeSet]);
 
         when(() => mockRepo.fetchMatchWithPlayers(10))
-            .thenAnswer((_) async => (match: dto, blue: bluePlayer, red: redPlayer));
-        when(() => mockRepo.finishSet(10, 1))
-            .thenAnswer((_) async => activeSet);
-        when(() => mockRepo.finishMatch(10)).thenAnswer((_) async => dto);
+            .thenAnswer((_) async => matchWithSet);
+        when(() => mockRepo.finishSet(10, 1)).thenAnswer((_) async {});
+        when(() => mockRepo.finishMatch(10)).thenAnswer((_) async {});
       },
       build: buildCubit,
       act: (cubit) async {
@@ -332,9 +325,10 @@ void main() {
       'calls technicalDefeatMatch then reloads',
       setUp: () {
         when(() => mockRepo.fetchMatchWithPlayers(10))
-            .thenAnswer((_) async => (match: matchDto, blue: bluePlayer, red: redPlayer));
-        when(() => mockRepo.technicalDefeatMatch(10, 2, reason: any(named: 'reason')))
-            .thenAnswer((_) async => matchDto);
+            .thenAnswer((_) async => baseMatch);
+        when(() => mockRepo.technicalDefeatMatch(10, 2,
+                reason: any(named: 'reason')))
+            .thenAnswer((_) async {});
       },
       build: buildCubit,
       act: (cubit) async {
@@ -356,9 +350,9 @@ void main() {
       'calls issueCard then reloads',
       setUp: () {
         when(() => mockRepo.fetchMatchWithPlayers(10))
-            .thenAnswer((_) async => (match: matchDto, blue: bluePlayer, red: redPlayer));
+            .thenAnswer((_) async => baseMatch);
         when(() => mockRepo.issueCard(10, 1, 'YELLOW'))
-            .thenAnswer((_) async => matchDto);
+            .thenAnswer((_) async {});
       },
       build: buildCubit,
       act: (cubit) async {
@@ -378,9 +372,8 @@ void main() {
       'calls revokeCard then reloads',
       setUp: () {
         when(() => mockRepo.fetchMatchWithPlayers(10))
-            .thenAnswer((_) async => (match: matchDto, blue: bluePlayer, red: redPlayer));
-        when(() => mockRepo.revokeCard(10, 99))
-            .thenAnswer((_) async => matchDto);
+            .thenAnswer((_) async => baseMatch);
+        when(() => mockRepo.revokeCard(10, 99)).thenAnswer((_) async {});
       },
       build: buildCubit,
       act: (cubit) async {
@@ -401,31 +394,27 @@ void main() {
 
   group('RefereeMatchReady computed properties', () {
     RefereeMatchReady makeReady({
-      List<MatchCardDto> cards = const [],
-      List<MatchSetDto> sets = const [],
+      List<MatchCard> cards = const [],
+      List<MatchSet> sets = const [],
       int? firstServerId,
       int setsToWin = 3,
     }) {
-      final dto = aMatchDto(
+      final match = aMatch(
         id: 10,
-        bluePlayerId: 1,
-        redPlayerId: 2,
+        bluePlayer: bluePlayer,
+        redPlayer: redPlayer,
         cards: cards,
         sets: sets,
         firstServerId: firstServerId,
         setsToWin: setsToWin,
       );
-      return RefereeMatchReady(
-        match: dto,
-        bluePlayer: bluePlayer,
-        redPlayer: redPlayer,
-      );
+      return RefereeMatchReady(match: match);
     }
 
     group('blueCards / redCards', () {
       test('blueCards returns cards where playerId == bluePlayerId', () {
-        final blueCard = aMatchCardDto(id: 1, matchId: 10, playerId: 1, cardType: 'YELLOW');
-        final redCard = aMatchCardDto(id: 2, matchId: 10, playerId: 2, cardType: 'YELLOW');
+        final blueCard = aMatchCard(id: 1, matchId: 10, playerId: 1, cardType: 'YELLOW');
+        final redCard = aMatchCard(id: 2, matchId: 10, playerId: 2, cardType: 'YELLOW');
         final ready = makeReady(cards: [blueCard, redCard]);
 
         expect(ready.blueCards, [blueCard]);
@@ -440,14 +429,14 @@ void main() {
       });
 
       test('true when only blue has WHITE (red still eligible)', () {
-        final blueWhite = aMatchCardDto(id: 1, matchId: 10, playerId: 1, cardType: 'WHITE');
+        final blueWhite = aMatchCard(id: 1, matchId: 10, playerId: 1, cardType: 'WHITE');
         final ready = makeReady(cards: [blueWhite]);
         expect(ready.canIssueWhite, isTrue);
       });
 
       test('false when both players have WHITE', () {
-        final blueWhite = aMatchCardDto(id: 1, matchId: 10, playerId: 1, cardType: 'WHITE');
-        final redWhite = aMatchCardDto(id: 2, matchId: 10, playerId: 2, cardType: 'WHITE');
+        final blueWhite = aMatchCard(id: 1, matchId: 10, playerId: 1, cardType: 'WHITE');
+        final redWhite = aMatchCard(id: 2, matchId: 10, playerId: 2, cardType: 'WHITE');
         final ready = makeReady(cards: [blueWhite, redWhite]);
         expect(ready.canIssueWhite, isFalse);
       });
@@ -461,9 +450,9 @@ void main() {
 
       test('false when both players have YELLOW', () {
         final blueYellow =
-            aMatchCardDto(id: 1, matchId: 10, playerId: 1, cardType: 'YELLOW');
+            aMatchCard(id: 1, matchId: 10, playerId: 1, cardType: 'YELLOW');
         final redYellow =
-            aMatchCardDto(id: 2, matchId: 10, playerId: 2, cardType: 'YELLOW');
+            aMatchCard(id: 2, matchId: 10, playerId: 2, cardType: 'YELLOW');
         final ready = makeReady(cards: [blueYellow, redYellow]);
         expect(ready.canIssueYellow, isFalse);
       });
@@ -478,7 +467,7 @@ void main() {
 
       test('canIssueRed true and blue eligible when blue has YELLOW', () {
         final blueYellow =
-            aMatchCardDto(id: 1, matchId: 10, playerId: 1, cardType: 'YELLOW');
+            aMatchCard(id: 1, matchId: 10, playerId: 1, cardType: 'YELLOW');
         final ready = makeReady(cards: [blueYellow]);
         expect(ready.canIssueRed, isTrue);
         expect(ready.eligibleRedPlayers, contains(1));
@@ -487,9 +476,9 @@ void main() {
 
       test('both players eligible when both have YELLOW', () {
         final blueYellow =
-            aMatchCardDto(id: 1, matchId: 10, playerId: 1, cardType: 'YELLOW');
+            aMatchCard(id: 1, matchId: 10, playerId: 1, cardType: 'YELLOW');
         final redYellow =
-            aMatchCardDto(id: 2, matchId: 10, playerId: 2, cardType: 'YELLOW');
+            aMatchCard(id: 2, matchId: 10, playerId: 2, cardType: 'YELLOW');
         final ready = makeReady(cards: [blueYellow, redYellow]);
         expect(ready.eligibleRedPlayers, containsAll([1, 2]));
       });
@@ -535,13 +524,13 @@ void main() {
 
       test('returns firstServer when active set and 0 points played (odd set)',
           () {
-        final activeSet = aMatchSetDto(
+        final activeSet = aMatchSet(
             id: 1,
             matchId: 10,
             number: 1,
-            bluePlayerScore: 0,
-            redPlayerScore: 0,
-            status: 'ACTIVE');
+            blueScore: 0,
+            redScore: 0,
+            status: SetStatus.active);
         final ready = makeReady(sets: [activeSet], firstServerId: 1);
         // set 1 (odd) → setStarter = firstServer = 1
         // total=0, changes = 0 ~/ 2 = 0 → 0%2==0 → setStarter = 1
@@ -549,26 +538,26 @@ void main() {
       });
 
       test('switches server after 2 points in normal play', () {
-        final activeSet = aMatchSetDto(
+        final activeSet = aMatchSet(
             id: 1,
             matchId: 10,
             number: 1,
-            bluePlayerScore: 2,
-            redPlayerScore: 0,
-            status: 'ACTIVE');
+            blueScore: 2,
+            redScore: 0,
+            status: SetStatus.active);
         final ready = makeReady(sets: [activeSet], firstServerId: 1);
         // total=2, changes = 2~/ 2 = 1 → 1%2==1 → otherServer = 2
         expect(ready.currentServerId(), 2);
       });
 
       test('even set (2) starts with otherServer', () {
-        final activeSet = aMatchSetDto(
+        final activeSet = aMatchSet(
             id: 1,
             matchId: 10,
             number: 2,
-            bluePlayerScore: 0,
-            redPlayerScore: 0,
-            status: 'ACTIVE');
+            blueScore: 0,
+            redScore: 0,
+            status: SetStatus.active);
         final ready = makeReady(sets: [activeSet], firstServerId: 1);
         // set 2 (even) → setStarter = otherServer = 2
         // total=0, changes = 0 → 0%2==0 → setStarter = 2

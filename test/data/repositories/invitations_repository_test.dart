@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:tennis_cup/data/models/arena.dart';
 import 'package:tennis_cup/data/models/tournament_invitation.dart';
 import 'package:tennis_cup/data/repositories/invitations_repository.dart';
 import '../../../test/helpers/mocks.dart';
@@ -56,7 +56,7 @@ void main() {
       expect(inv.tournamentId, '10');
       expect(inv.tournament.name, 'Open Cup');
       expect(inv.tournament.arena.title, 'Centre Court');
-      expect(inv.tournament.arena.color, Colors.red);
+      expect(inv.tournament.arena.color, ArenaColor.red);
     });
 
     test('builds TournamentInvitation from invitation data when tournament not found',
@@ -199,7 +199,7 @@ void main() {
   });
 
   group('_toDomain – arena color', () {
-    test('arena color RED maps to Colors.red', () async {
+    test('arena color RED maps to ArenaColor.red', () async {
       final dto = aMyInvitationDto(invitationId: 1, tournamentId: 10);
       final tDto = aTournamentDto(id: 10, arenaId: 5);
       final aDto = anArenaDto(id: 5, color: 'RED');
@@ -214,10 +214,10 @@ void main() {
 
       final result = await repository.fetchInvitations(status: 'PENDING');
 
-      expect(result.first.tournament.arena.color, Colors.red);
+      expect(result.first.tournament.arena.color, ArenaColor.red);
     });
 
-    test('arena color GREEN maps to Colors.green', () async {
+    test('arena color GREEN maps to ArenaColor.green', () async {
       final dto = aMyInvitationDto(invitationId: 1, tournamentId: 10);
       final tDto = aTournamentDto(id: 10, arenaId: 5);
       final aDto = anArenaDto(id: 5, color: 'GREEN');
@@ -232,7 +232,7 @@ void main() {
 
       final result = await repository.fetchInvitations(status: 'PENDING');
 
-      expect(result.first.tournament.arena.color, Colors.green);
+      expect(result.first.tournament.arena.color, ArenaColor.green);
     });
 
     test('arena with id maps correctly to tournament arena id string', () async {
@@ -252,7 +252,7 @@ void main() {
 
       expect(result.first.tournament.arena.id, '7');
       expect(result.first.tournament.arena.title, 'Blue Court');
-      expect(result.first.tournament.arena.color, Colors.blue);
+      expect(result.first.tournament.arena.color, ArenaColor.blue);
     });
   });
 

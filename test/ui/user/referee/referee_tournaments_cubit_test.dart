@@ -9,12 +9,12 @@ import '../../../helpers/mocks.dart';
 void main() {
   setUpAll(registerFallbackValues);
 
-  late MockRefereeRepository mockRepo;
+  late MockTournamentRepository mockRepo;
 
   const testUserId = '42';
 
   setUp(() {
-    mockRepo = MockRefereeRepository();
+    mockRepo = MockTournamentRepository();
   });
 
   RefereeTournamentsCubit buildCubit() =>

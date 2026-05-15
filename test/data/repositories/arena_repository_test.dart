@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:tennis_cup/data/models/arena.dart';
@@ -106,7 +105,7 @@ void main() {
   });
 
   group('_toArena – color mapping', () {
-    Future<Color> colorFor(String colorString) async {
+    Future<ArenaColor> colorFor(String colorString) async {
       final dto = anArenaDto(color: colorString);
       when(() => mockArenaService.fetchAllArenas())
           .thenAnswer((_) async => [dto]);
@@ -114,40 +113,40 @@ void main() {
       return result.first.color;
     }
 
-    test("'RED' → Colors.red", () async {
-      expect(await colorFor('RED'), Colors.red);
+    test("'RED' → ArenaColor.red", () async {
+      expect(await colorFor('RED'), ArenaColor.red);
     });
 
-    test("'GREEN' → Colors.green", () async {
-      expect(await colorFor('GREEN'), Colors.green);
+    test("'GREEN' → ArenaColor.green", () async {
+      expect(await colorFor('GREEN'), ArenaColor.green);
     });
 
-    test("'BLUE' → Colors.blue", () async {
-      expect(await colorFor('BLUE'), Colors.blue);
+    test("'BLUE' → ArenaColor.blue", () async {
+      expect(await colorFor('BLUE'), ArenaColor.blue);
     });
 
-    test("'YELLOW' → Colors.yellow", () async {
-      expect(await colorFor('YELLOW'), Colors.yellow);
+    test("'YELLOW' → ArenaColor.yellow", () async {
+      expect(await colorFor('YELLOW'), ArenaColor.yellow);
     });
 
-    test("'WHITE' → Colors.white", () async {
-      expect(await colorFor('WHITE'), Colors.white);
+    test("'WHITE' → ArenaColor.white", () async {
+      expect(await colorFor('WHITE'), ArenaColor.white);
     });
 
-    test("'BLACK' → Colors.black", () async {
-      expect(await colorFor('BLACK'), Colors.black);
+    test("'BLACK' → ArenaColor.black", () async {
+      expect(await colorFor('BLACK'), ArenaColor.black);
     });
 
-    test("'BROWN' → Colors.brown", () async {
-      expect(await colorFor('BROWN'), Colors.brown);
+    test("'BROWN' → ArenaColor.brown", () async {
+      expect(await colorFor('BROWN'), ArenaColor.brown);
     });
 
-    test("unknown color string → Colors.grey", () async {
-      expect(await colorFor('PURPLE'), Colors.grey);
+    test("unknown color string → ArenaColor.grey", () async {
+      expect(await colorFor('PURPLE'), ArenaColor.grey);
     });
 
-    test("empty string → Colors.grey", () async {
-      expect(await colorFor(''), Colors.grey);
+    test("empty string → ArenaColor.grey", () async {
+      expect(await colorFor(''), ArenaColor.grey);
     });
   });
 }

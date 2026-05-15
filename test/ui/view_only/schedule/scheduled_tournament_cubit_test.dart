@@ -1,5 +1,4 @@
 import 'package:bloc_test/bloc_test.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:tennis_cup/data/models/arena.dart';
@@ -26,10 +25,10 @@ void main() {
     tournamentId: '1',
     name: 'Test Tournament',
     gender: 'MALE',
-    status: 'ACTIVE',
+    status: TournamentStatus.active,
     players: const [],
     date: DateTime(2024, 1, 15),
-    arena: const Arena(id: '1', title: 'Arena 1', color: Color(0xFFFF0000)),
+    arena: const Arena(id: '1', title: 'Arena 1', color: ArenaColor.red),
     time: Time.Morning,
     points: const [],
     places: const [],

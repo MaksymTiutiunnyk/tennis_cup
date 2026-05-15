@@ -1,5 +1,4 @@
 import 'package:bloc_test/bloc_test.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:tennis_cup/data/models/arena.dart';
@@ -23,10 +22,10 @@ void main() {
     tournamentId: '1',
     name: 'Test Tournament',
     gender: 'MALE',
-    status: 'PENDING',
+    status: TournamentStatus.pending,
     players: const [],
     date: DateTime(2024, 1, 15),
-    arena: Arena(id: '1', title: 'Arena 1', color: Colors.red),
+    arena: const Arena(id: '1', title: 'Arena 1', color: ArenaColor.red),
     time: Time.Morning,
     points: const [],
     places: const [],
@@ -112,8 +111,7 @@ void main() {
     blocTest<OrganizerTournamentsCubit, OrganizerTournamentsState>(
       'success calls createTournament then reloads with loaded state',
       setUp: () {
-        when(() => mockRepo.createTournament(any()))
-            .thenAnswer((_) async {});
+        when(() => mockRepo.createTournament(any())).thenAnswer((_) async {});
         when(() => mockRepo.fetchScheduledTournament(
               tournamentDate: any(named: 'tournamentDate'),
               tournamentArena: any(named: 'tournamentArena'),
@@ -199,10 +197,10 @@ void main() {
       tournamentId: '1',
       name: 'T1',
       gender: 'MALE',
-      status: 'PENDING',
+      status: TournamentStatus.pending,
       players: const [],
       date: DateTime(2024, 1, 15),
-      arena: Arena(id: '1', title: 'Arena 1', color: Colors.red),
+      arena: const Arena(id: '1', title: 'Arena 1', color: ArenaColor.red),
       time: Time.Morning,
       points: const [],
       places: const [],
@@ -211,10 +209,10 @@ void main() {
       tournamentId: '2',
       name: 'T2',
       gender: 'MALE',
-      status: 'PENDING',
+      status: TournamentStatus.pending,
       players: const [],
       date: DateTime(2024, 1, 15),
-      arena: Arena(id: '1', title: 'Arena 1', color: Colors.red),
+      arena: const Arena(id: '1', title: 'Arena 1', color: ArenaColor.red),
       time: Time.Morning,
       points: const [],
       places: const [],
@@ -223,8 +221,7 @@ void main() {
     blocTest<OrganizerTournamentsCubit, OrganizerTournamentsState>(
       'success: optimistically removes tournament, no further state after delete',
       setUp: () {
-        when(() => mockRepo.deleteTournament(any()))
-            .thenAnswer((_) async {});
+        when(() => mockRepo.deleteTournament(any())).thenAnswer((_) async {});
       },
       build: buildCubit,
       seed: () => OrgTournamentsLoaded([tournament1, tournament2]),
@@ -267,8 +264,7 @@ void main() {
     blocTest<OrganizerTournamentsCubit, OrganizerTournamentsState>(
       'success calls startTournament then reloads',
       setUp: () {
-        when(() => mockRepo.startTournament(any()))
-            .thenAnswer((_) async {});
+        when(() => mockRepo.startTournament(any())).thenAnswer((_) async {});
         when(() => mockRepo.fetchScheduledTournament(
               tournamentDate: any(named: 'tournamentDate'),
               tournamentArena: any(named: 'tournamentArena'),
@@ -296,8 +292,7 @@ void main() {
     blocTest<OrganizerTournamentsCubit, OrganizerTournamentsState>(
       'success calls finishTournament then reloads',
       setUp: () {
-        when(() => mockRepo.finishTournament(any()))
-            .thenAnswer((_) async {});
+        when(() => mockRepo.finishTournament(any())).thenAnswer((_) async {});
         when(() => mockRepo.fetchScheduledTournament(
               tournamentDate: any(named: 'tournamentDate'),
               tournamentArena: any(named: 'tournamentArena'),
@@ -325,8 +320,7 @@ void main() {
     blocTest<OrganizerTournamentsCubit, OrganizerTournamentsState>(
       'success calls addPlayers then reloads',
       setUp: () {
-        when(() => mockRepo.addPlayers(any(), any()))
-            .thenAnswer((_) async {});
+        when(() => mockRepo.addPlayers(any(), any())).thenAnswer((_) async {});
         when(() => mockRepo.fetchScheduledTournament(
               tournamentDate: any(named: 'tournamentDate'),
               tournamentArena: any(named: 'tournamentArena'),
@@ -383,8 +377,7 @@ void main() {
     blocTest<OrganizerTournamentsCubit, OrganizerTournamentsState>(
       '_reload before load() called makes no repository call',
       setUp: () {
-        when(() => mockRepo.createTournament(any()))
-            .thenAnswer((_) async {});
+        when(() => mockRepo.createTournament(any())).thenAnswer((_) async {});
       },
       build: buildCubit,
       // create triggers _reload, but _date/_arena/_time are null → returns early
