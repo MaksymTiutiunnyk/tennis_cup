@@ -59,10 +59,20 @@ class TournamentCard extends StatelessWidget {
                 child: Text(s.delete),
               ),
             ],
-            if (tournament.status == TournamentStatus.active)
+            if (tournament.status == TournamentStatus.active) ...[
               PopupMenuItem(
                 value: _Action.finish,
                 child: Text(s.finish),
+              ),
+              PopupMenuItem(
+                value: _Action.checkDetails,
+                child: Text(s.checkDetails),
+              ),
+            ],
+            if (tournament.status == TournamentStatus.finished)
+              PopupMenuItem(
+                value: _Action.checkDetails,
+                child: Text(s.checkDetails),
               ),
           ],
         ),
@@ -90,6 +100,13 @@ class TournamentCard extends StatelessWidget {
         cubit.finish(id);
       case _Action.delete:
         _confirmDelete(context, cubit, id);
+      case _Action.checkDetails:
+        Navigator.of(context).push(MaterialPageRoute(
+          builder: (_) => BlocProvider.value(
+            value: cubit,
+            child: TournamentForm(existing: tournament, readOnly: true),
+          ),
+        ));
     }
   }
 
@@ -118,4 +135,4 @@ class TournamentCard extends StatelessWidget {
   }
 }
 
-enum _Action { edit, start, finish, delete }
+enum _Action { edit, start, finish, delete, checkDetails }

@@ -9,7 +9,9 @@ export 'package:tennis_cup/ui/user/organizer/view_models/referee_search_cubit.da
     show SelectedReferee;
 
 class RefereePicker extends StatefulWidget {
-  const RefereePicker({super.key});
+  final bool readOnly;
+
+  const RefereePicker({super.key, this.readOnly = false});
 
   @override
   State<RefereePicker> createState() => _RefereePickerState();
@@ -75,13 +77,16 @@ class _RefereePickerState extends State<RefereePicker> {
                           label: Text(r.name,
                               style: const TextStyle(color: Colors.white)),
                           backgroundColor: _chipColor(context, r.status),
-                          onDeleted: () => _cubit.removeReferee(r.id),
+                          onDeleted: widget.readOnly
+                              ? null
+                              : () => _cubit.removeReferee(r.id),
                           deleteIconColor: Colors.white,
                         ))
                     .toList(),
               ),
               const SizedBox(height: 8),
             ],
+            if (!widget.readOnly)
             TextField(
               controller: _ctrl,
               enabled: !searchDisabled,
@@ -103,7 +108,7 @@ class _RefereePickerState extends State<RefereePicker> {
               ),
               onChanged: _onChanged,
             ),
-            if (state.searchResults.isNotEmpty)
+            if (!widget.readOnly && state.searchResults.isNotEmpty)
               Card(
                 margin: const EdgeInsets.only(top: 2),
                 elevation: 4,

@@ -11,11 +11,13 @@ export 'package:tennis_cup/ui/user/organizer/view_models/player_search_cubit.dar
 class PlayerPicker extends StatefulWidget {
   final String? gender;
   final int? requiredPlayersCount;
+  final bool readOnly;
 
   const PlayerPicker({
     super.key,
     this.gender,
     this.requiredPlayersCount,
+    this.readOnly = false,
   });
 
   @override
@@ -88,13 +90,16 @@ class _PlayerPickerState extends State<PlayerPicker> {
                             style: const TextStyle(color: Colors.white),
                           ),
                           backgroundColor: _chipColor(context, p.status),
-                          onDeleted: () => _cubit.removePlayer(p.id),
+                          onDeleted: widget.readOnly
+                              ? null
+                              : () => _cubit.removePlayer(p.id),
                           deleteIconColor: Colors.white,
                         ))
                     .toList(),
               ),
               const SizedBox(height: 8),
             ],
+            if (!widget.readOnly)
             TextField(
               controller: _ctrl,
               enabled: !searchDisabled,
@@ -114,7 +119,7 @@ class _PlayerPickerState extends State<PlayerPicker> {
               ),
               onChanged: _onChanged,
             ),
-            if (state.searchResults.isNotEmpty)
+            if (!widget.readOnly && state.searchResults.isNotEmpty)
               Card(
                 margin: const EdgeInsets.only(top: 2),
                 elevation: 4,
