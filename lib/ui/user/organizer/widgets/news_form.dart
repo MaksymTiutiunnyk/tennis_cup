@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:tennis_cup/data/models/news.dart';
+import 'package:tennis_cup/generated/l10n.dart';
 import 'package:tennis_cup/ui/user/organizer/view_models/organizer_news_cubit.dart';
 
 final _displayFmt = DateFormat('dd MMM yyyy HH:mm');
@@ -115,12 +116,13 @@ class _NewsFormState extends State<NewsForm> {
 
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
     final existingImageUrl = widget.existing?.imageUrl ?? '';
     final hasExistingImage =
         existingImageUrl.isNotEmpty && !_removeImage && _pickedImage == null;
 
     return Scaffold(
-      appBar: AppBar(title: Text(_isEdit ? 'Edit News' : 'New News')),
+      appBar: AppBar(title: Text(_isEdit ? s.editNews : s.newNews)),
       body: BlocListener<OrganizerNewsCubit, OrganizerNewsState>(
         listener: (context, state) {
           if (state is OrgNewsError) {
@@ -136,36 +138,43 @@ class _NewsFormState extends State<NewsForm> {
             children: [
               TextFormField(
                 controller: _titleCtrl,
-                decoration: const InputDecoration(labelText: 'Title'),
+                decoration: InputDecoration(labelText: s.titleField),
                 maxLength: 255,
                 validator: (v) =>
-                    (v == null || v.trim().isEmpty) ? 'Required' : null,
+                    (v == null || v.trim().isEmpty) ? s.required : null,
               ),
               const SizedBox(height: 12),
               TextFormField(
                 controller: _bodyCtrl,
-                decoration: const InputDecoration(
-                  labelText: 'Body',
+                decoration: InputDecoration(
+                  labelText: s.bodyField,
                   alignLabelWithHint: true,
                 ),
                 maxLines: 6,
                 maxLength: 10000,
                 validator: (v) =>
-                    (v == null || v.trim().isEmpty) ? 'Required' : null,
+                    (v == null || v.trim().isEmpty) ? s.required : null,
               ),
               const SizedBox(height: 12),
               DropdownButtonFormField<String>(
                 value: _importance,
-                decoration: const InputDecoration(labelText: 'Importance'),
-                items: const ['REGULAR', 'INTERESTING']
-                    .map((v) => DropdownMenuItem(value: v, child: Text(v)))
-                    .toList(),
+                decoration: InputDecoration(labelText: s.importanceField),
+                items: [
+                  DropdownMenuItem(
+                    value: 'REGULAR',
+                    child: Text(s.importanceRegular),
+                  ),
+                  DropdownMenuItem(
+                    value: 'INTERESTING',
+                    child: Text(s.importanceInteresting),
+                  ),
+                ],
                 onChanged: (v) => setState(() => _importance = v!),
               ),
               const SizedBox(height: 12),
               ListTile(
                 contentPadding: EdgeInsets.zero,
-                title: const Text('Date & time'),
+                title: Text(s.dateTimeField),
                 subtitle: Text(_displayFmt.format(_timestamp)),
                 trailing: const Icon(Icons.calendar_today),
                 onTap: _pickDateTime,
@@ -189,8 +198,8 @@ class _NewsFormState extends State<NewsForm> {
                 icon: const Icon(Icons.image_outlined),
                 label: Text(
                   (_pickedImage != null || hasExistingImage)
-                      ? 'Change image'
-                      : 'Add image',
+                      ? s.changeImage
+                      : s.addImage,
                 ),
               ),
               const SizedBox(height: 24),
@@ -202,7 +211,7 @@ class _NewsFormState extends State<NewsForm> {
                         width: 20,
                         child: CircularProgressIndicator(strokeWidth: 2),
                       )
-                    : Text(_isEdit ? 'Save' : 'Create'),
+                    : Text(_isEdit ? s.save : s.create),
               ),
             ],
           ),
@@ -269,9 +278,7 @@ class _NetworkImagePreview extends StatelessWidget {
               );
             },
             loadingBuilder: (_, child, loadingProgress) {
-              if (loadingProgress == null) {
-                return child;
-              }
+              if (loadingProgress == null) return child;
               return Center(
                 child: CircularProgressIndicator(
                   value: loadingProgress.cumulativeBytesLoaded /

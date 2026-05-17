@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tennis_cup/data/models/match.dart';
 import 'package:tennis_cup/data/models/user.dart';
+import 'package:tennis_cup/generated/l10n.dart';
 
 class NoActiveSetView extends StatelessWidget {
   final User bluePlayer;
@@ -31,8 +32,9 @@ class NoActiveSetView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
+
     if (pendingSetNumber == null) {
-      // Match decided — simple centred finish view.
       return Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -46,7 +48,7 @@ class NoActiveSetView extends StatelessWidget {
               FilledButton.icon(
                 onPressed: onFinish,
                 icon: const Icon(Icons.emoji_events),
-                label: const Text('Finish Match'),
+                label: Text(s.finishMatch),
               ),
             ],
           ],
@@ -54,14 +56,11 @@ class NoActiveSetView extends StatelessWidget {
       );
     }
 
-    // Between sets — same 3-column layout as during play but with the last set
-    // score shown instead of a live score, and no tap-to-score interactivity.
     final leftPlayer = leftIsRed ? redPlayer : bluePlayer;
     final rightPlayer = leftIsRed ? bluePlayer : redPlayer;
     final leftBg = leftIsRed ? const Color(0xFFC62828) : const Color(0xFF1565C0);
     final rightBg = leftIsRed ? const Color(0xFF1565C0) : const Color(0xFFC62828);
 
-    // Map MatchSetDto scores (blue/red) to left/right positions.
     final leftScore = lastSet == null
         ? 0
         : (leftIsRed ? lastSet!.redScore : lastSet!.blueScore);
@@ -69,7 +68,6 @@ class NoActiveSetView extends StatelessWidget {
         ? 0
         : (leftIsRed ? lastSet!.blueScore : lastSet!.redScore);
 
-    // Show sets won BEFORE the just-finished set — subtract the winner's point.
     final lastWinnerId = lastSet?.winnerId;
     final displayBlueSets =
         blueSetsWon - (lastWinnerId == bluePlayer.id ? 1 : 0);
@@ -79,7 +77,6 @@ class NoActiveSetView extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        // Left score panel
         Expanded(
           child: _ScorePanel(
             player: leftPlayer,
@@ -90,7 +87,6 @@ class NoActiveSetView extends StatelessWidget {
 
         const VerticalDivider(width: 1),
 
-        // Center: sets tally + start next set
         SizedBox(
           width: 168,
           child: Container(
@@ -102,7 +98,7 @@ class NoActiveSetView extends StatelessWidget {
               children: [
                 if (lastSet != null) ...[
                   Text(
-                    'Set ${lastSet!.number} finished',
+                    s.setFinished(lastSet!.number),
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.labelMedium,
                   ),
@@ -120,7 +116,7 @@ class NoActiveSetView extends StatelessWidget {
                 FilledButton.icon(
                   onPressed: onStartSet,
                   icon: const Icon(Icons.play_arrow),
-                  label: Text('Start Set $pendingSetNumber'),
+                  label: Text(s.startSet(pendingSetNumber!)),
                 ),
               ],
             ),
@@ -129,7 +125,6 @@ class NoActiveSetView extends StatelessWidget {
 
         const VerticalDivider(width: 1),
 
-        // Right score panel
         Expanded(
           child: _ScorePanel(
             player: rightPlayer,

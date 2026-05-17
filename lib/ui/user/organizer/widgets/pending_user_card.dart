@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:tennis_cup/data/models/pending_user.dart';
 import 'package:tennis_cup/data/models/user_role.dart';
+import 'package:tennis_cup/generated/l10n.dart';
 import 'package:tennis_cup/ui/user/organizer/view_models/pending_users_cubit.dart';
 
 final _dateFmt = DateFormat('dd MMM yyyy');
@@ -14,6 +15,7 @@ class PendingUserCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
     final cubit = context.read<PendingUsersCubit>();
 
     return Card(
@@ -42,7 +44,7 @@ class PendingUserCard extends StatelessWidget {
               spacing: 6,
               children: user.roles
                   .map((r) => Chip(
-                        label: Text(_roleName(r),
+                        label: Text(_roleName(r, s),
                             style: const TextStyle(fontSize: 11)),
                         visualDensity: VisualDensity.compact,
                         padding: EdgeInsets.zero,
@@ -56,12 +58,12 @@ class PendingUserCard extends StatelessWidget {
                 TextButton(
                   style: TextButton.styleFrom(foregroundColor: Colors.red),
                   onPressed: () => _confirmReject(context, cubit),
-                  child: const Text('Reject'),
+                  child: Text(s.reject),
                 ),
                 const SizedBox(width: 8),
                 FilledButton(
                   onPressed: () => cubit.approve(user.id),
-                  child: const Text('Approve'),
+                  child: Text(s.approve),
                 ),
               ],
             ),
@@ -72,18 +74,19 @@ class PendingUserCard extends StatelessWidget {
   }
 
   void _confirmReject(BuildContext context, PendingUsersCubit cubit) {
+    final s = S.of(context);
     var reason = '';
     showDialog<bool>(
       context: context,
       builder: (dialogCtx) => AlertDialog(
-        title: const Text('Reject registration'),
+        title: Text(s.rejectRegistration),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text('Reject "${user.login}"?'),
+            Text('${s.reject} "${user.login}"?'),
             const SizedBox(height: 12),
             TextField(
-              decoration: const InputDecoration(labelText: 'Reason (optional)'),
+              decoration: InputDecoration(labelText: s.reasonOptional),
               onChanged: (v) => reason = v,
             ),
           ],
@@ -91,11 +94,11 @@ class PendingUserCard extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(dialogCtx).pop(false),
-            child: const Text('Cancel'),
+            child: Text(s.cancel),
           ),
           TextButton(
             onPressed: () => Navigator.of(dialogCtx).pop(true),
-            child: const Text('Reject'),
+            child: Text(s.reject),
           ),
         ],
       ),
@@ -107,10 +110,10 @@ class PendingUserCard extends StatelessWidget {
     });
   }
 
-  String _roleName(UserRole role) => switch (role) {
-        UserRole.player => 'Player',
-        UserRole.referee => 'Referee',
-        UserRole.organizer => 'Organizer',
-        UserRole.admin => 'Admin',
+  String _roleName(UserRole role, S s) => switch (role) {
+        UserRole.player => s.rolePlayer,
+        UserRole.referee => s.roleReferee,
+        UserRole.organizer => s.roleOrganizer,
+        UserRole.admin => s.roleAdmin,
       };
 }

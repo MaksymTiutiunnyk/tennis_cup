@@ -31,6 +31,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
 
   intl: ^0.19.0
   # Firebase — core + messaging for Android push notifications only.
@@ -50,10 +52,15 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
+  intl_utils: ^2.8.7
   flutter_launcher_icons: ^0.14.2
   flutter_lints: ^3.0.0
   mocktail: ^1.0.4
   bloc_test: ^9.1.7
+
+flutter_intl:
+  enabled: true
+  arb_dir: lib/core/l10n
 
 flutter_icons:
   android: true

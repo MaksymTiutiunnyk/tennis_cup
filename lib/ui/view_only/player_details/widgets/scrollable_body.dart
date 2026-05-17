@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tennis_cup/data/models/user.dart';
+import 'package:tennis_cup/generated/l10n.dart';
 import 'package:tennis_cup/routing/app_router.dart';
 import 'package:tennis_cup/ui/view_only/player_details/view_models/player_tournaments_cubit.dart';
 import 'package:tennis_cup/ui/view_only/player_details/widgets/player_info.dart';
@@ -45,9 +46,9 @@ class _ScrollableBodyState extends State<ScrollableBody> {
     ScaffoldMessenger.of(context).clearSnackBars();
     if (widget.player == player) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          duration: Duration(seconds: 2),
-          content: Text('Cannot be compared to oneself'),
+        SnackBar(
+          duration: const Duration(seconds: 2),
+          content: Text(S.of(context).cannotCompareToSelf),
         ),
       );
       return;
@@ -72,6 +73,7 @@ class _ScrollableBodyState extends State<ScrollableBody> {
 
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
     return SingleChildScrollView(
       controller: _scrollController,
       child: Stack(
@@ -93,9 +95,9 @@ class _ScrollableBodyState extends State<ScrollableBody> {
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                  child: const Padding(
-                    padding: EdgeInsets.all(18.0),
-                    child: Text('Participant to compare'),
+                  child: Padding(
+                    padding: const EdgeInsets.all(18.0),
+                    child: Text(s.participantToCompare),
                   ),
                 ),
               ),
@@ -123,7 +125,7 @@ class _ScrollableBodyState extends State<ScrollableBody> {
                 radius: 25,
                 backgroundColor:
                     Theme.of(context).colorScheme.secondaryContainer,
-                child: const Text('VS'),
+                child: Text(s.vs),
               ),
             ),
           ),

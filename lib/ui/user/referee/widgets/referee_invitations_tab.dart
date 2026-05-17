@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tennis_cup/core/di/service_locator.dart';
 import 'package:tennis_cup/data/models/tournament_invitation.dart';
+import 'package:tennis_cup/generated/l10n.dart';
 import 'package:tennis_cup/ui/user/player/view_models/invitations_cubit.dart';
 import 'package:tennis_cup/ui/user/player/widgets/tournament_invitation_card.dart';
 
@@ -33,6 +34,7 @@ class _InvitationsListViewState extends State<_InvitationsListView> {
 
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
     return BlocListener<InvitationsCubit, InvitationsState>(
       listener: (context, state) {
         if (state is InvitationsLoaded) {
@@ -47,11 +49,11 @@ class _InvitationsListViewState extends State<_InvitationsListView> {
           InvitationsLoaded() => RefreshIndicator(
               onRefresh: () => context.read<InvitationsCubit>().reload(),
               child: _items.isEmpty
-                  ? const CustomScrollView(
-                      physics: AlwaysScrollableScrollPhysics(),
+                  ? CustomScrollView(
+                      physics: const AlwaysScrollableScrollPhysics(),
                       slivers: [
                         SliverFillRemaining(
-                          child: Center(child: Text('No invitations yet')),
+                          child: Center(child: Text(s.noInvitationsYet)),
                         ),
                       ],
                     )

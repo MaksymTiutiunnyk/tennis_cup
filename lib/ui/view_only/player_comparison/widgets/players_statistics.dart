@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tennis_cup/data/models/user.dart';
+import 'package:tennis_cup/generated/l10n.dart';
 import 'package:tennis_cup/ui/view_only/player_comparison/widgets/players_statistic.dart';
 
 class PlayersStatistics extends StatelessWidget {
@@ -9,43 +10,44 @@ class PlayersStatistics extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
     return Flexible(
       fit: FlexFit.loose,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           PlayersStatistic(
-            label: 'Tennis Cup Rank:',
+            label: s.labelTennisCupRank,
             player1: player1.rating.toString(),
             player2: player2.rating.toString(),
           ),
           PlayersStatistic(
-            label: 'City, Country:',
+            label: s.labelCityCountry,
             player1: player1.place,
             player2: player2.place,
           ),
           PlayersStatistic(
-            label: 'Year of birth:',
+            label: s.labelYearOfBirth,
             player1: player1.year.toString(),
             player2: player2.year.toString(),
           ),
           PlayersStatistic(
-            label: 'Tournaments:',
+            label: s.tournaments,
             player1: player1.tournaments.toString(),
             player2: player2.tournaments.toString(),
           ),
           PlayersStatistic(
-            label: 'Matches:',
+            label: s.labelMatches,
             player1: player1.matches.toString(),
             player2: player2.matches.toString(),
           ),
           PlayersStatistic(
-            label: 'Wins:',
+            label: s.labelWins,
             player1: player1.wins.toString(),
             player2: player2.wins.toString(),
           ),
           PlayersStatistic(
-            label: 'Loses:',
+            label: s.labelLosses,
             player1: player1.losses.toString(),
             player2: player2.losses.toString(),
           ),

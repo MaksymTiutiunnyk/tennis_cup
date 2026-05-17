@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tennis_cup/generated/l10n.dart';
 
 class AsyncStateWidget extends StatelessWidget {
   final bool isLoading;
@@ -27,7 +28,7 @@ class AsyncStateWidget extends StatelessWidget {
             Text(errorMessage!),
             if (onRetry != null) ...[
               const SizedBox(height: 8),
-              ElevatedButton(onPressed: onRetry, child: const Text('Retry')),
+              ElevatedButton(onPressed: onRetry, child: Text(S.of(context).retry)),
             ],
           ],
         ),

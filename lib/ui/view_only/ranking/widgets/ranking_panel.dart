@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tennis_cup/data/models/user.dart';
+import 'package:tennis_cup/generated/l10n.dart';
 import 'package:tennis_cup/routing/app_router.dart';
 import 'package:tennis_cup/ui/view_only/player_search/widgets/player_search.dart';
 import 'package:tennis_cup/ui/view_only/ranking/view_models/gender_filter_cubit.dart';
@@ -53,7 +54,7 @@ class RankingPanel extends StatelessWidget {
               const Icon(Icons.people_rounded),
               const SizedBox(width: 8),
               Text(
-                'Rating of players',
+                S.of(context).ratingOfPlayers,
                 style: Theme.of(context).textTheme.bodyLarge,
               ),
             ],

@@ -4,16 +4,19 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tennis_cup/core/di/service_locator.dart';
 import 'package:tennis_cup/data/models/arena.dart';
 import 'package:tennis_cup/data/models/tournament.dart';
 import 'package:tennis_cup/firebase_options.dart';
+import 'package:tennis_cup/generated/l10n.dart';
 import 'package:tennis_cup/routing/app_router.dart';
 import 'package:tennis_cup/ui/auth/view_models/auth_cubit.dart';
 import 'package:tennis_cup/ui/core/themes/app_theme.dart';
 import 'package:tennis_cup/ui/core/widgets/connection_monitor.dart';
 import 'package:tennis_cup/ui/notifications/view_models/notification_cubit.dart';
+import 'package:tennis_cup/ui/settings/view_models/language_cubit.dart';
 import 'package:tennis_cup/ui/user/core/view_models/active_role_cubit.dart';
 import 'package:tennis_cup/ui/view_only/home/view_models/live_stream_match_index_cubit.dart';
 import 'package:tennis_cup/ui/view_only/home/view_models/video_player_cubit.dart';
@@ -31,7 +34,8 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
-    await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+    await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform);
   }
   ServiceLocator.init();
   SystemChrome.setPreferredOrientations([
@@ -58,7 +62,8 @@ class _TennisCupState extends State<TennisCup> {
     super.initState();
     _router = buildAppRouter(navigatorKey: _navigatorKey);
     if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
-      FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+      FirebaseMessaging.onBackgroundMessage(
+          _firebaseMessagingBackgroundHandler);
       _setupNotificationHandlers();
     }
   }
@@ -146,6 +151,7 @@ class _TennisCupState extends State<TennisCup> {
         BlocProvider(create: (_) => GenderFilterCubit()),
         BlocProvider(create: (_) => VideoPlayerCubit()),
         BlocProvider(create: (_) => LiveStreamMatchIndexCubit()),
+        BlocProvider(create: (_) => LanguageCubit()),
       ],
       child: BlocListener<AuthCubit, AuthState>(
         listener: (context, state) {
@@ -158,14 +164,24 @@ class _TennisCupState extends State<TennisCup> {
             roleCubit.initRoles([]);
           }
         },
-        child: MaterialApp.router(
-          title: 'Tennis Cup',
-          theme: AppTheme.light,
-          darkTheme: AppTheme.dark,
-          routerConfig: _router,
-          builder: (context, child) => ConnectionMonitor(
-            navigatorKey: _navigatorKey,
-            child: child!,
+        child: BlocBuilder<LanguageCubit, Locale>(
+          builder: (context, locale) => MaterialApp.router(
+            title: 'Tennis Cup',
+            theme: AppTheme.light,
+            darkTheme: AppTheme.dark,
+            locale: locale,
+            localizationsDelegates: const [
+              S.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            supportedLocales: S.delegate.supportedLocales,
+            routerConfig: _router,
+            builder: (context, child) => ConnectionMonitor(
+              navigatorKey: _navigatorKey,
+              child: child!,
+            ),
           ),
         ),
       ),

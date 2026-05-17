@@ -2,6 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tennis_cup/data/models/match.dart';
 import 'package:tennis_cup/data/models/user.dart';
 import 'package:tennis_cup/data/repositories/match_repository.dart';
+import 'package:tennis_cup/generated/l10n.dart';
 
 part 'referee_match_state.dart';
 
@@ -47,7 +48,7 @@ class RefereeMatchCubit extends Cubit<RefereeMatchState> {
     final s = state;
     if (s is! RefereeMatchReady) return;
     if (s.firstServerPlayerId == null) {
-      emit(s.copyWith(notification: 'Select the first server before starting'));
+      emit(s.copyWith(notification: S.current.selectFirstServer));
       return;
     }
     try {

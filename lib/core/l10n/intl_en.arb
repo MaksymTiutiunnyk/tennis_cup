@@ -1,0 +1,271 @@
+{
+  "@@locale": "en",
+
+  "signIn": "Sign in",
+  "createAccount": "Create account",
+  "alreadyHaveAccount": "Already have an account? Sign in",
+  "loginField": "Login",
+  "passwordField": "Password",
+
+  "register": "Register",
+  "required": "Required",
+  "atLeast8Chars": "At least 8 characters",
+  "cancel": "Cancel",
+  "save": "Save",
+  "create": "Create",
+  "update": "Update",
+  "delete": "Delete",
+  "edit": "Edit",
+  "start": "Start",
+  "finish": "Finish",
+  "apply": "Apply",
+  "retry": "Retry",
+  "accept": "Accept",
+  "decline": "Decline",
+  "approve": "Approve",
+  "reject": "Reject",
+  "confirm": "Confirm",
+  "remove": "Remove",
+  "revoke": "Revoke",
+
+  "firstNameField": "First name",
+  "lastNameField": "Last name",
+  "patronymicField": "Patronymic (optional)",
+  "birthDateField": "Birth date",
+  "genderField": "Gender",
+  "male": "Male",
+  "female": "Female",
+  "countryField": "Country",
+  "cityField": "City",
+  "blockUser": "Block user?",
+  "unblockUser": "Unblock user?",
+  "blockUserButton": "Block user",
+  "unblockUserButton": "Unblock user",
+  "blockButton": "Block",
+  "unblockButton": "Unblock",
+  "blockUserContent": "This user will no longer be able to log in.",
+  "unblockUserContent": "This user will be able to log in again.",
+
+  "account": "Account",
+  "changePassword": "Change password",
+  "changePasswordSubtitle": "Update the password for your account",
+  "passwordUpdated": "Password updated.",
+  "signOut": "Sign out",
+  "signOutConfirmTitle": "Sign out?",
+  "signOutConfirmContent": "You will need to sign in again to continue.",
+  "currentPassword": "Current password",
+  "newPassword": "New password",
+  "confirmNewPassword": "Confirm new password",
+  "newPasswordMustDiffer": "New password must differ from current",
+  "passwordsDoNotMatch": "Passwords do not match",
+
+  "language": "Language",
+
+  "tournamentName": "Name",
+  "tournamentType": "Type",
+  "arenaField": "Arena",
+  "arenaIdField": "Arena ID",
+  "matchDuration": "Match duration (minutes)",
+  "requiredPlayersCount": "Required players count",
+  "setsToWin": "Sets to win",
+  "startTime": "Start time",
+  "editTournament": "Edit Tournament",
+  "newTournament": "New Tournament",
+  "minTwoPlayers": "Min 2 players",
+  "mustBe1To4": "Must be 1–4",
+  "addAtLeastOneReferee": "Please add at least one referee",
+  "removeAcceptedInvitationsFirst": "Remove some accepted invitations firstly",
+  "noTournamentsYet": "No tournaments yet",
+  "deleteTournament": "Delete tournament",
+  "deleteTournamentConfirm": "Delete \"{name}\"? This cannot be undone.",
+  "@deleteTournamentConfirm": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+
+  "timeMorning": "MORNING",
+  "timeDay": "DAY",
+  "timeEvening": "EVENING",
+  "timeNight": "NIGHT",
+  "timeMidnight": "MIDNIGHT",
+
+  "genderMale": "MALE",
+  "genderFemale": "FEMALE",
+
+  "rolePlayer": "Player",
+  "roleReferee": "Referee",
+  "roleOrganizer": "Organizer",
+  "roleAdmin": "Admin",
+
+  "editNews": "Edit News",
+  "newNews": "New News",
+  "titleField": "Title",
+  "bodyField": "Body",
+  "importanceField": "Importance",
+  "importanceRegular": "Regular",
+  "importanceInteresting": "Interesting",
+  "dateTimeField": "Date & time",
+  "addImage": "Add image",
+  "changeImage": "Change image",
+  "noNewsThisMonth": "No news this month",
+  "deleteNewsItem": "Delete news item",
+  "noNewsFound": "No news found",
+  "noInterestingNewsFound": "No interesting news found",
+
+  "searchByName": "Search by first or last name",
+  "enterNameToSearch": "Enter a name to search",
+  "noUsersFound": "No users found",
+  "somethingWentWrong": "Something went wrong",
+  "addUser": "Add user",
+  "editUser": "Edit user",
+  "noPendingRegistrations": "No pending registrations",
+  "rejectRegistration": "Reject registration",
+  "reasonOptional": "Reason (optional)",
+
+  "addPhoto": "Add photo",
+  "changePhoto": "Change photo",
+  "roles": "Roles",
+
+  "addPlayers": "Add players",
+  "playerSlotsFull": "Player slots are full",
+  "searchByNameHint": "Search by name…",
+  "addReferee": "Add referee",
+  "refereeAlreadyAccepted": "Referee already accepted",
+
+  "startMatch": "Start Match",
+  "finishMatch": "Finish Match",
+  "finishMatchConfirm": "Finish the match?",
+  "finishSet": "Finish Set",
+  "finishSetConfirm": "Finish set {number}?",
+  "@finishSetConfirm": {
+    "placeholders": { "number": { "type": "int" } }
+  },
+  "finishSetAndMatchConfirm": "Finish set {number} and end the match?",
+  "@finishSetAndMatchConfirm": {
+    "placeholders": { "number": { "type": "int" } }
+  },
+  "startSet": "Start Set {number}",
+  "@startSet": {
+    "placeholders": {
+      "number": { "type": "int" }
+    }
+  },
+  "setNumber": "Set {number}",
+  "@setNumber": {
+    "placeholders": { "number": { "type": "int" } }
+  },
+  "setFinished": "Set {number} finished",
+  "@setFinished": {
+    "placeholders": { "number": { "type": "int" } }
+  },
+  "medicalTimeoutTitle": "Medical Timeout",
+  "medicalTimeoutContent": "Start a 10-minute medical timeout?",
+  "technicalPauseTitle": "Technical Pause",
+  "technicalPauseContent": "Start a technical pause?",
+  "technicalDefeatMatch": "Technical Defeat — Match",
+  "firstServer": "First Server",
+  "medicalButton": "Medical",
+  "techPauseButton": "Tech Pause",
+  "tdMatchButton": "TD Match",
+  "issueCardTitle": "Issue {card} Card",
+  "@issueCardTitle": {
+    "placeholders": { "card": { "type": "String" } }
+  },
+  "whiteCard": "White (Timeout)",
+  "yellowCard": "Yellow (Warning)",
+  "redCard": "Red (Penalty)",
+  "noActiveTournaments": "No active tournaments",
+  "noMatchesFound": "No matches found",
+  "tournamentComplete": "Tournament complete",
+  "revokeCard": "Revoke Card",
+  "undoPoint": "–1",
+
+  "acceptInvitationTitle": "Accept invitation?",
+  "declineInvitationTitle": "Decline invitation?",
+  "cannotBeUndone": "This can't be undone.",
+  "noInvitationsYet": "No invitations yet",
+
+  "labelDate": "Date",
+  "labelStart": "Start",
+  "timeLabelMorning": "Morning",
+  "timeLabelDay": "Day",
+  "timeLabelEvening": "Evening",
+  "timeLabelNight": "Night",
+  "timeLabelMidnight": "Midnight",
+
+  "oopsSomethingWentWrong": "Ooops, something went wrong",
+  "noWinnersFound": "No winners found",
+
+  "winnersTitle": "Tennis Cup: Winners",
+  "liveStreamTitle": "Tennis Cup: Live stream",
+  "upcomingMatchesTitle": "Tennis Cup: Upcoming matches",
+
+  "filters": "Filters",
+  "all": "All",
+  "arenaFilter": "Arena: {title}",
+  "@arenaFilter": {
+    "placeholders": { "title": { "type": "String" } }
+  },
+
+  "noPlayersFound": "No players found",
+  "ratingOfPlayers": "Rating of players",
+  "labelTennisCupRank": "Tennis Cup Rank:",
+  "labelCityCountry": "City, Country:",
+  "labelYearOfBirth": "Year of birth:",
+  "labelMatches": "Matches:",
+  "labelWins": "Wins:",
+  "labelLosses": "Loses:",
+  "labelSetsRatio": "Sets ratio:",
+  "playersCountLabel": "{count} players",
+  "@playersCountLabel": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+
+  "tournamentNotFound": "Tournament is not found",
+  "arenasNotFound": "Arenas not found",
+
+  "vs": "VS",
+  "playersComparisonTitle": "Tennis Cup: Players comparison",
+  "playersNotFound": "Players not found",
+  "playersMatchesTitle": "Players' matches: {player1} vs {player2}",
+  "@playersMatchesTitle": {
+    "placeholders": {
+      "player1": { "type": "String" },
+      "player2": { "type": "String" }
+    }
+  },
+
+  "playerNotFound": "Player not found",
+  "playerStatisticsTitle": "Tennis Cup: Player's statistics",
+  "tournaments": "Tournaments",
+  "noTournamentsFound": "No tournaments found",
+  "tournamentResults": "Tournament results",
+  "labelName": "Name",
+  "labelPoints": "Points",
+  "labelPosition": "Position",
+  "cannotCompareToSelf": "Cannot be compared to oneself",
+  "participantToCompare": "Participant to compare",
+
+  "enterParticipantName": "Enter participant's last or first name",
+
+  "homeTab": "Home",
+  "scheduleTab": "Schedule",
+  "rankingTab": "Ranking",
+  "newsTab": "News",
+  "appBarTitleHome": "Tennis Cup: Home page",
+  "appBarTitleSchedule": "Tennis Cup: Schedule",
+  "appBarTitleRanking": "Tennis Cup: Ranking",
+  "appBarTitleNews": "Tennis Cup: News",
+
+  "selectFirstServer": "Select the first server before starting",
+  "registrationSubmitted": "Registration submitted. Waiting for admin approval.",
+
+  "tabSettings": "Settings",
+  "tabInvitations": "Invitations",
+  "tabUsers": "Users",
+  "tabPending": "Pending",
+
+  "menLabel": "Men",
+  "womenLabel": "Women"
+}

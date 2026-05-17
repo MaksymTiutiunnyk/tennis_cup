@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:tennis_cup/data/models/tournament.dart';
 import 'package:tennis_cup/data/models/tournament_invitation.dart';
+import 'package:tennis_cup/generated/l10n.dart';
 import 'package:tennis_cup/ui/user/player/view_models/invitations_cubit.dart';
 
 final DateFormat _dateFmt = DateFormat('dd MMM yyyy');
@@ -27,24 +28,26 @@ class TournamentInvitationCard extends StatelessWidget {
     );
   }
 
-  String _timeLabel(Time t) => switch (t) {
-        Time.Morning => 'Morning',
-        Time.Day => 'Day',
-        Time.Evening => 'Evening',
-        Time.Night => 'Night',
-        Time.Midnight => 'Midnight',
+  String _timeLabel(S s, Time t) => switch (t) {
+        Time.Morning => s.timeLabelMorning,
+        Time.Day => s.timeLabelDay,
+        Time.Evening => s.timeLabelEvening,
+        Time.Night => s.timeLabelNight,
+        Time.Midnight => s.timeLabelMidnight,
       };
 
-  Future<bool> _confirm(BuildContext context, String action) async {
+  Future<bool> _confirm(
+      BuildContext context, String title, String action) async {
+    final s = S.of(context);
     return await showDialog<bool>(
           context: context,
           builder: (ctx) => AlertDialog(
-            title: Text('$action invitation?'),
-            content: const Text('This can\'t be undone.'),
+            title: Text(title),
+            content: Text(s.cannotBeUndone),
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(ctx).pop(false),
-                child: const Text('Cancel'),
+                child: Text(s.cancel),
               ),
               FilledButton(
                 onPressed: () => Navigator.of(ctx).pop(true),
@@ -58,6 +61,7 @@ class TournamentInvitationCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
     final theme = Theme.of(context);
     final tournament = invitation.tournament;
     final arenaSubtitle = tournament.arena.city == null
@@ -91,7 +95,7 @@ class TournamentInvitationCard extends StatelessWidget {
                 ),
                 Chip(
                   label: Text(
-                    isReferee ? 'REFEREE' : 'PLAYER',
+                    isReferee ? s.roleReferee : s.rolePlayer,
                     style: theme.textTheme.labelSmall?.copyWith(
                       color: isReferee
                           ? theme.colorScheme.onTertiary
@@ -107,39 +111,40 @@ class TournamentInvitationCard extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 8),
-            _buildRow(context, 'Arena', arenaSubtitle),
-            _buildRow(context, 'Date', _dateFmt.format(tournament.date)),
-            _buildRow(
-                context, 'Start', _timeFmt.format(tournament.date)),
+            _buildRow(context, s.arenaField, arenaSubtitle),
+            _buildRow(context, s.labelDate, _dateFmt.format(tournament.date)),
+            _buildRow(context, s.labelStart, _timeFmt.format(tournament.date)),
             if (tournament.gender.isNotEmpty)
-              _buildRow(context, 'Gender', tournament.gender),
-            _buildRow(context, 'Type', _timeLabel(tournament.time)),
+              _buildRow(context, s.genderField, tournament.gender),
+            _buildRow(context, s.tournamentType, _timeLabel(s, tournament.time)),
             const SizedBox(height: 12),
             Row(
               children: [
                 Expanded(
                   child: FilledButton.icon(
                     onPressed: () async {
-                      final ok = await _confirm(context, 'Accept');
+                      final ok = await _confirm(
+                          context, s.acceptInvitationTitle, s.accept);
                       if (ok && context.mounted) {
                         cubit.accept(invitation.id);
                       }
                     },
                     icon: const Icon(Icons.check),
-                    label: const Text('Accept'),
+                    label: Text(s.accept),
                   ),
                 ),
                 const SizedBox(width: 8),
                 Expanded(
                   child: OutlinedButton.icon(
                     onPressed: () async {
-                      final ok = await _confirm(context, 'Decline');
+                      final ok = await _confirm(
+                          context, s.declineInvitationTitle, s.decline);
                       if (ok && context.mounted) {
                         cubit.decline(invitation.id);
                       }
                     },
                     icon: const Icon(Icons.close),
-                    label: const Text('Decline'),
+                    label: Text(s.decline),
                   ),
                 ),
               ],

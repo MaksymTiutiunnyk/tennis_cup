@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tennis_cup/core/di/service_locator.dart';
+import 'package:tennis_cup/generated/l10n.dart';
 import 'package:tennis_cup/data/models/arena.dart';
 import 'package:tennis_cup/data/models/tournament.dart';
 import 'package:tennis_cup/ui/view_only/schedule/view_models/arena_filter_cubit.dart';
@@ -71,12 +72,13 @@ class Schedule extends StatelessWidget {
               child: BlocBuilder<ScheduledTournamentCubit, ScheduledTournamentState>(
                 builder: (context, state) {
                   if (state is ScheduledTournamentError) {
-                    return const Center(
-                      child: Text('Ooops, something went wrong'),
+                    return Center(
+                      child: Text(S.of(context).oopsSomethingWentWrong),
                     );
                   }
                   if (state is TournamentNotFound) {
-                    return const Center(child: Text('Tournament is not found'));
+                    return Center(
+                        child: Text(S.of(context).tournamentNotFound));
                   }
                   if (state is ScheduledTournamentFetched) {
                     return BlocProvider<TournamentChangesCubit>(

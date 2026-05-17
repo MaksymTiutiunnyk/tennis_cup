@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tennis_cup/core/di/service_locator.dart';
 import 'package:tennis_cup/data/models/user.dart';
+import 'package:tennis_cup/generated/l10n.dart';
 import 'package:tennis_cup/ui/view_only/player_details/widgets/player_details.dart';
 
 class PlayerDetailsRoute extends StatefulWidget {
@@ -35,7 +36,7 @@ class _PlayerDetailsRouteState extends State<PlayerDetailsRoute> {
         if (snapshot.hasError || !snapshot.hasData) {
           return Scaffold(
             appBar: AppBar(),
-            body: const Center(child: Text('Player not found')),
+            body: Center(child: Text(S.of(context).playerNotFound)),
           );
         }
         return PlayerDetails(player: snapshot.data!);

@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:tennis_cup/core/di/service_locator.dart';
 import 'package:tennis_cup/data/models/match.dart';
 import 'package:tennis_cup/data/models/tournament.dart';
+import 'package:tennis_cup/generated/l10n.dart';
 import 'package:tennis_cup/routing/app_router.dart';
 import 'package:tennis_cup/ui/view_only/schedule/view_models/live_tournament_results_cubit.dart';
 
@@ -31,6 +32,7 @@ class _TournamentResultsBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
     return Column(
       children: [
         Padding(
@@ -40,7 +42,7 @@ class _TournamentResultsBody extends StatelessWidget {
               const Icon(Icons.table_chart_outlined),
               const SizedBox(width: 8),
               Text(
-                'Tournament results',
+                s.tournamentResults,
                 style: Theme.of(context).textTheme.bodyLarge,
               ),
             ],
@@ -53,7 +55,7 @@ class _TournamentResultsBody extends StatelessWidget {
             columns: [
               DataColumn(
                 label: Text(
-                  'Name',
+                  s.labelName,
                   style: Theme.of(context).textTheme.labelMedium,
                 ),
               ),
@@ -73,13 +75,13 @@ class _TournamentResultsBody extends StatelessWidget {
                 ),
               DataColumn(
                 label: Text(
-                  'Points',
+                  s.labelPoints,
                   style: Theme.of(context).textTheme.labelMedium,
                 ),
               ),
               DataColumn(
                 label: Text(
-                  'Position',
+                  s.labelPosition,
                   style: Theme.of(context).textTheme.labelMedium,
                 ),
               ),

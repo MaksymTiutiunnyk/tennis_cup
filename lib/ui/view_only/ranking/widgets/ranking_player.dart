@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tennis_cup/data/models/user.dart';
+import 'package:tennis_cup/generated/l10n.dart';
 import 'package:tennis_cup/routing/app_router.dart';
 import 'package:tennis_cup/ui/core/widgets/player_avatar.dart';
 
@@ -10,6 +11,7 @@ class RankingPlayer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
     return InkWell(
       onTap: () => context.push(
         AppRoutes.playerDetails(player.id.toString()),
@@ -34,7 +36,7 @@ class RankingPlayer extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Rank Tennis Cup:',
+                    s.labelTennisCupRank,
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                   Text(
@@ -48,7 +50,7 @@ class RankingPlayer extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Tournaments:',
+                    s.tournaments,
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                   Text(
@@ -62,7 +64,7 @@ class RankingPlayer extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'City, Country:',
+                    s.labelCityCountry,
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                   Text(
@@ -76,7 +78,7 @@ class RankingPlayer extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Year of birth:',
+                    s.labelYearOfBirth,
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                   Text(

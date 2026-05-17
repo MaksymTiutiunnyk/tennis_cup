@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tennis_cup/core/di/service_locator.dart';
 import 'package:tennis_cup/data/models/user.dart';
+import 'package:tennis_cup/generated/l10n.dart';
 import 'package:tennis_cup/ui/view_only/player_comparison/widgets/players_comparison.dart';
 
 class PlayersComparisonRoute extends StatefulWidget {
@@ -44,7 +45,7 @@ class _PlayersComparisonRouteState extends State<PlayersComparisonRoute> {
         if (snapshot.hasError || !snapshot.hasData) {
           return Scaffold(
             appBar: AppBar(),
-            body: const Center(child: Text('Players not found')),
+            body: Center(child: Text(S.of(context).playersNotFound)),
           );
         }
         final (p1, p2) = snapshot.data!;

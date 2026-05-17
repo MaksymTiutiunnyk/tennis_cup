@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tennis_cup/data/models/user.dart';
+import 'package:tennis_cup/generated/l10n.dart';
 import 'package:tennis_cup/ui/view_only/player_comparison/view_models/head_to_head_cubit.dart';
 import 'package:tennis_cup/ui/view_only/player_comparison/widgets/players_match.dart';
 
@@ -22,7 +23,7 @@ class PlayersMatches extends StatelessWidget {
               const SizedBox(width: 8),
               Flexible(
                 child: Text(
-                  "Players' matches: ${player1.fullName} vs ${player2.fullName}",
+                  S.of(context).playersMatchesTitle(player1.fullName, player2.fullName),
                   softWrap: true,
                 ),
               ),
@@ -36,9 +37,9 @@ class PlayersMatches extends StatelessWidget {
               HeadToHeadLoading() =>
                 const Center(child: CircularProgressIndicator()),
               HeadToHeadError() =>
-                const Center(child: Text('Oops, something went wrong')),
+                Center(child: Text(S.of(context).oopsSomethingWentWrong)),
               HeadToHeadLoaded(:final matches) => matches.isEmpty
-                  ? const Center(child: Text('No matches found'))
+                  ? Center(child: Text(S.of(context).noMatchesFound))
                   : ListView.builder(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),

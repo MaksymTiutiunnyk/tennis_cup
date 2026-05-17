@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tennis_cup/generated/l10n.dart';
 import 'package:tennis_cup/ui/user/organizer/view_models/referee_search_cubit.dart';
 
 export 'package:tennis_cup/ui/user/organizer/view_models/referee_search_cubit.dart'
@@ -56,6 +57,7 @@ class _RefereePickerState extends State<RefereePicker> {
 
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
     final colorScheme = Theme.of(context).colorScheme;
     return BlocBuilder<RefereePickerCubit, RefereePickerState>(
       builder: (context, state) {
@@ -84,10 +86,10 @@ class _RefereePickerState extends State<RefereePicker> {
               controller: _ctrl,
               enabled: !searchDisabled,
               decoration: InputDecoration(
-                labelText: 'Add referee',
+                labelText: s.addReferee,
                 hintText: searchDisabled
-                    ? 'Referee already accepted'
-                    : 'Search by name…',
+                    ? s.refereeAlreadyAccepted
+                    : s.searchByNameHint,
                 suffixIcon: state.isLoading
                     ? const Padding(
                         padding: EdgeInsets.all(12),

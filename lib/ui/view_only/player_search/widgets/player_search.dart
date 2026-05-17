@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tennis_cup/core/di/service_locator.dart';
 import 'package:tennis_cup/data/models/user.dart';
+import 'package:tennis_cup/generated/l10n.dart';
 import 'package:tennis_cup/ui/view_only/player_search/view_models/player_search_bloc.dart';
 
 class PlayerSearch extends StatelessWidget {
@@ -11,6 +12,7 @@ class PlayerSearch extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
     return BlocProvider(
       create: (context) => PlayerSearchBloc(
         playerRepository: ServiceLocator.playerRepository,
@@ -29,7 +31,7 @@ class PlayerSearch extends StatelessWidget {
                       .add(SearchFieldChanged(value));
                 },
                 decoration: InputDecoration(
-                  hintText: "Enter participant's last or first name",
+                  hintText: s.enterParticipantName,
                   suffixIcon: IconButton(
                     icon: const Icon(Icons.close),
                     color: Colors.redAccent,
@@ -47,13 +49,13 @@ class PlayerSearch extends StatelessWidget {
               child: BlocBuilder<PlayerSearchBloc, PlayerSearchState>(
                 builder: (context, state) {
                   if (state is PlayerSearchError) {
-                    return const Center(
-                      child: Text('Ooops, something went wrong'),
+                    return Center(
+                      child: Text(s.oopsSomethingWentWrong),
                     );
                   }
                   if (state is PlayersNotFound) {
-                    return const Center(
-                      child: Text('No players found'),
+                    return Center(
+                      child: Text(s.noPlayersFound),
                     );
                   }
                   if (state is PlayerSearchLoaded) {

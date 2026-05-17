@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:tennis_cup/core/di/service_locator.dart';
 import 'package:tennis_cup/data/services/dto/tournament_dto.dart';
+import 'package:tennis_cup/generated/l10n.dart';
 import 'package:tennis_cup/ui/auth/view_models/auth_cubit.dart';
 import 'package:tennis_cup/ui/core/widgets/async_state_widget.dart';
 import 'package:tennis_cup/ui/core/widgets/refreshable_list.dart';
@@ -33,7 +34,7 @@ class RefereeTournamentsTab extends StatelessWidget {
                   items: state.tournaments,
                   onRefresh: () =>
                       context.read<RefereeTournamentsCubit>().reload(),
-                  emptyWidget: const Text('No active tournaments'),
+                  emptyWidget: Text(S.of(context).noActiveTournaments),
                   padding: const EdgeInsets.all(8),
                   itemBuilder: (context, t) {
                     final date = DateTime.tryParse(t.startTime);

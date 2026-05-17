@@ -5,6 +5,7 @@ import 'package:tennis_cup/core/di/service_locator.dart';
 import 'package:tennis_cup/data/models/arena.dart';
 import 'package:tennis_cup/data/models/tournament.dart';
 import 'package:tennis_cup/data/models/tournament_request.dart';
+import 'package:tennis_cup/generated/l10n.dart';
 import 'package:tennis_cup/ui/user/organizer/view_models/organizer_tournaments_cubit.dart';
 import 'package:tennis_cup/ui/user/organizer/view_models/player_search_cubit.dart';
 import 'package:tennis_cup/ui/user/organizer/view_models/referee_search_cubit.dart';
@@ -177,11 +178,12 @@ class _TournamentFormState extends State<TournamentForm> {
   }
 
   Future<void> _submit() async {
+    final s = S.of(context);
     if (!_formKey.currentState!.validate()) return;
 
     if (!_isEdit && _refereeCubit.state.selected.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please add at least one referee')),
+        SnackBar(content: Text(s.addAtLeastOneReferee)),
       );
       return;
     }
@@ -230,6 +232,7 @@ class _TournamentFormState extends State<TournamentForm> {
 
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
     return MultiBlocProvider(
       providers: [
         BlocProvider.value(value: _playerCubit),
@@ -237,7 +240,7 @@ class _TournamentFormState extends State<TournamentForm> {
       ],
       child: Scaffold(
         appBar: AppBar(
-          title: Text(_isEdit ? 'Edit Tournament' : 'New Tournament'),
+          title: Text(_isEdit ? s.editTournament : s.newTournament),
         ),
         body: _loadingArenas
             ? const Center(child: CircularProgressIndicator())
@@ -251,34 +254,31 @@ class _TournamentFormState extends State<TournamentForm> {
                     children: [
                     TextFormField(
                       controller: _nameCtrl,
-                      decoration: const InputDecoration(labelText: 'Name'),
+                      decoration: InputDecoration(labelText: s.tournamentName),
                       validator: (v) =>
-                          (v == null || v.trim().isEmpty) ? 'Required' : null,
+                          (v == null || v.trim().isEmpty) ? s.required : null,
                     ),
                     const SizedBox(height: 12),
                     DropdownButtonFormField<String>(
                       value: _type,
-                      decoration: const InputDecoration(labelText: 'Type'),
-                      items: const [
-                        'MORNING',
-                        'DAY',
-                        'EVENING',
-                        'NIGHT',
-                        'MIDNIGHT'
-                      ]
-                          .map((t) =>
-                              DropdownMenuItem(value: t, child: Text(t)))
-                          .toList(),
+                      decoration: InputDecoration(labelText: s.tournamentType),
+                      items: [
+                        DropdownMenuItem(value: 'MORNING', child: Text(s.timeMorning)),
+                        DropdownMenuItem(value: 'DAY', child: Text(s.timeDay)),
+                        DropdownMenuItem(value: 'EVENING', child: Text(s.timeEvening)),
+                        DropdownMenuItem(value: 'NIGHT', child: Text(s.timeNight)),
+                        DropdownMenuItem(value: 'MIDNIGHT', child: Text(s.timeMidnight)),
+                      ],
                       onChanged: (v) => setState(() => _type = v!),
                     ),
                     const SizedBox(height: 12),
                     DropdownButtonFormField<String>(
                       value: _gender,
-                      decoration: const InputDecoration(labelText: 'Gender'),
-                      items: const ['MALE', 'FEMALE']
-                          .map((g) =>
-                              DropdownMenuItem(value: g, child: Text(g)))
-                          .toList(),
+                      decoration: InputDecoration(labelText: s.genderField),
+                      items: [
+                        DropdownMenuItem(value: 'MALE', child: Text(s.genderMale)),
+                        DropdownMenuItem(value: 'FEMALE', child: Text(s.genderFemale)),
+                      ],
                       onChanged: (v) => setState(() => _gender = v!),
                     ),
                     const SizedBox(height: 12),
@@ -286,7 +286,7 @@ class _TournamentFormState extends State<TournamentForm> {
                       DropdownButtonFormField<int>(
                         value: _arenaId,
                         decoration:
-                            const InputDecoration(labelText: 'Arena'),
+                            InputDecoration(labelText: s.arenaField),
                         items: _arenas
                             .map((a) => DropdownMenuItem(
                                 value: int.tryParse(a.id),
@@ -295,45 +295,43 @@ class _TournamentFormState extends State<TournamentForm> {
                             .toList(),
                         onChanged: (v) =>
                             setState(() => _arenaId = v ?? 1),
-                        validator: (v) => v == null ? 'Required' : null,
+                        validator: (v) => v == null ? s.required : null,
                       )
                     else
                       TextFormField(
                         decoration:
-                            const InputDecoration(labelText: 'Arena ID'),
+                            InputDecoration(labelText: s.arenaIdField),
                         keyboardType: TextInputType.number,
                         initialValue: _arenaId.toString(),
                         onChanged: (v) => _arenaId = int.tryParse(v) ?? 1,
                         validator: (v) =>
-                            (v == null || v.isEmpty) ? 'Required' : null,
+                            (v == null || v.isEmpty) ? s.required : null,
                       ),
                     const SizedBox(height: 12),
                     const RefereePicker(),
                     const SizedBox(height: 12),
                     TextFormField(
                       controller: _durationCtrl,
-                      decoration: const InputDecoration(
-                          labelText: 'Match duration (minutes)'),
+                      decoration: InputDecoration(
+                          labelText: s.matchDuration),
                       keyboardType: TextInputType.number,
                       validator: (v) =>
                           (int.tryParse(v ?? '') ?? 0) <= 0
-                              ? 'Required'
+                              ? s.required
                               : null,
                     ),
                     const SizedBox(height: 12),
                     TextFormField(
                       controller: _requiredPlayersCtrl,
-                      decoration: const InputDecoration(
-                          labelText: 'Required players count'),
+                      decoration: InputDecoration(
+                          labelText: s.requiredPlayersCount),
                       keyboardType: TextInputType.number,
                       validator: (v) {
                         final n = int.tryParse(v ?? '');
-                        if (n == null || n < 2) {
-                          return 'Min 2 players';
-                        }
+                        if (n == null || n < 2) return s.minTwoPlayers;
                         if (widget.existing != null &&
                             n < widget.existing!.players.length) {
-                          return 'Remove some accepted invitations firstly';
+                          return s.removeAcceptedInvitationsFirst;
                         }
                         return null;
                       },
@@ -342,20 +340,18 @@ class _TournamentFormState extends State<TournamentForm> {
                     TextFormField(
                       controller: _setsToWinCtrl,
                       decoration:
-                          const InputDecoration(labelText: 'Sets to win'),
+                          InputDecoration(labelText: s.setsToWin),
                       keyboardType: TextInputType.number,
                       validator: (v) {
                         final n = int.tryParse(v ?? '');
-                        if (n == null || n < 1 || n > 4) {
-                          return 'Must be 1–4';
-                        }
+                        if (n == null || n < 1 || n > 4) return s.mustBe1To4;
                         return null;
                       },
                     ),
                     const SizedBox(height: 12),
                     ListTile(
                       contentPadding: EdgeInsets.zero,
-                      title: const Text('Start time'),
+                      title: Text(s.startTime),
                       subtitle: Text(_displayFmt.format(_startTime)),
                       trailing: const Icon(Icons.calendar_today),
                       onTap: _pickDateTime,
@@ -386,7 +382,7 @@ class _TournamentFormState extends State<TournamentForm> {
                                 child: CircularProgressIndicator(
                                     strokeWidth: 2),
                               )
-                            : Text(_isEdit ? 'Save' : 'Create'),
+                            : Text(_isEdit ? s.save : s.create),
                       ),
                     ),
                   ],

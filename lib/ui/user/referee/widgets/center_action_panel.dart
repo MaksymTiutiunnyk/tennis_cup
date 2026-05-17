@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tennis_cup/data/models/match.dart';
+import 'package:tennis_cup/generated/l10n.dart';
 import 'package:tennis_cup/ui/user/referee/view_models/referee_match_cubit.dart';
 import 'package:tennis_cup/ui/user/referee/widgets/action_button.dart';
 import 'package:tennis_cup/ui/user/referee/widgets/card_chip.dart';
@@ -41,8 +42,8 @@ class _CenterActionPanelState extends State<CenterActionPanel> {
     reasonCtrl = TextEditingController();
   }
 
-  // ── Helpers ──────────────────────────────────────────────────────────────
   Future<bool> _confirm(BuildContext context, String title, String body) async {
+    final s = S.of(context);
     final result = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -51,11 +52,11 @@ class _CenterActionPanelState extends State<CenterActionPanel> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text('Cancel'),
+            child: Text(s.cancel),
           ),
           FilledButton(
             onPressed: () => Navigator.of(ctx).pop(true),
-            child: const Text('Confirm'),
+            child: Text(s.confirm),
           ),
         ],
       ),
@@ -70,6 +71,7 @@ class _CenterActionPanelState extends State<CenterActionPanel> {
     List<int> eligibleIds, {
     bool withReason = false,
   }) async {
+    final s = S.of(context);
     final blue = widget.state.bluePlayer;
     final red = widget.state.redPlayer;
     int? selectedId;
@@ -99,9 +101,9 @@ class _CenterActionPanelState extends State<CenterActionPanel> {
                 const SizedBox(height: 8),
                 TextField(
                   controller: reasonCtrl,
-                  decoration: const InputDecoration(
-                    labelText: 'Reason (optional)',
-                    border: OutlineInputBorder(),
+                  decoration: InputDecoration(
+                    labelText: s.reasonOptional,
+                    border: const OutlineInputBorder(),
                   ),
                   maxLines: 2,
                 ),
@@ -111,12 +113,12 @@ class _CenterActionPanelState extends State<CenterActionPanel> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(ctx).pop(false),
-              child: const Text('Cancel'),
+              child: Text(s.cancel),
             ),
             FilledButton(
               onPressed:
                   selectedId == null ? null : () => Navigator.of(ctx).pop(true),
-              child: const Text('Confirm'),
+              child: Text(s.confirm),
             ),
           ],
         ),
@@ -130,28 +132,30 @@ class _CenterActionPanelState extends State<CenterActionPanel> {
     );
   }
 
-  // ── Action handlers ───────────────────────────────────────────────────────
   Future<void> _onMedicalTimeout(BuildContext context) async {
+    final s = S.of(context);
     final ok = await _confirm(
-        context, 'Medical Timeout', 'Start a 10-minute medical timeout?');
+        context, s.medicalTimeoutTitle, s.medicalTimeoutContent);
     if (ok && context.mounted) {
       await TimeoutOverlay.show(context, TimeoutType.medical);
     }
   }
 
   Future<void> _onTechPause(BuildContext context) async {
+    final s = S.of(context);
     final ok =
-        await _confirm(context, 'Technical Pause', 'Start a technical pause?');
+        await _confirm(context, s.technicalPauseTitle, s.technicalPauseContent);
     if (ok && context.mounted) {
       await TimeoutOverlay.show(context, TimeoutType.techPause);
     }
   }
 
   Future<void> _onTechDefeatMatch(BuildContext context) async {
+    final s = S.of(context);
     final cubit = context.read<RefereeMatchCubit>();
     final result = await _selectPlayer(
       context,
-      'Technical Defeat — Match',
+      s.technicalDefeatMatch,
       [widget.state.bluePlayer.id, widget.state.redPlayer.id],
       withReason: true,
     );
@@ -162,26 +166,29 @@ class _CenterActionPanelState extends State<CenterActionPanel> {
   }
 
   Future<void> _onFinishSet(BuildContext context) async {
+    final s = S.of(context);
     final cubit = context.read<RefereeMatchCubit>();
     final ok = await _confirm(
-        context, 'Finish Set', 'Finish set ${widget.activeSet.number}?');
+        context, s.finishSet, s.finishSetConfirm(widget.activeSet.number));
     if (ok && context.mounted) {
       cubit.finishSet(widget.activeSet.number);
     }
   }
 
   Future<void> _onFinishSetAndMatch(BuildContext context) async {
+    final s = S.of(context);
     final cubit = context.read<RefereeMatchCubit>();
-    final ok = await _confirm(context, 'Finish Match',
-        'Finish set ${widget.activeSet.number} and end the match?');
+    final ok = await _confirm(context, s.finishMatch,
+        s.finishSetAndMatchConfirm(widget.activeSet.number));
     if (ok && context.mounted) {
       cubit.finishSetAndMatch(widget.activeSet.number);
     }
   }
 
   Future<void> _onFinishMatch(BuildContext context) async {
+    final s = S.of(context);
     final cubit = context.read<RefereeMatchCubit>();
-    final ok = await _confirm(context, 'Finish Match', 'Finish the match?');
+    final ok = await _confirm(context, s.finishMatch, s.finishMatchConfirm);
     if (ok && context.mounted) {
       cubit.finishMatch();
     }
@@ -189,30 +196,29 @@ class _CenterActionPanelState extends State<CenterActionPanel> {
 
   Future<void> _onIssueCard(
       BuildContext context, String cardType, List<int> eligible) async {
+    final s = S.of(context);
     final cubit = context.read<RefereeMatchCubit>();
     final result = await _selectPlayer(
       context,
-      'Issue ${_cardLabel(cardType)} Card',
+      s.issueCardTitle(_cardLabel(cardType, s)),
       eligible,
     );
     if (result != null && context.mounted) {
       final (playerId, _) = result;
       await cubit.issueCard(playerId, cardType);
-      // White card = timeout; show the 1-minute overlay after backend confirms.
       if (context.mounted && cardType == 'WHITE') {
         await TimeoutOverlay.show(context, TimeoutType.general);
       }
     }
   }
 
-  String _cardLabel(String cardType) => switch (cardType) {
-        'WHITE' => 'White (Timeout)',
-        'YELLOW' => 'Yellow (Warning)',
-        'RED' => 'Red (Penalty)',
+  String _cardLabel(String cardType, S s) => switch (cardType) {
+        'WHITE' => s.whiteCard,
+        'YELLOW' => s.yellowCard,
+        'RED' => s.redCard,
         _ => cardType,
       };
 
-  // ── Finish button logic ───────────────────────────────────────────────────
   bool get _wouldFinishMatch {
     if (!widget.canFinishSet) return false;
     final blueLeads =
@@ -222,22 +228,20 @@ class _CenterActionPanelState extends State<CenterActionPanel> {
         : (widget.redSetsWon + 1 >= widget.state.match.setsToWin);
   }
 
-  // ── Build ─────────────────────────────────────────────────────────────────
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
     final cubit = context.read<RefereeMatchCubit>();
 
     return Container(
       color: Theme.of(context).colorScheme.surfaceContainerHighest,
-      // Reduced vertical padding significantly
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
       child: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Set number + match score
             Text(
-              'Set ${widget.activeSet.number}',
+              s.setNumber(widget.activeSet.number),
               style: Theme.of(context).textTheme.labelMedium,
             ),
             Text(
@@ -247,28 +251,24 @@ class _CenterActionPanelState extends State<CenterActionPanel> {
                   .titleLarge
                   ?.copyWith(fontWeight: FontWeight.bold),
             ),
-            // Halved spacer sizes
             const SizedBox(height: 4),
 
-            // Medical timeout — disabled when set/match can be finished
             ActionButton(
               icon: Icons.medical_services_outlined,
-              label: 'Medical',
+              label: s.medicalButton,
               onPressed: widget.scoringLocked
                   ? null
                   : () => _onMedicalTimeout(context),
             ),
             const SizedBox(height: 2),
 
-            // Tech pause — disabled when set/match can be finished
             ActionButton(
               icon: Icons.pause_circle_outline,
-              label: 'Tech Pause',
+              label: s.techPauseButton,
               onPressed:
                   widget.scoringLocked ? null : () => _onTechPause(context),
             ),
 
-            // –1 point buttons (left player / right player)
             Row(
               children: [
                 Expanded(
@@ -285,7 +285,7 @@ class _CenterActionPanelState extends State<CenterActionPanel> {
                             ? cubit.subtractPointRed
                             : cubit.subtractPointBlue)
                         : null,
-                    child: const Text('–1'),
+                    child: Text(s.undoPoint),
                   ),
                 ),
                 const SizedBox(width: 6),
@@ -303,17 +303,16 @@ class _CenterActionPanelState extends State<CenterActionPanel> {
                             ? cubit.subtractPointBlue
                             : cubit.subtractPointRed)
                         : null,
-                    child: const Text('–1'),
+                    child: Text(s.undoPoint),
                   ),
                 ),
               ],
             ),
             const SizedBox(height: 4),
 
-            // Tech defeat match — disabled when set/match can be finished
             ActionButton(
               icon: Icons.close,
-              label: 'TD Match',
+              label: s.tdMatchButton,
               onPressed: widget.scoringLocked
                   ? null
                   : () => _onTechDefeatMatch(context),
@@ -321,32 +320,30 @@ class _CenterActionPanelState extends State<CenterActionPanel> {
             ),
             const SizedBox(height: 8),
 
-            // Finish Set / Finish Match (contextual)
             if (widget.canFinishMatch)
               ActionButton(
                 icon: Icons.emoji_events,
-                label: 'Finish Match',
+                label: s.finishMatch,
                 onPressed: () => _onFinishMatch(context),
                 filled: true,
               )
             else if (_wouldFinishMatch)
               ActionButton(
                 icon: Icons.emoji_events,
-                label: 'Finish Match',
+                label: s.finishMatch,
                 onPressed: () => _onFinishSetAndMatch(context),
                 filled: true,
               )
             else
               ActionButton(
                 icon: Icons.check_circle_outline,
-                label: 'Finish Set',
+                label: s.finishSet,
                 onPressed:
                     widget.canFinishSet ? () => _onFinishSet(context) : null,
                 filled: true,
               ),
             const SizedBox(height: 6),
 
-            // Cards row — disabled when set/match can be finished
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
