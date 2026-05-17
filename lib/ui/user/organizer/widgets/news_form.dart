@@ -126,9 +126,12 @@ class _NewsFormState extends State<NewsForm> {
       body: BlocListener<OrganizerNewsCubit, OrganizerNewsState>(
         listener: (context, state) {
           if (state is OrgNewsError) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.message)),
-            );
+            ScaffoldMessenger.of(context)
+              ..hideCurrentSnackBar()
+              ..showSnackBar(SnackBar(
+                content: Text(state.message),
+                backgroundColor: Theme.of(context).colorScheme.error,
+              ));
           }
         },
         child: Form(

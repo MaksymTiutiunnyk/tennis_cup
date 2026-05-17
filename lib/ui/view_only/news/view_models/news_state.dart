@@ -22,6 +22,6 @@ class NewsFetched extends NewsState {
 }
 
 class NewsError extends NewsState {
-  final Object e;
-  const NewsError(super.selectedPeriod, this.e);
+  final String message;
+  const NewsError(super.selectedPeriod, this.message);
 }

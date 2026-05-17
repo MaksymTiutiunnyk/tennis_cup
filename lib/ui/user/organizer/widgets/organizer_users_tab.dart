@@ -92,8 +92,25 @@ class _OrganizerUsersTabBodyState extends State<_OrganizerUsersTabBody> {
                     itemCount: users.length,
                     itemBuilder: (_, i) => UserSearchTile(user: users[i]),
                   ),
-                UsersSearchError() => Center(
-                    child: Text(s.somethingWentWrong),
+                UsersSearchError(:final message) => Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(24),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.error_outline,
+                              color: Theme.of(context).colorScheme.error,
+                              size: 40),
+                          const SizedBox(height: 8),
+                          Text(
+                            message,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                color: Theme.of(context).colorScheme.error),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
               },
             ),

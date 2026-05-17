@@ -31,9 +31,12 @@ class EditUserScreen extends StatelessWidget {
             if (state is UserEditSuccess) {
               Navigator.of(context).pop();
             } else if (state is UserEditError) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(state.message)),
-              );
+              ScaffoldMessenger.of(context)
+                ..hideCurrentSnackBar()
+                ..showSnackBar(SnackBar(
+                  content: Text(state.message),
+                  backgroundColor: Theme.of(context).colorScheme.error,
+                ));
             }
           },
           child: Scaffold(

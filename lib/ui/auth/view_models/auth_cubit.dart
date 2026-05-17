@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tennis_cup/core/utils/error_utils.dart';
 import 'package:tennis_cup/core/utils/jwt_utils.dart';
 import 'package:tennis_cup/data/auth/auth_token_store.dart';
 import 'package:tennis_cup/data/models/user_role.dart';
@@ -45,7 +46,7 @@ class AuthCubit extends Cubit<AuthState> {
       ));
     } catch (e) {
       if (isClosed) return;
-      emit(AuthError(_parseError(e)));
+      emit(AuthError(errorMessage(e)));
     }
   }
 
@@ -81,7 +82,7 @@ class AuthCubit extends Cubit<AuthState> {
       ));
     } catch (e) {
       if (isClosed) return;
-      emit(AuthError(_parseError(e)));
+      emit(AuthError(errorMessage(e)));
     }
   }
 
@@ -93,8 +94,4 @@ class AuthCubit extends Cubit<AuthState> {
     emit(AuthUnauthenticated());
   }
 
-  String _parseError(Object e) {
-    if (e is Exception) return e.toString().replaceFirst('Exception: ', '');
-    return 'An error occurred';
-  }
 }

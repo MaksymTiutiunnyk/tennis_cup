@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tennis_cup/core/utils/error_utils.dart';
 import 'package:tennis_cup/data/models/match.dart';
 import 'package:tennis_cup/data/repositories/tournament_repository.dart';
 
@@ -11,7 +12,10 @@ final class LiveStreamTournamentsLoaded extends LiveStreamTournamentsState {
   LiveStreamTournamentsLoaded(this.matches);
 }
 
-final class LiveStreamTournamentsError extends LiveStreamTournamentsState {}
+final class LiveStreamTournamentsError extends LiveStreamTournamentsState {
+  final String message;
+  LiveStreamTournamentsError(this.message);
+}
 
 class LiveStreamTournamentsCubit extends Cubit<LiveStreamTournamentsState> {
   final TournamentRepository tournamentRepository;
@@ -26,9 +30,9 @@ class LiveStreamTournamentsCubit extends Cubit<LiveStreamTournamentsState> {
       final matches = await tournamentRepository.fetchLiveStreamMatches();
       if (isClosed) return;
       emit(LiveStreamTournamentsLoaded(matches));
-    } catch (_) {
+    } catch (e) {
       if (isClosed) return;
-      emit(LiveStreamTournamentsError());
+      emit(LiveStreamTournamentsError(errorMessage(e)));
     }
   }
 }

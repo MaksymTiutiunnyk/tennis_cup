@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tennis_cup/core/pagination/page_request.dart';
+import 'package:tennis_cup/core/utils/error_utils.dart';
 import 'package:tennis_cup/data/models/pending_user.dart';
 import 'package:tennis_cup/data/repositories/admin_repository.dart';
 
@@ -24,7 +25,7 @@ class PendingUsersCubit extends Cubit<PendingUsersState> {
       emit(PendingUsersLoaded(result.items));
     } catch (e) {
       if (isClosed) return;
-      emit(PendingUsersError(_message(e)));
+      emit(PendingUsersError(errorMessage(e)));
     }
   }
 
@@ -35,7 +36,7 @@ class PendingUsersCubit extends Cubit<PendingUsersState> {
     } catch (e) {
       if (isClosed) return;
       if (snapshot != null) emit(PendingUsersLoaded(snapshot));
-      emit(PendingUsersError(_message(e)));
+      emit(PendingUsersError(errorMessage(e)));
     }
   }
 
@@ -46,7 +47,7 @@ class PendingUsersCubit extends Cubit<PendingUsersState> {
     } catch (e) {
       if (isClosed) return;
       if (snapshot != null) emit(PendingUsersLoaded(snapshot));
-      emit(PendingUsersError(_message(e)));
+      emit(PendingUsersError(errorMessage(e)));
     }
   }
 
@@ -59,6 +60,4 @@ class PendingUsersCubit extends Cubit<PendingUsersState> {
     return snapshot;
   }
 
-  static String _message(Object e) =>
-      e is Exception ? e.toString().replaceFirst('Exception: ', '') : '$e';
 }

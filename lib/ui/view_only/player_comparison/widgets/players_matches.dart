@@ -36,8 +36,26 @@ class PlayersMatches extends StatelessWidget {
             builder: (context, state) => switch (state) {
               HeadToHeadLoading() =>
                 const Center(child: CircularProgressIndicator()),
-              HeadToHeadError() =>
-                Center(child: Text(S.of(context).oopsSomethingWentWrong)),
+              HeadToHeadError(:final message) => Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(24),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.error_outline,
+                            color: Theme.of(context).colorScheme.error,
+                            size: 40),
+                        const SizedBox(height: 8),
+                        Text(
+                          message,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              color: Theme.of(context).colorScheme.error),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               HeadToHeadLoaded(:final matches) => matches.isEmpty
                   ? Center(child: Text(S.of(context).noMatchesFound))
                   : ListView.builder(

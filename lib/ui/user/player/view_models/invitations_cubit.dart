@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tennis_cup/core/utils/error_utils.dart';
 import 'package:tennis_cup/data/models/tournament_invitation.dart';
 import 'package:tennis_cup/data/repositories/invitations_repository.dart';
 
@@ -23,9 +24,9 @@ class InvitationsCubit extends Cubit<InvitationsState> {
       final items = await _repository.fetchInvitations(status: status);
       if (isClosed) return;
       emit(InvitationsLoaded(items));
-    } catch (_) {
+    } catch (e) {
       if (isClosed) return;
-      emit(InvitationsError('Failed to load invitations'));
+      emit(InvitationsError(errorMessage(e)));
     }
   }
 
@@ -46,9 +47,9 @@ class InvitationsCubit extends Cubit<InvitationsState> {
       final updated =
           current.items.where((i) => i.id != invitationId).toList();
       emit(InvitationsLoaded(updated));
-    } catch (_) {
+    } catch (e) {
       if (isClosed) return;
-      emit(InvitationsError('Failed to update invitation'));
+      emit(InvitationsError(errorMessage(e)));
     }
   }
 }

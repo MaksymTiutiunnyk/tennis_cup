@@ -37,8 +37,25 @@ class LiveStreamMatches extends StatelessWidget {
             builder: (context, state) => switch (state) {
               LiveStreamTournamentsLoading() =>
                 const Center(child: CircularProgressIndicator()),
-              LiveStreamTournamentsError() =>
-                Center(child: Text(S.of(context).oopsSomethingWentWrong)),
+              LiveStreamTournamentsError(:final message) => Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.error_outline,
+                            color: Theme.of(context).colorScheme.error),
+                        const SizedBox(height: 8),
+                        Text(
+                          message,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              color: Theme.of(context).colorScheme.error),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               LiveStreamTournamentsLoaded(:final matches) =>
                 _buildContent(context, matches),
             },

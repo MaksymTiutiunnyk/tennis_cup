@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tennis_cup/core/utils/error_utils.dart';
 import 'package:tennis_cup/data/models/news.dart';
 import 'package:tennis_cup/data/repositories/news_repository.dart';
 
@@ -29,7 +30,7 @@ class NewsCubit extends Cubit<NewsState> {
       emit(NewsFetched(selectedPeriod: period, fetchedNews: fetchedNews));
     } catch (e) {
       if (isClosed) return;
-      emit(NewsError(period, e));
+      emit(NewsError(period, errorMessage(e)));
     }
   }
 }

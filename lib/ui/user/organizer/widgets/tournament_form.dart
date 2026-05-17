@@ -183,9 +183,12 @@ class _TournamentFormState extends State<TournamentForm> {
     if (!_formKey.currentState!.validate()) return;
 
     if (!_isEdit && _refereeCubit.state.selected.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(s.addAtLeastOneReferee)),
-      );
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(SnackBar(
+          content: Text(s.addAtLeastOneReferee),
+          backgroundColor: Theme.of(context).colorScheme.error,
+        ));
       return;
     }
 
@@ -395,9 +398,13 @@ class _TournamentFormState extends State<TournamentForm> {
                           OrganizerTournamentsState>(
                         listener: (context, state) {
                           if (state is OrgTournamentsError) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text(state.message)),
-                            );
+                            ScaffoldMessenger.of(context)
+                              ..hideCurrentSnackBar()
+                              ..showSnackBar(SnackBar(
+                                content: Text(state.message),
+                                backgroundColor:
+                                    Theme.of(context).colorScheme.error,
+                              ));
                           }
                         },
                         builder: (context, state) => FilledButton(

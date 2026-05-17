@@ -50,7 +50,24 @@ class PlayerSearch extends StatelessWidget {
                 builder: (context, state) {
                   if (state is PlayerSearchError) {
                     return Center(
-                      child: Text(s.oopsSomethingWentWrong),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.error_outline,
+                                color: Theme.of(context).colorScheme.error,
+                                size: 36),
+                            const SizedBox(height: 8),
+                            Text(
+                              state.message,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  color: Theme.of(context).colorScheme.error),
+                            ),
+                          ],
+                        ),
+                      ),
                     );
                   }
                   if (state is PlayersNotFound) {

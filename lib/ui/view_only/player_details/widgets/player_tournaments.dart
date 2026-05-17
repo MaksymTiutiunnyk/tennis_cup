@@ -34,8 +34,26 @@ class PlayerTournaments extends StatelessWidget {
               builder: (context, state) => switch (state) {
                 PlayerTournamentsLoading() =>
                   const Center(child: CircularProgressIndicator()),
-                PlayerTournamentsError() =>
-                  Center(child: Text(s.oopsSomethingWentWrong)),
+                PlayerTournamentsError(:final message) => Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(24),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.error_outline,
+                              color: Theme.of(context).colorScheme.error,
+                              size: 40),
+                          const SizedBox(height: 8),
+                          Text(
+                            message,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                color: Theme.of(context).colorScheme.error),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 PlayerTournamentsLoaded(:final tournaments)
                     when tournaments.isEmpty =>
                   Center(child: Text(s.noTournamentsFound)),

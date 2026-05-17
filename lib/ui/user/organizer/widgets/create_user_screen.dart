@@ -35,9 +35,12 @@ class CreateUserScreen extends StatelessWidget {
                 SnackBar(content: Text(state.message)),
               );
             } else if (state is UserCreationError) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(state.message)),
-              );
+              ScaffoldMessenger.of(context)
+                ..hideCurrentSnackBar()
+                ..showSnackBar(SnackBar(
+                  content: Text(state.message),
+                  backgroundColor: Theme.of(context).colorScheme.error,
+                ));
             }
           },
           child: Scaffold(

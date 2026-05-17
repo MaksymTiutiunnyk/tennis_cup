@@ -44,7 +44,25 @@ class _InvitationsListViewState extends State<_InvitationsListView> {
         builder: (context, state) => switch (state) {
           InvitationsLoading() =>
             const Center(child: CircularProgressIndicator()),
-          InvitationsError(message: final m) => Center(child: Text(m)),
+          InvitationsError(message: final m) => Center(
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.error_outline,
+                        color: Theme.of(context).colorScheme.error, size: 40),
+                    const SizedBox(height: 8),
+                    Text(
+                      m,
+                      textAlign: TextAlign.center,
+                      style:
+                          TextStyle(color: Theme.of(context).colorScheme.error),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           InvitationsLoaded() => RefreshIndicator(
               onRefresh: () => context.read<InvitationsCubit>().reload(),
               child: _items.isEmpty

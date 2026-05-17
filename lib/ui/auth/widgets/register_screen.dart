@@ -20,9 +20,12 @@ class RegisterContent extends StatelessWidget {
           context.read<AuthViewCubit>().showLogin();
         }
         if (state is AuthError) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.message)),
-          );
+          ScaffoldMessenger.of(context)
+            ..hideCurrentSnackBar()
+            ..showSnackBar(SnackBar(
+              content: Text(state.message),
+              backgroundColor: Theme.of(context).colorScheme.error,
+            ));
         }
       },
       builder: (context, state) {

@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tennis_cup/core/utils/error_utils.dart';
 import 'package:tennis_cup/data/models/arena.dart';
 import 'package:tennis_cup/data/models/tournament.dart';
 import 'package:tennis_cup/data/repositories/tournament_repository.dart';
@@ -32,7 +33,7 @@ class ScheduledTournamentCubit extends Cubit<ScheduledTournamentState> {
       emit(ScheduledTournamentFetched(tournaments.first));
     } catch (e) {
       if (isClosed) return;
-      emit(ScheduledTournamentError(e));
+      emit(ScheduledTournamentError(errorMessage(e)));
     }
   }
 
@@ -53,7 +54,7 @@ class ScheduledTournamentCubit extends Cubit<ScheduledTournamentState> {
       emit(ScheduledTournamentFetched(tournaments.first));
     } catch (e) {
       if (isClosed) return;
-      emit(ScheduledTournamentError(e));
+      emit(ScheduledTournamentError(errorMessage(e)));
     }
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tennis_cup/core/pagination/page_request.dart';
+import 'package:tennis_cup/core/utils/error_utils.dart';
 import 'package:tennis_cup/data/models/gender.dart';
 import 'package:tennis_cup/data/models/user.dart';
 import 'package:tennis_cup/data/repositories/player_repository.dart';
@@ -27,9 +28,9 @@ class RankingPlayersCubit extends Cubit<RankingPlayersState> {
       if (isClosed) return;
       emit(
           RankingPlayersLoaded(players: result.items, hasMore: result.hasMore));
-    } catch (_) {
+    } catch (e) {
       if (isClosed) return;
-      emit(const RankingPlayersError());
+      emit(RankingPlayersError(errorMessage(e)));
     }
   }
 

@@ -35,8 +35,25 @@ class Winners extends StatelessWidget {
             builder: (context, state) => switch (state) {
               WinnersLoading() =>
                 const Center(child: CircularProgressIndicator()),
-              WinnersError() =>
-                Center(child: Text(S.of(context).oopsSomethingWentWrong)),
+              WinnersError(:final message) => Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.error_outline,
+                            color: Theme.of(context).colorScheme.error),
+                        const SizedBox(height: 8),
+                        Text(
+                          message,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              color: Theme.of(context).colorScheme.error),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               WinnersLoaded(:final winners) => _buildContent(context, winners),
             },
           ),

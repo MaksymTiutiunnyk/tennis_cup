@@ -15,7 +15,7 @@ class ScheduledTournamentFetched extends ScheduledTournamentState {
 class TournamentNotFound extends ScheduledTournamentState {}
 
 class ScheduledTournamentError extends ScheduledTournamentState {
-  final Object e;
+  final String message;
 
-  const ScheduledTournamentError(this.e);
+  const ScheduledTournamentError(this.message);
 }

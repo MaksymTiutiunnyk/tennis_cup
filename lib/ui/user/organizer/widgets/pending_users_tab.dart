@@ -21,16 +21,29 @@ class PendingUsersTab extends StatelessWidget {
             PendingUsersLoading() =>
               const Center(child: CircularProgressIndicator()),
             PendingUsersError(message: final m) => Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(m, textAlign: TextAlign.center),
-                    const SizedBox(height: 12),
-                    TextButton(
-                      onPressed: () => context.read<PendingUsersCubit>().load(),
-                      child: Text(s.retry),
-                    ),
-                  ],
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.error_outline,
+                          color: Theme.of(context).colorScheme.error, size: 40),
+                      const SizedBox(height: 8),
+                      Text(
+                        m,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.error),
+                      ),
+                      const SizedBox(height: 16),
+                      FilledButton.icon(
+                        onPressed: () =>
+                            context.read<PendingUsersCubit>().load(),
+                        icon: const Icon(Icons.refresh, size: 18),
+                        label: Text(s.retry),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             PendingUsersLoaded(users: final users) => RefreshIndicator(

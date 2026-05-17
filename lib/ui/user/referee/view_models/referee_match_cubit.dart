@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tennis_cup/core/utils/error_utils.dart';
 import 'package:tennis_cup/data/models/match.dart';
 import 'package:tennis_cup/data/models/user.dart';
 import 'package:tennis_cup/data/repositories/match_repository.dart';
@@ -21,7 +22,7 @@ class RefereeMatchCubit extends Cubit<RefereeMatchState> {
       emit(RefereeMatchReady(match: match));
     } catch (e) {
       if (isClosed) return;
-      emit(RefereeMatchError(e.toString()));
+      emit(RefereeMatchError(errorMessage(e)));
     }
   }
 
@@ -34,7 +35,7 @@ class RefereeMatchCubit extends Cubit<RefereeMatchState> {
       emit(current.copyWith(match: match));
     } catch (e) {
       if (isClosed) return;
-      emit(RefereeMatchError(e.toString()));
+      emit(RefereeMatchError(errorMessage(e)));
     }
   }
 
@@ -67,7 +68,7 @@ class RefereeMatchCubit extends Cubit<RefereeMatchState> {
       await _reload();
     } catch (e) {
       if (isClosed) return;
-      emit(RefereeMatchError(e.toString()));
+      emit(RefereeMatchError(errorMessage(e)));
     }
   }
 
@@ -79,7 +80,7 @@ class RefereeMatchCubit extends Cubit<RefereeMatchState> {
       await _reload();
     } catch (e) {
       if (isClosed) return;
-      emit(RefereeMatchError(e.toString()));
+      emit(RefereeMatchError(errorMessage(e)));
     }
   }
 
@@ -100,7 +101,7 @@ class RefereeMatchCubit extends Cubit<RefereeMatchState> {
       await _reload();
     } catch (e) {
       if (isClosed) return;
-      emit(RefereeMatchError(e.toString()));
+      emit(RefereeMatchError(errorMessage(e)));
     }
   }
 
@@ -121,7 +122,7 @@ class RefereeMatchCubit extends Cubit<RefereeMatchState> {
       await _reload();
     } catch (e) {
       if (isClosed) return;
-      emit(RefereeMatchError(e.toString()));
+      emit(RefereeMatchError(errorMessage(e)));
     }
   }
 
@@ -133,7 +134,7 @@ class RefereeMatchCubit extends Cubit<RefereeMatchState> {
       await _reload();
     } catch (e) {
       if (isClosed) return;
-      emit(RefereeMatchError(e.toString()));
+      emit(RefereeMatchError(errorMessage(e)));
     }
   }
 
@@ -145,7 +146,7 @@ class RefereeMatchCubit extends Cubit<RefereeMatchState> {
       await _reload();
     } catch (e) {
       if (isClosed) return;
-      emit(RefereeMatchError(e.toString()));
+      emit(RefereeMatchError(errorMessage(e)));
     }
   }
 
@@ -158,7 +159,7 @@ class RefereeMatchCubit extends Cubit<RefereeMatchState> {
       await _reload();
     } catch (e) {
       if (isClosed) return;
-      emit(RefereeMatchError(e.toString()));
+      emit(RefereeMatchError(errorMessage(e)));
     }
   }
 
@@ -171,7 +172,7 @@ class RefereeMatchCubit extends Cubit<RefereeMatchState> {
       await _reload();
     } catch (e) {
       if (isClosed) return;
-      emit(RefereeMatchError(e.toString()));
+      emit(RefereeMatchError(errorMessage(e)));
     }
   }
 
@@ -185,7 +186,7 @@ class RefereeMatchCubit extends Cubit<RefereeMatchState> {
       await _reload();
     } catch (e) {
       if (isClosed) return;
-      emit(RefereeMatchError(e.toString()));
+      emit(RefereeMatchError(errorMessage(e)));
     }
   }
 
@@ -197,7 +198,7 @@ class RefereeMatchCubit extends Cubit<RefereeMatchState> {
       await _reload();
     } catch (e) {
       if (isClosed) return;
-      emit(RefereeMatchError(e.toString()));
+      emit(RefereeMatchError(errorMessage(e)));
     }
   }
 
@@ -209,7 +210,7 @@ class RefereeMatchCubit extends Cubit<RefereeMatchState> {
       await _reload();
     } catch (e) {
       if (isClosed) return;
-      emit(RefereeMatchError(e.toString()));
+      emit(RefereeMatchError(errorMessage(e)));
     }
   }
 }

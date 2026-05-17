@@ -37,8 +37,25 @@ class UpcomingMatches extends StatelessWidget {
               builder: (context, state) => switch (state) {
                 UpcomingTournamentsLoading() =>
                   const Center(child: CircularProgressIndicator()),
-                UpcomingTournamentsError() =>
-                  Center(child: Text(S.of(context).oopsSomethingWentWrong)),
+                UpcomingTournamentsError(:final message) => Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.error_outline,
+                              color: Theme.of(context).colorScheme.error),
+                          const SizedBox(height: 8),
+                          Text(
+                            message,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                color: Theme.of(context).colorScheme.error),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 UpcomingTournamentsLoaded(:final matches) =>
                   _buildList(context, matches),
               },

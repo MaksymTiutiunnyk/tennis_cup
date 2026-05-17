@@ -13,13 +13,17 @@ class MatchManagementScreen extends StatelessWidget {
           (curr is RefereeMatchReady && curr.notification != null) ||
           curr is RefereeMatchError,
       listener: (context, state) {
-        final msg = state is RefereeMatchReady
-            ? state.notification
-            : (state as RefereeMatchError).message;
-        if (msg != null) {
+        if (state is RefereeMatchReady && state.notification != null) {
           ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
-            ..showSnackBar(SnackBar(content: Text(msg)));
+            ..showSnackBar(SnackBar(content: Text(state.notification!)));
+        } else if (state is RefereeMatchError) {
+          ScaffoldMessenger.of(context)
+            ..hideCurrentSnackBar()
+            ..showSnackBar(SnackBar(
+              content: Text(state.message),
+              backgroundColor: Theme.of(context).colorScheme.error,
+            ));
         }
       },
       builder: (context, state) {
@@ -27,7 +31,25 @@ class MatchManagementScreen extends StatelessWidget {
           return const Center(child: CircularProgressIndicator());
         }
         if (state is RefereeMatchError) {
-          return Center(child: Text(state.message));
+          return Center(
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.error_outline,
+                      color: Theme.of(context).colorScheme.error, size: 40),
+                  const SizedBox(height: 8),
+                  Text(
+                    state.message,
+                    textAlign: TextAlign.center,
+                    style:
+                        TextStyle(color: Theme.of(context).colorScheme.error),
+                  ),
+                ],
+              ),
+            ),
+          );
         }
         if (state is! RefereeMatchReady) return const SizedBox();
         return MatchBody(state: state);
