@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:tennis_cup/data/models/gender.dart';
 import 'package:tennis_cup/data/models/tournament.dart';
 import 'package:tennis_cup/data/models/tournament_invitation.dart';
 import 'package:tennis_cup/generated/l10n.dart';
@@ -115,8 +116,14 @@ class TournamentInvitationCard extends StatelessWidget {
             _buildRow(context, s.labelDate, _dateFmt.format(tournament.date)),
             _buildRow(context, s.labelStart, _timeFmt.format(tournament.date)),
             if (tournament.gender.isNotEmpty)
-              _buildRow(context, s.genderField, tournament.gender),
-            _buildRow(context, s.tournamentType, _timeLabel(s, tournament.time)),
+              _buildRow(
+                  context,
+                  s.genderField,
+                  tournament.gender.toLowerCase() == Gender.male.name
+                      ? s.menLabel
+                      : s.womenLabel),
+            _buildRow(
+                context, s.tournamentType, _timeLabel(s, tournament.time)),
             const SizedBox(height: 12),
             Row(
               children: [
