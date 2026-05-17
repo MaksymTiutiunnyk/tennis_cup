@@ -1,4 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:tennis_cup/generated/l10n.dart';
+
+String cardLabel(String cardType, S s) => switch (cardType) {
+      'WHITE' => s.whiteCard,
+      'YELLOW' => s.yellowCard,
+      'RED' => s.redCard,
+      _ => cardType,
+    };
 
 class CardChip extends StatelessWidget {
   final String cardType; // 'WHITE', 'YELLOW', 'RED'

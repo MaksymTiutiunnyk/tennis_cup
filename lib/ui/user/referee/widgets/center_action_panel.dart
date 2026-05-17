@@ -200,7 +200,7 @@ class _CenterActionPanelState extends State<CenterActionPanel> {
     final cubit = context.read<RefereeMatchCubit>();
     final result = await _selectPlayer(
       context,
-      s.issueCardTitle(_cardLabel(cardType, s)),
+      s.issueCardTitle(cardLabel(cardType, s)),
       eligible,
     );
     if (result != null && context.mounted) {
@@ -212,12 +212,6 @@ class _CenterActionPanelState extends State<CenterActionPanel> {
     }
   }
 
-  String _cardLabel(String cardType, S s) => switch (cardType) {
-        'WHITE' => s.whiteCard,
-        'YELLOW' => s.yellowCard,
-        'RED' => s.redCard,
-        _ => cardType,
-      };
 
   bool get _wouldFinishMatch {
     if (!widget.canFinishSet) return false;

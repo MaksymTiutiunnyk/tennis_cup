@@ -268,5 +268,16 @@
   "tabPending": "Pending",
 
   "menLabel": "Men",
-  "womenLabel": "Women"
+  "womenLabel": "Women",
+
+  "generalTimeoutLabel": "Timeout",
+  "tapToDismiss": "Tap anywhere to dismiss",
+
+  "revokeCardConfirm": "Revoke the {cardType} card issued to {playerName}?",
+  "@revokeCardConfirm": {
+    "placeholders": {
+      "cardType": { "type": "String" },
+      "playerName": { "type": "String" }
+    }
+  }
 }

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:tennis_cup/generated/l10n.dart';
 
 enum TimeoutType { medical, techPause, general }
 
@@ -75,10 +76,10 @@ class _TimeoutOverlayState extends State<TimeoutOverlay> {
         TimeoutType.general => Icons.timer,
       };
 
-  String get _label => switch (widget.type) {
-        TimeoutType.medical => 'Medical Timeout',
-        TimeoutType.techPause => 'Technical Pause',
-        TimeoutType.general => 'Timeout',
+  String _label(S s) => switch (widget.type) {
+        TimeoutType.medical => s.medicalTimeoutTitle,
+        TimeoutType.techPause => s.technicalPauseTitle,
+        TimeoutType.general => s.generalTimeoutLabel,
       };
 
   String _formatDuration(Duration d) {
@@ -89,6 +90,7 @@ class _TimeoutOverlayState extends State<TimeoutOverlay> {
 
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
     return GestureDetector(
       onTap: () => Navigator.of(context).pop(),
       child: Scaffold(
@@ -100,7 +102,7 @@ class _TimeoutOverlayState extends State<TimeoutOverlay> {
               Icon(_icon, size: 80, color: Colors.white70),
               const SizedBox(height: 16),
               Text(
-                _label,
+                _label(s),
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 28,
@@ -118,9 +120,9 @@ class _TimeoutOverlayState extends State<TimeoutOverlay> {
                 ),
               ),
               const SizedBox(height: 40),
-              const Text(
-                'Tap anywhere to dismiss',
-                style: TextStyle(color: Colors.white54, fontSize: 14),
+              Text(
+                s.tapToDismiss,
+                style: const TextStyle(color: Colors.white54, fontSize: 14),
               ),
             ],
           ),

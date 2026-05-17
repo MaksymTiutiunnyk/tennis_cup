@@ -256,5 +256,16 @@
   "tabPending": "Очікують",
 
   "menLabel": "Чоловіки",
-  "womenLabel": "Жінки"
+  "womenLabel": "Жінки",
+
+  "generalTimeoutLabel": "Тайм-аут",
+  "tapToDismiss": "Торкніться будь-де, щоб закрити",
+
+  "revokeCardConfirm": "Скасувати картку {cardType}, видану {playerName}?",
+  "@revokeCardConfirm": {
+    "placeholders": {
+      "cardType": { "type": "String" },
+      "playerName": { "type": "String" }
+    }
+  }
 }

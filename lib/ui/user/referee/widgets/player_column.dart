@@ -34,7 +34,7 @@ class PlayerColumn extends StatelessWidget {
       builder: (ctx) => AlertDialog(
         title: Text(s.revokeCard),
         content: Text(
-            'Revoke the ${card.cardType.toLowerCase()} card issued to ${player.fullName}?'),
+            s.revokeCardConfirm(cardLabel(card.cardType, s), player.fullName)),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
