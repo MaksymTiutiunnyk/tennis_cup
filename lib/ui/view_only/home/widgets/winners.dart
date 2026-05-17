@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tennis_cup/data/models/winner_view.dart';
+import 'package:tennis_cup/data/models/arena_winner.dart';
 import 'package:tennis_cup/ui/view_only/home/view_models/winners_cubit.dart';
 import 'package:tennis_cup/ui/view_only/home/widgets/winner.dart';
 
@@ -43,7 +43,7 @@ class Winners extends StatelessWidget {
     );
   }
 
-  Widget _buildContent(List<WinnerView> winners) {
+  Widget _buildContent(List<ArenaWinner> winners) {
     if (winners.isEmpty) {
       return const Center(child: Text('No winners found'));
     }

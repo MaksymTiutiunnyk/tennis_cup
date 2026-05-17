@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:tennis_cup/data/models/player.dart';
+import 'package:tennis_cup/data/models/user.dart';
 import 'package:tennis_cup/ui/view_only/player_comparison/widgets/players_statistic.dart';
 
 class PlayersStatistics extends StatelessWidget {
-  final Player player1, player2;
+  final User player1, player2;
   const PlayersStatistics(
       {required this.player1, required this.player2, super.key});
 
@@ -16,8 +16,8 @@ class PlayersStatistics extends StatelessWidget {
         children: [
           PlayersStatistic(
             label: 'Tennis Cup Rank:',
-            player1: player1.rankTennis.toString(),
-            player2: player2.rankTennis.toString(),
+            player1: player1.rating.toString(),
+            player2: player2.rating.toString(),
           ),
           PlayersStatistic(
             label: 'City, Country:',
@@ -46,8 +46,8 @@ class PlayersStatistics extends StatelessWidget {
           ),
           PlayersStatistic(
             label: 'Loses:',
-            player1: player1.loses.toString(),
-            player2: player2.loses.toString(),
+            player1: player1.losses.toString(),
+            player2: player2.losses.toString(),
           ),
         ],
       ),

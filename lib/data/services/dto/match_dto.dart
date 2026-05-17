@@ -121,7 +121,7 @@ class MatchSetDto {
 class MatchDto {
   final int id;
   final int tournamentId;
-  final int refereeId;
+  final int? refereeId;
   final String status;
   final int? bluePlayerId;
   final int? redPlayerId;
@@ -138,7 +138,7 @@ class MatchDto {
   const MatchDto({
     required this.id,
     required this.tournamentId,
-    required this.refereeId,
+    this.refereeId,
     required this.status,
     required this.bluePlayerId,
     required this.redPlayerId,
@@ -156,7 +156,7 @@ class MatchDto {
   factory MatchDto.fromJson(Map<String, dynamic> json) => MatchDto(
         id: (json['id'] as num).toInt(),
         tournamentId: (json['tournamentId'] as num).toInt(),
-        refereeId: (json['refereeId'] as num?)?.toInt() ?? 0,
+        refereeId: (json['refereeId'] as num?)?.toInt(),
         status: json['status'] as String? ?? '',
         bluePlayerId: (json['bluePlayerId'] as num?)?.toInt(),
         redPlayerId: (json['redPlayerId'] as num?)?.toInt(),

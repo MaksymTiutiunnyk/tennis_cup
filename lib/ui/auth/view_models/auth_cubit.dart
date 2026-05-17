@@ -19,6 +19,7 @@ class AuthCubit extends Cubit<AuthState> {
 
   Future<void> checkAuthStatus() async {
     final token = await _tokenStore.getAccessToken();
+    if (isClosed) return;
     if (token != null) {
       emit(AuthAuthenticated(
         userId: extractUserId(token),
@@ -37,11 +38,13 @@ class AuthCubit extends Cubit<AuthState> {
     try {
       await _authService.login(login: login, password: password);
       final token = await _tokenStore.getAccessToken();
+      if (isClosed) return;
       emit(AuthAuthenticated(
         userId: token != null ? extractUserId(token) : '',
         roles: token != null ? extractRoles(token) : [UserRole.player],
       ));
     } catch (e) {
+      if (isClosed) return;
       emit(AuthError(_parseError(e)));
     }
   }
@@ -72,10 +75,12 @@ class AuthCubit extends Cubit<AuthState> {
         country: country,
         city: city,
       );
+      if (isClosed) return;
       emit(AuthUnauthenticated(
         message: 'Registration submitted. Waiting for admin approval.',
       ));
     } catch (e) {
+      if (isClosed) return;
       emit(AuthError(_parseError(e)));
     }
   }
@@ -83,10 +88,9 @@ class AuthCubit extends Cubit<AuthState> {
   Future<void> logout() async {
     try {
       await _authService.logout();
-    } catch (_) {
-    } finally {
-      emit(AuthUnauthenticated());
-    }
+    } catch (_) {}
+    if (isClosed) return;
+    emit(AuthUnauthenticated());
   }
 
   String _parseError(Object e) {

@@ -34,8 +34,10 @@ class OrganizerTournamentsCubit extends Cubit<OrganizerTournamentsState> {
         tournamentTime: time,
         statuses: ['PENDING', 'ACTIVE', 'FINISHED', 'CANCELLED'],
       );
+      if (isClosed) return;
       emit(OrgTournamentsLoaded(tournaments));
     } catch (e) {
+      if (isClosed) return;
       emit(OrgTournamentsError(_message(e)));
     }
   }
@@ -45,6 +47,7 @@ class OrganizerTournamentsCubit extends Cubit<OrganizerTournamentsState> {
       await _repository.createTournament(request);
       await _reload();
     } catch (e) {
+      if (isClosed) return;
       emit(OrgTournamentsError(_message(e)));
     }
   }
@@ -54,6 +57,7 @@ class OrganizerTournamentsCubit extends Cubit<OrganizerTournamentsState> {
       await _repository.updateTournament(id, request);
       await _reload();
     } catch (e) {
+      if (isClosed) return;
       emit(OrgTournamentsError(_message(e)));
     }
   }
@@ -68,6 +72,7 @@ class OrganizerTournamentsCubit extends Cubit<OrganizerTournamentsState> {
     try {
       await _repository.deleteTournament(id);
     } catch (e) {
+      if (isClosed) return;
       if (current is OrgTournamentsLoaded) emit(current);
       emit(OrgTournamentsError(_message(e)));
     }
@@ -78,6 +83,7 @@ class OrganizerTournamentsCubit extends Cubit<OrganizerTournamentsState> {
       await _repository.startTournament(id);
       await _reload();
     } catch (e) {
+      if (isClosed) return;
       emit(OrgTournamentsError(_message(e)));
     }
   }
@@ -87,6 +93,7 @@ class OrganizerTournamentsCubit extends Cubit<OrganizerTournamentsState> {
       await _repository.finishTournament(id);
       await _reload();
     } catch (e) {
+      if (isClosed) return;
       emit(OrgTournamentsError(_message(e)));
     }
   }
@@ -96,6 +103,7 @@ class OrganizerTournamentsCubit extends Cubit<OrganizerTournamentsState> {
       await _repository.addPlayers(tournamentId, playerIds);
       await _reload();
     } catch (e) {
+      if (isClosed) return;
       emit(OrgTournamentsError(_message(e)));
     }
   }
@@ -105,6 +113,7 @@ class OrganizerTournamentsCubit extends Cubit<OrganizerTournamentsState> {
       await _repository.removePlayers(tournamentId, playerIds);
       await _reload();
     } catch (e) {
+      if (isClosed) return;
       emit(OrgTournamentsError(_message(e)));
     }
   }

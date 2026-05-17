@@ -5,8 +5,8 @@ import 'package:intl/intl.dart';
 import 'package:tennis_cup/core/di/service_locator.dart';
 import 'package:tennis_cup/data/models/arena.dart';
 import 'package:tennis_cup/data/models/match.dart';
-import 'package:tennis_cup/data/models/match_view.dart';
 import 'package:tennis_cup/routing/app_router.dart';
+import 'package:tennis_cup/ui/core/themes/color_utils.dart';
 import 'package:tennis_cup/ui/view_only/home/view_models/live_match_cubit.dart';
 import 'package:tennis_cup/ui/view_only/home/view_models/video_player_cubit.dart';
 import 'package:tennis_cup/ui/view_only/home/widgets/live_stream_match_player.dart';
@@ -21,7 +21,7 @@ String _formatGender(String gender) =>
     gender.toLowerCase() == 'female' ? 'Women' : 'Men';
 
 class LiveStreamMatch extends StatelessWidget {
-  final MatchView match;
+  final Match match;
 
   const LiveStreamMatch({super.key, required this.match});
 
@@ -29,7 +29,7 @@ class LiveStreamMatch extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider<LiveMatchCubit>(
       create: (_) => LiveMatchCubit(
-        matchId: match.matchId,
+        matchId: match.id.toString(),
         matchRepository: ServiceLocator.matchRepository,
       ),
       child: BlocBuilder<VideoPlayerCubit, VideoPlayerState>(
@@ -57,7 +57,7 @@ class LiveStreamMatch extends StatelessWidget {
                         onTap: () {
                           context
                               .read<ScheduleDateCubit>()
-                              .selectDate(match.tournamentStart);
+                              .selectDate(match.scheduledStart);
                           context
                               .read<TimeFilterCubit>()
                               .selectTime(match.tournamentTime);
@@ -74,7 +74,7 @@ class LiveStreamMatch extends StatelessWidget {
                             Row(
                               children: [
                                 Icon(Icons.circle,
-                                    color: match.arenaColor, size: 8),
+                                    color: arenaColorToMaterial(match.arenaColor), size: 8),
                                 const SizedBox(width: 8),
                                 Text(
                                   'Arena: ${match.arenaName}',
@@ -83,7 +83,7 @@ class LiveStreamMatch extends StatelessWidget {
                               ],
                             ),
                             Text(
-                              '${_dateFormatter.format(match.tournamentStart)} ${_formatGender(match.tournamentGender)}, ${match.tournamentTime.name}',
+                              '${_dateFormatter.format(match.scheduledStart)} ${_formatGender(match.tournamentGender)}, ${match.tournamentTime.name}',
                               style: Theme.of(context).textTheme.bodySmall,
                             ),
                           ],
@@ -140,10 +140,10 @@ class LiveStreamMatch extends StatelessWidget {
                             final String blueLabel;
                             final String redLabel;
                             if (state != null && state.isTechnicalDefeat) {
-                              blueLabel = state.winnerId == bluePlayer.userId
+                              blueLabel = state.winnerId == bluePlayer.id
                                   ? 'W'
                                   : 'L';
-                              redLabel = state.winnerId == redPlayer.userId
+                              redLabel = state.winnerId == redPlayer.id
                                   ? 'W'
                                   : 'L';
                             } else {

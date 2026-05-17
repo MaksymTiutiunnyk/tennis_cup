@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tennis_cup/data/models/player.dart';
+import 'package:tennis_cup/data/models/user.dart';
 import 'package:tennis_cup/ui/view_only/player_details/view_models/player_tournaments_cubit.dart';
 import 'package:tennis_cup/ui/view_only/player_details/widgets/player_tournament.dart';
 
 class PlayerTournaments extends StatelessWidget {
-  final Player player;
+  final User player;
 
   const PlayerTournaments({super.key, required this.player});
 

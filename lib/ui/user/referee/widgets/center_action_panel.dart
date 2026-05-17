@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tennis_cup/data/services/dto/match_dto.dart';
+import 'package:tennis_cup/data/models/match.dart';
 import 'package:tennis_cup/ui/user/referee/view_models/referee_match_cubit.dart';
 import 'package:tennis_cup/ui/user/referee/widgets/action_button.dart';
 import 'package:tennis_cup/ui/user/referee/widgets/card_chip.dart';
@@ -8,7 +8,7 @@ import 'package:tennis_cup/ui/user/referee/widgets/timeout_overlay.dart';
 
 class CenterActionPanel extends StatefulWidget {
   final RefereeMatchReady state;
-  final MatchSetDto activeSet;
+  final MatchSet activeSet;
   final int blueSetsWon;
   final int redSetsWon;
   final bool scoringLocked;
@@ -86,12 +86,12 @@ class _CenterActionPanelState extends State<CenterActionPanel> {
             mainAxisSize: MainAxisSize.min,
             children: [
               for (final player in [blue, red])
-                if (eligibleIds.contains(player.userId))
+                if (eligibleIds.contains(player.id))
                   RadioListTile<int>(
                     dense: true,
                     visualDensity: VisualDensity.compact,
                     title: Text(player.fullName),
-                    value: player.userId,
+                    value: player.id,
                     groupValue: selectedId,
                     onChanged: (v) => setDialogState(() => selectedId = v),
                   ),
@@ -152,7 +152,7 @@ class _CenterActionPanelState extends State<CenterActionPanel> {
     final result = await _selectPlayer(
       context,
       'Technical Defeat — Match',
-      [widget.state.bluePlayer.userId, widget.state.redPlayer.userId],
+      [widget.state.bluePlayer.id, widget.state.redPlayer.id],
       withReason: true,
     );
     if (result != null && context.mounted) {
@@ -216,7 +216,7 @@ class _CenterActionPanelState extends State<CenterActionPanel> {
   bool get _wouldFinishMatch {
     if (!widget.canFinishSet) return false;
     final blueLeads =
-        widget.activeSet.bluePlayerScore > widget.activeSet.redPlayerScore;
+        widget.activeSet.blueScore > widget.activeSet.redScore;
     return blueLeads
         ? (widget.blueSetsWon + 1 >= widget.state.match.setsToWin)
         : (widget.redSetsWon + 1 >= widget.state.match.setsToWin);
@@ -278,8 +278,8 @@ class _CenterActionPanelState extends State<CenterActionPanel> {
                       visualDensity: VisualDensity.compact,
                     ),
                     onPressed: (widget.leftIsRed
-                                ? widget.activeSet.redPlayerScore
-                                : widget.activeSet.bluePlayerScore) >
+                                ? widget.activeSet.redScore
+                                : widget.activeSet.blueScore) >
                             0
                         ? (widget.leftIsRed
                             ? cubit.subtractPointRed
@@ -296,8 +296,8 @@ class _CenterActionPanelState extends State<CenterActionPanel> {
                       visualDensity: VisualDensity.compact,
                     ),
                     onPressed: (widget.leftIsRed
-                                ? widget.activeSet.bluePlayerScore
-                                : widget.activeSet.redPlayerScore) >
+                                ? widget.activeSet.blueScore
+                                : widget.activeSet.redScore) >
                             0
                         ? (widget.leftIsRed
                             ? cubit.subtractPointBlue

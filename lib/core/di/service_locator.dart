@@ -1,14 +1,3 @@
-// To switch to Firebase, replace the REST service instantiations in init()
-// with their Firebase counterparts, e.g.:
-//   playerService = FirebasePlayerService();
-//   tournamentService = FirebaseTournamentService();
-//   arenaService = FirebaseArenaService();
-//   matchService = FirebaseMatchService();
-//   newsService = FirebaseNewsService();
-// Also call Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform)
-// in main.dart before ServiceLocator.init().
-// Firebase service implementations live in lib/data/services/firebase/.
-
 import 'package:dio/dio.dart';
 import 'package:tennis_cup/config/app_config.dart';
 import 'package:tennis_cup/core/network/dio_client.dart';
@@ -18,7 +7,6 @@ import 'package:tennis_cup/data/repositories/invitations_repository.dart';
 import 'package:tennis_cup/data/repositories/match_repository.dart';
 import 'package:tennis_cup/data/repositories/news_repository.dart';
 import 'package:tennis_cup/data/repositories/player_repository.dart';
-import 'package:tennis_cup/data/repositories/referee_repository.dart';
 import 'package:tennis_cup/data/repositories/tournament_repository.dart';
 import 'package:tennis_cup/data/services/abstract/i_admin_service.dart';
 import 'package:tennis_cup/data/services/abstract/i_notification_service.dart';
@@ -56,7 +44,6 @@ class ServiceLocator {
   static late NewsRepository newsRepository;
   static late InvitationsRepository invitationsRepository;
   static late AdminRepository adminRepository;
-  static late RefereeRepository refereeRepository;
 
   static void init() {
     tokenStore = const AuthTokenStore();
@@ -119,14 +106,12 @@ class ServiceLocator {
     notificationService = RestNotificationService(notificationDio);
 
     playerRepository = PlayerRepository(playerService);
-    tournamentRepository = TournamentRepository(tournamentService, arenaService, playerService, matchService);
-    matchRepository = MatchRepository(matchService, playerService);
+    tournamentRepository = TournamentRepository(tournamentService, arenaService, playerRepository, matchService);
+    matchRepository = MatchRepository(matchService, playerRepository);
     newsRepository = NewsRepository(newsService);
     invitationsRepository =
         InvitationsRepository(tournamentService, arenaService);
     adminRepository = AdminRepository(adminService);
-    refereeRepository =
-        RefereeRepository(tournamentService, matchService, playerService);
 
     matchWsService.connect();
   }

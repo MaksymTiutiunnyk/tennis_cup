@@ -4,7 +4,6 @@ import 'package:tennis_cup/data/models/arena.dart';
 import 'package:tennis_cup/data/models/tournament.dart';
 import 'package:tennis_cup/data/services/dto/dashboard_dto.dart';
 import 'package:tennis_cup/data/services/dto/tournament_dto.dart';
-import 'package:tennis_cup/data/services/dto/tournament_invitation_dto.dart';
 
 abstract interface class ITournamentService {
   // ---- Read ----

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tennis_cup/core/di/service_locator.dart';
-import 'package:tennis_cup/data/models/player.dart';
+import 'package:tennis_cup/data/models/user.dart';
 import 'package:tennis_cup/ui/view_only/player_search/view_models/player_search_bloc.dart';
 
 class PlayerSearch extends StatelessWidget {
-  final void Function(BuildContext context, Player player) onSelectPlayer;
+  final void Function(BuildContext context, User player) onSelectPlayer;
 
   const PlayerSearch({super.key, required this.onSelectPlayer});
 

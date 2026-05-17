@@ -2,7 +2,8 @@ import 'dart:typed_data';
 
 import 'package:tennis_cup/core/pagination/page_request.dart';
 import 'package:tennis_cup/core/pagination/page_result.dart';
-import 'package:tennis_cup/data/models/player.dart';
+import 'package:tennis_cup/data/models/gender.dart';
+import 'package:tennis_cup/data/models/user.dart';
 import 'package:tennis_cup/data/services/abstract/i_player_service.dart';
 
 class PlayerRepository {
@@ -10,21 +11,21 @@ class PlayerRepository {
 
   const PlayerRepository(this._service);
 
-  Future<PageResult<Player>> fetchRankingPlayers({
+  Future<PageResult<User>> fetchRankingPlayers({
     required PageRequest page,
-    Sex? sexFilter,
+    Gender? genderFilter,
   }) {
-    return _service.fetchRankingPlayers(page: page, sexFilter: sexFilter);
+    return _service.fetchRankingPlayers(page: page, genderFilter: genderFilter);
   }
 
-  Future<List<Player>> fetchPlayersBySubstring({
+  Future<List<User>> fetchPlayersBySubstring({
     required String query,
     String? gender,
   }) {
     return _service.searchPlayersByName(query: query, gender: gender);
   }
 
-  Future<Player> fetchPlayerById(int id) {
+  Future<User> fetchPlayerById(int id) {
     return _service.fetchPlayerById(id);
   }
 

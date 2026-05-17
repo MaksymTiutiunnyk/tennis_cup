@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tennis_cup/data/models/match_view.dart';
+import 'package:tennis_cup/data/models/match.dart';
 import 'package:tennis_cup/ui/view_only/home/view_models/upcoming_tournaments_cubit.dart';
 import 'package:tennis_cup/ui/view_only/home/widgets/upcoming_match.dart';
 
@@ -47,7 +47,7 @@ class UpcomingMatches extends StatelessWidget {
     );
   }
 
-  Widget _buildList(List<MatchView> matches) {
+  Widget _buildList(List<Match> matches) {
     if (matches.isEmpty) {
       return const Center(child: Text('No matches found'));
     }

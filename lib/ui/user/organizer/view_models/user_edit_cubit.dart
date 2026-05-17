@@ -2,7 +2,7 @@ import 'dart:typed_data';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:tennis_cup/data/models/player.dart';
+import 'package:tennis_cup/data/models/user.dart';
 import 'package:tennis_cup/data/models/user_role.dart';
 import 'package:tennis_cup/data/repositories/player_repository.dart';
 
@@ -19,8 +19,10 @@ class UserEditCubit extends Cubit<UserEditState> {
     emit(UserEditLoading());
     try {
       final player = await _playerRepository.fetchPlayerById(userId);
+      if (isClosed) return;
       emit(UserEditLoaded(user: player, roles: List.from(initialRoles)));
     } catch (e) {
+      if (isClosed) return;
       emit(UserEditError('Failed to load user'));
     }
   }
@@ -35,6 +37,7 @@ class UserEditCubit extends Cubit<UserEditState> {
     if (picked == null) return;
 
     final bytes = Uint8List.fromList(await picked.readAsBytes());
+    if (isClosed) return;
     emit(UserEditLoaded(
       user: current.user,
       roles: current.roles,
@@ -95,8 +98,10 @@ class UserEditCubit extends Cubit<UserEditState> {
       fields['roles'] = current.roles.map((r) => r.name.toUpperCase()).toList();
 
       await _playerRepository.updateProfile(userId, fields);
+      if (isClosed) return;
       emit(UserEditSuccess());
     } catch (e) {
+      if (isClosed) return;
       emit(UserEditLoaded(
         user: current.user,
         roles: current.roles,

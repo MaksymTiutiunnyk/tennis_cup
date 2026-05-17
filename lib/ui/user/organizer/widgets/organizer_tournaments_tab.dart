@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tennis_cup/core/di/service_locator.dart';
 import 'package:tennis_cup/data/models/arena.dart';
 import 'package:tennis_cup/data/models/tournament.dart';
+import 'package:tennis_cup/ui/core/widgets/async_state_widget.dart';
+import 'package:tennis_cup/ui/core/widgets/refreshable_list.dart';
 import 'package:tennis_cup/ui/user/organizer/view_models/organizer_tournaments_cubit.dart';
 import 'package:tennis_cup/ui/user/organizer/widgets/tournament_card.dart';
 import 'package:tennis_cup/ui/user/organizer/widgets/tournament_form.dart';
@@ -41,7 +43,7 @@ class OrganizerTournamentsTab extends StatelessWidget {
             const Arena(
                 id: '1',
                 title: 'Kyiv Yellow Arena',
-                color: Colors.yellow,
+                color: ArenaColor.yellow,
                 city: 'Kyiv'),
           ),
         ),
@@ -95,45 +97,22 @@ class OrganizerTournamentsTab extends StatelessWidget {
               Expanded(
                 child: BlocBuilder<OrganizerTournamentsCubit,
                     OrganizerTournamentsState>(
-                  builder: (context, state) => switch (state) {
-                    OrgTournamentsLoading() =>
-                      const Center(child: CircularProgressIndicator()),
-                    OrgTournamentsError(message: final m) => Center(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(m, textAlign: TextAlign.center),
-                            const SizedBox(height: 12),
-                            TextButton(
-                              onPressed: () => _reload(context),
-                              child: const Text('Retry'),
-                            ),
-                          ],
-                        ),
-                      ),
-                    OrgTournamentsLoaded(tournaments: final list) =>
-                      RefreshIndicator(
-                        onRefresh: () => _reload(context),
-                        child: list.isEmpty
-                            ? const CustomScrollView(
-                                physics: AlwaysScrollableScrollPhysics(),
-                                slivers: [
-                                  SliverFillRemaining(
-                                    child: Center(
-                                        child: Text('No tournaments yet')),
-                                  ),
-                                ],
-                              )
-                            : ListView.builder(
-                                physics:
-                                    const AlwaysScrollableScrollPhysics(),
-                                padding: const EdgeInsets.all(8),
-                                itemCount: list.length,
-                                itemBuilder: (_, i) =>
-                                    TournamentCard(tournament: list[i]),
-                              ),
-                      ),
-                  },
+                  builder: (context, state) => AsyncStateWidget(
+                    isLoading: state is OrgTournamentsLoading,
+                    errorMessage: state is OrgTournamentsError
+                        ? state.message
+                        : null,
+                    onRetry: () => _reload(context),
+                    child: state is OrgTournamentsLoaded
+                        ? RefreshableList<Tournament>(
+                            items: state.tournaments,
+                            onRefresh: () => _reload(context),
+                            itemBuilder: (_, t) => TournamentCard(tournament: t),
+                            emptyWidget: const Text('No tournaments yet'),
+                            padding: const EdgeInsets.all(8),
+                          )
+                        : const SizedBox.shrink(),
+                  ),
                 ),
               ),
             ],

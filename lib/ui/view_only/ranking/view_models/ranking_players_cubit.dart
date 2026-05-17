@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tennis_cup/core/pagination/page_request.dart';
-import 'package:tennis_cup/data/models/player.dart';
+import 'package:tennis_cup/data/models/gender.dart';
+import 'package:tennis_cup/data/models/user.dart';
 import 'package:tennis_cup/data/repositories/player_repository.dart';
 
 part 'ranking_players_state.dart';
@@ -8,23 +9,26 @@ part 'ranking_players_state.dart';
 class RankingPlayersCubit extends Cubit<RankingPlayersState> {
   final PlayerRepository playerRepository;
   PageRequest _currentPage = const PageRequest(page: 0, size: 10);
-  Sex _currentSex = Sex.All;
+  Gender? _currentGender;
 
   RankingPlayersCubit({required this.playerRepository})
       : super(const RankingPlayersLoading());
 
-  Future<void> fetchPlayers({required Sex sex, int size = 10}) async {
-    _currentSex = sex;
+  Future<void> fetchPlayers({required Gender? gender, int size = 10}) async {
+    _currentGender = gender;
     _currentPage = PageRequest(page: 0, size: size);
     emit(const RankingPlayersLoading());
     try {
       final result = await playerRepository.fetchRankingPlayers(
         page: _currentPage,
-        sexFilter: sex,
+        genderFilter: gender,
       );
       if (result.hasMore) _currentPage = _currentPage.next;
-      emit(RankingPlayersLoaded(players: result.items, hasMore: result.hasMore));
+      if (isClosed) return;
+      emit(
+          RankingPlayersLoaded(players: result.items, hasMore: result.hasMore));
     } catch (_) {
+      if (isClosed) return;
       emit(const RankingPlayersError());
     }
   }
@@ -37,14 +41,16 @@ class RankingPlayersCubit extends Cubit<RankingPlayersState> {
     try {
       final result = await playerRepository.fetchRankingPlayers(
         page: _currentPage,
-        sexFilter: _currentSex,
+        genderFilter: _currentGender,
       );
       if (result.hasMore) _currentPage = _currentPage.next;
+      if (isClosed) return;
       emit(RankingPlayersLoaded(
         players: [...current.players, ...result.items],
         hasMore: result.hasMore,
       ));
     } catch (_) {
+      if (isClosed) return;
       emit(RankingPlayersLoaded(
         players: current.players,
         hasMore: current.hasMore,

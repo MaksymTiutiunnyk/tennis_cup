@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:tennis_cup/data/models/player.dart';
+import 'package:tennis_cup/data/models/user.dart';
 import 'package:tennis_cup/routing/app_router.dart';
 import 'package:tennis_cup/ui/core/widgets/player_avatar.dart';
 
 class RankingPlayer extends StatelessWidget {
-  final Player player;
+  final User player;
   const RankingPlayer({super.key, required this.player});
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () => context.push(
-        AppRoutes.playerDetails(player.userId.toString()),
+        AppRoutes.playerDetails(player.id.toString()),
       ),
       child: Card(
         child: Padding(
@@ -24,7 +24,7 @@ class RankingPlayer extends StatelessWidget {
                   PlayerAvatar(imageUrl: player.imageUrl, radius: 20),
                   const SizedBox(width: 8),
                   Text(
-                    '${player.surname} ${player.name}',
+                    '${player.lastName} ${player.firstName}',
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                 ],
@@ -38,7 +38,7 @@ class RankingPlayer extends StatelessWidget {
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                   Text(
-                    player.rankTennis.toString(),
+                    player.rating.toString(),
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                 ],

@@ -14,7 +14,7 @@ class TournamentCard extends StatelessWidget {
   const TournamentCard({super.key, required this.tournament});
 
   bool get canBeStarted {
-    return tournament.status == 'PENDING' &&
+    return tournament.status == TournamentStatus.pending &&
         tournament.refereeId != null &&
         tournament.players.length == tournament.requiredPlayersCount;
   }
@@ -38,7 +38,7 @@ class TournamentCard extends StatelessWidget {
         trailing: PopupMenuButton<_Action>(
           onSelected: (action) => _handleAction(context, cubit, action),
           itemBuilder: (_) => [
-            if (tournament.status == 'PENDING') ...[
+            if (tournament.status == TournamentStatus.pending) ...[
               if (canBeStarted)
                 const PopupMenuItem(
                   value: _Action.start,
@@ -53,7 +53,7 @@ class TournamentCard extends StatelessWidget {
                 child: Text('Delete'),
               ),
             ],
-            if (tournament.status == 'ACTIVE')
+            if (tournament.status == TournamentStatus.active)
               const PopupMenuItem(
                 value: _Action.finish,
                 child: Text('Finish'),

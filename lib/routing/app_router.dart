@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:tennis_cup/data/models/combined_user.dart';
+import 'package:tennis_cup/data/models/user.dart';
 import 'package:tennis_cup/ui/core/widgets/custom_navigator_observer.dart';
 import 'package:tennis_cup/ui/shell/widgets/user_shell.dart';
 import 'package:tennis_cup/ui/shell/widgets/view_shell.dart';
@@ -199,7 +199,7 @@ GoRouter buildAppRouter({GlobalKey<NavigatorState>? navigatorKey}) {
       GoRoute(
         path: '/organizer/edit-user/:userId',
         builder: (context, state) {
-          final extra = state.extra as CombinedUser?;
+          final extra = state.extra as User?;
           return EditUserScreen(
             userId: int.parse(state.pathParameters['userId']!),
             initialRoles: extra?.roles ?? const [],

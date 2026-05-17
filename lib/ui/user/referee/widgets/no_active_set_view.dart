@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:tennis_cup/data/models/player.dart';
-import 'package:tennis_cup/data/services/dto/match_dto.dart';
+import 'package:tennis_cup/data/models/match.dart';
+import 'package:tennis_cup/data/models/user.dart';
 
 class NoActiveSetView extends StatelessWidget {
-  final Player bluePlayer;
-  final Player redPlayer;
+  final User bluePlayer;
+  final User redPlayer;
   final int blueSetsWon;
   final int redSetsWon;
-  final MatchSetDto? lastSet;
+  final MatchSet? lastSet;
   /// Which player is on the left — mirrors the side layout of the last finished set.
   final bool leftIsRed;
   final int? pendingSetNumber;
@@ -64,17 +64,17 @@ class NoActiveSetView extends StatelessWidget {
     // Map MatchSetDto scores (blue/red) to left/right positions.
     final leftScore = lastSet == null
         ? 0
-        : (leftIsRed ? lastSet!.redPlayerScore : lastSet!.bluePlayerScore);
+        : (leftIsRed ? lastSet!.redScore : lastSet!.blueScore);
     final rightScore = lastSet == null
         ? 0
-        : (leftIsRed ? lastSet!.bluePlayerScore : lastSet!.redPlayerScore);
+        : (leftIsRed ? lastSet!.blueScore : lastSet!.redScore);
 
     // Show sets won BEFORE the just-finished set — subtract the winner's point.
     final lastWinnerId = lastSet?.winnerId;
     final displayBlueSets =
-        blueSetsWon - (lastWinnerId == bluePlayer.userId ? 1 : 0);
+        blueSetsWon - (lastWinnerId == bluePlayer.id ? 1 : 0);
     final displayRedSets =
-        redSetsWon - (lastWinnerId == redPlayer.userId ? 1 : 0);
+        redSetsWon - (lastWinnerId == redPlayer.id ? 1 : 0);
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -143,7 +143,7 @@ class NoActiveSetView extends StatelessWidget {
 }
 
 class _ScorePanel extends StatelessWidget {
-  final Player player;
+  final User player;
   final int score;
   final Color bgColor;
 
@@ -160,7 +160,7 @@ class _ScorePanel extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
           child: Text(
-            '${player.name} ${player.surname}',
+            '${player.firstName} ${player.lastName}',
             textAlign: TextAlign.center,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,

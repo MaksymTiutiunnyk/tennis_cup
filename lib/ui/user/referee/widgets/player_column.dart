@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tennis_cup/data/models/player.dart';
-import 'package:tennis_cup/data/services/dto/match_dto.dart';
+import 'package:tennis_cup/data/models/match.dart';
+import 'package:tennis_cup/data/models/user.dart';
 import 'package:tennis_cup/ui/user/referee/view_models/referee_match_cubit.dart';
 import 'package:tennis_cup/ui/user/referee/widgets/card_chip.dart';
 
 class PlayerColumn extends StatelessWidget {
-  final Player player;
+  final User player;
   final int score;
   final bool isServing;
-  final List<MatchCardDto> issuedCards;
+  final List<MatchCard> issuedCards;
   final Color bgColor;
   final VoidCallback? onScore;
   final bool compact;
@@ -25,7 +25,7 @@ class PlayerColumn extends StatelessWidget {
     this.compact = false,
   });
 
-  Future<void> _confirmRevoke(BuildContext context, MatchCardDto card) async {
+  Future<void> _confirmRevoke(BuildContext context, MatchCard card) async {
     final cubit = context.read<RefereeMatchCubit>();
     final confirmed = await showDialog<bool>(
       context: context,
@@ -65,7 +65,7 @@ class PlayerColumn extends StatelessWidget {
             children: [
               Flexible(
                 child: Text(
-                  '${player.name} ${player.surname}',
+                  '${player.firstName} ${player.lastName}',
                   textAlign: TextAlign.center,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,

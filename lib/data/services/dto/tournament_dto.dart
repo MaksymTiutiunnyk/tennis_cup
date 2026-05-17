@@ -1,5 +1,3 @@
-import 'package:tennis_cup/data/models/tournament.dart';
-
 class CreateUpdateTournamentRequestDto {
   final String name;
   final String type;
@@ -37,21 +35,6 @@ class CreateUpdateTournamentRequestDto {
         'setsToWin': setsToWin,
         'playerIds': playerIds,
       };
-}
-
-Time timeFromString(String value) {
-  switch (value.toUpperCase()) {
-    case 'MORNING':
-      return Time.Morning;
-    case 'DAY':
-      return Time.Day;
-    case 'EVENING':
-      return Time.Evening;
-    case 'NIGHT':
-      return Time.Night;
-    default:
-      return Time.Morning;
-  }
 }
 
 class TournamentParticipantDto {
@@ -127,5 +110,36 @@ class TournamentDto {
                     e as Map<String, dynamic>))
                 .toList() ??
             [],
+      );
+}
+
+class MyInvitationDto {
+  final int invitationId;
+  final int tournamentId;
+  final String tournamentName;
+  final String startTime;
+  final String role;
+  final String status;
+  final String createdAt;
+
+  const MyInvitationDto({
+    required this.invitationId,
+    required this.tournamentId,
+    required this.tournamentName,
+    required this.startTime,
+    required this.role,
+    required this.status,
+    required this.createdAt,
+  });
+
+  factory MyInvitationDto.fromJson(Map<String, dynamic> json) =>
+      MyInvitationDto(
+        invitationId: (json['invitationId'] as num).toInt(),
+        tournamentId: (json['tournamentId'] as num).toInt(),
+        tournamentName: json['tournamentName'] as String? ?? '',
+        startTime: json['startTime'] as String? ?? '',
+        role: json['role'] as String? ?? 'PLAYER',
+        status: json['status'] as String? ?? 'PENDING',
+        createdAt: json['createdAt'] as String? ?? '',
       );
 }

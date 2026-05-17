@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tennis_cup/data/models/match_view.dart';
+import 'package:tennis_cup/data/models/match.dart';
 import 'package:tennis_cup/ui/view_only/home/view_models/live_stream_match_index_cubit.dart';
 import 'package:tennis_cup/ui/view_only/home/view_models/live_stream_tournaments_cubit.dart';
 import 'package:tennis_cup/ui/view_only/home/widgets/live_stream_match.dart';
@@ -46,7 +46,7 @@ class LiveStreamMatches extends StatelessWidget {
     );
   }
 
-  Widget _buildContent(BuildContext context, List<MatchView> matches) {
+  Widget _buildContent(BuildContext context, List<Match> matches) {
     if (matches.isEmpty) {
       return const Center(child: Text('No matches found'));
     }

@@ -1,3 +1,4 @@
+import 'package:tennis_cup/core/utils/enum_utils.dart';
 import 'package:tennis_cup/data/models/arena.dart';
 import 'package:tennis_cup/data/models/tournament.dart';
 import 'package:tennis_cup/data/models/tournament_invitation.dart';
@@ -5,7 +6,6 @@ import 'package:tennis_cup/data/services/abstract/i_arena_service.dart';
 import 'package:tennis_cup/data/services/abstract/i_tournament_service.dart';
 import 'package:tennis_cup/data/services/dto/arena_dto.dart';
 import 'package:tennis_cup/data/services/dto/tournament_dto.dart';
-import 'package:tennis_cup/data/services/dto/tournament_invitation_dto.dart';
 
 class InvitationsRepository {
   final ITournamentService _tournamentService;
@@ -61,7 +61,7 @@ class InvitationsRepository {
       tournamentId: dto.tournamentId.toString(),
       name: tournamentDto?.name ?? dto.tournamentName,
       gender: tournamentDto?.gender ?? '',
-      status: tournamentDto?.status ?? 'PENDING',
+      status: enumFromString(TournamentStatus.values, tournamentDto?.status, TournamentStatus.pending),
       players: const [],
       date: tournamentDto != null
           ? DateTime.parse(tournamentDto.startTime)

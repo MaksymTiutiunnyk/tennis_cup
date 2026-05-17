@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import 'package:tennis_cup/data/models/player.dart';
-import 'package:tennis_cup/data/models/winner_view.dart';
+import 'package:tennis_cup/data/models/user.dart';
+import 'package:tennis_cup/data/models/arena_winner.dart';
 import 'package:tennis_cup/routing/app_router.dart';
 import 'package:tennis_cup/ui/core/widgets/player_avatar.dart';
 
@@ -12,16 +12,16 @@ String _formatGender(String gender) =>
     gender.toLowerCase() == 'female' ? 'Women' : 'Men';
 
 class Winner extends StatelessWidget {
-  final WinnerView view;
+  final ArenaWinner view;
   const Winner({super.key, required this.view});
 
   @override
   Widget build(BuildContext context) {
-    final Player winner = view.winners.first;
+    final User winner = view.winners.first;
 
     return InkWell(
       onTap: () => context.push(
-        AppRoutes.playerDetails(winner.userId.toString()),
+        AppRoutes.playerDetails(winner.id.toString()),
       ),
       child: Container(
         margin: const EdgeInsets.fromLTRB(8, 0, 8, 8),

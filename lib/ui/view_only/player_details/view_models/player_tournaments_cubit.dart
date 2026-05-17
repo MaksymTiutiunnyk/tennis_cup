@@ -1,14 +1,14 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tennis_cup/core/pagination/page_request.dart';
-import 'package:tennis_cup/data/models/player.dart';
 import 'package:tennis_cup/data/models/tournament.dart';
+import 'package:tennis_cup/data/models/user.dart';
 import 'package:tennis_cup/data/repositories/tournament_repository.dart';
 
 part 'player_tournaments_state.dart';
 
 class PlayerTournamentsCubit extends Cubit<PlayerTournamentsState> {
   final TournamentRepository tournamentRepository;
-  final Player player1;
+  final User player1;
   PageRequest _currentPage = const PageRequest(page: 0, size: 2);
   bool _isLoading = false;
 
@@ -24,8 +24,8 @@ class PlayerTournamentsCubit extends Cubit<PlayerTournamentsState> {
 
     _isLoading = true;
     try {
-      final result = await tournamentRepository.fetchPlayersTournaments(
-        userId: player1.userId.toString(),
+      final result = await tournamentRepository.fetchPlayerTournaments(
+        playerId: player1.id.toString(),
         page: _currentPage,
       );
       if (result.hasMore) _currentPage = _currentPage.next;
@@ -33,11 +33,13 @@ class PlayerTournamentsCubit extends Cubit<PlayerTournamentsState> {
       final existing = current is PlayerTournamentsLoaded
           ? current.tournaments
           : <Tournament>[];
+      if (isClosed) return;
       emit(PlayerTournamentsLoaded(
         tournaments: [...existing, ...result.items],
         hasMore: result.hasMore,
       ));
     } catch (e) {
+      if (isClosed) return;
       emit(const PlayerTournamentsError('Error loading tournaments'));
     } finally {
       _isLoading = false;

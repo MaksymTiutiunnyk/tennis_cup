@@ -1,15 +1,15 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tennis_cup/core/pagination/page_request.dart';
 import 'package:tennis_cup/data/models/match.dart';
-import 'package:tennis_cup/data/models/player.dart';
+import 'package:tennis_cup/data/models/user.dart';
 import 'package:tennis_cup/data/repositories/match_repository.dart';
 
 part 'head_to_head_state.dart';
 
 class HeadToHeadCubit extends Cubit<HeadToHeadState> {
   final MatchRepository matchRepository;
-  final Player player1;
-  final Player player2;
+  final User player1;
+  final User player2;
   PageRequest _currentPage = const PageRequest(page: 0, size: 10);
   bool _isLoading = false;
 
@@ -27,8 +27,8 @@ class HeadToHeadCubit extends Cubit<HeadToHeadState> {
     _isLoading = true;
     try {
       final result = await matchRepository.fetchHeadToHead(
-        userId1: player1.userId,
-        userId2: player2.userId,
+        playerId1: player1.id,
+        playerId2: player2.id,
         page: _currentPage,
       );
       if (result.hasMore) _currentPage = _currentPage.next;

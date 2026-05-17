@@ -9,7 +9,7 @@ class PlayerSearchLoading extends PlayerSearchState {}
 class PlayersNotFound extends PlayerSearchState {}
 
 class PlayerSearchLoaded extends PlayerSearchState {
-  final List<Player> players;
+  final List<User> players;
 
   const PlayerSearchLoaded(this.players);
 }

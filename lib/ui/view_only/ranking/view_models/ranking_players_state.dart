@@ -9,13 +9,13 @@ final class RankingPlayersLoading extends RankingPlayersState {
 }
 
 final class RankingPlayersLoaded extends RankingPlayersState {
-  final List<Player> players;
+  final List<User> players;
   final bool hasMore;
   const RankingPlayersLoaded({required this.players, required this.hasMore});
 }
 
 final class RankingPlayersLoadingMore extends RankingPlayersState {
-  final List<Player> players;
+  final List<User> players;
   const RankingPlayersLoadingMore({required this.players});
 }
 

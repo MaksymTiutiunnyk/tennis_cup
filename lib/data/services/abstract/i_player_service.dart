@@ -2,20 +2,21 @@ import 'dart:typed_data';
 
 import 'package:tennis_cup/core/pagination/page_request.dart';
 import 'package:tennis_cup/core/pagination/page_result.dart';
-import 'package:tennis_cup/data/models/player.dart';
+import 'package:tennis_cup/data/models/gender.dart';
+import 'package:tennis_cup/data/models/user.dart';
 
 abstract interface class IPlayerService {
-  Future<PageResult<Player>> fetchRankingPlayers({
+  Future<PageResult<User>> fetchRankingPlayers({
     required PageRequest page,
-    Sex? sexFilter,
+    Gender? genderFilter,
   });
 
-  Future<List<Player>> searchPlayersByName({
+  Future<List<User>> searchPlayersByName({
     required String query,
     String? gender,
   });
 
-  Future<Player> fetchPlayerById(int id);
+  Future<User> fetchPlayerById(int id);
 
   Future<void> updateProfile(int id, Map<String, dynamic> fields);
 

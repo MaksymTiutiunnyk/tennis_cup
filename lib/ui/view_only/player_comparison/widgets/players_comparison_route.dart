@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tennis_cup/core/di/service_locator.dart';
-import 'package:tennis_cup/data/models/player.dart';
+import 'package:tennis_cup/data/models/user.dart';
 import 'package:tennis_cup/ui/view_only/player_comparison/widgets/players_comparison.dart';
 
 class PlayersComparisonRoute extends StatefulWidget {
@@ -18,7 +18,7 @@ class PlayersComparisonRoute extends StatefulWidget {
 }
 
 class _PlayersComparisonRouteState extends State<PlayersComparisonRoute> {
-  late Future<(Player, Player)> _future;
+  late Future<(User, User)> _future;
 
   @override
   void initState() {
@@ -33,7 +33,7 @@ class _PlayersComparisonRouteState extends State<PlayersComparisonRoute> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<(Player, Player)>(
+    return FutureBuilder<(User, User)>(
       future: _future,
       builder: (context, snapshot) {
         if (snapshot.connectionState != ConnectionState.done) {
