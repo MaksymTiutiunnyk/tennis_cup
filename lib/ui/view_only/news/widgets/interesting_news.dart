@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tennis_cup/generated/l10n.dart';
 import 'package:tennis_cup/ui/view_only/news/view_models/news_cubit.dart';
 import 'package:tennis_cup/ui/view_only/news/widgets/single_interesting_news.dart';
 
@@ -9,6 +10,7 @@ class InterestingNews extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
     final isScreenHigh = height / width > 16 / 9;
@@ -32,7 +34,7 @@ class InterestingNews extends StatelessWidget {
           if (state is NewsFetched) {
             final interesting = state.interestingNews;
             if (interesting.isEmpty) {
-              return const Center(child: Text('No interesting news found'));
+              return Center(child: Text(s.noInterestingNewsFound));
             }
             return PageView.builder(
               scrollDirection: Axis.horizontal,
@@ -44,7 +46,7 @@ class InterestingNews extends StatelessWidget {
               ),
             );
           }
-          return const Center(child: Text('Ooops, something went wrong'));
+          return Center(child: Text(s.oopsSomethingWentWrong));
         },
       ),
     );

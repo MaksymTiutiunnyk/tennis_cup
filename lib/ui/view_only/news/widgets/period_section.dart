@@ -3,13 +3,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:tennis_cup/ui/view_only/news/view_models/news_cubit.dart';
 
-DateFormat formatter = DateFormat('MMMM yyyy');
-
 class PeriodSection extends StatelessWidget {
   const PeriodSection({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final locale = Localizations.localeOf(context).languageCode;
     return Container(
       margin: const EdgeInsets.fromLTRB(0, 8, 0, 2),
       padding: const EdgeInsets.all(8),
@@ -21,7 +20,8 @@ class PeriodSection extends StatelessWidget {
       child: BlocBuilder<NewsCubit, NewsState>(
         builder: (context, state) {
           final period = state.selectedPeriod;
-          String formattedPeriod = formatter.format(period);
+          final formattedPeriod =
+              DateFormat('LLLL yyyy', locale).format(period);
           return Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [

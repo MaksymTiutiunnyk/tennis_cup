@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:tennis_cup/data/models/gender.dart';
 import 'package:tennis_cup/data/models/tournament.dart';
+import 'package:tennis_cup/generated/l10n.dart';
 import 'package:tennis_cup/ui/user/organizer/view_models/organizer_tournaments_cubit.dart';
 import 'package:tennis_cup/ui/user/organizer/widgets/tournament_form.dart';
 import 'package:tennis_cup/ui/user/organizer/widgets/tournament_status_chip.dart';
@@ -21,16 +23,20 @@ class TournamentCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
     final cubit = context.read<OrganizerTournamentsCubit>();
     final theme = Theme.of(context);
+    final tournamentGender = tournament.gender.toLowerCase() == Gender.male.name
+        ? s.menLabel
+        : s.womenLabel;
 
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 4),
       child: ListTile(
         title: Text(tournament.name, style: theme.textTheme.titleMedium),
         subtitle: Text(
-          '${tournament.gender} · ${tournament.arena.title} · '
-          '${tournament.requiredPlayersCount} players\n'
+          '$tournamentGender · ${tournament.arena.title} · '
+          '${s.playersCountLabel(tournament.requiredPlayersCount ?? 0)}\n'
           '${_dateFmt.format(tournament.date)}',
         ),
         isThreeLine: true,
@@ -40,23 +46,33 @@ class TournamentCard extends StatelessWidget {
           itemBuilder: (_) => [
             if (tournament.status == TournamentStatus.pending) ...[
               if (canBeStarted)
-                const PopupMenuItem(
+                PopupMenuItem(
                   value: _Action.start,
-                  child: Text('Start'),
+                  child: Text(s.start),
                 ),
-              const PopupMenuItem(
+              PopupMenuItem(
                 value: _Action.edit,
-                child: Text('Edit'),
+                child: Text(s.edit),
               ),
-              const PopupMenuItem(
+              PopupMenuItem(
                 value: _Action.delete,
-                child: Text('Delete'),
+                child: Text(s.delete),
               ),
             ],
-            if (tournament.status == TournamentStatus.active)
-              const PopupMenuItem(
+            if (tournament.status == TournamentStatus.active) ...[
+              PopupMenuItem(
                 value: _Action.finish,
-                child: Text('Finish'),
+                child: Text(s.finish),
+              ),
+              PopupMenuItem(
+                value: _Action.checkDetails,
+                child: Text(s.checkDetails),
+              ),
+            ],
+            if (tournament.status == TournamentStatus.finished)
+              PopupMenuItem(
+                value: _Action.checkDetails,
+                child: Text(s.checkDetails),
               ),
           ],
         ),
@@ -84,24 +100,32 @@ class TournamentCard extends StatelessWidget {
         cubit.finish(id);
       case _Action.delete:
         _confirmDelete(context, cubit, id);
+      case _Action.checkDetails:
+        Navigator.of(context).push(MaterialPageRoute(
+          builder: (_) => BlocProvider.value(
+            value: cubit,
+            child: TournamentForm(existing: tournament, readOnly: true),
+          ),
+        ));
     }
   }
 
   void _confirmDelete(
       BuildContext context, OrganizerTournamentsCubit cubit, int id) {
+    final s = S.of(context);
     showDialog<bool>(
       context: context,
       builder: (dialogCtx) => AlertDialog(
-        title: const Text('Delete tournament'),
-        content: Text('Delete "${tournament.name}"? This cannot be undone.'),
+        title: Text(s.deleteTournament),
+        content: Text(s.deleteTournamentConfirm(tournament.name)),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(dialogCtx).pop(false),
-            child: const Text('Cancel'),
+            child: Text(s.cancel),
           ),
           TextButton(
             onPressed: () => Navigator.of(dialogCtx).pop(true),
-            child: const Text('Delete'),
+            child: Text(s.delete),
           ),
         ],
       ),
@@ -111,4 +135,4 @@ class TournamentCard extends StatelessWidget {
   }
 }
 
-enum _Action { edit, start, finish, delete }
+enum _Action { edit, start, finish, delete, checkDetails }

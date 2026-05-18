@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tennis_cup/data/models/user.dart';
+import 'package:tennis_cup/generated/l10n.dart';
 import 'package:tennis_cup/ui/view_only/player_comparison/widgets/player_intro.dart';
 
 class PlayersIntro extends StatelessWidget {
@@ -40,7 +41,7 @@ class PlayersIntro extends StatelessWidget {
             child: CircleAvatar(
               radius: 20,
               backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
-              child: const Text('VS'),
+              child: Text(S.of(context).vs),
             ),
           ),
         )

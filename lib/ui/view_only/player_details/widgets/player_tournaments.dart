@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tennis_cup/data/models/user.dart';
+import 'package:tennis_cup/generated/l10n.dart';
 import 'package:tennis_cup/ui/view_only/player_details/view_models/player_tournaments_cubit.dart';
 import 'package:tennis_cup/ui/view_only/player_details/widgets/player_tournament.dart';
 
@@ -11,18 +12,19 @@ class PlayerTournaments extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
     return Flexible(
       fit: FlexFit.loose,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Padding(
-            padding: EdgeInsets.fromLTRB(8.0, 16, 8, 8),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(8.0, 16, 8, 8),
             child: Row(
               children: [
-                Icon(Icons.emoji_events),
-                SizedBox(width: 8),
-                Text('Tournaments'),
+                const Icon(Icons.emoji_events),
+                const SizedBox(width: 8),
+                Text(s.tournaments),
               ],
             ),
           ),
@@ -32,11 +34,29 @@ class PlayerTournaments extends StatelessWidget {
               builder: (context, state) => switch (state) {
                 PlayerTournamentsLoading() =>
                   const Center(child: CircularProgressIndicator()),
-                PlayerTournamentsError() =>
-                  const Center(child: Text('Oops, something went wrong')),
+                PlayerTournamentsError(:final message) => Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(24),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.error_outline,
+                              color: Theme.of(context).colorScheme.error,
+                              size: 40),
+                          const SizedBox(height: 8),
+                          Text(
+                            message,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                color: Theme.of(context).colorScheme.error),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 PlayerTournamentsLoaded(:final tournaments)
                     when tournaments.isEmpty =>
-                  const Center(child: Text('No tournaments found')),
+                  Center(child: Text(s.noTournamentsFound)),
                 PlayerTournamentsLoaded(:final tournaments) =>
                   ListView.builder(
                     shrinkWrap: true,

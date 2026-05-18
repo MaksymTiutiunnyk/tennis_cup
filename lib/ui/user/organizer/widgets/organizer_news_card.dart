@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:tennis_cup/data/models/news.dart';
+import 'package:tennis_cup/generated/l10n.dart';
 import 'package:tennis_cup/ui/user/organizer/view_models/organizer_news_cubit.dart';
 
 final _dateFmt = DateFormat('dd MMM');
@@ -77,22 +78,23 @@ class OrganizerNewsCard extends StatelessWidget {
   }
 
   void _confirmDelete(BuildContext context) {
+    final s = S.of(context);
     showDialog<void>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: const Text('Delete news item'),
-        content: Text('Delete "${news.title}"?'),
+        title: Text(s.deleteNewsItem),
+        content: Text('${s.delete} "${news.title}"?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(dialogContext),
-            child: const Text('Cancel'),
+            child: Text(s.cancel),
           ),
           TextButton(
             onPressed: () {
               Navigator.pop(dialogContext);
               context.read<OrganizerNewsCubit>().delete(news.id);
             },
-            child: const Text('Delete'),
+            child: Text(s.delete),
           ),
         ],
       ),
@@ -106,6 +108,7 @@ class _ImportanceBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
       decoration: BoxDecoration(
@@ -113,7 +116,7 @@ class _ImportanceBadge extends StatelessWidget {
         borderRadius: BorderRadius.circular(4),
       ),
       child: Text(
-        isInteresting ? 'INTERESTING' : 'REGULAR',
+        isInteresting ? s.importanceInteresting : s.importanceRegular,
         style: TextStyle(
           fontSize: 11,
           color: isInteresting ? Colors.white : Colors.grey.shade700,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:tennis_cup/generated/l10n.dart';
 
 typedef UserRegistrationSubmitCallback = void Function({
   String? role,
@@ -79,6 +80,14 @@ class _UserRegistrationFormBodyState extends State<UserRegistrationFormBody> {
 
   bool get _isEditMode => widget.initialValues != null;
 
+  String _roleLabel(String role, S s) => switch (role.toUpperCase()) {
+        'PLAYER' => s.rolePlayer,
+        'REFEREE' => s.roleReferee,
+        'ORGANIZER' => s.roleOrganizer,
+        'ADMIN' => s.roleAdmin,
+        _ => role[0] + role.substring(1).toLowerCase(),
+      };
+
   @override
   void initState() {
     super.initState();
@@ -150,20 +159,19 @@ class _UserRegistrationFormBodyState extends State<UserRegistrationFormBody> {
   }
 
   Future<void> _onBlockPressed() async {
+    final s = S.of(context);
     final isBlocked = widget.currentStatus == 'BLOCKED';
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text(isBlocked ? 'Unblock user?' : 'Block user?'),
+        title: Text(isBlocked ? s.unblockUser : s.blockUser),
         content: Text(
-          isBlocked
-              ? 'This user will be able to log in again.'
-              : 'This user will no longer be able to log in.',
+          isBlocked ? s.unblockUserContent : s.blockUserContent,
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Cancel'),
+            child: Text(s.cancel),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(ctx, true),
@@ -172,7 +180,7 @@ class _UserRegistrationFormBodyState extends State<UserRegistrationFormBody> {
                 : FilledButton.styleFrom(
                     backgroundColor: Theme.of(context).colorScheme.error,
                   ),
-            child: Text(isBlocked ? 'Unblock' : 'Block'),
+            child: Text(isBlocked ? s.unblockButton : s.blockButton),
           ),
         ],
       ),
@@ -184,6 +192,7 @@ class _UserRegistrationFormBodyState extends State<UserRegistrationFormBody> {
 
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
     return Form(
       key: _formKey,
       child: Column(
@@ -203,29 +212,29 @@ class _UserRegistrationFormBodyState extends State<UserRegistrationFormBody> {
                   .map((r) => ButtonSegment(
                         value: r,
                         label: Text(
-                          r[0] + r.substring(1).toLowerCase(),
+                          _roleLabel(r, s),
                           overflow: TextOverflow.ellipsis,
                         ),
                       ))
                   .toList(),
               selected: {_role},
-              onSelectionChanged: (s) => setState(() => _role = s.first),
+              onSelectionChanged: (sel) => setState(() => _role = sel.first),
             ),
             const SizedBox(height: 16),
           ],
           if (!_isEditMode) ...[
             TextFormField(
               controller: _loginCtrl,
-              decoration: const InputDecoration(labelText: 'Login *'),
+              decoration: InputDecoration(labelText: '${s.loginField} *'),
               validator: (v) =>
-                  (v == null || v.trim().isEmpty) ? 'Required' : null,
+                  (v == null || v.trim().isEmpty) ? s.required : null,
             ),
             const SizedBox(height: 12),
             TextFormField(
               controller: _passwordCtrl,
               obscureText: _obscure,
               decoration: InputDecoration(
-                labelText: 'Password *',
+                labelText: '${s.passwordField} *',
                 suffixIcon: IconButton(
                   icon:
                       Icon(_obscure ? Icons.visibility : Icons.visibility_off),
@@ -233,72 +242,71 @@ class _UserRegistrationFormBodyState extends State<UserRegistrationFormBody> {
                 ),
               ),
               validator: (v) =>
-                  (v == null || v.length < 8) ? 'At least 8 characters' : null,
+                  (v == null || v.length < 8) ? s.atLeast8Chars : null,
             ),
             const SizedBox(height: 12),
           ],
           TextFormField(
             controller: _firstNameCtrl,
             textCapitalization: TextCapitalization.words,
-            decoration: const InputDecoration(labelText: 'First name *'),
+            decoration: InputDecoration(labelText: '${s.firstNameField} *'),
             validator: (v) =>
-                (v == null || v.trim().isEmpty) ? 'Required' : null,
+                (v == null || v.trim().isEmpty) ? s.required : null,
           ),
           const SizedBox(height: 12),
           TextFormField(
             controller: _lastNameCtrl,
             textCapitalization: TextCapitalization.words,
-            decoration: const InputDecoration(labelText: 'Last name *'),
+            decoration: InputDecoration(labelText: '${s.lastNameField} *'),
             validator: (v) =>
-                (v == null || v.trim().isEmpty) ? 'Required' : null,
+                (v == null || v.trim().isEmpty) ? s.required : null,
           ),
           const SizedBox(height: 12),
           TextFormField(
             controller: _patronymicCtrl,
             textCapitalization: TextCapitalization.words,
-            decoration:
-                const InputDecoration(labelText: 'Patronymic (optional)'),
+            decoration: InputDecoration(labelText: s.patronymicField),
           ),
           const SizedBox(height: 12),
           TextFormField(
             controller: _birthCtrl,
             readOnly: true,
             decoration: InputDecoration(
-              labelText: 'Birth date *',
+              labelText: '${s.birthDateField} *',
               suffixIcon: IconButton(
                 icon: const Icon(Icons.calendar_today, size: 18),
                 onPressed: _pickDate,
               ),
             ),
             onTap: _pickDate,
-            validator: (v) => (v == null || v.isEmpty) ? 'Required' : null,
+            validator: (v) => (v == null || v.isEmpty) ? s.required : null,
           ),
           const SizedBox(height: 12),
           DropdownButtonFormField<String>(
             value: _gender,
-            decoration: const InputDecoration(labelText: 'Gender *'),
-            items: const [
-              DropdownMenuItem(value: 'MALE', child: Text('Male')),
-              DropdownMenuItem(value: 'FEMALE', child: Text('Female')),
+            decoration: InputDecoration(labelText: '${s.genderField} *'),
+            items: [
+              DropdownMenuItem(value: 'MALE', child: Text(s.male)),
+              DropdownMenuItem(value: 'FEMALE', child: Text(s.female)),
             ],
             onChanged: (v) => setState(() => _gender = v),
-            validator: (v) => v == null ? 'Required' : null,
+            validator: (v) => v == null ? s.required : null,
           ),
           const SizedBox(height: 12),
           TextFormField(
             controller: _countryCtrl,
             textCapitalization: TextCapitalization.words,
-            decoration: const InputDecoration(labelText: 'Country *'),
+            decoration: InputDecoration(labelText: '${s.countryField} *'),
             validator: (v) =>
-                (v == null || v.trim().isEmpty) ? 'Required' : null,
+                (v == null || v.trim().isEmpty) ? s.required : null,
           ),
           const SizedBox(height: 12),
           TextFormField(
             controller: _cityCtrl,
             textCapitalization: TextCapitalization.words,
-            decoration: const InputDecoration(labelText: 'City *'),
+            decoration: InputDecoration(labelText: '${s.cityField} *'),
             validator: (v) =>
-                (v == null || v.trim().isEmpty) ? 'Required' : null,
+                (v == null || v.trim().isEmpty) ? s.required : null,
           ),
           const SizedBox(height: 32),
           if (widget.currentStatus != null) ...[
@@ -312,7 +320,9 @@ class _UserRegistrationFormBodyState extends State<UserRegistrationFormBody> {
                           color: Theme.of(context).colorScheme.error),
                     ),
               child: Text(
-                widget.currentStatus == 'BLOCKED' ? 'Unblock user' : 'Block user',
+                widget.currentStatus == 'BLOCKED'
+                    ? s.unblockUserButton
+                    : s.blockUserButton,
               ),
             ),
             const SizedBox(height: 12),

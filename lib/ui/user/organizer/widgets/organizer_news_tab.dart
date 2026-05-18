@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:tennis_cup/core/di/service_locator.dart';
 import 'package:tennis_cup/data/models/news.dart';
+import 'package:tennis_cup/generated/l10n.dart';
 import 'package:tennis_cup/ui/user/organizer/view_models/organizer_news_cubit.dart';
 import 'package:tennis_cup/ui/user/organizer/widgets/news_form.dart';
 import 'package:tennis_cup/ui/user/organizer/widgets/organizer_news_card.dart';
@@ -26,60 +27,61 @@ class OrganizerNewsTab extends StatelessWidget {
         repository: ServiceLocator.newsRepository,
       ),
       child: BlocBuilder<OrganizerNewsCubit, OrganizerNewsState>(
-        builder: (context, state) => Scaffold(
-          body: Column(
-            children: [
-              _PeriodBar(period: state.period),
-              Expanded(
-                child: switch (state) {
-                  OrgNewsLoading() =>
-                    const Center(child: CircularProgressIndicator()),
-                  OrgNewsError(message: final m) => Center(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(m, textAlign: TextAlign.center),
-                          const SizedBox(height: 12),
-                          TextButton(
-                            onPressed: () => context
-                                .read<OrganizerNewsCubit>()
-                                .load(state.period),
-                            child: const Text('Retry'),
-                          ),
-                        ],
-                      ),
-                    ),
-                  OrgNewsLoaded(items: final list) when list.isEmpty =>
-                    const Center(child: Text('No news this month')),
-                  OrgNewsLoaded(items: final list) => RefreshIndicator(
-                      onRefresh: () => context
-                          .read<OrganizerNewsCubit>()
-                          .load(state.period),
-                      child: ListView.builder(
-                        padding: const EdgeInsets.all(8),
-                        itemCount: list.length,
-                        itemBuilder: (_, i) => OrganizerNewsCard(
-                          news: list[i],
-                          onEdit: () => _openForm(context, list[i]),
+        builder: (context, state) {
+          final s = S.of(context);
+          return Scaffold(
+            body: Column(
+              children: [
+                _PeriodBar(period: state.period),
+                Expanded(
+                  child: switch (state) {
+                    OrgNewsLoading() =>
+                      const Center(child: CircularProgressIndicator()),
+                    OrgNewsError(message: final m) => Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(m, textAlign: TextAlign.center),
+                            const SizedBox(height: 12),
+                            TextButton(
+                              onPressed: () => context
+                                  .read<OrganizerNewsCubit>()
+                                  .load(state.period),
+                              child: Text(s.retry),
+                            ),
+                          ],
                         ),
                       ),
-                    ),
-                },
-              ),
-            ],
-          ),
-          floatingActionButton: FloatingActionButton(
-            heroTag: 'organizer_news_fab',
-            onPressed: () => _openForm(context, null),
-            child: const Icon(Icons.add),
-          ),
-        ),
+                    OrgNewsLoaded(items: final list) when list.isEmpty =>
+                      Center(child: Text(s.noNewsThisMonth)),
+                    OrgNewsLoaded(items: final list) => RefreshIndicator(
+                        onRefresh: () => context
+                            .read<OrganizerNewsCubit>()
+                            .load(state.period),
+                        child: ListView.builder(
+                          padding: const EdgeInsets.all(8),
+                          itemCount: list.length,
+                          itemBuilder: (_, i) => OrganizerNewsCard(
+                            news: list[i],
+                            onEdit: () => _openForm(context, list[i]),
+                          ),
+                        ),
+                      ),
+                  },
+                ),
+              ],
+            ),
+            floatingActionButton: FloatingActionButton(
+              heroTag: 'organizer_news_fab',
+              onPressed: () => _openForm(context, null),
+              child: const Icon(Icons.add),
+            ),
+          );
+        },
       ),
     );
   }
 }
-
-final _periodFmt = DateFormat('MMMM yyyy');
 
 class _PeriodBar extends StatelessWidget {
   final DateTime period;
@@ -88,6 +90,8 @@ class _PeriodBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final now = DateTime.now();
+    final locale = Localizations.localeOf(context).languageCode;
+    final formattedPeriod = DateFormat('LLLL yyyy', locale).format(period);
     return Container(
       margin: const EdgeInsets.fromLTRB(0, 8, 0, 2),
       padding: const EdgeInsets.all(8),
@@ -107,7 +111,7 @@ class _PeriodBar extends StatelessWidget {
                     .load(DateTime(period.year, period.month - 1)),
             icon: const Icon(Icons.arrow_back_ios),
           ),
-          Text(_periodFmt.format(period)),
+          Text(formattedPeriod),
           IconButton(
             onPressed: period.year == now.year && period.month == now.month
                 ? null

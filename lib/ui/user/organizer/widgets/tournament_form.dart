@@ -5,6 +5,7 @@ import 'package:tennis_cup/core/di/service_locator.dart';
 import 'package:tennis_cup/data/models/arena.dart';
 import 'package:tennis_cup/data/models/tournament.dart';
 import 'package:tennis_cup/data/models/tournament_request.dart';
+import 'package:tennis_cup/generated/l10n.dart';
 import 'package:tennis_cup/ui/user/organizer/view_models/organizer_tournaments_cubit.dart';
 import 'package:tennis_cup/ui/user/organizer/view_models/player_search_cubit.dart';
 import 'package:tennis_cup/ui/user/organizer/view_models/referee_search_cubit.dart';
@@ -15,8 +16,9 @@ final _displayFmt = DateFormat('dd MMM yyyy HH:mm');
 
 class TournamentForm extends StatefulWidget {
   final Tournament? existing;
+  final bool readOnly;
 
-  const TournamentForm({super.key, this.existing});
+  const TournamentForm({super.key, this.existing, this.readOnly = false});
 
   @override
   State<TournamentForm> createState() => _TournamentFormState();
@@ -177,12 +179,16 @@ class _TournamentFormState extends State<TournamentForm> {
   }
 
   Future<void> _submit() async {
+    final s = S.of(context);
     if (!_formKey.currentState!.validate()) return;
 
     if (!_isEdit && _refereeCubit.state.selected.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please add at least one referee')),
-      );
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(SnackBar(
+          content: Text(s.addAtLeastOneReferee),
+          backgroundColor: Theme.of(context).colorScheme.error,
+        ));
       return;
     }
 
@@ -230,6 +236,7 @@ class _TournamentFormState extends State<TournamentForm> {
 
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
     return MultiBlocProvider(
       providers: [
         BlocProvider.value(value: _playerCubit),
@@ -237,13 +244,17 @@ class _TournamentFormState extends State<TournamentForm> {
       ],
       child: Scaffold(
         appBar: AppBar(
-          title: Text(_isEdit ? 'Edit Tournament' : 'New Tournament'),
+          title: Text(widget.readOnly
+              ? s.checkDetails
+              : (_isEdit ? s.editTournament : s.newTournament)),
         ),
         body: _loadingArenas
             ? const Center(child: CircularProgressIndicator())
             : Form(
                 key: _formKey,
-                autovalidateMode: AutovalidateMode.onUserInteraction,
+                autovalidateMode: widget.readOnly
+                    ? AutovalidateMode.disabled
+                    : AutovalidateMode.onUserInteraction,
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.all(16),
                   child: Column(
@@ -251,144 +262,165 @@ class _TournamentFormState extends State<TournamentForm> {
                     children: [
                     TextFormField(
                       controller: _nameCtrl,
-                      decoration: const InputDecoration(labelText: 'Name'),
-                      validator: (v) =>
-                          (v == null || v.trim().isEmpty) ? 'Required' : null,
+                      readOnly: widget.readOnly,
+                      decoration: InputDecoration(labelText: s.tournamentName),
+                      validator: widget.readOnly
+                          ? null
+                          : (v) => (v == null || v.trim().isEmpty)
+                              ? s.required
+                              : null,
                     ),
                     const SizedBox(height: 12),
                     DropdownButtonFormField<String>(
                       value: _type,
-                      decoration: const InputDecoration(labelText: 'Type'),
-                      items: const [
-                        'MORNING',
-                        'DAY',
-                        'EVENING',
-                        'NIGHT',
-                        'MIDNIGHT'
-                      ]
-                          .map((t) =>
-                              DropdownMenuItem(value: t, child: Text(t)))
-                          .toList(),
-                      onChanged: (v) => setState(() => _type = v!),
+                      decoration: InputDecoration(labelText: s.tournamentType),
+                      items: [
+                        DropdownMenuItem(value: 'MORNING', child: Text(s.timeMorning)),
+                        DropdownMenuItem(value: 'DAY', child: Text(s.timeDay)),
+                        DropdownMenuItem(value: 'EVENING', child: Text(s.timeEvening)),
+                        DropdownMenuItem(value: 'NIGHT', child: Text(s.timeNight)),
+                        DropdownMenuItem(value: 'MIDNIGHT', child: Text(s.timeMidnight)),
+                      ],
+                      onChanged: widget.readOnly ? null : (v) => setState(() => _type = v!),
                     ),
                     const SizedBox(height: 12),
                     DropdownButtonFormField<String>(
                       value: _gender,
-                      decoration: const InputDecoration(labelText: 'Gender'),
-                      items: const ['MALE', 'FEMALE']
-                          .map((g) =>
-                              DropdownMenuItem(value: g, child: Text(g)))
-                          .toList(),
-                      onChanged: (v) => setState(() => _gender = v!),
+                      decoration: InputDecoration(labelText: s.genderField),
+                      items: [
+                        DropdownMenuItem(value: 'MALE', child: Text(s.genderMale)),
+                        DropdownMenuItem(value: 'FEMALE', child: Text(s.genderFemale)),
+                      ],
+                      onChanged: widget.readOnly ? null : (v) => setState(() => _gender = v!),
                     ),
                     const SizedBox(height: 12),
                     if (_arenas.isNotEmpty)
                       DropdownButtonFormField<int>(
                         value: _arenaId,
                         decoration:
-                            const InputDecoration(labelText: 'Arena'),
+                            InputDecoration(labelText: s.arenaField),
                         items: _arenas
                             .map((a) => DropdownMenuItem(
                                 value: int.tryParse(a.id),
                                 child: Text(
                                     '${a.title} (${a.city ?? ''})'.trim())))
                             .toList(),
-                        onChanged: (v) =>
-                            setState(() => _arenaId = v ?? 1),
-                        validator: (v) => v == null ? 'Required' : null,
+                        onChanged: widget.readOnly
+                            ? null
+                            : (v) => setState(() => _arenaId = v ?? 1),
+                        validator: widget.readOnly
+                            ? null
+                            : (v) => v == null ? s.required : null,
                       )
                     else
                       TextFormField(
+                        readOnly: widget.readOnly,
                         decoration:
-                            const InputDecoration(labelText: 'Arena ID'),
+                            InputDecoration(labelText: s.arenaIdField),
                         keyboardType: TextInputType.number,
                         initialValue: _arenaId.toString(),
-                        onChanged: (v) => _arenaId = int.tryParse(v) ?? 1,
-                        validator: (v) =>
-                            (v == null || v.isEmpty) ? 'Required' : null,
+                        onChanged: widget.readOnly
+                            ? null
+                            : (v) => _arenaId = int.tryParse(v) ?? 1,
+                        validator: widget.readOnly
+                            ? null
+                            : (v) => (v == null || v.isEmpty) ? s.required : null,
                       ),
                     const SizedBox(height: 12),
-                    const RefereePicker(),
+                    RefereePicker(readOnly: widget.readOnly),
                     const SizedBox(height: 12),
                     TextFormField(
                       controller: _durationCtrl,
-                      decoration: const InputDecoration(
-                          labelText: 'Match duration (minutes)'),
+                      readOnly: widget.readOnly,
+                      decoration: InputDecoration(
+                          labelText: s.matchDuration),
                       keyboardType: TextInputType.number,
-                      validator: (v) =>
-                          (int.tryParse(v ?? '') ?? 0) <= 0
-                              ? 'Required'
+                      validator: widget.readOnly
+                          ? null
+                          : (v) => (int.tryParse(v ?? '') ?? 0) <= 0
+                              ? s.required
                               : null,
                     ),
                     const SizedBox(height: 12),
                     TextFormField(
                       controller: _requiredPlayersCtrl,
-                      decoration: const InputDecoration(
-                          labelText: 'Required players count'),
+                      readOnly: widget.readOnly,
+                      decoration: InputDecoration(
+                          labelText: s.requiredPlayersCount),
                       keyboardType: TextInputType.number,
-                      validator: (v) {
-                        final n = int.tryParse(v ?? '');
-                        if (n == null || n < 2) {
-                          return 'Min 2 players';
-                        }
-                        if (widget.existing != null &&
-                            n < widget.existing!.players.length) {
-                          return 'Remove some accepted invitations firstly';
-                        }
-                        return null;
-                      },
+                      validator: widget.readOnly
+                          ? null
+                          : (v) {
+                              final n = int.tryParse(v ?? '');
+                              if (n == null || n < 2) return s.minTwoPlayers;
+                              if (widget.existing != null &&
+                                  n < widget.existing!.players.length) {
+                                return s.removeAcceptedInvitationsFirst;
+                              }
+                              return null;
+                            },
                     ),
                     const SizedBox(height: 12),
                     TextFormField(
                       controller: _setsToWinCtrl,
+                      readOnly: widget.readOnly,
                       decoration:
-                          const InputDecoration(labelText: 'Sets to win'),
+                          InputDecoration(labelText: s.setsToWin),
                       keyboardType: TextInputType.number,
-                      validator: (v) {
-                        final n = int.tryParse(v ?? '');
-                        if (n == null || n < 1 || n > 4) {
-                          return 'Must be 1–4';
-                        }
-                        return null;
-                      },
+                      validator: widget.readOnly
+                          ? null
+                          : (v) {
+                              final n = int.tryParse(v ?? '');
+                              if (n == null || n < 1 || n > 4) return s.mustBe1To4;
+                              return null;
+                            },
                     ),
                     const SizedBox(height: 12),
                     ListTile(
                       contentPadding: EdgeInsets.zero,
-                      title: const Text('Start time'),
+                      title: Text(s.startTime),
                       subtitle: Text(_displayFmt.format(_startTime)),
-                      trailing: const Icon(Icons.calendar_today),
-                      onTap: _pickDateTime,
+                      trailing: widget.readOnly
+                          ? null
+                          : const Icon(Icons.calendar_today),
+                      onTap: widget.readOnly ? null : _pickDateTime,
                     ),
                     const SizedBox(height: 12),
                     PlayerPicker(
                       gender: _gender,
                       requiredPlayersCount:
                           widget.existing?.requiredPlayersCount,
+                      readOnly: widget.readOnly,
                     ),
-                    const SizedBox(height: 24),
-                    BlocConsumer<OrganizerTournamentsCubit,
-                        OrganizerTournamentsState>(
-                      listener: (context, state) {
-                        if (state is OrgTournamentsError) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text(state.message)),
-                          );
-                        }
-                      },
-                      builder: (context, state) => FilledButton(
-                        onPressed:
-                            state is OrgTournamentsLoading ? null : _submit,
-                        child: state is OrgTournamentsLoading
-                            ? const SizedBox(
-                                height: 20,
-                                width: 20,
-                                child: CircularProgressIndicator(
-                                    strokeWidth: 2),
-                              )
-                            : Text(_isEdit ? 'Save' : 'Create'),
+                    if (!widget.readOnly) ...[
+                      const SizedBox(height: 24),
+                      BlocConsumer<OrganizerTournamentsCubit,
+                          OrganizerTournamentsState>(
+                        listener: (context, state) {
+                          if (state is OrgTournamentsError) {
+                            ScaffoldMessenger.of(context)
+                              ..hideCurrentSnackBar()
+                              ..showSnackBar(SnackBar(
+                                content: Text(state.message),
+                                backgroundColor:
+                                    Theme.of(context).colorScheme.error,
+                              ));
+                          }
+                        },
+                        builder: (context, state) => FilledButton(
+                          onPressed:
+                              state is OrgTournamentsLoading ? null : _submit,
+                          child: state is OrgTournamentsLoading
+                              ? const SizedBox(
+                                  height: 20,
+                                  width: 20,
+                                  child: CircularProgressIndicator(
+                                      strokeWidth: 2),
+                                )
+                              : Text(_isEdit ? s.save : s.create),
+                        ),
                       ),
-                    ),
+                    ],
                   ],
                   ),
                 ),

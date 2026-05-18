@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tennis_cup/core/utils/error_utils.dart';
 import 'package:tennis_cup/data/repositories/admin_repository.dart';
 import 'package:tennis_cup/ui/user/organizer/view_models/user_creation_state.dart';
 
@@ -40,7 +41,7 @@ class UserCreationCubit extends Cubit<UserCreationState> {
       emit(UserCreationSuccess('$roleName created successfully'));
     } catch (e) {
       if (isClosed) return;
-      emit(UserCreationError('Failed to create user'));
+      emit(UserCreationError(errorMessage(e)));
     }
   }
 }

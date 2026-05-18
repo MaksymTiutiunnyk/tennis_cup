@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:tennis_cup/core/utils/error_utils.dart';
 import 'package:tennis_cup/data/models/user.dart';
 import 'package:tennis_cup/data/models/user_role.dart';
 import 'package:tennis_cup/data/repositories/player_repository.dart';
@@ -23,7 +24,7 @@ class UserEditCubit extends Cubit<UserEditState> {
       emit(UserEditLoaded(user: player, roles: List.from(initialRoles)));
     } catch (e) {
       if (isClosed) return;
-      emit(UserEditError('Failed to load user'));
+      emit(UserEditError(errorMessage(e)));
     }
   }
 
@@ -108,7 +109,7 @@ class UserEditCubit extends Cubit<UserEditState> {
         pendingAvatarBytes: current.pendingAvatarBytes,
         avatarRemoved: current.avatarRemoved,
       ));
-      emit(UserEditError('Failed to save changes'));
+      emit(UserEditError(errorMessage(e)));
     }
   }
 }

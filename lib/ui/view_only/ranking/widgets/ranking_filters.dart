@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tennis_cup/data/models/gender.dart';
+import 'package:tennis_cup/generated/l10n.dart';
 import 'package:tennis_cup/ui/view_only/ranking/view_models/gender_filter_cubit.dart';
 
 class RankingFilters extends StatelessWidget {
   const RankingFilters({super.key});
 
-  static const _options = <(Gender?, String)>[
-    (null, 'All'),
-    (Gender.male, 'Male'),
-    (Gender.female, 'Female'),
-  ];
-
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
+    final options = <(Gender?, String)>[
+      (null, s.all),
+      (Gender.male, s.male),
+      (Gender.female, s.female),
+    ];
+
     return Column(
       children: [
         Padding(
@@ -26,7 +28,7 @@ class RankingFilters extends StatelessWidget {
                   const Icon(Icons.filter_list),
                   const SizedBox(width: 8),
                   Text(
-                    'Filters',
+                    s.filters,
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                 ],
@@ -39,7 +41,7 @@ class RankingFilters extends StatelessWidget {
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                child: const Text('Apply'),
+                child: Text(s.apply),
               ),
             ],
           ),
@@ -51,7 +53,7 @@ class RankingFilters extends StatelessWidget {
             child: BlocBuilder<GenderFilterCubit, Gender?>(
               builder: (context, state) => ListView(
                 children: [
-                  for (final (value, label) in _options)
+                  for (final (value, label) in options)
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [

@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tennis_cup/core/pagination/page_request.dart';
+import 'package:tennis_cup/core/utils/error_utils.dart';
 import 'package:tennis_cup/data/models/tournament.dart';
 import 'package:tennis_cup/data/models/user.dart';
 import 'package:tennis_cup/data/repositories/tournament_repository.dart';
@@ -40,7 +41,7 @@ class PlayerTournamentsCubit extends Cubit<PlayerTournamentsState> {
       ));
     } catch (e) {
       if (isClosed) return;
-      emit(const PlayerTournamentsError('Error loading tournaments'));
+      emit(PlayerTournamentsError(errorMessage(e)));
     } finally {
       _isLoading = false;
     }

@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tennis_cup/core/utils/error_utils.dart';
 import 'package:tennis_cup/data/models/match.dart';
 import 'package:tennis_cup/data/repositories/match_repository.dart';
 
@@ -35,8 +36,8 @@ class TournamentMatchesCubit extends Cubit<TournamentMatchesState> {
           await _repository.fetchMatchesForTournament(tournamentId);
       _sort(matches);
       if (!isClosed) emit(TournamentMatchesLoaded(matches));
-    } catch (_) {
-      if (!isClosed) emit(TournamentMatchesError('Failed to load matches'));
+    } catch (e) {
+      if (!isClosed) emit(TournamentMatchesError(errorMessage(e)));
     }
   }
 

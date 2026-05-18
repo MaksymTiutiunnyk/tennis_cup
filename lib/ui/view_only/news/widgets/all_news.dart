@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tennis_cup/generated/l10n.dart';
 import 'package:tennis_cup/ui/view_only/news/view_models/news_cubit.dart';
 import 'package:tennis_cup/ui/view_only/news/widgets/single_news.dart';
 
@@ -8,16 +9,35 @@ class AllNews extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
     return Flexible(
       fit: FlexFit.loose,
       child: BlocBuilder<NewsCubit, NewsState>(
         builder: (context, state) {
           if (state is NewsError) {
-            return const Text('Ooops, something went wrong');
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.error_outline,
+                        color: Theme.of(context).colorScheme.error, size: 40),
+                    const SizedBox(height: 8),
+                    Text(
+                      state.message,
+                      textAlign: TextAlign.center,
+                      style:
+                          TextStyle(color: Theme.of(context).colorScheme.error),
+                    ),
+                  ],
+                ),
+              ),
+            );
           }
 
           if (state is NewsFetched && state.fetchedNews.isEmpty) {
-            return const Text('No news found');
+            return Text(s.noNewsFound);
           }
 
           if (state is NewsFetched) {

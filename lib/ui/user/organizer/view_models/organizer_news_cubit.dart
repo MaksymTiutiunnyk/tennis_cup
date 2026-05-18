@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tennis_cup/core/utils/error_utils.dart';
 import 'package:tennis_cup/data/models/news.dart';
 import 'package:tennis_cup/data/repositories/news_repository.dart';
 
@@ -26,7 +27,7 @@ class OrganizerNewsCubit extends Cubit<OrganizerNewsState> {
       emit(OrgNewsLoaded(period, items));
     } catch (e) {
       if (isClosed) return;
-      emit(OrgNewsError(period, _message(e)));
+      emit(OrgNewsError(period, errorMessage(e)));
     }
   }
 
@@ -48,7 +49,7 @@ class OrganizerNewsCubit extends Cubit<OrganizerNewsState> {
       await load(state.period);
     } catch (e) {
       if (isClosed) return;
-      emit(OrgNewsError(state.period, _message(e)));
+      emit(OrgNewsError(state.period, errorMessage(e)));
     }
   }
 
@@ -74,7 +75,7 @@ class OrganizerNewsCubit extends Cubit<OrganizerNewsState> {
       await load(state.period);
     } catch (e) {
       if (isClosed) return;
-      emit(OrgNewsError(state.period, _message(e)));
+      emit(OrgNewsError(state.period, errorMessage(e)));
     }
   }
 
@@ -91,10 +92,8 @@ class OrganizerNewsCubit extends Cubit<OrganizerNewsState> {
     } catch (e) {
       if (isClosed) return;
       if (current is OrgNewsLoaded) emit(current);
-      emit(OrgNewsError(state.period, _message(e)));
+      emit(OrgNewsError(state.period, errorMessage(e)));
     }
   }
 
-  static String _message(Object e) =>
-      e is Exception ? e.toString().replaceFirst('Exception: ', '') : '$e';
 }

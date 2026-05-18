@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tennis_cup/core/pagination/page_request.dart';
+import 'package:tennis_cup/core/utils/error_utils.dart';
 import 'package:tennis_cup/data/models/match.dart';
 import 'package:tennis_cup/data/models/user.dart';
 import 'package:tennis_cup/data/repositories/match_repository.dart';
@@ -39,8 +40,8 @@ class HeadToHeadCubit extends Cubit<HeadToHeadState> {
         matches: [...existing, ...result.items],
         hasMore: result.hasMore,
       ));
-    } catch (_) {
-      emit(const HeadToHeadError('Error loading matches'));
+    } catch (e) {
+      emit(HeadToHeadError(errorMessage(e)));
     } finally {
       _isLoading = false;
     }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tennis_cup/core/di/service_locator.dart';
+import 'package:tennis_cup/generated/l10n.dart';
 import 'package:tennis_cup/data/models/arena.dart';
 import 'package:tennis_cup/data/models/tournament.dart';
 import 'package:tennis_cup/ui/core/widgets/async_state_widget.dart';
@@ -108,7 +109,7 @@ class OrganizerTournamentsTab extends StatelessWidget {
                             items: state.tournaments,
                             onRefresh: () => _reload(context),
                             itemBuilder: (_, t) => TournamentCard(tournament: t),
-                            emptyWidget: const Text('No tournaments yet'),
+                            emptyWidget: Text(S.of(context).noTournamentsYet),
                             padding: const EdgeInsets.all(8),
                           )
                         : const SizedBox.shrink(),

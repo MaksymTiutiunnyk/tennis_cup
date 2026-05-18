@@ -15,7 +15,7 @@ class PlayerSearchLoaded extends PlayerSearchState {
 }
 
 class PlayerSearchError extends PlayerSearchState {
-  final Object e;
+  final String message;
 
-  const PlayerSearchError(this.e);
+  const PlayerSearchError(this.message);
 }

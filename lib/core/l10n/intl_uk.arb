@@ -1,0 +1,271 @@
+{
+  "@@locale": "uk",
+
+  "signIn": "Увійти",
+  "createAccount": "Створити акаунт",
+  "alreadyHaveAccount": "Вже маєте акаунт? Увійти",
+  "loginField": "Логін",
+  "passwordField": "Пароль",
+
+  "register": "Зареєструватися",
+  "required": "Обов'язкове поле",
+  "atLeast8Chars": "Щонайменше 8 символів",
+  "cancel": "Скасувати",
+  "save": "Зберегти",
+  "create": "Створити",
+  "update": "Оновити",
+  "delete": "Видалити",
+  "edit": "Редагувати",
+  "start": "Почати",
+  "finish": "Завершити",
+  "checkDetails": "Переглянути деталі",
+  "apply": "Застосувати",
+  "retry": "Повторити",
+  "accept": "Прийняти",
+  "decline": "Відхилити",
+  "approve": "Схвалити",
+  "reject": "Відхилити",
+  "confirm": "Підтвердити",
+  "remove": "Видалити",
+  "revoke": "Скасувати",
+
+  "firstNameField": "Ім'я",
+  "lastNameField": "Прізвище",
+  "patronymicField": "По батькові (необов'язково)",
+  "birthDateField": "Дата народження",
+  "genderField": "Стать",
+  "male": "Чоловіча",
+  "female": "Жіноча",
+  "countryField": "Країна",
+  "cityField": "Місто",
+  "blockUser": "Заблокувати користувача?",
+  "unblockUser": "Розблокувати користувача?",
+  "blockUserButton": "Заблокувати користувача",
+  "unblockUserButton": "Розблокувати користувача",
+  "blockButton": "Заблокувати",
+  "unblockButton": "Розблокувати",
+  "blockUserContent": "Цей користувач більше не зможе увійти.",
+  "unblockUserContent": "Цей користувач знову зможе увійти.",
+
+  "account": "Акаунт",
+  "changePassword": "Змінити пароль",
+  "changePasswordSubtitle": "Оновіть пароль вашого акаунту",
+  "passwordUpdated": "Пароль оновлено.",
+  "signOut": "Вийти",
+  "signOutConfirmTitle": "Вийти?",
+  "signOutConfirmContent": "Для продовження вам потрібно буде увійти знову.",
+  "currentPassword": "Поточний пароль",
+  "newPassword": "Новий пароль",
+  "confirmNewPassword": "Підтвердити новий пароль",
+  "newPasswordMustDiffer": "Новий пароль має відрізнятися від поточного",
+  "passwordsDoNotMatch": "Паролі не збігаються",
+
+  "language": "Мова",
+
+  "tournamentName": "Назва",
+  "tournamentType": "Тип",
+  "arenaField": "Арена",
+  "arenaIdField": "ID арени",
+  "matchDuration": "Тривалість матчу (хвилини)",
+  "requiredPlayersCount": "Необхідна кількість гравців",
+  "setsToWin": "Сети для перемоги",
+  "startTime": "Час початку",
+  "editTournament": "Редагувати турнір",
+  "newTournament": "Новий турнір",
+  "minTwoPlayers": "Мінімум 2 гравці",
+  "mustBe1To4": "Має бути від 1 до 4",
+  "addAtLeastOneReferee": "Додайте щонайменше одного суддю",
+  "removeAcceptedInvitationsFirst": "Спочатку скасуйте деякі прийняті запрошення",
+  "noTournamentsYet": "Турнірів ще немає",
+  "deleteTournament": "Видалити турнір",
+  "deleteTournamentConfirm": "Видалити \"{name}\"? Це незворотна дія.",
+  "@deleteTournamentConfirm": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+
+  "timeMorning": "РАНОК",
+  "timeDay": "ДЕНЬ",
+  "timeEvening": "ВЕЧІР",
+  "timeNight": "НІЧ",
+  "timeMidnight": "ОПІВНІЧ",
+
+  "genderMale": "ЧОЛОВІЧА",
+  "genderFemale": "ЖІНОЧА",
+
+  "rolePlayer": "Гравець",
+  "roleReferee": "Суддя",
+  "roleOrganizer": "Організатор",
+  "roleAdmin": "Адмін",
+
+  "editNews": "Редагувати новину",
+  "newNews": "Нова новина",
+  "titleField": "Заголовок",
+  "bodyField": "Текст",
+  "importanceField": "Важливість",
+  "importanceRegular": "Звичайна",
+  "importanceInteresting": "Цікава",
+  "dateTimeField": "Дата і час",
+  "addImage": "Додати зображення",
+  "changeImage": "Змінити зображення",
+  "noNewsThisMonth": "Цього місяця новин немає",
+  "deleteNewsItem": "Видалити новину",
+  "noNewsFound": "Новин не знайдено",
+  "noInterestingNewsFound": "Цікавих новин не знайдено",
+
+  "searchByName": "Пошук за ім'ям або прізвищем",
+  "enterNameToSearch": "Введіть ім'я для пошуку",
+  "noUsersFound": "Користувачів не знайдено",
+  "somethingWentWrong": "Щось пішло не так",
+  "addUser": "Додати користувача",
+  "editUser": "Редагувати користувача",
+  "noPendingRegistrations": "Очікуваних реєстрацій немає",
+  "rejectRegistration": "Відхилити реєстрацію",
+  "reasonOptional": "Причина (необов'язково)",
+
+  "addPhoto": "Додати фото",
+  "changePhoto": "Змінити фото",
+  "roles": "Ролі",
+
+  "addPlayers": "Додати гравців",
+  "playerSlotsFull": "Місця для гравців заповнені",
+  "searchByNameHint": "Пошук за ім'ям…",
+  "addReferee": "Додати суддю",
+  "refereeAlreadyAccepted": "Суддя вже прийняв запрошення",
+
+  "startMatch": "Почати матч",
+  "finishMatch": "Завершити матч",
+  "finishMatchConfirm": "Завершити матч?",
+  "finishSet": "Завершити сет",
+  "finishSetConfirm": "Завершити сет {number}?",
+  "@finishSetConfirm": {
+    "placeholders": { "number": { "type": "int" } }
+  },
+  "finishSetAndMatchConfirm": "Завершити сет {number} і завершити матч?",
+  "@finishSetAndMatchConfirm": {
+    "placeholders": { "number": { "type": "int" } }
+  },
+  "startSet": "Почати сет {number}",
+  "@startSet": {
+    "placeholders": {
+      "number": { "type": "int" }
+    }
+  },
+  "setNumber": "Сет {number}",
+  "@setNumber": {
+    "placeholders": { "number": { "type": "int" } }
+  },
+  "setFinished": "Сет {number} завершено",
+  "@setFinished": {
+    "placeholders": { "number": { "type": "int" } }
+  },
+  "medicalTimeoutTitle": "Медичний тайм-аут",
+  "medicalTimeoutContent": "Почати 10-хвилинний медичний тайм-аут?",
+  "technicalPauseTitle": "Технічна пауза",
+  "technicalPauseContent": "Почати технічну паузу?",
+  "technicalDefeatMatch": "Технічна поразка — Матч",
+  "firstServer": "Першій подачі",
+  "medicalButton": "Медичний",
+  "techPauseButton": "Тех. пауза",
+  "tdMatchButton": "ТП Матч",
+  "issueCardTitle": "Видати картку {card}",
+  "@issueCardTitle": {
+    "placeholders": { "card": { "type": "String" } }
+  },
+  "whiteCard": "Біла (тайм-аут)",
+  "yellowCard": "Жовта (попередження)",
+  "redCard": "Червона (штраф)",
+  "noActiveTournaments": "Активних турнірів немає",
+  "noMatchesFound": "Матчів не знайдено",
+  "tournamentComplete": "Турнір завершено",
+  "revokeCard": "Скасувати картку",
+  "undoPoint": "–1",
+
+  "acceptInvitationTitle": "Прийняти запрошення?",
+  "declineInvitationTitle": "Відхилити запрошення?",
+  "cannotBeUndone": "Цю дію не можна скасувати.",
+  "noInvitationsYet": "Запрошень ще немає",
+
+  "labelDate": "Дата",
+  "labelStart": "Початок",
+  "timeLabelMorning": "Ранок",
+  "timeLabelDay": "День",
+  "timeLabelEvening": "Вечір",
+  "timeLabelNight": "Ніч",
+  "timeLabelMidnight": "Північ",
+
+  "oopsSomethingWentWrong": "Сталася неочікувана помилка",
+  "noWinnersFound": "Переможців не знайдено",
+
+  "winnersTitle": "Tennis Cup: Переможці",
+  "liveStreamTitle": "Tennis Cup: Пряма трансляція",
+  "upcomingMatchesTitle": "Tennis Cup: Найближчі матчі",
+
+  "filters": "Фільтри",
+  "all": "Всі",
+  "arenaFilter": "Арена: {title}",
+
+  "noPlayersFound": "Гравців не знайдено",
+  "ratingOfPlayers": "Рейтинг гравців",
+  "labelTennisCupRank": "Рейтинг Tennis Cup:",
+  "labelCityCountry": "Місто, Країна:",
+  "labelYearOfBirth": "Рік народження:",
+  "labelMatches": "Матчів:",
+  "labelWins": "Перемог:",
+  "labelLosses": "Поразок:",
+  "labelSetsRatio": "Сети:",
+  "playersCountLabel": "{count} гравців",
+
+  "tournamentNotFound": "Турнір не знайдено",
+  "arenasNotFound": "Арени не знайдено",
+
+  "vs": "VS",
+  "playersComparisonTitle": "Tennis Cup: Порівняння гравців",
+  "playersNotFound": "Гравців не знайдено",
+  "playersMatchesTitle": "Матчі гравців: {player1} проти {player2}",
+
+  "playerNotFound": "Гравця не знайдено",
+  "playerStatisticsTitle": "Tennis Cup: Статистика гравця",
+  "tournaments": "Турніри",
+  "noTournamentsFound": "Турнірів не знайдено",
+  "tournamentResults": "Результати турніру",
+  "labelName": "Ім'я",
+  "labelPoints": "Очки",
+  "labelPosition": "Позиція",
+  "cannotCompareToSelf": "Неможливо порівняти із собою",
+  "participantToCompare": "Учасник для порівняння",
+
+  "enterParticipantName": "Введіть прізвище або ім'я учасника",
+
+  "homeTab": "Головна",
+  "scheduleTab": "Розклад",
+  "rankingTab": "Рейтинг",
+  "newsTab": "Новини",
+  "appBarTitleHome": "Tennis Cup: Головна",
+  "appBarTitleSchedule": "Tennis Cup: Розклад",
+  "appBarTitleRanking": "Tennis Cup: Рейтинг",
+  "appBarTitleNews": "Tennis Cup: Новини",
+
+  "selectFirstServer": "Оберіть першого подаючого перед початком",
+  "registrationSubmitted": "Реєстрацію подано. Очікуйте підтвердження адміністратора.",
+
+  "tabSettings": "Налаштування",
+  "tabInvitations": "Запрошення",
+  "tabUsers": "Користувачі",
+  "tabPending": "Очікують",
+
+  "menLabel": "Чоловіки",
+  "womenLabel": "Жінки",
+
+  "generalTimeoutLabel": "Тайм-аут",
+  "tapToDismiss": "Торкніться будь-де, щоб закрити",
+
+  "revokeCardConfirm": "Скасувати картку {cardType}, видану {playerName}?",
+  "@revokeCardConfirm": {
+    "placeholders": {
+      "cardType": { "type": "String" },
+      "playerName": { "type": "String" }
+    }
+  }
+}

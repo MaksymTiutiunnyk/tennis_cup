@@ -1,22 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import 'package:tennis_cup/data/models/user.dart';
 import 'package:tennis_cup/data/models/arena_winner.dart';
+import 'package:tennis_cup/data/models/tournament.dart';
+import 'package:tennis_cup/data/models/user.dart';
+import 'package:tennis_cup/generated/l10n.dart';
 import 'package:tennis_cup/routing/app_router.dart';
 import 'package:tennis_cup/ui/core/widgets/player_avatar.dart';
 
 final _formatter = DateFormat('yyyy-MM-dd');
 
-String _formatGender(String gender) =>
-    gender.toLowerCase() == 'female' ? 'Women' : 'Men';
-
 class Winner extends StatelessWidget {
   final ArenaWinner view;
   const Winner({super.key, required this.view});
 
+  String _genderLabel(S s, String gender) =>
+      gender.toLowerCase() == 'female' ? s.womenLabel : s.menLabel;
+
+  String _timeLabel(S s, Time t) => switch (t) {
+        Time.Morning => s.timeLabelMorning,
+        Time.Day => s.timeLabelDay,
+        Time.Evening => s.timeLabelEvening,
+        Time.Night => s.timeLabelNight,
+        Time.Midnight => s.timeLabelMidnight,
+      };
+
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
     final User winner = view.winners.first;
 
     return InkWell(
@@ -45,7 +56,7 @@ class Winner extends StatelessWidget {
                 const Icon(Icons.emoji_events, color: Colors.orange, size: 24),
                 const SizedBox(width: 8),
                 Text(
-                  '${_formatGender(view.tournamentGender)}, ${view.tournamentTime.name}',
+                  '${_genderLabel(s, view.tournamentGender)}, ${_timeLabel(s, view.tournamentTime)}',
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),
               ],

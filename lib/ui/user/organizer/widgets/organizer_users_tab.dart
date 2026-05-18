@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tennis_cup/core/di/service_locator.dart';
+import 'package:tennis_cup/generated/l10n.dart';
 import 'package:tennis_cup/ui/user/organizer/view_models/users_search_cubit.dart';
 import 'package:tennis_cup/ui/user/organizer/view_models/users_search_state.dart';
 import 'package:tennis_cup/ui/user/organizer/widgets/create_user_fab.dart';
@@ -49,6 +50,7 @@ class _OrganizerUsersTabBodyState extends State<_OrganizerUsersTabBody> {
 
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
     return Scaffold(
       body: Column(
         children: [
@@ -59,7 +61,7 @@ class _OrganizerUsersTabBodyState extends State<_OrganizerUsersTabBody> {
               textCapitalization: TextCapitalization.words,
               onChanged: _onSearchChanged,
               decoration: InputDecoration(
-                hintText: 'Search by first or last name',
+                hintText: s.searchByName,
                 prefixIcon: const Icon(Icons.search),
                 suffixIcon: _controller.text.isNotEmpty
                     ? IconButton(
@@ -78,20 +80,37 @@ class _OrganizerUsersTabBodyState extends State<_OrganizerUsersTabBody> {
           Expanded(
             child: BlocBuilder<UsersSearchCubit, UsersSearchState>(
               builder: (context, state) => switch (state) {
-                UsersSearchIdle() => const Center(
-                    child: Text('Enter a name to search'),
+                UsersSearchIdle() => Center(
+                    child: Text(s.enterNameToSearch),
                   ),
                 UsersSearchLoading() => const Center(
                     child: CircularProgressIndicator(),
                   ),
                 UsersSearchLoaded(users: final users) when users.isEmpty =>
-                  const Center(child: Text('No users found')),
+                  Center(child: Text(s.noUsersFound)),
                 UsersSearchLoaded(users: final users) => ListView.builder(
                     itemCount: users.length,
                     itemBuilder: (_, i) => UserSearchTile(user: users[i]),
                   ),
-                UsersSearchError() => const Center(
-                    child: Text('Something went wrong'),
+                UsersSearchError(:final message) => Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(24),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.error_outline,
+                              color: Theme.of(context).colorScheme.error,
+                              size: 40),
+                          const SizedBox(height: 8),
+                          Text(
+                            message,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                color: Theme.of(context).colorScheme.error),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
               },
             ),

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tennis_cup/generated/l10n.dart';
 import 'package:tennis_cup/ui/auth/view_models/auth_cubit.dart';
 import 'package:tennis_cup/ui/auth/view_models/auth_view_cubit.dart';
+import 'package:tennis_cup/ui/settings/widgets/language_switcher.dart';
 
 class LoginContent extends StatefulWidget {
   const LoginContent({super.key});
@@ -32,12 +34,16 @@ class _LoginContentState extends State<LoginContent> {
 
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
     return BlocConsumer<AuthCubit, AuthState>(
       listener: (context, state) {
         if (state is AuthError) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.message)),
-          );
+          ScaffoldMessenger.of(context)
+            ..hideCurrentSnackBar()
+            ..showSnackBar(SnackBar(
+              content: Text(state.message),
+              backgroundColor: Theme.of(context).colorScheme.error,
+            ));
         }
       },
       builder: (context, state) {
@@ -50,23 +56,23 @@ class _LoginContentState extends State<LoginContent> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    'Sign in',
+                    s.signIn,
                     style: Theme.of(context).textTheme.headlineLarge,
                   ),
                   const SizedBox(height: 32),
                   TextFormField(
                     controller: _loginController,
-                    decoration: const InputDecoration(labelText: 'Login'),
+                    decoration: InputDecoration(labelText: s.loginField),
                     validator: (v) =>
-                        (v == null || v.trim().isEmpty) ? 'Required' : null,
+                        (v == null || v.trim().isEmpty) ? s.required : null,
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
                     controller: _passwordController,
-                    decoration: const InputDecoration(labelText: 'Password'),
+                    decoration: InputDecoration(labelText: s.passwordField),
                     obscureText: true,
                     validator: (v) =>
-                        (v == null || v.isEmpty) ? 'Required' : null,
+                        (v == null || v.isEmpty) ? s.required : null,
                   ),
                   const SizedBox(height: 32),
                   SizedBox(
@@ -79,14 +85,16 @@ class _LoginContentState extends State<LoginContent> {
                               width: 20,
                               child: CircularProgressIndicator(strokeWidth: 2),
                             )
-                          : const Text('Sign in'),
+                          : Text(s.signIn),
                     ),
                   ),
                   const SizedBox(height: 16),
                   TextButton(
                     onPressed: context.read<AuthViewCubit>().showRegister,
-                    child: const Text('Create account'),
+                    child: Text(s.createAccount),
                   ),
+                  const SizedBox(height: 8),
+                  const LanguageSwitcher(),
                 ],
               ),
             ),

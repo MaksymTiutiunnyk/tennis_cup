@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tennis_cup/core/utils/error_utils.dart';
 import 'package:tennis_cup/data/models/arena.dart';
 import 'package:tennis_cup/data/models/tournament.dart';
 import 'package:tennis_cup/data/models/tournament_request.dart';
@@ -38,7 +39,7 @@ class OrganizerTournamentsCubit extends Cubit<OrganizerTournamentsState> {
       emit(OrgTournamentsLoaded(tournaments));
     } catch (e) {
       if (isClosed) return;
-      emit(OrgTournamentsError(_message(e)));
+      emit(OrgTournamentsError(errorMessage(e)));
     }
   }
 
@@ -48,7 +49,7 @@ class OrganizerTournamentsCubit extends Cubit<OrganizerTournamentsState> {
       await _reload();
     } catch (e) {
       if (isClosed) return;
-      emit(OrgTournamentsError(_message(e)));
+      emit(OrgTournamentsError(errorMessage(e)));
     }
   }
 
@@ -58,7 +59,7 @@ class OrganizerTournamentsCubit extends Cubit<OrganizerTournamentsState> {
       await _reload();
     } catch (e) {
       if (isClosed) return;
-      emit(OrgTournamentsError(_message(e)));
+      emit(OrgTournamentsError(errorMessage(e)));
     }
   }
 
@@ -74,7 +75,7 @@ class OrganizerTournamentsCubit extends Cubit<OrganizerTournamentsState> {
     } catch (e) {
       if (isClosed) return;
       if (current is OrgTournamentsLoaded) emit(current);
-      emit(OrgTournamentsError(_message(e)));
+      emit(OrgTournamentsError(errorMessage(e)));
     }
   }
 
@@ -84,7 +85,7 @@ class OrganizerTournamentsCubit extends Cubit<OrganizerTournamentsState> {
       await _reload();
     } catch (e) {
       if (isClosed) return;
-      emit(OrgTournamentsError(_message(e)));
+      emit(OrgTournamentsError(errorMessage(e)));
     }
   }
 
@@ -94,7 +95,7 @@ class OrganizerTournamentsCubit extends Cubit<OrganizerTournamentsState> {
       await _reload();
     } catch (e) {
       if (isClosed) return;
-      emit(OrgTournamentsError(_message(e)));
+      emit(OrgTournamentsError(errorMessage(e)));
     }
   }
 
@@ -104,7 +105,7 @@ class OrganizerTournamentsCubit extends Cubit<OrganizerTournamentsState> {
       await _reload();
     } catch (e) {
       if (isClosed) return;
-      emit(OrgTournamentsError(_message(e)));
+      emit(OrgTournamentsError(errorMessage(e)));
     }
   }
 
@@ -114,7 +115,7 @@ class OrganizerTournamentsCubit extends Cubit<OrganizerTournamentsState> {
       await _reload();
     } catch (e) {
       if (isClosed) return;
-      emit(OrgTournamentsError(_message(e)));
+      emit(OrgTournamentsError(errorMessage(e)));
     }
   }
 
@@ -123,6 +124,4 @@ class OrganizerTournamentsCubit extends Cubit<OrganizerTournamentsState> {
     await load(date: _date!, arena: _arena!, time: _time!);
   }
 
-  static String _message(Object e) =>
-      e is Exception ? e.toString().replaceFirst('Exception: ', '') : '$e';
 }

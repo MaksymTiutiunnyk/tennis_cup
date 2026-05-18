@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tennis_cup/data/models/user.dart';
+import 'package:tennis_cup/generated/l10n.dart';
 import 'package:tennis_cup/ui/core/widgets/player_avatar.dart';
 
 class PlayerInfo extends StatelessWidget {
@@ -8,6 +9,7 @@ class PlayerInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
     return Card(
       margin: const EdgeInsets.all(8),
       child: Column(
@@ -27,7 +29,7 @@ class PlayerInfo extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Rank Tennis Cup:',
+                      s.labelTennisCupRank,
                       style: Theme.of(context).textTheme.bodySmall,
                     ),
                     Text(
@@ -41,7 +43,21 @@ class PlayerInfo extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Tournaments:',
+                      s.labelMatches,
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                    Text(
+                      player.matches.toString(),
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 4),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      s.tournaments,
                       style: Theme.of(context).textTheme.bodySmall,
                     ),
                     Text(
@@ -55,7 +71,7 @@ class PlayerInfo extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'City, Country:',
+                      s.labelCityCountry,
                       style: Theme.of(context).textTheme.bodySmall,
                     ),
                     Text(
@@ -69,7 +85,7 @@ class PlayerInfo extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Year of birth:',
+                      s.labelYearOfBirth,
                       style: Theme.of(context).textTheme.bodySmall,
                     ),
                     Text(
@@ -83,7 +99,7 @@ class PlayerInfo extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Wins:',
+                      s.labelWins,
                       style: Theme.of(context).textTheme.bodySmall,
                     ),
                     Text(
@@ -100,7 +116,7 @@ class PlayerInfo extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Loses:',
+                      s.labelLosses,
                       style: Theme.of(context).textTheme.bodySmall,
                     ),
                     Text(

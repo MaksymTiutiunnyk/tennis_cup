@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tennis_cup/core/di/service_locator.dart';
 import 'package:tennis_cup/data/models/tournament_invitation.dart';
+import 'package:tennis_cup/generated/l10n.dart';
 import 'package:tennis_cup/ui/user/player/view_models/invitations_cubit.dart';
 import 'package:tennis_cup/ui/user/player/widgets/tournament_invitation_card.dart';
 
@@ -43,15 +44,34 @@ class _InvitationsListViewState extends State<_InvitationsListView> {
         builder: (context, state) => switch (state) {
           InvitationsLoading() =>
             const Center(child: CircularProgressIndicator()),
-          InvitationsError(message: final m) => Center(child: Text(m)),
+          InvitationsError(message: final m) => Center(
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.error_outline,
+                        color: Theme.of(context).colorScheme.error, size: 40),
+                    const SizedBox(height: 8),
+                    Text(
+                      m,
+                      textAlign: TextAlign.center,
+                      style:
+                          TextStyle(color: Theme.of(context).colorScheme.error),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           InvitationsLoaded() => RefreshIndicator(
               onRefresh: () => context.read<InvitationsCubit>().reload(),
               child: _items.isEmpty
-                  ? const CustomScrollView(
-                      physics: AlwaysScrollableScrollPhysics(),
+                  ? CustomScrollView(
+                      physics: const AlwaysScrollableScrollPhysics(),
                       slivers: [
                         SliverFillRemaining(
-                          child: Center(child: Text('No invitations yet')),
+                          child: Center(
+                              child: Text(S.of(context).noInvitationsYet)),
                         ),
                       ],
                     )

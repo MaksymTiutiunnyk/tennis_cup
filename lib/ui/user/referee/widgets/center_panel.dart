@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tennis_cup/data/models/user.dart';
+import 'package:tennis_cup/generated/l10n.dart';
 import 'package:tennis_cup/ui/user/referee/view_models/referee_match_cubit.dart';
 import 'package:tennis_cup/ui/user/referee/widgets/server_tile.dart';
 
@@ -21,6 +22,7 @@ class CenterPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
     return Container(
       color: Theme.of(context).colorScheme.surfaceContainerHighest,
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
@@ -29,7 +31,7 @@ class CenterPanel extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-            'First Server',
+            s.firstServer,
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.titleSmall,
           ),
@@ -51,7 +53,7 @@ class CenterPanel extends StatelessWidget {
           FilledButton.icon(
             onPressed: state.firstServerPlayerId == null ? null : onStartMatch,
             icon: const Icon(Icons.play_arrow),
-            label: const Text('Start Match'),
+            label: Text(s.startMatch),
           ),
         ],
       ),

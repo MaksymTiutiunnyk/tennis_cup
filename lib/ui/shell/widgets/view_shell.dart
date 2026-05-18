@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tennis_cup/generated/l10n.dart';
 import 'package:tennis_cup/ui/settings/widgets/mode_switcher.dart';
 import 'package:tennis_cup/ui/view_only/home/view_models/video_player_cubit.dart';
 
@@ -9,15 +10,16 @@ class ViewShell extends StatelessWidget {
 
   const ViewShell({super.key, required this.navigationShell});
 
-  static const _titles = [
-    'Tennis Cup: Home page',
-    'Tennis Cup: Schedule',
-    'Tennis Cup: Ranking',
-    'Tennis Cup: News',
-  ];
-
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
+    final titles = [
+      s.appBarTitleHome,
+      s.appBarTitleSchedule,
+      s.appBarTitleRanking,
+      s.appBarTitleNews,
+    ];
+
     return BlocBuilder<VideoPlayerCubit, VideoPlayerState>(
       builder: (context, videoState) {
         final isFullscreen = videoState is PlayerFullScreenRunning;
@@ -26,7 +28,7 @@ class ViewShell extends StatelessWidget {
           appBar: isFullscreen
               ? null
               : AppBar(
-                  title: Text(_titles[tabIndex]),
+                  title: Text(titles[tabIndex]),
                   actions: const [ModeSwitcher()],
                 ),
           body: navigationShell,
@@ -38,15 +40,15 @@ class ViewShell extends StatelessWidget {
                     i,
                     initialLocation: i == tabIndex,
                   ),
-                  items: const [
+                  items: [
                     BottomNavigationBarItem(
-                        icon: Icon(Icons.home), label: 'Home'),
+                        icon: const Icon(Icons.home), label: s.homeTab),
                     BottomNavigationBarItem(
-                        icon: Icon(Icons.schedule), label: 'Schedule'),
+                        icon: const Icon(Icons.schedule), label: s.scheduleTab),
                     BottomNavigationBarItem(
-                        icon: Icon(Icons.people), label: 'Ranking'),
+                        icon: const Icon(Icons.people), label: s.rankingTab),
                     BottomNavigationBarItem(
-                        icon: Icon(Icons.newspaper), label: 'News'),
+                        icon: const Icon(Icons.newspaper), label: s.newsTab),
                   ],
                 ),
         );

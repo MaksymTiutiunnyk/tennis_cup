@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tennis_cup/core/di/service_locator.dart';
 import 'package:tennis_cup/data/models/user_role.dart';
+import 'package:tennis_cup/generated/l10n.dart';
 import 'package:tennis_cup/ui/auth/view_models/auth_cubit.dart';
 import 'package:tennis_cup/ui/core/widgets/user_registration_form_body.dart';
 import 'package:tennis_cup/ui/user/organizer/view_models/user_creation_cubit.dart';
@@ -34,19 +35,23 @@ class CreateUserScreen extends StatelessWidget {
                 SnackBar(content: Text(state.message)),
               );
             } else if (state is UserCreationError) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(state.message)),
-              );
+              ScaffoldMessenger.of(context)
+                ..hideCurrentSnackBar()
+                ..showSnackBar(SnackBar(
+                  content: Text(state.message),
+                  backgroundColor: Theme.of(context).colorScheme.error,
+                ));
             }
           },
           child: Scaffold(
-            appBar: AppBar(title: const Text('Add user')),
+            appBar: AppBar(title: Text(S.of(context).addUser)),
             body: BlocBuilder<UserCreationCubit, UserCreationState>(
               builder: (context, state) => SingleChildScrollView(
                 padding: const EdgeInsets.all(24),
                 child: UserRegistrationFormBody(
                   availableRoles: availableRoles,
                   isLoading: state is UserCreationLoading,
+                  submitLabel: S.of(context).create,
                   onSubmit: ({
                     role,
                     login,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tennis_cup/generated/l10n.dart';
 import 'package:tennis_cup/ui/view_only/ranking/view_models/ranking_players_cubit.dart';
 import 'package:tennis_cup/ui/view_only/ranking/widgets/ranking_player.dart';
 
@@ -36,15 +37,33 @@ class _RankingPlayersState extends State<RankingPlayers> {
 
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
     return Expanded(
       child: BlocBuilder<RankingPlayersCubit, RankingPlayersState>(
         builder: (context, state) => switch (state) {
           RankingPlayersLoading() =>
             const Center(child: CircularProgressIndicator()),
-          RankingPlayersError() =>
-            const Center(child: Text('Ooops, something went wrong')),
+          RankingPlayersError(:final message) => Center(
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.error_outline,
+                        color: Theme.of(context).colorScheme.error, size: 40),
+                    const SizedBox(height: 8),
+                    Text(
+                      message,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.error),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           RankingPlayersLoaded(:final players) when players.isEmpty =>
-            const Center(child: Text('No players found')),
+            Center(child: Text(s.noPlayersFound)),
           RankingPlayersLoaded(:final players) =>
             ListView.builder(
               controller: _scrollController,

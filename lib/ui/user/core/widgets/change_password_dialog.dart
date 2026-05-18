@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tennis_cup/generated/l10n.dart';
 import 'package:tennis_cup/ui/user/core/view_models/change_password_cubit.dart';
 
 class ChangePasswordDialog extends StatefulWidget {
@@ -37,6 +38,7 @@ class _ChangePasswordDialogState extends State<ChangePasswordDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
     return BlocConsumer<ChangePasswordCubit, ChangePasswordState>(
       listener: (context, state) {
         if (state is ChangePasswordSuccess) {
@@ -50,7 +52,7 @@ class _ChangePasswordDialogState extends State<ChangePasswordDialog> {
 
         return AlertDialog(
           title: Text(
-            'Change password',
+            s.changePassword,
             style: Theme.of(context).textTheme.headlineMedium,
           ),
           content: SizedBox(
@@ -65,7 +67,7 @@ class _ChangePasswordDialogState extends State<ChangePasswordDialog> {
                     obscureText: _obscureCurrent,
                     enabled: !submitting,
                     decoration: InputDecoration(
-                      labelText: 'Current password',
+                      labelText: s.currentPassword,
                       suffixIcon: IconButton(
                         icon: Icon(_obscureCurrent
                             ? Icons.visibility_outlined
@@ -75,7 +77,7 @@ class _ChangePasswordDialogState extends State<ChangePasswordDialog> {
                       ),
                     ),
                     validator: (v) =>
-                        (v == null || v.isEmpty) ? 'Required' : null,
+                        (v == null || v.isEmpty) ? s.required : null,
                   ),
                   const SizedBox(height: 12),
                   TextFormField(
@@ -83,8 +85,8 @@ class _ChangePasswordDialogState extends State<ChangePasswordDialog> {
                     obscureText: _obscureNew,
                     enabled: !submitting,
                     decoration: InputDecoration(
-                      labelText: 'New password',
-                      helperText: 'At least 8 characters',
+                      labelText: s.newPassword,
+                      helperText: s.atLeast8Chars,
                       suffixIcon: IconButton(
                         icon: Icon(_obscureNew
                             ? Icons.visibility_outlined
@@ -94,12 +96,8 @@ class _ChangePasswordDialogState extends State<ChangePasswordDialog> {
                       ),
                     ),
                     validator: (v) {
-                      if (v == null || v.length < 8) {
-                        return 'At least 8 characters';
-                      }
-                      if (v == _currentCtrl.text) {
-                        return 'New password must differ from current';
-                      }
+                      if (v == null || v.length < 8) return s.atLeast8Chars;
+                      if (v == _currentCtrl.text) return s.newPasswordMustDiffer;
                       return null;
                     },
                   ),
@@ -109,7 +107,7 @@ class _ChangePasswordDialogState extends State<ChangePasswordDialog> {
                     obscureText: _obscureConfirm,
                     enabled: !submitting,
                     decoration: InputDecoration(
-                      labelText: 'Confirm new password',
+                      labelText: s.confirmNewPassword,
                       suffixIcon: IconButton(
                         icon: Icon(_obscureConfirm
                             ? Icons.visibility_outlined
@@ -119,7 +117,7 @@ class _ChangePasswordDialogState extends State<ChangePasswordDialog> {
                       ),
                     ),
                     validator: (v) =>
-                        v != _newCtrl.text ? 'Passwords do not match' : null,
+                        v != _newCtrl.text ? s.passwordsDoNotMatch : null,
                   ),
                   if (errorMessage != null) ...[
                     const SizedBox(height: 16),
@@ -137,7 +135,7 @@ class _ChangePasswordDialogState extends State<ChangePasswordDialog> {
           actions: [
             TextButton(
               onPressed: submitting ? null : () => Navigator.of(context).pop(),
-              child: const Text('Cancel'),
+              child: Text(s.cancel),
             ),
             FilledButton(
               onPressed: submitting ? null : _submit,
@@ -147,7 +145,7 @@ class _ChangePasswordDialogState extends State<ChangePasswordDialog> {
                       width: 18,
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
-                  : const Text('Update'),
+                  : Text(s.update),
             ),
           ],
         );

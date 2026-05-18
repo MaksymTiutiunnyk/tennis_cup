@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tennis_cup/data/models/user_role.dart';
+import 'package:tennis_cup/generated/l10n.dart';
 import 'package:tennis_cup/ui/auth/view_models/auth_cubit.dart';
 import 'package:tennis_cup/ui/auth/widgets/auth_gate.dart';
 import 'package:tennis_cup/ui/settings/widgets/mode_switcher.dart';
@@ -26,12 +27,13 @@ class UserShell extends StatelessWidget {
               prev.activeRole != curr.activeRole &&
               curr.availableRoles.isNotEmpty,
           listener: (context, roleState) {
-            final tabs = _tabsForRole(roleState.activeRole);
+            final tabs = _tabsForRole(roleState.activeRole, S.of(context));
             navigationShell.goBranch(tabs.first.branchIndex,
                 initialLocation: true);
           },
           builder: (context, roleState) {
-            final tabs = _tabsForRole(roleState.activeRole);
+            final s = S.of(context);
+            final tabs = _tabsForRole(roleState.activeRole, s);
             final currentBranch = navigationShell.currentIndex;
             final visibleIdx =
                 tabs.indexWhere((t) => t.branchIndex == currentBranch);
@@ -50,17 +52,19 @@ class UserShell extends StatelessWidget {
                 actions: const [ModeSwitcher()],
               ),
               body: authed ? navigationShell : const AuthGate(),
-              bottomNavigationBar: !authed ? null : BottomNavigationBar(
-                currentIndex: currentVisibleIndex,
-                onTap: (i) {
-                  final branchIdx = tabs[i].branchIndex;
-                  navigationShell.goBranch(
-                    branchIdx,
-                    initialLocation: branchIdx == currentBranch,
-                  );
-                },
-                items: tabs.map((t) => t.item).toList(),
-              ),
+              bottomNavigationBar: !authed
+                  ? null
+                  : BottomNavigationBar(
+                      currentIndex: currentVisibleIndex,
+                      onTap: (i) {
+                        final branchIdx = tabs[i].branchIndex;
+                        navigationShell.goBranch(
+                          branchIdx,
+                          initialLocation: branchIdx == currentBranch,
+                        );
+                      },
+                      items: tabs.map((t) => t.item).toList(),
+                    ),
             );
           },
         );
@@ -68,12 +72,12 @@ class UserShell extends StatelessWidget {
     );
   }
 
-  List<_Tab> _tabsForRole(UserRole role) {
-    const settings = (
+  List<_Tab> _tabsForRole(UserRole role, S s) {
+    final settings = (
       branchIndex: 5,
       item: BottomNavigationBarItem(
-        icon: Icon(Icons.settings_outlined),
-        label: 'Settings',
+        icon: const Icon(Icons.settings_outlined),
+        label: s.tabSettings,
       ),
     );
 
@@ -81,9 +85,9 @@ class UserShell extends StatelessWidget {
       UserRole.player => [
           (
             branchIndex: 0,
-            item: const BottomNavigationBarItem(
-              icon: Icon(Icons.emoji_events_outlined),
-              label: 'Tournaments',
+            item: BottomNavigationBarItem(
+              icon: const Icon(Icons.emoji_events_outlined),
+              label: s.tournaments,
             ),
           ),
           settings,
@@ -91,16 +95,16 @@ class UserShell extends StatelessWidget {
       UserRole.referee => [
           (
             branchIndex: 1,
-            item: const BottomNavigationBarItem(
-              icon: Icon(Icons.sports_outlined),
-              label: 'Tournaments',
+            item: BottomNavigationBarItem(
+              icon: const Icon(Icons.sports_outlined),
+              label: s.tournaments,
             ),
           ),
           (
             branchIndex: 7,
-            item: const BottomNavigationBarItem(
-              icon: Icon(Icons.mail_outline),
-              label: 'Invitations',
+            item: BottomNavigationBarItem(
+              icon: const Icon(Icons.mail_outline),
+              label: s.tabInvitations,
             ),
           ),
           settings,
@@ -108,30 +112,30 @@ class UserShell extends StatelessWidget {
       UserRole.organizer => [
           (
             branchIndex: 2,
-            item: const BottomNavigationBarItem(
-              icon: Icon(Icons.emoji_events),
-              label: 'Tournaments',
+            item: BottomNavigationBarItem(
+              icon: const Icon(Icons.emoji_events),
+              label: s.tournaments,
             ),
           ),
           (
             branchIndex: 3,
-            item: const BottomNavigationBarItem(
-              icon: Icon(Icons.people),
-              label: 'Users',
+            item: BottomNavigationBarItem(
+              icon: const Icon(Icons.people),
+              label: s.tabUsers,
             ),
           ),
           (
             branchIndex: 4,
-            item: const BottomNavigationBarItem(
-              icon: Icon(Icons.how_to_reg),
-              label: 'Pending',
+            item: BottomNavigationBarItem(
+              icon: const Icon(Icons.how_to_reg),
+              label: s.tabPending,
             ),
           ),
           (
             branchIndex: 6,
-            item: const BottomNavigationBarItem(
-              icon: Icon(Icons.newspaper_outlined),
-              label: 'News',
+            item: BottomNavigationBarItem(
+              icon: const Icon(Icons.newspaper_outlined),
+              label: s.newsTab,
             ),
           ),
           settings,
@@ -139,30 +143,30 @@ class UserShell extends StatelessWidget {
       UserRole.admin => [
           (
             branchIndex: 2,
-            item: const BottomNavigationBarItem(
-              icon: Icon(Icons.emoji_events),
-              label: 'Tournaments',
+            item: BottomNavigationBarItem(
+              icon: const Icon(Icons.emoji_events),
+              label: s.tournaments,
             ),
           ),
           (
             branchIndex: 3,
-            item: const BottomNavigationBarItem(
-              icon: Icon(Icons.people),
-              label: 'Users',
+            item: BottomNavigationBarItem(
+              icon: const Icon(Icons.people),
+              label: s.tabUsers,
             ),
           ),
           (
             branchIndex: 4,
-            item: const BottomNavigationBarItem(
-              icon: Icon(Icons.how_to_reg),
-              label: 'Pending',
+            item: BottomNavigationBarItem(
+              icon: const Icon(Icons.how_to_reg),
+              label: s.tabPending,
             ),
           ),
           (
             branchIndex: 6,
-            item: const BottomNavigationBarItem(
-              icon: Icon(Icons.newspaper_outlined),
-              label: 'News',
+            item: BottomNavigationBarItem(
+              icon: const Icon(Icons.newspaper_outlined),
+              label: s.newsTab,
             ),
           ),
           settings,

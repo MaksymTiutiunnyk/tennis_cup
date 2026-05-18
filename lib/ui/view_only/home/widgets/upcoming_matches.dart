@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tennis_cup/data/models/match.dart';
+import 'package:tennis_cup/generated/l10n.dart';
 import 'package:tennis_cup/ui/view_only/home/view_models/upcoming_tournaments_cubit.dart';
 import 'package:tennis_cup/ui/view_only/home/widgets/upcoming_match.dart';
 
@@ -10,6 +11,7 @@ class UpcomingMatches extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
     return Flexible(
       fit: FlexFit.loose,
       child: Column(
@@ -23,7 +25,7 @@ class UpcomingMatches extends StatelessWidget {
                 const Icon(Icons.calendar_today),
                 const SizedBox(width: 8),
                 Text(
-                  'Tennis Cup: Upcoming matches',
+                  s.upcomingMatchesTitle,
                   style: Theme.of(context).textTheme.bodyLarge,
                 ),
               ],
@@ -35,10 +37,27 @@ class UpcomingMatches extends StatelessWidget {
               builder: (context, state) => switch (state) {
                 UpcomingTournamentsLoading() =>
                   const Center(child: CircularProgressIndicator()),
-                UpcomingTournamentsError() =>
-                  const Center(child: Text('Ooops, something went wrong')),
+                UpcomingTournamentsError(:final message) => Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.error_outline,
+                              color: Theme.of(context).colorScheme.error),
+                          const SizedBox(height: 8),
+                          Text(
+                            message,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                color: Theme.of(context).colorScheme.error),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 UpcomingTournamentsLoaded(:final matches) =>
-                  _buildList(matches),
+                  _buildList(context, matches),
               },
             ),
           ),
@@ -47,9 +66,9 @@ class UpcomingMatches extends StatelessWidget {
     );
   }
 
-  Widget _buildList(List<Match> matches) {
+  Widget _buildList(BuildContext context, List<Match> matches) {
     if (matches.isEmpty) {
-      return const Center(child: Text('No matches found'));
+      return Center(child: Text(S.of(context).noMatchesFound));
     }
     return ListView.builder(
       physics: isScrollable ? null : const NeverScrollableScrollPhysics(),

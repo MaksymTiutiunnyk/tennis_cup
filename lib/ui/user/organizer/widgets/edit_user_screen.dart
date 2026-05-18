@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tennis_cup/core/di/service_locator.dart';
 import 'package:tennis_cup/data/models/user_role.dart';
+import 'package:tennis_cup/generated/l10n.dart';
 import 'package:tennis_cup/ui/auth/view_models/auth_cubit.dart';
 import 'package:tennis_cup/ui/core/widgets/user_registration_form_body.dart';
 import 'package:tennis_cup/ui/user/organizer/view_models/user_edit_cubit.dart';
@@ -30,13 +31,16 @@ class EditUserScreen extends StatelessWidget {
             if (state is UserEditSuccess) {
               Navigator.of(context).pop();
             } else if (state is UserEditError) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(state.message)),
-              );
+              ScaffoldMessenger.of(context)
+                ..hideCurrentSnackBar()
+                ..showSnackBar(SnackBar(
+                  content: Text(state.message),
+                  backgroundColor: Theme.of(context).colorScheme.error,
+                ));
             }
           },
           child: Scaffold(
-            appBar: AppBar(title: const Text('Edit user')),
+            appBar: AppBar(title: Text(S.of(context).editUser)),
             body: BlocBuilder<UserEditCubit, UserEditState>(
               builder: (context, state) {
                 if (state is UserEditInitial || state is UserEditLoading) {
@@ -60,7 +64,7 @@ class EditUserScreen extends StatelessWidget {
                         ),
                       UserRegistrationFormBody(
                         isLoading: state.saving,
-                        submitLabel: 'Save',
+                        submitLabel: S.of(context).save,
                         currentStatus: state.user.status,
                         initialValues: UserProfileInitialValues(
                           firstName: user.firstName,

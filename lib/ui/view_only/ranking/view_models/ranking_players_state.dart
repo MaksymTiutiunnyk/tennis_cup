@@ -20,5 +20,6 @@ final class RankingPlayersLoadingMore extends RankingPlayersState {
 }
 
 final class RankingPlayersError extends RankingPlayersState {
-  const RankingPlayersError();
+  final String message;
+  const RankingPlayersError(this.message);
 }

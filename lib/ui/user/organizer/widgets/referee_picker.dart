@@ -2,13 +2,16 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tennis_cup/generated/l10n.dart';
 import 'package:tennis_cup/ui/user/organizer/view_models/referee_search_cubit.dart';
 
 export 'package:tennis_cup/ui/user/organizer/view_models/referee_search_cubit.dart'
     show SelectedReferee;
 
 class RefereePicker extends StatefulWidget {
-  const RefereePicker({super.key});
+  final bool readOnly;
+
+  const RefereePicker({super.key, this.readOnly = false});
 
   @override
   State<RefereePicker> createState() => _RefereePickerState();
@@ -56,6 +59,7 @@ class _RefereePickerState extends State<RefereePicker> {
 
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
     final colorScheme = Theme.of(context).colorScheme;
     return BlocBuilder<RefereePickerCubit, RefereePickerState>(
       builder: (context, state) {
@@ -73,21 +77,24 @@ class _RefereePickerState extends State<RefereePicker> {
                           label: Text(r.name,
                               style: const TextStyle(color: Colors.white)),
                           backgroundColor: _chipColor(context, r.status),
-                          onDeleted: () => _cubit.removeReferee(r.id),
+                          onDeleted: widget.readOnly
+                              ? null
+                              : () => _cubit.removeReferee(r.id),
                           deleteIconColor: Colors.white,
                         ))
                     .toList(),
               ),
               const SizedBox(height: 8),
             ],
+            if (!widget.readOnly)
             TextField(
               controller: _ctrl,
               enabled: !searchDisabled,
               decoration: InputDecoration(
-                labelText: 'Add referee',
+                labelText: s.addReferee,
                 hintText: searchDisabled
-                    ? 'Referee already accepted'
-                    : 'Search by name…',
+                    ? s.refereeAlreadyAccepted
+                    : s.searchByNameHint,
                 suffixIcon: state.isLoading
                     ? const Padding(
                         padding: EdgeInsets.all(12),
@@ -101,7 +108,7 @@ class _RefereePickerState extends State<RefereePicker> {
               ),
               onChanged: _onChanged,
             ),
-            if (state.searchResults.isNotEmpty)
+            if (!widget.readOnly && state.searchResults.isNotEmpty)
               Card(
                 margin: const EdgeInsets.only(top: 2),
                 elevation: 4,

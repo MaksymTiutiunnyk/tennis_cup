@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tennis_cup/core/utils/error_utils.dart';
 import 'package:tennis_cup/data/models/match.dart';
 import 'package:tennis_cup/data/repositories/tournament_repository.dart';
 
@@ -11,7 +12,10 @@ final class UpcomingTournamentsLoaded extends UpcomingTournamentsState {
   UpcomingTournamentsLoaded(this.matches);
 }
 
-final class UpcomingTournamentsError extends UpcomingTournamentsState {}
+final class UpcomingTournamentsError extends UpcomingTournamentsState {
+  final String message;
+  UpcomingTournamentsError(this.message);
+}
 
 class UpcomingTournamentsCubit extends Cubit<UpcomingTournamentsState> {
   final TournamentRepository tournamentRepository;
@@ -26,9 +30,9 @@ class UpcomingTournamentsCubit extends Cubit<UpcomingTournamentsState> {
       final matches = await tournamentRepository.fetchUpcomingMatches();
       if (isClosed) return;
       emit(UpcomingTournamentsLoaded(matches));
-    } catch (_) {
+    } catch (e) {
       if (isClosed) return;
-      emit(UpcomingTournamentsError());
+      emit(UpcomingTournamentsError(errorMessage(e)));
     }
   }
 }

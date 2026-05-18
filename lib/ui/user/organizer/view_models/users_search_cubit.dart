@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tennis_cup/core/utils/error_utils.dart';
 import 'package:tennis_cup/data/repositories/admin_repository.dart';
 import 'package:tennis_cup/ui/user/organizer/view_models/users_search_state.dart';
 
@@ -24,7 +25,7 @@ class UsersSearchCubit extends Cubit<UsersSearchState> {
       emit(UsersSearchLoaded(users: users));
     } catch (e) {
       if (isClosed) return;
-      emit(UsersSearchError('Failed to search users'));
+      emit(UsersSearchError(errorMessage(e)));
     }
   }
 

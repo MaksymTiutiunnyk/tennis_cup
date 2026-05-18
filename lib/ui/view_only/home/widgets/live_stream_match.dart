@@ -5,6 +5,8 @@ import 'package:intl/intl.dart';
 import 'package:tennis_cup/core/di/service_locator.dart';
 import 'package:tennis_cup/data/models/arena.dart';
 import 'package:tennis_cup/data/models/match.dart';
+import 'package:tennis_cup/data/models/tournament.dart';
+import 'package:tennis_cup/generated/l10n.dart';
 import 'package:tennis_cup/routing/app_router.dart';
 import 'package:tennis_cup/ui/core/themes/color_utils.dart';
 import 'package:tennis_cup/ui/view_only/home/view_models/live_match_cubit.dart';
@@ -17,16 +19,25 @@ import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 final _dateFormatter = DateFormat('yyyy-MM-dd');
 
-String _formatGender(String gender) =>
-    gender.toLowerCase() == 'female' ? 'Women' : 'Men';
-
 class LiveStreamMatch extends StatelessWidget {
   final Match match;
 
   const LiveStreamMatch({super.key, required this.match});
 
+  String _genderLabel(S s, String gender) =>
+      gender.toLowerCase() == 'female' ? s.womenLabel : s.menLabel;
+
+  String _timeLabel(S s, Time t) => switch (t) {
+        Time.Morning => s.timeLabelMorning,
+        Time.Day => s.timeLabelDay,
+        Time.Evening => s.timeLabelEvening,
+        Time.Night => s.timeLabelNight,
+        Time.Midnight => s.timeLabelMidnight,
+      };
+
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
     return BlocProvider<LiveMatchCubit>(
       create: (_) => LiveMatchCubit(
         matchId: match.id.toString(),
@@ -77,13 +88,13 @@ class LiveStreamMatch extends StatelessWidget {
                                     color: arenaColorToMaterial(match.arenaColor), size: 8),
                                 const SizedBox(width: 8),
                                 Text(
-                                  'Arena: ${match.arenaName}',
+                                  s.arenaFilter(match.arenaName),
                                   style: Theme.of(context).textTheme.bodyMedium,
                                 ),
                               ],
                             ),
                             Text(
-                              '${_dateFormatter.format(match.scheduledStart)} ${_formatGender(match.tournamentGender)}, ${match.tournamentTime.name}',
+                              '${_dateFormatter.format(match.scheduledStart)} ${_genderLabel(s, match.tournamentGender)}, ${_timeLabel(s, match.tournamentTime)}',
                               style: Theme.of(context).textTheme.bodySmall,
                             ),
                           ],

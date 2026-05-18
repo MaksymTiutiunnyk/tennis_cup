@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tennis_cup/generated/l10n.dart';
 import 'package:tennis_cup/ui/auth/view_models/auth_cubit.dart';
 import 'package:tennis_cup/ui/auth/view_models/auth_view_cubit.dart';
 import 'package:tennis_cup/ui/core/widgets/user_registration_form_body.dart';
@@ -9,18 +10,22 @@ class RegisterContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
     return BlocConsumer<AuthCubit, AuthState>(
       listener: (context, state) {
         if (state is AuthUnauthenticated && state.message != null) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.message!)),
+            SnackBar(content: Text(S.of(context).registrationSubmitted)),
           );
           context.read<AuthViewCubit>().showLogin();
         }
         if (state is AuthError) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.message)),
-          );
+          ScaffoldMessenger.of(context)
+            ..hideCurrentSnackBar()
+            ..showSnackBar(SnackBar(
+              content: Text(state.message),
+              backgroundColor: Theme.of(context).colorScheme.error,
+            ));
         }
       },
       builder: (context, state) {
@@ -29,14 +34,14 @@ class RegisterContent extends StatelessWidget {
           child: Column(
             children: [
               Text(
-                'Create account',
+                s.createAccount,
                 style: Theme.of(context).textTheme.headlineLarge,
               ),
               const SizedBox(height: 16),
               UserRegistrationFormBody(
                 availableRoles: const ['PLAYER', 'REFEREE'],
                 isLoading: state is AuthLoading,
-                submitLabel: 'Register',
+                submitLabel: s.register,
                 onSubmit: ({
                   role,
                   login,
@@ -65,7 +70,7 @@ class RegisterContent extends StatelessWidget {
                 },
                 footer: TextButton(
                   onPressed: context.read<AuthViewCubit>().showLogin,
-                  child: const Text('Already have an account? Sign in'),
+                  child: Text(s.alreadyHaveAccount),
                 ),
               ),
             ],

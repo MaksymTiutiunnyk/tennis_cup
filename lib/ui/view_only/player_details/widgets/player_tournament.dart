@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import 'package:tennis_cup/data/models/user.dart';
+import 'package:tennis_cup/data/models/gender.dart';
 import 'package:tennis_cup/data/models/tournament.dart';
+import 'package:tennis_cup/data/models/user.dart';
+import 'package:tennis_cup/generated/l10n.dart';
 import 'package:tennis_cup/routing/app_router.dart';
 import 'package:tennis_cup/ui/view_only/schedule/view_models/arena_filter_cubit.dart';
 import 'package:tennis_cup/ui/view_only/schedule/view_models/schedule_date_cubit.dart';
@@ -39,8 +41,7 @@ class PlayerTournament extends StatelessWidget {
     for (final match in tournament.matches!) {
       if (match.bluePlayer.id == player.id && match.blueScore == 3) {
         wins++;
-      } else if (match.redPlayer.id == player.id &&
-          match.redScore == 3) {
+      } else if (match.redPlayer.id == player.id && match.redScore == 3) {
         wins++;
       }
     }
@@ -52,18 +53,28 @@ class PlayerTournament extends StatelessWidget {
     for (final match in tournament.matches!) {
       if (match.bluePlayer.id == player.id && match.redScore == 3) {
         loses++;
-      } else if (match.redPlayer.id == player.id &&
-          match.blueScore == 3) {
+      } else if (match.redPlayer.id == player.id && match.blueScore == 3) {
         loses++;
       }
     }
     return loses;
   }
 
+  String _timeLabel(S s, Time t) => switch (t) {
+        Time.Morning => s.timeLabelMorning,
+        Time.Day => s.timeLabelDay,
+        Time.Evening => s.timeLabelEvening,
+        Time.Night => s.timeLabelNight,
+        Time.Midnight => s.timeLabelMidnight,
+      };
+
   @override
   Widget build(BuildContext context) {
-    final index =
-        tournament.players.indexWhere((p) => p.id == player.id);
+    final s = S.of(context);
+    final index = tournament.players.indexWhere((p) => p.id == player.id);
+    final tournamentGender = tournament.gender.toLowerCase() == Gender.male.name
+        ? s.menLabel
+        : s.womenLabel;
 
     return InkWell(
       onTap: () {
@@ -92,7 +103,7 @@ class PlayerTournament extends StatelessWidget {
                   const SizedBox(width: 16),
                   Expanded(
                     child: Text(
-                      '${formatter.format(tournament.date)} ${tournament.gender}, ${tournament.time.name} ${tournament.arena.title}',
+                      '${formatter.format(tournament.date)} $tournamentGender, ${_timeLabel(s, tournament.time)} ${tournament.arena.title}',
                     ),
                   ),
                 ],
@@ -102,7 +113,7 @@ class PlayerTournament extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Position:',
+                    '${s.labelPosition}:',
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                   Text(
@@ -116,7 +127,7 @@ class PlayerTournament extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Wins:',
+                    s.labelWins,
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                   Text(
@@ -133,7 +144,7 @@ class PlayerTournament extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Loses:',
+                    s.labelLosses,
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                   Text(
@@ -150,11 +161,11 @@ class PlayerTournament extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Sets ratio:',
+                    s.labelSetsRatio,
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                   Text(
-                    _getSetsRatio().toString(),
+                    _getSetsRatio(),
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                 ],
@@ -164,7 +175,7 @@ class PlayerTournament extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Points:',
+                    '${s.labelPoints}:',
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                   Text(

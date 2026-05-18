@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tennis_cup/core/di/service_locator.dart';
 import 'package:tennis_cup/data/models/match.dart';
 import 'package:tennis_cup/data/services/dto/tournament_dto.dart';
+import 'package:tennis_cup/generated/l10n.dart';
 import 'package:tennis_cup/ui/user/referee/view_models/referee_match_cubit.dart';
 import 'package:tennis_cup/ui/user/referee/view_models/tournament_matches_cubit.dart';
 import 'package:tennis_cup/ui/user/referee/widgets/match_management_screen.dart';
@@ -119,6 +120,7 @@ class _TournamentManagementScreenState
   }
 
   Widget _buildBody(BuildContext context) {
+    final s = S.of(context);
     return BlocConsumer<TournamentMatchesCubit, TournamentMatchesState>(
       listener: (context, state) {
         if (state is TournamentMatchesLoaded) {
@@ -132,32 +134,43 @@ class _TournamentManagementScreenState
 
         if (matchesState is TournamentMatchesError) {
           return Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(matchesState.message),
-                const SizedBox(height: 12),
-                TextButton(
-                  onPressed: _matchesCubit.load,
-                  child: const Text('Retry'),
-                ),
-              ],
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.error_outline,
+                      color: Theme.of(context).colorScheme.error, size: 40),
+                  const SizedBox(height: 8),
+                  Text(
+                    matchesState.message,
+                    textAlign: TextAlign.center,
+                    style:
+                        TextStyle(color: Theme.of(context).colorScheme.error),
+                  ),
+                  const SizedBox(height: 16),
+                  FilledButton.icon(
+                    onPressed: _matchesCubit.load,
+                    icon: const Icon(Icons.refresh, size: 18),
+                    label: Text(s.retry),
+                  ),
+                ],
+              ),
             ),
           );
         }
 
-        final matches =
-            (matchesState as TournamentMatchesLoaded).matches;
+        final matches = (matchesState as TournamentMatchesLoaded).matches;
 
         if (matches.isEmpty) {
-          return const Center(child: Text('No matches found'));
+          return Center(child: Text(s.noMatchesFound));
         }
 
         final allDone = matches.every((m) =>
             m.status == MatchStatus.finished ||
             m.status == MatchStatus.technicalDefeat);
         if (allDone) {
-          return const Center(child: Text('Tournament complete'));
+          return Center(child: Text(s.tournamentComplete));
         }
 
         return BlocConsumer<RefereeMatchCubit, RefereeMatchState>(
@@ -191,7 +204,25 @@ class _TournamentManagementScreenState
             }
 
             if (matchState is RefereeMatchError) {
-              return Center(child: Text(matchState.message));
+              return Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.error_outline,
+                          color: Theme.of(context).colorScheme.error, size: 40),
+                      const SizedBox(height: 8),
+                      Text(
+                        matchState.message,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.error),
+                      ),
+                    ],
+                  ),
+                ),
+              );
             }
 
             return const Center(child: CircularProgressIndicator());

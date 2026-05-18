@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tennis_cup/generated/l10n.dart';
 import 'package:tennis_cup/ui/user/organizer/view_models/player_search_cubit.dart';
 
 export 'package:tennis_cup/ui/user/organizer/view_models/player_search_cubit.dart'
@@ -10,11 +11,13 @@ export 'package:tennis_cup/ui/user/organizer/view_models/player_search_cubit.dar
 class PlayerPicker extends StatefulWidget {
   final String? gender;
   final int? requiredPlayersCount;
+  final bool readOnly;
 
   const PlayerPicker({
     super.key,
     this.gender,
     this.requiredPlayersCount,
+    this.readOnly = false,
   });
 
   @override
@@ -63,6 +66,7 @@ class _PlayerPickerState extends State<PlayerPicker> {
 
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
     final colorScheme = Theme.of(context).colorScheme;
     return BlocBuilder<PlayerPickerCubit, PlayerPickerState>(
       builder: (context, state) {
@@ -86,21 +90,22 @@ class _PlayerPickerState extends State<PlayerPicker> {
                             style: const TextStyle(color: Colors.white),
                           ),
                           backgroundColor: _chipColor(context, p.status),
-                          onDeleted: () => _cubit.removePlayer(p.id),
+                          onDeleted: widget.readOnly
+                              ? null
+                              : () => _cubit.removePlayer(p.id),
                           deleteIconColor: Colors.white,
                         ))
                     .toList(),
               ),
               const SizedBox(height: 8),
             ],
+            if (!widget.readOnly)
             TextField(
               controller: _ctrl,
               enabled: !searchDisabled,
               decoration: InputDecoration(
-                labelText: 'Add players',
-                hintText: searchDisabled
-                    ? 'Player slots are full'
-                    : 'Search by name…',
+                labelText: s.addPlayers,
+                hintText: searchDisabled ? s.playerSlotsFull : s.searchByNameHint,
                 suffixIcon: state.isLoading
                     ? const Padding(
                         padding: EdgeInsets.all(12),
@@ -114,7 +119,7 @@ class _PlayerPickerState extends State<PlayerPicker> {
               ),
               onChanged: _onChanged,
             ),
-            if (state.searchResults.isNotEmpty)
+            if (!widget.readOnly && state.searchResults.isNotEmpty)
               Card(
                 margin: const EdgeInsets.only(top: 2),
                 elevation: 4,

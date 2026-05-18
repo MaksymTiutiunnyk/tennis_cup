@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tennis_cup/core/utils/error_utils.dart';
 import 'package:tennis_cup/data/models/user.dart';
 import 'package:tennis_cup/data/repositories/player_repository.dart';
 
@@ -27,7 +28,7 @@ class PlayerSearchBloc extends Bloc<PlayerSearchEvent, PlayerSearchState> {
         emit(PlayerSearchLoaded(players));
       } catch (e) {
         if (isClosed) return;
-        emit(PlayerSearchError(e));
+        emit(PlayerSearchError(errorMessage(e)));
       }
     });
   }

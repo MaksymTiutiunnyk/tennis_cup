@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tennis_cup/data/models/match.dart';
 import 'package:tennis_cup/data/models/user.dart';
+import 'package:tennis_cup/generated/l10n.dart';
 import 'package:tennis_cup/ui/user/referee/view_models/referee_match_cubit.dart';
 import 'package:tennis_cup/ui/user/referee/widgets/card_chip.dart';
 
@@ -26,21 +27,22 @@ class PlayerColumn extends StatelessWidget {
   });
 
   Future<void> _confirmRevoke(BuildContext context, MatchCard card) async {
+    final s = S.of(context);
     final cubit = context.read<RefereeMatchCubit>();
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Revoke Card'),
+        title: Text(s.revokeCard),
         content: Text(
-            'Revoke the ${card.cardType.toLowerCase()} card issued to ${player.fullName}?'),
+            s.revokeCardConfirm(cardLabel(card.cardType, s), player.fullName)),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text('Cancel'),
+            child: Text(s.cancel),
           ),
           FilledButton(
             onPressed: () => Navigator.of(ctx).pop(true),
-            child: const Text('Revoke'),
+            child: Text(s.revoke),
           ),
         ],
       ),
@@ -54,7 +56,6 @@ class PlayerColumn extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        // Player name + serve indicator
         Padding(
           padding: EdgeInsets.symmetric(
             vertical: compact ? 4 : 6,
@@ -82,7 +83,6 @@ class PlayerColumn extends StatelessWidget {
           ),
         ),
 
-        // Score tap area
         Expanded(
           child: InkWell(
             onTap: onScore,
@@ -105,7 +105,6 @@ class PlayerColumn extends StatelessWidget {
           ),
         ),
 
-        // Issued cards — tappable to revoke
         if (issuedCards.isNotEmpty)
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 4),
