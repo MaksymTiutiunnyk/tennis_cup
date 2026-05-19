@@ -44,6 +44,7 @@ class OrganizerTournamentsCubit extends Cubit<OrganizerTournamentsState> {
   }
 
   Future<void> create(CreateUpdateTournamentRequest request) async {
+    emit(OrgTournamentsLoading());
     try {
       await _repository.createTournament(request);
       await _reload();
@@ -54,6 +55,7 @@ class OrganizerTournamentsCubit extends Cubit<OrganizerTournamentsState> {
   }
 
   Future<void> update(int id, CreateUpdateTournamentRequest request) async {
+    emit(OrgTournamentsLoading());
     try {
       await _repository.updateTournament(id, request);
       await _reload();
