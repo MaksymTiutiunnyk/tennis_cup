@@ -1,8 +1,8 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import 'package:tennis_cup/data/models/match.dart';
 import 'package:tennis_cup/ui/core/widgets/custom_navigator_observer.dart';
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 part 'video_player_state.dart';
 
@@ -12,6 +12,7 @@ class VideoPlayerCubit extends Cubit<VideoPlayerState> {
   }
 
   void runFullScreenPlayer(Match match, int startAt) {
+    state.youtubePlayerController?.dispose();
     var controller = YoutubePlayerController(
       initialVideoId: 'oZhjLx2tsLM',
       flags: YoutubePlayerFlags(
@@ -23,6 +24,7 @@ class VideoPlayerCubit extends Cubit<VideoPlayerState> {
   }
 
   void runPlayer(Match match, int startAt) {
+    state.youtubePlayerController?.dispose();
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     var controller = YoutubePlayerController(
       initialVideoId: 'oZhjLx2tsLM',
@@ -35,9 +37,8 @@ class VideoPlayerCubit extends Cubit<VideoPlayerState> {
   }
 
   void stopPlayer() {
-    if (state is PlayerStopped) {
-      return;
-    }
+    if (state is PlayerStopped) return;
+    state.youtubePlayerController?.dispose();
     emit(PlayerStopped());
   }
 
