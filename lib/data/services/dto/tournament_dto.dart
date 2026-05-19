@@ -9,6 +9,7 @@ class CreateUpdateTournamentRequestDto {
   final int requiredPlayersCount;
   final int setsToWin;
   final List<int> playerIds;
+  final String? youTubeUrl;
 
   const CreateUpdateTournamentRequestDto({
     required this.name,
@@ -21,6 +22,7 @@ class CreateUpdateTournamentRequestDto {
     required this.requiredPlayersCount,
     required this.setsToWin,
     required this.playerIds,
+    this.youTubeUrl,
   });
 
   Map<String, dynamic> toJson() => {
@@ -34,6 +36,8 @@ class CreateUpdateTournamentRequestDto {
         'requiredPlayersCount': requiredPlayersCount,
         'setsToWin': setsToWin,
         'playerIds': playerIds,
+        if (youTubeUrl != null && youTubeUrl!.isNotEmpty)
+          'youTubeUrl': youTubeUrl,
       };
 }
 
@@ -72,6 +76,7 @@ class TournamentDto {
   final int requiredPlayersCount;
   final int setsToWin;
   final int matchDurationMinutes;
+  final String? youTubeUrl;
   final List<TournamentParticipantDto> participants;
 
   const TournamentDto({
@@ -88,6 +93,7 @@ class TournamentDto {
     required this.matchDurationMinutes,
     required this.participants,
     this.refereeId,
+    this.youTubeUrl,
   });
 
   factory TournamentDto.fromJson(Map<String, dynamic> json) => TournamentDto(
@@ -105,6 +111,7 @@ class TournamentDto {
         setsToWin: (json['setsToWin'] as num?)?.toInt() ?? 1,
         matchDurationMinutes:
             (json['matchDurationMinutes'] as num?)?.toInt() ?? 30,
+        youTubeUrl: json['youTubeUrl'] as String?,
         participants: (json['participants'] as List<dynamic>?)
                 ?.map((e) => TournamentParticipantDto.fromJson(
                     e as Map<String, dynamic>))

@@ -30,6 +30,7 @@ class _TournamentFormState extends State<TournamentForm> {
   late final TextEditingController _durationCtrl;
   late final TextEditingController _requiredPlayersCtrl;
   late final TextEditingController _setsToWinCtrl;
+  late final TextEditingController _youTubeUrlCtrl;
 
   String _type = 'MORNING';
   String _gender = 'MALE';
@@ -54,6 +55,7 @@ class _TournamentFormState extends State<TournamentForm> {
         TextEditingController(text: e?.requiredPlayersCount.toString() ?? '6');
     _setsToWinCtrl =
         TextEditingController(text: e?.setsToWin?.toString() ?? '3');
+    _youTubeUrlCtrl = TextEditingController(text: e?.youTubeUrl ?? '');
 
     final initialReferees = e == null
         ? <SelectedReferee>[]
@@ -139,6 +141,7 @@ class _TournamentFormState extends State<TournamentForm> {
     _durationCtrl.dispose();
     _requiredPlayersCtrl.dispose();
     _setsToWinCtrl.dispose();
+    _youTubeUrlCtrl.dispose();
     _playerCubit.close();
     _refereeCubit.close();
     super.dispose();
@@ -211,6 +214,9 @@ class _TournamentFormState extends State<TournamentForm> {
           requiredPlayersCount:
               int.tryParse(_requiredPlayersCtrl.text.trim()) ?? 6,
           setsToWin: int.tryParse(_setsToWinCtrl.text.trim()) ?? 3,
+          youTubeUrl: _youTubeUrlCtrl.text.trim().isEmpty
+              ? null
+              : _youTubeUrlCtrl.text.trim(),
         ),
       );
     } else {
@@ -226,6 +232,9 @@ class _TournamentFormState extends State<TournamentForm> {
             int.tryParse(_requiredPlayersCtrl.text.trim()) ?? 6,
         setsToWin: int.tryParse(_setsToWinCtrl.text.trim()) ?? 3,
         playerIds: playerIds,
+        youTubeUrl: _youTubeUrlCtrl.text.trim().isEmpty
+            ? null
+            : _youTubeUrlCtrl.text.trim(),
       ));
     }
 
@@ -374,6 +383,14 @@ class _TournamentFormState extends State<TournamentForm> {
                               if (n == null || n < 1 || n > 4) return s.mustBe1To4;
                               return null;
                             },
+                    ),
+                    const SizedBox(height: 12),
+                    TextFormField(
+                      controller: _youTubeUrlCtrl,
+                      readOnly: widget.readOnly,
+                      decoration: InputDecoration(
+                          labelText: s.youTubeUrlField),
+                      keyboardType: TextInputType.url,
                     ),
                     const SizedBox(height: 12),
                     ListTile(

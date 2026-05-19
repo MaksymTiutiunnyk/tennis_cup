@@ -43,6 +43,7 @@ class Tournament extends Equatable {
   final int? setsToWin;
   final int? requiredPlayersCount;
   final int? matchDurationMinutes;
+  final String? youTubeUrl;
   final List<TournamentParticipant> participantInvitations;
   final List<TournamentRefereeInvitation> refereeInvitations;
 
@@ -63,6 +64,7 @@ class Tournament extends Equatable {
     this.setsToWin,
     this.requiredPlayersCount,
     this.matchDurationMinutes,
+    this.youTubeUrl,
     this.participantInvitations = const [],
     this.refereeInvitations = const [],
   });
@@ -86,6 +88,7 @@ class Tournament extends Equatable {
         refereeInvitations,
         setsToWin,
         matchDurationMinutes,
-        requiredPlayersCount
+        requiredPlayersCount,
+        youTubeUrl,
       ];
 }

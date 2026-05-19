@@ -9,6 +9,7 @@ class CreateUpdateTournamentRequest {
   final int requiredPlayersCount;
   final int setsToWin;
   final List<int> playerIds;
+  final String? youTubeUrl;
 
   const CreateUpdateTournamentRequest({
     required this.name,
@@ -21,5 +22,6 @@ class CreateUpdateTournamentRequest {
     required this.requiredPlayersCount,
     required this.setsToWin,
     required this.playerIds,
+    this.youTubeUrl,
   });
 }

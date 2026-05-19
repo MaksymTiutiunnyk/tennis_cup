@@ -132,6 +132,7 @@ class MatchDto {
   final String scheduledEnd;
   final String? actualStart;
   final String? actualEnd;
+  final String? youTubeUrl;
   final List<MatchSetDto> sets;
   final List<MatchCardDto> cards;
 
@@ -146,6 +147,7 @@ class MatchDto {
     required this.scheduledEnd,
     required this.sets,
     required this.setsToWin,
+    this.youTubeUrl,
     this.winnerId,
     this.firstServerId,
     this.actualStart,
@@ -167,6 +169,7 @@ class MatchDto {
         scheduledEnd: json['scheduledEnd'] as String? ?? '',
         actualStart: json['actualStart'] as String?,
         actualEnd: json['actualEnd'] as String?,
+        youTubeUrl: json['youTubeUrl'] as String?,
         sets: (json['sets'] as List<dynamic>?)
                 ?.map((s) => MatchSetDto.fromJson(s as Map<String, dynamic>))
                 .toList() ??

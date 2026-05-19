@@ -49,6 +49,7 @@ class _HomeState extends State<Home> {
               onExitFullScreen: () {
                 context.read<VideoPlayerCubit>().runPlayer(
                       state.match,
+                      state.youTubeUrl,
                       state.youtubePlayerController!.value.position.inSeconds,
                     );
               },
