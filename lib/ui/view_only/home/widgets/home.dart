@@ -98,7 +98,7 @@ class _HomeState extends State<Home> {
 
   @override
   void deactivate() {
-    var currentController =
+    final currentController =
         context.read<VideoPlayerCubit>().state.youtubePlayerController;
     if (currentController == null) {
       super.deactivate();
@@ -112,6 +112,7 @@ class _HomeState extends State<Home> {
         startAt: currentController.value.position.inSeconds,
       ),
     );
+    currentController.dispose();
     super.deactivate();
   }
 }

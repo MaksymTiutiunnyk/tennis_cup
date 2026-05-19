@@ -44,14 +44,9 @@ class LiveStreamMatch extends StatelessWidget {
         matchRepository: ServiceLocator.matchRepository,
       ),
       child: BlocBuilder<VideoPlayerCubit, VideoPlayerState>(
-        builder: (context, state) {
-          var isPlaying = false;
-          var state = context.read<VideoPlayerCubit>().state;
-          if (state is PlayerRunning) {
-            if (state.match == match) {
-              isPlaying = true;
-            }
-          }
+        builder: (context, videoState) {
+          final isPlaying =
+              videoState is PlayerRunning && videoState.match == match;
 
           return Container(
             margin: const EdgeInsets.fromLTRB(8, 0, 8, 8),
@@ -85,7 +80,9 @@ class LiveStreamMatch extends StatelessWidget {
                             Row(
                               children: [
                                 Icon(Icons.circle,
-                                    color: arenaColorToMaterial(match.arenaColor), size: 8),
+                                    color:
+                                        arenaColorToMaterial(match.arenaColor),
+                                    size: 8),
                                 const SizedBox(width: 8),
                                 Text(
                                   s.arenaFilter(match.arenaName),
@@ -105,12 +102,9 @@ class LiveStreamMatch extends StatelessWidget {
                           if (isPlaying) {
                             context.read<VideoPlayerCubit>().stopPlayer();
                           } else {
-                            context.read<VideoPlayerCubit>().runPlayer(
-                                match,
-                                state.youtubePlayerController != null
-                                    ? state.youtubePlayerController!.value
-                                        .position.inSeconds
-                                    : 0);
+                            context
+                                .read<VideoPlayerCubit>()
+                                .runPlayer(match, 0);
                           }
                         },
                         icon: Icon(
@@ -127,7 +121,7 @@ class LiveStreamMatch extends StatelessWidget {
                   child: isPlaying
                       ? YoutubePlayerBuilder(
                           player: YoutubePlayer(
-                            controller: state.youtubePlayerController!,
+                            controller: videoState.youtubePlayerController!,
                           ),
                           builder: (context, player) {
                             return player;
@@ -137,8 +131,8 @@ class LiveStreamMatch extends StatelessWidget {
                                 .read<VideoPlayerCubit>()
                                 .runFullScreenPlayer(
                                   match,
-                                  state.youtubePlayerController!.value.position
-                                      .inSeconds,
+                                  videoState.youtubePlayerController!.value
+                                      .position.inSeconds,
                                 );
                           },
                         )
@@ -151,19 +145,15 @@ class LiveStreamMatch extends StatelessWidget {
                             final String blueLabel;
                             final String redLabel;
                             if (state != null && state.isTechnicalDefeat) {
-                              blueLabel = state.winnerId == bluePlayer.id
-                                  ? 'W'
-                                  : 'L';
-                              redLabel = state.winnerId == redPlayer.id
-                                  ? 'W'
-                                  : 'L';
-                            } else {
                               blueLabel =
-                                  (state?.blueScore ?? match.blueScore)
-                                      .toString();
+                                  state.winnerId == bluePlayer.id ? 'W' : 'L';
                               redLabel =
-                                  (state?.redScore ?? match.redScore)
-                                      .toString();
+                                  state.winnerId == redPlayer.id ? 'W' : 'L';
+                            } else {
+                              blueLabel = (state?.blueScore ?? match.blueScore)
+                                  .toString();
+                              redLabel = (state?.redScore ?? match.redScore)
+                                  .toString();
                             }
                             return Container(
                               padding: const EdgeInsets.symmetric(
