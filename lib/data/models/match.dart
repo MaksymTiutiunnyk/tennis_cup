@@ -73,6 +73,7 @@ class Match extends Equatable {
   final int? refereeId;
   final int? firstServerId;
   final int? winnerId;
+  final String? youTubeUrl;
   final List<MatchSet> sets;
   final List<MatchCard> cards;
 
@@ -96,6 +97,7 @@ class Match extends Equatable {
     this.refereeId,
     this.firstServerId,
     this.winnerId,
+    this.youTubeUrl,
     this.sets = const [],
     this.cards = const [],
   });
@@ -103,10 +105,8 @@ class Match extends Equatable {
   bool get isTechnicalDefeat => status == MatchStatus.technicalDefeat;
   List<int> get blueSetScores => sets.map((s) => s.blueScore).toList();
   List<int> get redSetScores => sets.map((s) => s.redScore).toList();
-  int get blueScore =>
-      sets.where((s) => s.winnerId == bluePlayer.id).length;
-  int get redScore =>
-      sets.where((s) => s.winnerId == redPlayer.id).length;
+  int get blueScore => sets.where((s) => s.winnerId == bluePlayer.id).length;
+  int get redScore => sets.where((s) => s.winnerId == redPlayer.id).length;
 
   @override
   List<Object?> get props => [

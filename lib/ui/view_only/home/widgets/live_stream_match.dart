@@ -27,6 +27,18 @@ class LiveStreamMatch extends StatelessWidget {
   String _genderLabel(S s, String gender) =>
       gender.toLowerCase() == 'female' ? s.womenLabel : s.menLabel;
 
+  String _scoreLabel(Match? liveState, Match fallback, {required bool isBlue}) {
+    final player = isBlue
+        ? (liveState?.bluePlayer ?? fallback.bluePlayer)
+        : (liveState?.redPlayer ?? fallback.redPlayer);
+    if (liveState != null && liveState.isTechnicalDefeat) {
+      return liveState.winnerId == player.id ? 'W' : 'L';
+    }
+    return isBlue
+        ? (liveState?.blueScore ?? fallback.blueScore).toString()
+        : (liveState?.redScore ?? fallback.redScore).toString();
+  }
+
   String _timeLabel(S s, Time t) => switch (t) {
         Time.Morning => s.timeLabelMorning,
         Time.Day => s.timeLabelDay,
@@ -43,119 +55,108 @@ class LiveStreamMatch extends StatelessWidget {
         matchId: match.id.toString(),
         matchRepository: ServiceLocator.matchRepository,
       ),
-      child: BlocBuilder<VideoPlayerCubit, VideoPlayerState>(
-        builder: (context, videoState) {
-          final isPlaying =
-              videoState is PlayerRunning && videoState.match == match;
+      child: BlocBuilder<LiveMatchCubit, Match?>(
+        builder: (context, liveState) {
+          final youTubeUrl = liveState?.youTubeUrl;
+          return BlocBuilder<VideoPlayerCubit, VideoPlayerState>(
+            builder: (context, videoState) {
+              final isPlaying =
+                  videoState is PlayerRunning && videoState.match == match;
 
-          return Container(
-            margin: const EdgeInsets.fromLTRB(8, 0, 8, 8),
-            child: Column(
-              children: [
-                Container(
-                  padding: const EdgeInsets.fromLTRB(16, 8, 0, 8),
-                  decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.primaryContainer),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      InkWell(
-                        onTap: () {
-                          context
-                              .read<ScheduleDateCubit>()
-                              .selectDate(match.scheduledStart);
-                          context
-                              .read<TimeFilterCubit>()
-                              .selectTime(match.tournamentTime);
-                          context.read<ArenaFilterCubit>().selectArena(Arena(
-                                id: match.arenaId,
-                                title: match.arenaName,
-                                color: match.arenaColor,
-                              ));
-                          context.go(AppRoutes.viewSchedule);
-                        },
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
+              return Container(
+                margin: const EdgeInsets.fromLTRB(8, 0, 8, 8),
+                child: Column(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.fromLTRB(16, 8, 0, 8),
+                      decoration: BoxDecoration(
+                          color:
+                              Theme.of(context).colorScheme.primaryContainer),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          InkWell(
+                            onTap: () {
+                              context
+                                  .read<ScheduleDateCubit>()
+                                  .selectDate(match.scheduledStart);
+                              context
+                                  .read<TimeFilterCubit>()
+                                  .selectTime(match.tournamentTime);
+                              context
+                                  .read<ArenaFilterCubit>()
+                                  .selectArena(Arena(
+                                    id: match.arenaId,
+                                    title: match.arenaName,
+                                    color: match.arenaColor,
+                                  ));
+                              context.go(AppRoutes.viewSchedule);
+                            },
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Icon(Icons.circle,
-                                    color:
-                                        arenaColorToMaterial(match.arenaColor),
-                                    size: 8),
-                                const SizedBox(width: 8),
+                                Row(
+                                  children: [
+                                    Icon(Icons.circle,
+                                        color: arenaColorToMaterial(
+                                            match.arenaColor),
+                                        size: 8),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      s.arenaFilter(match.arenaName),
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium,
+                                    ),
+                                  ],
+                                ),
                                 Text(
-                                  s.arenaFilter(match.arenaName),
-                                  style: Theme.of(context).textTheme.bodyMedium,
+                                  '${_dateFormatter.format(match.scheduledStart)} ${_genderLabel(s, match.tournamentGender)}, ${_timeLabel(s, match.tournamentTime)}',
+                                  style: Theme.of(context).textTheme.bodySmall,
                                 ),
                               ],
                             ),
-                            Text(
-                              '${_dateFormatter.format(match.scheduledStart)} ${_genderLabel(s, match.tournamentGender)}, ${_timeLabel(s, match.tournamentTime)}',
-                              style: Theme.of(context).textTheme.bodySmall,
-                            ),
-                          ],
-                        ),
-                      ),
-                      IconButton(
-                        onPressed: () {
-                          if (isPlaying) {
-                            context.read<VideoPlayerCubit>().stopPlayer();
-                          } else {
-                            context
-                                .read<VideoPlayerCubit>()
-                                .runPlayer(match, 0);
-                          }
-                        },
-                        icon: Icon(
-                          isPlaying
-                              ? Icons.play_disabled_rounded
-                              : Icons.play_arrow_rounded,
-                          size: 30,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Expanded(
-                  child: isPlaying
-                      ? YoutubePlayerBuilder(
-                          player: YoutubePlayer(
-                            controller: videoState.youtubePlayerController!,
                           ),
-                          builder: (context, player) {
-                            return player;
-                          },
-                          onEnterFullScreen: () {
-                            context
-                                .read<VideoPlayerCubit>()
-                                .runFullScreenPlayer(
-                                  match,
-                                  videoState.youtubePlayerController!.value
-                                      .position.inSeconds,
-                                );
-                          },
-                        )
-                      : BlocBuilder<LiveMatchCubit, Match?>(
-                          builder: (context, state) {
-                            final bluePlayer =
-                                state?.bluePlayer ?? match.bluePlayer;
-                            final redPlayer =
-                                state?.redPlayer ?? match.redPlayer;
-                            final String blueLabel;
-                            final String redLabel;
-                            if (state != null && state.isTechnicalDefeat) {
-                              blueLabel =
-                                  state.winnerId == bluePlayer.id ? 'W' : 'L';
-                              redLabel =
-                                  state.winnerId == redPlayer.id ? 'W' : 'L';
-                            } else {
-                              blueLabel = (state?.blueScore ?? match.blueScore)
-                                  .toString();
-                              redLabel = (state?.redScore ?? match.redScore)
-                                  .toString();
-                            }
-                            return Container(
+                          if (youTubeUrl != null)
+                            IconButton(
+                              onPressed: () {
+                                if (isPlaying) {
+                                  context.read<VideoPlayerCubit>().stopPlayer();
+                                } else {
+                                  context
+                                      .read<VideoPlayerCubit>()
+                                      .runPlayer(match, youTubeUrl, 0);
+                                }
+                              },
+                              icon: Icon(
+                                isPlaying
+                                    ? Icons.play_disabled_rounded
+                                    : Icons.play_arrow_rounded,
+                                size: 30,
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                    Expanded(
+                      child: isPlaying
+                          ? YoutubePlayerBuilder(
+                              player: YoutubePlayer(
+                                controller: videoState.youtubePlayerController!,
+                              ),
+                              builder: (context, player) => player,
+                              onEnterFullScreen: () {
+                                context
+                                    .read<VideoPlayerCubit>()
+                                    .runFullScreenPlayer(
+                                      match,
+                                      youTubeUrl ?? '',
+                                      videoState.youtubePlayerController!.value
+                                          .position.inSeconds,
+                                    );
+                              },
+                            )
+                          : Container(
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 16, vertical: 8),
                               decoration: BoxDecoration(
@@ -166,22 +167,26 @@ class LiveStreamMatch extends StatelessWidget {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   LiveStreamMatchPlayer(
-                                    player: bluePlayer,
-                                    label: blueLabel,
+                                    player: liveState?.bluePlayer ??
+                                        match.bluePlayer,
+                                    label: _scoreLabel(liveState, match,
+                                        isBlue: true),
                                   ),
                                   const SizedBox(height: 16),
                                   LiveStreamMatchPlayer(
-                                    player: redPlayer,
-                                    label: redLabel,
+                                    player:
+                                        liveState?.redPlayer ?? match.redPlayer,
+                                    label: _scoreLabel(liveState, match,
+                                        isBlue: false),
                                   ),
                                 ],
                               ),
-                            );
-                          },
-                        ),
+                            ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              );
+            },
           );
         },
       ),

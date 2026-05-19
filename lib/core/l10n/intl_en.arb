@@ -279,5 +279,7 @@
       "cardType": { "type": "String" },
       "playerName": { "type": "String" }
     }
-  }
+  },
+
+  "youTubeUrlField": "YouTube URL (optional)"
 }

@@ -222,6 +222,7 @@ class MatchRepository {
       refereeId: dto.refereeId,
       firstServerId: dto.firstServerId,
       winnerId: dto.winnerId,
+      youTubeUrl: dto.youTubeUrl,
       sets: sortedSets
           .map((s) => MatchSet(
                 id: s.id,

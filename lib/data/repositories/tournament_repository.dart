@@ -183,6 +183,7 @@ class TournamentRepository {
       requiredPlayersCount: request.requiredPlayersCount,
       setsToWin: request.setsToWin,
       playerIds: request.playerIds,
+      youTubeUrl: request.youTubeUrl,
     ));
   }
 
@@ -201,6 +202,7 @@ class TournamentRepository {
         setsToWin: request.setsToWin,
         refereeIds: request.refereeIds,
         playerIds: request.playerIds,
+        youTubeUrl: request.youTubeUrl,
       ),
     );
   }
@@ -418,6 +420,7 @@ class TournamentRepository {
       setsToWin: dto.setsToWin,
       matchDurationMinutes: dto.matchDurationMinutes,
       requiredPlayersCount: dto.requiredPlayersCount,
+      youTubeUrl: dto.youTubeUrl,
       participantInvitations: dto.participants
           .where((p) => p.role == 'PLAYER')
           .map((p) => TournamentParticipant(
