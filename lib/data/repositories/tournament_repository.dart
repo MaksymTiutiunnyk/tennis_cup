@@ -120,6 +120,7 @@ class TournamentRepository {
       bluePlayer: bluePlayer,
       redPlayer: redPlayer,
       sets: sets,
+      youTubeUrl: dto.tournament.youTubeUrl,
     );
   }
 

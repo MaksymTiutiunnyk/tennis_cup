@@ -37,6 +37,7 @@ class TournamentBriefDto {
   final String gender;
   final String type;
   final String start;
+  final String? youTubeUrl;
 
   const TournamentBriefDto({
     required this.id,
@@ -44,6 +45,7 @@ class TournamentBriefDto {
     required this.gender,
     required this.type,
     required this.start,
+    this.youTubeUrl,
   });
 
   factory TournamentBriefDto.fromJson(Map<String, dynamic> json) =>
@@ -53,6 +55,7 @@ class TournamentBriefDto {
         gender: json['gender'] as String? ?? '',
         type: json['type'] as String? ?? '',
         start: json['start'] as String? ?? '',
+        youTubeUrl: json['youTubeUrl'] as String?,
       );
 }
 

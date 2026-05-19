@@ -11,9 +11,9 @@ class VideoPlayerCubit extends Cubit<VideoPlayerState> {
     CustomNavigatorObserver.stopPlayerCallback = stopPlayer;
   }
 
-  void runFullScreenPlayer(Match match, String youTubeUrl, int startAt) {
+  void runFullScreenPlayer(Match match, int startAt) {
     state.youtubePlayerController?.dispose();
-    final videoId = YoutubePlayer.convertUrlToId(youTubeUrl) ?? '';
+    final videoId = YoutubePlayer.convertUrlToId(match.youTubeUrl ?? '') ?? '';
     var controller = YoutubePlayerController(
       initialVideoId: videoId,
       flags: YoutubePlayerFlags(
@@ -21,13 +21,13 @@ class VideoPlayerCubit extends Cubit<VideoPlayerState> {
         enableCaption: false,
       ),
     );
-    emit(PlayerFullScreenRunning(controller, match, youTubeUrl));
+    emit(PlayerFullScreenRunning(controller, match));
   }
 
-  void runPlayer(Match match, String youTubeUrl, int startAt) {
+  void runPlayer(Match match, int startAt) {
     state.youtubePlayerController?.dispose();
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-    final videoId = YoutubePlayer.convertUrlToId(youTubeUrl) ?? '';
+    final videoId = YoutubePlayer.convertUrlToId(match.youTubeUrl ?? '') ?? '';
     var controller = YoutubePlayerController(
       initialVideoId: videoId,
       flags: YoutubePlayerFlags(
@@ -35,7 +35,7 @@ class VideoPlayerCubit extends Cubit<VideoPlayerState> {
         enableCaption: false,
       ),
     );
-    emit(PlayerRunning(controller, match, youTubeUrl));
+    emit(PlayerRunning(controller, match));
   }
 
   void stopPlayer() {

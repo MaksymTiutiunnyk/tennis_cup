@@ -10,15 +10,12 @@ class PlayerStopped extends VideoPlayerState {}
 
 class PlayerRunning extends VideoPlayerState {
   Match match;
-  String youTubeUrl; // TODO: remove when backend returns youTubeUrl
 
-  PlayerRunning(super.youtubePlayerController, this.match, this.youTubeUrl);
+  PlayerRunning(super.youtubePlayerController, this.match);
 }
 
 class PlayerFullScreenRunning extends VideoPlayerState {
   Match match;
-  String youTubeUrl;
 
-  PlayerFullScreenRunning(
-      super.youtubePlayerController, this.match, this.youTubeUrl);
+  PlayerFullScreenRunning(super.youtubePlayerController, this.match);
 }
