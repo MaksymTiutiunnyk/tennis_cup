@@ -105,7 +105,7 @@ class _ScrollableBodyState extends State<ScrollableBody> {
             ],
           ),
           Positioned(
-            top: 340,
+            top: 365,
             child: Container(
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
@@ -125,7 +125,10 @@ class _ScrollableBodyState extends State<ScrollableBody> {
                 radius: 25,
                 backgroundColor:
                     Theme.of(context).colorScheme.secondaryContainer,
-                child: Text(s.vs),
+                child: const Text(
+                  'VS',
+                  style: TextStyle(height: 0),
+                ),
               ),
             ),
           ),
