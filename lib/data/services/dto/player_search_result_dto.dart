@@ -1,4 +1,4 @@
-class UserSearchResultDto {
+class PlayerSearchResultDto {
   final int userId;
   final String firstName;
   final String lastName;
@@ -7,7 +7,7 @@ class UserSearchResultDto {
   final String? country;
   final String? avatarUrl;
 
-  const UserSearchResultDto({
+  const PlayerSearchResultDto({
     required this.userId,
     required this.firstName,
     required this.lastName,
@@ -17,8 +17,8 @@ class UserSearchResultDto {
     this.avatarUrl,
   });
 
-  factory UserSearchResultDto.fromJson(Map<String, dynamic> json) =>
-      UserSearchResultDto(
+  factory PlayerSearchResultDto.fromJson(Map<String, dynamic> json) =>
+      PlayerSearchResultDto(
         userId: (json['userId'] as num).toInt(),
         firstName: json['firstName'] as String? ?? '',
         lastName: json['lastName'] as String? ?? '',

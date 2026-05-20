@@ -5,7 +5,7 @@ import 'package:tennis_cup/core/pagination/page_result.dart';
 import 'package:tennis_cup/data/models/gender.dart';
 import 'package:tennis_cup/data/services/dto/rating_record_dto.dart';
 import 'package:tennis_cup/data/services/dto/player_profile_dto.dart';
-import 'package:tennis_cup/data/services/dto/user_search_result_dto.dart';
+import 'package:tennis_cup/data/services/dto/player_search_result_dto.dart';
 
 abstract interface class IPlayerService {
   Future<PageResult<RatingRecordDto>> fetchRankingPlayers({
@@ -13,7 +13,7 @@ abstract interface class IPlayerService {
     Gender? genderFilter,
   });
 
-  Future<List<UserSearchResultDto>> searchPlayersByName({
+  Future<List<PlayerSearchResultDto>> searchPlayersByName({
     required String query,
     String? gender,
   });

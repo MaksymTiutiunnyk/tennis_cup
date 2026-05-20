@@ -7,7 +7,7 @@ import 'package:tennis_cup/data/models/gender.dart';
 import 'package:tennis_cup/data/services/abstract/i_player_service.dart';
 import 'package:tennis_cup/data/services/dto/rating_record_dto.dart';
 import 'package:tennis_cup/data/services/dto/player_profile_dto.dart';
-import 'package:tennis_cup/data/services/dto/user_search_result_dto.dart';
+import 'package:tennis_cup/data/services/dto/player_search_result_dto.dart';
 
 class RestPlayerService implements IPlayerService {
   final Dio _dio;
@@ -49,7 +49,7 @@ class RestPlayerService implements IPlayerService {
   }
 
   @override
-  Future<List<UserSearchResultDto>> searchPlayersByName({
+  Future<List<PlayerSearchResultDto>> searchPlayersByName({
     required String query,
     String? gender,
   }) async {
@@ -64,7 +64,7 @@ class RestPlayerService implements IPlayerService {
     );
     final content = (response.data!['content'] as List<dynamic>);
     return content
-        .map((e) => UserSearchResultDto.fromJson(e as Map<String, dynamic>))
+        .map((e) => PlayerSearchResultDto.fromJson(e as Map<String, dynamic>))
         .toList();
   }
 
