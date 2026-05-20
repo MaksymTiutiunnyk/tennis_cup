@@ -165,7 +165,7 @@
   "technicalPauseTitle": "Технічна пауза",
   "technicalPauseContent": "Почати технічну паузу?",
   "technicalDefeatMatch": "Технічна поразка — Матч",
-  "firstServer": "Першій подачі",
+  "firstServer": "Перша подача",
   "medicalButton": "Медичний",
   "techPauseButton": "Тех. пауза",
   "tdMatchButton": "ТП Матч",
@@ -193,7 +193,7 @@
   "timeLabelDay": "День",
   "timeLabelEvening": "Вечір",
   "timeLabelNight": "Ніч",
-  "timeLabelMidnight": "Північ",
+  "timeLabelMidnight": "Опівніч",
 
   "oopsSomethingWentWrong": "Сталася неочікувана помилка",
   "noWinnersFound": "Переможців не знайдено",
@@ -246,7 +246,7 @@
   "appBarTitleRanking": "Tennis Cup: Рейтинг",
   "appBarTitleNews": "Tennis Cup: Новини",
 
-  "selectFirstServer": "Оберіть першого подаючого перед початком",
+  "selectFirstServer": "Оберіть першу подачу перед початком",
   "registrationSubmitted": "Реєстрацію подано. Очікуйте підтвердження адміністратора.",
 
   "tabSettings": "Налаштування",
