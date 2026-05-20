@@ -53,7 +53,6 @@ class _ScheduledMatchBody extends StatelessWidget {
                         match.bluePlayer.id.toString(),
                         match.redPlayer.id.toString(),
                       ),
-                      extra: (p1: match.bluePlayer, p2: match.redPlayer),
                     ),
                     icon: const Icon(Icons.people),
                   ),
@@ -66,7 +65,6 @@ class _ScheduledMatchBody extends StatelessWidget {
                     onTap: () => context.push(
                       AppRoutes.playerDetails(
                           match.bluePlayer.id.toString()),
-                      extra: match.bluePlayer,
                     ),
                     child: Text(
                       match.bluePlayer.fullName,
@@ -96,7 +94,6 @@ class _ScheduledMatchBody extends StatelessWidget {
                     onTap: () => context.push(
                       AppRoutes.playerDetails(
                           match.redPlayer.id.toString()),
-                      extra: match.redPlayer,
                     ),
                     child: Text(
                       match.redPlayer.fullName,
