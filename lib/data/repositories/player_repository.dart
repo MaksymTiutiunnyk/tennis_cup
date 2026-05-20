@@ -36,6 +36,7 @@ class PlayerRepository {
         birthDate: dto.birthDate,
         city: dto.city ?? '',
         country: dto.country ?? '',
+        imageUrl: dto.avatarUrl ?? '',
         rating: dto.ratingValue,
       );
 

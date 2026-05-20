@@ -9,6 +9,7 @@ class RatingRecordDto {
   final String? city;
   final String? country;
   final String? birthDate;
+  final String? avatarUrl;
 
   const RatingRecordDto({
     required this.id,
@@ -21,6 +22,7 @@ class RatingRecordDto {
     this.city,
     this.country,
     this.birthDate,
+    this.avatarUrl,
   });
 
   factory RatingRecordDto.fromJson(Map<String, dynamic> json) =>
@@ -35,5 +37,6 @@ class RatingRecordDto {
         city: json['city'] as String?,
         country: json['country'] as String?,
         birthDate: json['birthDate'] as String?,
+        avatarUrl: json['avatarUrl'] as String?,
       );
 }
