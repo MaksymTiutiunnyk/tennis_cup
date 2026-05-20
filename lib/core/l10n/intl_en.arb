@@ -298,6 +298,8 @@
   "tooltipBack": "Back",
   "tooltipRefresh": "Refresh",
   "notificationView": "View",
+  "notificationPlayerInvitation": "New tournament invitation",
+  "notificationRefereeInvitation": "New referee tournament invitation",
 
   "generalTimeoutLabel": "Timeout",
   "tapToDismiss": "Tap anywhere to dismiss",

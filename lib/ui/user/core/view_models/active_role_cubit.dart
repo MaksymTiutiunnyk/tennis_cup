@@ -16,6 +16,18 @@ class ActiveRoleCubit extends Cubit<ActiveRoleState> {
 
   void switchRole(UserRole role) {
     if (!state.availableRoles.contains(role)) return;
-    emit(ActiveRoleState(availableRoles: state.availableRoles, activeRole: role));
+    emit(ActiveRoleState(
+      availableRoles: state.availableRoles,
+      activeRole: role,
+      invitationsReloadToken: state.invitationsReloadToken,
+    ));
+  }
+
+  void requestInvitationsReload() {
+    emit(ActiveRoleState(
+      availableRoles: state.availableRoles,
+      activeRole: state.activeRole,
+      invitationsReloadToken: state.invitationsReloadToken + 1,
+    ));
   }
 }

@@ -5,12 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:go_router/go_router.dart';
 import 'package:tennis_cup/core/di/service_locator.dart';
 import 'package:tennis_cup/data/models/arena.dart';
 import 'package:tennis_cup/data/models/tournament.dart';
+import 'package:tennis_cup/data/models/user_role.dart';
 import 'package:tennis_cup/firebase_options.dart';
 import 'package:tennis_cup/generated/l10n.dart';
 import 'package:tennis_cup/routing/app_router.dart';
@@ -61,6 +62,8 @@ class TennisCup extends StatefulWidget {
 class _TennisCupState extends State<TennisCup> {
   late final GoRouter _router;
   final _navigatorKey = GlobalKey<NavigatorState>();
+  String? _pendingNotificationType;
+  String? _pendingNotificationRole;
 
   @override
   void initState() {
@@ -77,16 +80,16 @@ class _TennisCupState extends State<TennisCup> {
     FirebaseMessaging.onMessage.listen((message) {
       final ctx = _navigatorKey.currentContext;
       if (ctx == null || !ctx.mounted) return;
-      final title = message.notification?.title ?? '';
-      final body = message.notification?.body ?? '';
       final type = message.data['type'] as String?;
+      final role = message.data['role'] as String?;
+      final (content, hasAction) = _snackBarContent(ctx, type, role, message);
       ScaffoldMessenger.of(ctx).showSnackBar(
         SnackBar(
-          content: Text(body.isNotEmpty ? '$title\n$body' : title),
-          action: type == 'TOURNAMENT_INVITATION'
+          content: Text(content),
+          action: hasAction
               ? SnackBarAction(
                   label: S.of(ctx).notificationView,
-                  onPressed: () => _router.go(AppRoutes.userInvitations),
+                  onPressed: () => _handleNotificationTap(type, role),
                 )
               : null,
           duration: const Duration(seconds: 5),
@@ -95,20 +98,62 @@ class _TennisCupState extends State<TennisCup> {
     });
 
     FirebaseMessaging.onMessageOpenedApp.listen((message) {
-      _handleNotificationTap(message.data['type'] as String?);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        _handleNotificationTap(
+          message.data['type'] as String?,
+          message.data['role'] as String?,
+        );
+      });
     });
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final message = await FirebaseMessaging.instance.getInitialMessage();
       if (message == null || !mounted) return;
-      _handleNotificationTap(message.data['type'] as String?);
+      final type = message.data['type'] as String?;
+      if (type == null) return;
+      final ctx = _navigatorKey.currentContext;
+      if (ctx == null || !ctx.mounted) return;
+      if (ctx.read<AuthCubit>().state is AuthAuthenticated) {
+        _handleNotificationTap(type, message.data['role'] as String?);
+      } else {
+        _pendingNotificationType = type;
+        _pendingNotificationRole = message.data['role'] as String?;
+      }
     });
   }
 
-  void _handleNotificationTap(String? type) {
+  (String, bool) _snackBarContent(
+      BuildContext ctx, String? type, String? role, RemoteMessage message) {
     if (type == 'TOURNAMENT_INVITATION') {
-      _router.go(AppRoutes.userInvitations);
+      final s = S.of(ctx);
+      return (
+        role == 'REFEREE'
+            ? s.notificationRefereeInvitation
+            : s.notificationPlayerInvitation,
+        true,
+      );
     }
+    final title = message.notification?.title ?? '';
+    final body = message.notification?.body ?? '';
+    return (body.isNotEmpty ? '$title\n$body' : title, false);
+  }
+
+  void _handleNotificationTap(String? type, String? role) {
+    if (type != 'TOURNAMENT_INVITATION') return;
+    final ctx = _navigatorKey.currentContext;
+    if (ctx == null || !ctx.mounted) return;
+    final roleCubit = ctx.read<ActiveRoleCubit>();
+    final (targetRole, targetRoute) = role == 'REFEREE'
+        ? (UserRole.referee, AppRoutes.refereeInvitations)
+        : (UserRole.player, AppRoutes.userInvitations);
+    if (!roleCubit.state.availableRoles.contains(targetRole)) return;
+    roleCubit.switchRole(targetRole);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      _router.go(targetRoute);
+      roleCubit.requestInvitationsReload();
+    });
   }
 
   @override
@@ -165,6 +210,15 @@ class _TennisCupState extends State<TennisCup> {
           if (state is AuthAuthenticated) {
             roleCubit.initRoles(state.roles);
             notifCubit.init();
+            final pending = _pendingNotificationType;
+            if (pending != null) {
+              final pendingRole = _pendingNotificationRole;
+              _pendingNotificationType = null;
+              _pendingNotificationRole = null;
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (mounted) _handleNotificationTap(pending, pendingRole);
+              });
+            }
           } else if (state is AuthUnauthenticated) {
             roleCubit.initRoles([]);
           }

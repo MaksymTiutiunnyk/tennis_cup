@@ -286,6 +286,8 @@
   "tooltipBack": "Назад",
   "tooltipRefresh": "Оновити",
   "notificationView": "Переглянути",
+  "notificationPlayerInvitation": "Нове запрошення до турніру",
+  "notificationRefereeInvitation": "Нове запрошення судді до турніру",
 
   "generalTimeoutLabel": "Тайм-аут",
   "tapToDismiss": "Торкніться будь-де, щоб закрити",

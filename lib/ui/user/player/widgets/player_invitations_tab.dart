@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tennis_cup/core/di/service_locator.dart';
 import 'package:tennis_cup/data/models/tournament_invitation.dart';
 import 'package:tennis_cup/generated/l10n.dart';
+import 'package:tennis_cup/ui/user/core/view_models/active_role_cubit.dart';
 import 'package:tennis_cup/ui/user/player/view_models/invitations_cubit.dart';
 import 'package:tennis_cup/ui/user/player/widgets/tournament_invitation_card.dart';
 
@@ -16,7 +17,12 @@ class PlayerInvitationsTab extends StatelessWidget {
         repository: ServiceLocator.invitationsRepository,
         status: 'PENDING',
       ),
-      child: const _InvitationsListView(),
+      child: BlocListener<ActiveRoleCubit, ActiveRoleState>(
+        listenWhen: (prev, curr) =>
+            prev.invitationsReloadToken != curr.invitationsReloadToken,
+        listener: (context, _) => context.read<InvitationsCubit>().reload(),
+        child: const _InvitationsListView(),
+      ),
     );
   }
 }
