@@ -8,6 +8,7 @@ import 'package:tennis_cup/data/services/abstract/i_player_service.dart';
 import 'package:tennis_cup/data/services/dto/rating_record_dto.dart';
 import 'package:tennis_cup/data/services/dto/player_profile_dto.dart';
 import 'package:tennis_cup/data/services/dto/player_search_result_dto.dart';
+import 'package:tennis_cup/data/services/dto/user_brief_dto.dart';
 
 class RestPlayerService implements IPlayerService {
   final Dio _dio;
@@ -46,6 +47,18 @@ class RestPlayerService implements IPlayerService {
   Future<PlayerProfileDto> fetchPlayerById(int id) async {
     final response = await _dio.get('/api/v1/users/$id');
     return PlayerProfileDto.fromJson(response.data as Map<String, dynamic>);
+  }
+
+  @override
+  Future<List<UserBriefDto>> fetchUsersBatch(List<int> userIds) async {
+    if (userIds.isEmpty) return const [];
+    final response = await _dio.post<List<dynamic>>(
+      '/api/v1/users/batch',
+      data: {'userIds': userIds},
+    );
+    return response.data!
+        .map((e) => UserBriefDto.fromJson(e as Map<String, dynamic>))
+        .toList();
   }
 
   @override

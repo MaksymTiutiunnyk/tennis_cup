@@ -9,6 +9,7 @@ import 'package:tennis_cup/data/services/abstract/i_player_service.dart';
 import 'package:tennis_cup/data/services/dto/player_profile_dto.dart';
 import 'package:tennis_cup/data/services/dto/rating_record_dto.dart';
 import 'package:tennis_cup/data/services/dto/player_search_result_dto.dart';
+import 'package:tennis_cup/data/services/dto/user_brief_dto.dart';
 
 class PlayerRepository {
   final IPlayerService _service;
@@ -61,6 +62,23 @@ class PlayerRepository {
     final dto = await _service.fetchPlayerById(id);
     return _toUserFromProfile(dto);
   }
+
+  Future<Map<int, User>> fetchUsersBatch(Set<int> ids) async {
+    if (ids.isEmpty) return const {};
+    final dtos = await _service.fetchUsersBatch(ids.toList());
+    return {for (final dto in dtos) dto.id: _toUserFromBrief(dto)};
+  }
+
+  static User _toUserFromBrief(UserBriefDto dto) => User(
+        id: dto.id,
+        firstName: dto.firstName,
+        lastName: dto.lastName,
+        gender: genderFromString(dto.gender),
+        birthDate: dto.birthDate,
+        city: dto.city ?? '',
+        country: dto.country ?? '',
+        imageUrl: dto.avatarUrl ?? '',
+      );
 
   static User _toUserFromProfile(PlayerProfileDto dto) {
     final stats = dto.statistics;
