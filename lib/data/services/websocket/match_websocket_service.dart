@@ -2,11 +2,10 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:stomp_dart_client/stomp_dart_client.dart';
+import 'package:tennis_cup/config/app_config.dart';
 import 'package:tennis_cup/data/services/dto/match_dto.dart';
 
 class MatchWebSocketService {
-  static const _wsUrl = 'ws://localhost:8080/ws';
-
   late final StompClient _client;
   final _controllers = <String, StreamController<MatchDto>>{};
   final _stompSubs = <String, StompUnsubscribe>{};
@@ -14,7 +13,7 @@ class MatchWebSocketService {
   MatchWebSocketService() {
     _client = StompClient(
       config: StompConfig(
-        url: _wsUrl,
+        url: wsUrl,
         reconnectDelay: const Duration(seconds: 5),
         onConnect: _onConnect,
         onDisconnect: (_) => _resubscribeOnReconnect(),
