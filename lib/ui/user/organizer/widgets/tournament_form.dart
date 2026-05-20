@@ -97,6 +97,7 @@ class _TournamentFormState extends State<TournamentForm> {
     _loadArenas();
   }
 
+  // TODO: move methods to cubit
   Future<void> _resolveRefereeNames() async {
     final resolved = await Future.wait(
       _refereeCubit.state.selected.map((r) async {
@@ -117,22 +118,24 @@ class _TournamentFormState extends State<TournamentForm> {
   }
 
   Future<void> _resolvePlayerNames() async {
-    final resolved = await Future.wait(
-      _playerCubit.state.selected.map((p) async {
-        try {
-          final player =
-              await ServiceLocator.playerRepository.fetchPlayerById(p.id);
-          return SelectedPlayer(
-            id: p.id,
-            name: player.fullName,
-            status: p.status,
-          );
-        } catch (_) {
-          return p;
-        }
-      }),
-    );
-    if (!_playerCubit.isClosed) _playerCubit.syncInitial(resolved);
+    final selected = _playerCubit.state.selected;
+    if (selected.isEmpty) return;
+    try {
+      final players = await ServiceLocator.playerRepository
+          .fetchUsersBatch(selected.map((p) => p.id).toSet());
+      final resolved = selected
+          .map((p) => SelectedPlayer(
+                id: p.id,
+                name: players[p.id]?.fullName ?? p.name,
+                status: p.status,
+              ))
+          .toList();
+      if (!_playerCubit.isClosed) {
+        _playerCubit.syncInitial(resolved);
+      }
+    } catch (_) {
+      // leave names unresolved on failure
+    }
   }
 
   @override
@@ -269,176 +272,189 @@ class _TournamentFormState extends State<TournamentForm> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                    TextFormField(
-                      controller: _nameCtrl,
-                      readOnly: widget.readOnly,
-                      decoration: InputDecoration(labelText: s.tournamentName),
-                      validator: widget.readOnly
-                          ? null
-                          : (v) => (v == null || v.trim().isEmpty)
-                              ? s.required
-                              : null,
-                    ),
-                    const SizedBox(height: 12),
-                    DropdownButtonFormField<String>(
-                      value: _type,
-                      decoration: InputDecoration(labelText: s.tournamentType),
-                      items: [
-                        DropdownMenuItem(value: 'MORNING', child: Text(s.timeMorning)),
-                        DropdownMenuItem(value: 'DAY', child: Text(s.timeDay)),
-                        DropdownMenuItem(value: 'EVENING', child: Text(s.timeEvening)),
-                        DropdownMenuItem(value: 'NIGHT', child: Text(s.timeNight)),
-                        DropdownMenuItem(value: 'MIDNIGHT', child: Text(s.timeMidnight)),
-                      ],
-                      onChanged: widget.readOnly ? null : (v) => setState(() => _type = v!),
-                    ),
-                    const SizedBox(height: 12),
-                    DropdownButtonFormField<String>(
-                      value: _gender,
-                      decoration: InputDecoration(labelText: s.genderField),
-                      items: [
-                        DropdownMenuItem(value: 'MALE', child: Text(s.genderMale)),
-                        DropdownMenuItem(value: 'FEMALE', child: Text(s.genderFemale)),
-                      ],
-                      onChanged: widget.readOnly ? null : (v) => setState(() => _gender = v!),
-                    ),
-                    const SizedBox(height: 12),
-                    if (_arenas.isNotEmpty)
-                      DropdownButtonFormField<int>(
-                        value: _arenaId,
-                        decoration:
-                            InputDecoration(labelText: s.arenaField),
-                        items: _arenas
-                            .map((a) => DropdownMenuItem(
-                                value: int.tryParse(a.id),
-                                child: Text(
-                                    '${a.title} (${a.city ?? ''})'.trim())))
-                            .toList(),
-                        onChanged: widget.readOnly
-                            ? null
-                            : (v) => setState(() => _arenaId = v ?? 1),
-                        validator: widget.readOnly
-                            ? null
-                            : (v) => v == null ? s.required : null,
-                      )
-                    else
                       TextFormField(
+                        controller: _nameCtrl,
                         readOnly: widget.readOnly,
                         decoration:
-                            InputDecoration(labelText: s.arenaIdField),
-                        keyboardType: TextInputType.number,
-                        initialValue: _arenaId.toString(),
-                        onChanged: widget.readOnly
-                            ? null
-                            : (v) => _arenaId = int.tryParse(v) ?? 1,
+                            InputDecoration(labelText: s.tournamentName),
                         validator: widget.readOnly
                             ? null
-                            : (v) => (v == null || v.isEmpty) ? s.required : null,
+                            : (v) => (v == null || v.trim().isEmpty)
+                                ? s.required
+                                : null,
                       ),
-                    const SizedBox(height: 12),
-                    RefereePicker(readOnly: widget.readOnly),
-                    const SizedBox(height: 12),
-                    TextFormField(
-                      controller: _durationCtrl,
-                      readOnly: widget.readOnly,
-                      decoration: InputDecoration(
-                          labelText: s.matchDuration),
-                      keyboardType: TextInputType.number,
-                      validator: widget.readOnly
-                          ? null
-                          : (v) => (int.tryParse(v ?? '') ?? 0) <= 0
-                              ? s.required
-                              : null,
-                    ),
-                    const SizedBox(height: 12),
-                    TextFormField(
-                      controller: _requiredPlayersCtrl,
-                      readOnly: widget.readOnly,
-                      decoration: InputDecoration(
-                          labelText: s.requiredPlayersCount),
-                      keyboardType: TextInputType.number,
-                      validator: widget.readOnly
-                          ? null
-                          : (v) {
-                              final n = int.tryParse(v ?? '');
-                              if (n == null || n < 2) return s.minTwoPlayers;
-                              if (widget.existing != null &&
-                                  n < widget.existing!.players.length) {
-                                return s.removeAcceptedInvitationsFirst;
-                              }
-                              return null;
-                            },
-                    ),
-                    const SizedBox(height: 12),
-                    TextFormField(
-                      controller: _setsToWinCtrl,
-                      readOnly: widget.readOnly,
-                      decoration:
-                          InputDecoration(labelText: s.setsToWin),
-                      keyboardType: TextInputType.number,
-                      validator: widget.readOnly
-                          ? null
-                          : (v) {
-                              final n = int.tryParse(v ?? '');
-                              if (n == null || n < 1 || n > 4) return s.mustBe1To4;
-                              return null;
-                            },
-                    ),
-                    const SizedBox(height: 12),
-                    TextFormField(
-                      controller: _youTubeUrlCtrl,
-                      readOnly: widget.readOnly,
-                      decoration: InputDecoration(
-                          labelText: s.youTubeUrlField),
-                      keyboardType: TextInputType.url,
-                    ),
-                    const SizedBox(height: 12),
-                    ListTile(
-                      contentPadding: EdgeInsets.zero,
-                      title: Text(s.startTime),
-                      subtitle: Text(_displayFmt.format(_startTime)),
-                      trailing: widget.readOnly
-                          ? null
-                          : const Icon(Icons.calendar_today),
-                      onTap: widget.readOnly ? null : _pickDateTime,
-                    ),
-                    const SizedBox(height: 12),
-                    PlayerPicker(
-                      gender: _gender,
-                      requiredPlayersCount:
-                          widget.existing?.requiredPlayersCount,
-                      readOnly: widget.readOnly,
-                    ),
-                    if (!widget.readOnly) ...[
-                      const SizedBox(height: 24),
-                      BlocConsumer<OrganizerTournamentsCubit,
-                          OrganizerTournamentsState>(
-                        listener: (context, state) {
-                          if (state is OrgTournamentsError) {
-                            ScaffoldMessenger.of(context)
-                              ..hideCurrentSnackBar()
-                              ..showSnackBar(SnackBar(
-                                content: Text(state.message),
-                                backgroundColor:
-                                    Theme.of(context).colorScheme.error,
-                              ));
-                          }
-                        },
-                        builder: (context, state) => FilledButton(
-                          onPressed:
-                              state is OrgTournamentsLoading ? null : _submit,
-                          child: state is OrgTournamentsLoading
-                              ? const SizedBox(
-                                  height: 20,
-                                  width: 20,
-                                  child: CircularProgressIndicator(
-                                      strokeWidth: 2),
-                                )
-                              : Text(_isEdit ? s.save : s.create),
+                      const SizedBox(height: 12),
+                      DropdownButtonFormField<String>(
+                        value: _type,
+                        decoration:
+                            InputDecoration(labelText: s.tournamentType),
+                        items: [
+                          DropdownMenuItem(
+                              value: 'MORNING', child: Text(s.timeMorning)),
+                          DropdownMenuItem(
+                              value: 'DAY', child: Text(s.timeDay)),
+                          DropdownMenuItem(
+                              value: 'EVENING', child: Text(s.timeEvening)),
+                          DropdownMenuItem(
+                              value: 'NIGHT', child: Text(s.timeNight)),
+                          DropdownMenuItem(
+                              value: 'MIDNIGHT', child: Text(s.timeMidnight)),
+                        ],
+                        onChanged: widget.readOnly
+                            ? null
+                            : (v) => setState(() => _type = v!),
+                      ),
+                      const SizedBox(height: 12),
+                      DropdownButtonFormField<String>(
+                        value: _gender,
+                        decoration: InputDecoration(labelText: s.genderField),
+                        items: [
+                          DropdownMenuItem(
+                              value: 'MALE', child: Text(s.genderMale)),
+                          DropdownMenuItem(
+                              value: 'FEMALE', child: Text(s.genderFemale)),
+                        ],
+                        onChanged: widget.readOnly
+                            ? null
+                            : (v) => setState(() => _gender = v!),
+                      ),
+                      const SizedBox(height: 12),
+                      if (_arenas.isNotEmpty)
+                        DropdownButtonFormField<int>(
+                          value: _arenaId,
+                          decoration: InputDecoration(labelText: s.arenaField),
+                          items: _arenas
+                              .map((a) => DropdownMenuItem(
+                                  value: int.tryParse(a.id),
+                                  child: Text(
+                                      '${a.title} (${a.city ?? ''})'.trim())))
+                              .toList(),
+                          onChanged: widget.readOnly
+                              ? null
+                              : (v) => setState(() => _arenaId = v ?? 1),
+                          validator: widget.readOnly
+                              ? null
+                              : (v) => v == null ? s.required : null,
+                        )
+                      else
+                        TextFormField(
+                          readOnly: widget.readOnly,
+                          decoration:
+                              InputDecoration(labelText: s.arenaIdField),
+                          keyboardType: TextInputType.number,
+                          initialValue: _arenaId.toString(),
+                          onChanged: widget.readOnly
+                              ? null
+                              : (v) => _arenaId = int.tryParse(v) ?? 1,
+                          validator: widget.readOnly
+                              ? null
+                              : (v) =>
+                                  (v == null || v.isEmpty) ? s.required : null,
                         ),
+                      const SizedBox(height: 12),
+                      RefereePicker(readOnly: widget.readOnly),
+                      const SizedBox(height: 12),
+                      TextFormField(
+                        controller: _durationCtrl,
+                        readOnly: widget.readOnly,
+                        decoration: InputDecoration(labelText: s.matchDuration),
+                        keyboardType: TextInputType.number,
+                        validator: widget.readOnly
+                            ? null
+                            : (v) => (int.tryParse(v ?? '') ?? 0) <= 0
+                                ? s.required
+                                : null,
                       ),
+                      const SizedBox(height: 12),
+                      TextFormField(
+                        controller: _requiredPlayersCtrl,
+                        readOnly: widget.readOnly,
+                        decoration:
+                            InputDecoration(labelText: s.requiredPlayersCount),
+                        keyboardType: TextInputType.number,
+                        validator: widget.readOnly
+                            ? null
+                            : (v) {
+                                final n = int.tryParse(v ?? '');
+                                if (n == null || n < 2) return s.minTwoPlayers;
+                                if (widget.existing != null &&
+                                    n < widget.existing!.players.length) {
+                                  return s.removeAcceptedInvitationsFirst;
+                                }
+                                return null;
+                              },
+                      ),
+                      const SizedBox(height: 12),
+                      TextFormField(
+                        controller: _setsToWinCtrl,
+                        readOnly: widget.readOnly,
+                        decoration: InputDecoration(labelText: s.setsToWin),
+                        keyboardType: TextInputType.number,
+                        validator: widget.readOnly
+                            ? null
+                            : (v) {
+                                final n = int.tryParse(v ?? '');
+                                if (n == null || n < 1 || n > 4) {
+                                  return s.mustBe1To4;
+                                }
+                                return null;
+                              },
+                      ),
+                      const SizedBox(height: 12),
+                      TextFormField(
+                        controller: _youTubeUrlCtrl,
+                        readOnly: widget.readOnly,
+                        decoration:
+                            InputDecoration(labelText: s.youTubeUrlField),
+                        keyboardType: TextInputType.url,
+                      ),
+                      const SizedBox(height: 12),
+                      ListTile(
+                        contentPadding: EdgeInsets.zero,
+                        title: Text(s.startTime),
+                        subtitle: Text(_displayFmt.format(_startTime)),
+                        trailing: widget.readOnly
+                            ? null
+                            : const Icon(Icons.calendar_today),
+                        onTap: widget.readOnly ? null : _pickDateTime,
+                      ),
+                      const SizedBox(height: 12),
+                      PlayerPicker(
+                        gender: _gender,
+                        requiredPlayersCount:
+                            widget.existing?.requiredPlayersCount,
+                        readOnly: widget.readOnly,
+                      ),
+                      if (!widget.readOnly) ...[
+                        const SizedBox(height: 24),
+                        BlocConsumer<OrganizerTournamentsCubit,
+                            OrganizerTournamentsState>(
+                          listener: (context, state) {
+                            if (state is OrgTournamentsError) {
+                              ScaffoldMessenger.of(context)
+                                ..hideCurrentSnackBar()
+                                ..showSnackBar(SnackBar(
+                                  content: Text(state.message),
+                                  backgroundColor:
+                                      Theme.of(context).colorScheme.error,
+                                ));
+                            }
+                          },
+                          builder: (context, state) => FilledButton(
+                            onPressed:
+                                state is OrgTournamentsLoading ? null : _submit,
+                            child: state is OrgTournamentsLoading
+                                ? const SizedBox(
+                                    height: 20,
+                                    width: 20,
+                                    child: CircularProgressIndicator(
+                                        strokeWidth: 2),
+                                  )
+                                : Text(_isEdit ? s.save : s.create),
+                          ),
+                        ),
+                      ],
                     ],
-                  ],
                   ),
                 ),
               ),

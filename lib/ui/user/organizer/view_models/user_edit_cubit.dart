@@ -16,12 +16,12 @@ class UserEditCubit extends Cubit<UserEditState> {
       : _playerRepository = playerRepository,
         super(UserEditInitial());
 
-  Future<void> loadUser(int userId, List<UserRole> initialRoles) async {
+  Future<void> loadUser(int userId) async {
     emit(UserEditLoading());
     try {
       final player = await _playerRepository.fetchPlayerById(userId);
       if (isClosed) return;
-      emit(UserEditLoaded(user: player, roles: List.from(initialRoles)));
+      emit(UserEditLoaded(user: player, roles: List.from(player.roles)));
     } catch (e) {
       if (isClosed) return;
       emit(UserEditError(errorMessage(e)));
