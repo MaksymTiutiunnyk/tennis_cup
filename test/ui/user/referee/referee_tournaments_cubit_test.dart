@@ -48,7 +48,7 @@ void main() {
       wait: const Duration(milliseconds: 10),
       expect: () => [
         isA<RefereeTournamentsError>()
-            .having((s) => s.message, 'message', 'Failed to load tournaments'),
+            .having((s) => s.message, 'message', 'network error'),
       ],
     );
   });

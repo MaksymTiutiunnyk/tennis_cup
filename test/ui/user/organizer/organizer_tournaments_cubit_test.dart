@@ -159,7 +159,10 @@ void main() {
         await cubit.create(testRequest);
       },
       skip: 2,
-      expect: () => [isA<OrgTournamentsError>()],
+      expect: () => [
+        isA<OrgTournamentsLoading>(),
+        isA<OrgTournamentsError>(),
+      ],
     );
   });
 
@@ -380,9 +383,10 @@ void main() {
         when(() => mockRepo.createTournament(any())).thenAnswer((_) async {});
       },
       build: buildCubit,
-      // create triggers _reload, but _date/_arena/_time are null → returns early
+      // create itself emits Loading, then _reload returns early because
+      // _date/_arena/_time were never set — so no fetch call is made.
       act: (cubit) => cubit.create(testRequest),
-      expect: () => const [],
+      expect: () => [isA<OrgTournamentsLoading>()],
       verify: (_) {
         verifyNever(() => mockRepo.fetchScheduledTournament(
               tournamentDate: any(named: 'tournamentDate'),

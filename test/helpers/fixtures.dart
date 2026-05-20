@@ -11,7 +11,11 @@ import 'package:tennis_cup/data/services/dto/admin_dto.dart';
 import 'package:tennis_cup/data/services/dto/arena_dto.dart';
 import 'package:tennis_cup/data/services/dto/match_dto.dart';
 import 'package:tennis_cup/data/services/dto/news_dto.dart';
+import 'package:tennis_cup/data/services/dto/player_profile_dto.dart';
+import 'package:tennis_cup/data/services/dto/player_search_result_dto.dart';
+import 'package:tennis_cup/data/services/dto/rating_record_dto.dart';
 import 'package:tennis_cup/data/services/dto/tournament_dto.dart';
+import 'package:tennis_cup/data/services/dto/user_brief_dto.dart';
 
 // ---- User ----
 
@@ -431,6 +435,116 @@ TournamentInvitation aTournamentInvitation({
     ),
     role: role,
     status: status,
+  );
+}
+
+// ---- RatingRecordDto ----
+
+RatingRecordDto aRatingRecordDto({
+  int id = 1,
+  int userId = 1,
+  String firstName = 'Ivan',
+  String lastName = 'Petrov',
+  double ratingValue = 1500.0,
+  String? date,
+  String? gender = 'MALE',
+  String? city,
+  String? country,
+  String? birthDate,
+  String? avatarUrl,
+}) {
+  return RatingRecordDto(
+    id: id,
+    userId: userId,
+    firstName: firstName,
+    lastName: lastName,
+    ratingValue: ratingValue,
+    date: date,
+    gender: gender,
+    city: city,
+    country: country,
+    birthDate: birthDate,
+    avatarUrl: avatarUrl,
+  );
+}
+
+// ---- PlayerSearchResultDto ----
+
+PlayerSearchResultDto aPlayerSearchResultDto({
+  int userId = 1,
+  String firstName = 'Ivan',
+  String lastName = 'Petrov',
+  List<String> roles = const ['PLAYER'],
+  String? city,
+  String? country,
+  String? avatarUrl,
+}) {
+  return PlayerSearchResultDto(
+    userId: userId,
+    firstName: firstName,
+    lastName: lastName,
+    roles: roles,
+    city: city,
+    country: country,
+    avatarUrl: avatarUrl,
+  );
+}
+
+// ---- PlayerProfileDto ----
+
+PlayerProfileDto aPlayerProfileDto({
+  int id = 1,
+  String firstName = 'Ivan',
+  String lastName = 'Petrov',
+  String? patronymicName,
+  String? gender = 'MALE',
+  String? birthDate,
+  String? city,
+  String? country,
+  List<String> roles = const ['PLAYER'],
+  String? status = 'ACTIVE',
+  double? rating,
+  String? avatarUrl,
+  PlayerStatisticsDto? statistics,
+}) {
+  return PlayerProfileDto(
+    id: id,
+    firstName: firstName,
+    lastName: lastName,
+    patronymicName: patronymicName,
+    gender: gender,
+    birthDate: birthDate,
+    city: city,
+    country: country,
+    roles: roles,
+    status: status,
+    rating: rating,
+    avatarUrl: avatarUrl,
+    statistics: statistics,
+  );
+}
+
+// ---- UserBriefDto ----
+
+UserBriefDto aUserBriefDto({
+  int id = 1,
+  String firstName = 'Ivan',
+  String lastName = 'Petrov',
+  String? avatarUrl,
+  String? gender = 'MALE',
+  String? city,
+  String? country,
+  String? birthDate,
+}) {
+  return UserBriefDto(
+    id: id,
+    firstName: firstName,
+    lastName: lastName,
+    avatarUrl: avatarUrl,
+    gender: gender,
+    city: city,
+    country: country,
+    birthDate: birthDate,
   );
 }
 

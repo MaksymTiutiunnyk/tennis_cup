@@ -1,6 +1,9 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:tennis_cup/core/pagination/page_request.dart';
+import 'package:tennis_cup/generated/l10n.dart';
 import 'package:tennis_cup/data/auth/auth_token_store.dart';
 import 'package:tennis_cup/data/models/arena.dart';
 import 'package:tennis_cup/data/models/tournament.dart';
@@ -71,10 +74,18 @@ class MockRestAuthService extends Mock implements RestAuthService {}
 
 // ---- Fallback values ----
 
-void registerFallbackValues() {
+Future<void> registerFallbackValues() async {
+  // Initialize localization so any code path that touches S.current
+  // (e.g. errorMessage in cubits) doesn't trip the _current != null assert.
+  await S.load(const Locale('en'));
+  // Initialize intl date locale data so DateFormat(...) constructors don't
+  // throw `LocaleDataException` in non-Flutter test contexts.
+  await initializeDateFormatting();
+
   registerFallbackValue(Options());
   registerFallbackValue(RequestOptions(path: ''));
   registerFallbackValue(const PageRequest(page: 0, size: 10));
+  registerFallbackValue(<int>{});
   registerFallbackValue(const CreateUserRequestDto(
     role: '',
     login: '',
