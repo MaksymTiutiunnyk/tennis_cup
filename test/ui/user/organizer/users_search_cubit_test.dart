@@ -86,7 +86,7 @@ void main() {
         isA<UsersSearchError>().having(
           (s) => s.message,
           'message',
-          'Failed to search users',
+          'network error',
         ),
       ],
     );

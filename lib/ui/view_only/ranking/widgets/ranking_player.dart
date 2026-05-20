@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tennis_cup/data/models/gender.dart';
 import 'package:tennis_cup/data/models/user.dart';
 import 'package:tennis_cup/generated/l10n.dart';
 import 'package:tennis_cup/routing/app_router.dart';
@@ -50,11 +51,15 @@ class RankingPlayer extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    s.tournaments,
+                    s.genderField,
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                   Text(
-                    player.tournaments.toString(),
+                    switch (player.gender) {
+                      Gender.male => s.male,
+                      Gender.female => s.female,
+                      null => '–',
+                    },
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                 ],

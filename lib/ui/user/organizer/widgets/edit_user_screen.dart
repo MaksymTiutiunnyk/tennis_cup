@@ -11,20 +11,15 @@ import 'package:tennis_cup/ui/user/organizer/widgets/user_roles_section.dart';
 
 class EditUserScreen extends StatelessWidget {
   final int userId;
-  final List<UserRole> initialRoles;
 
-  const EditUserScreen({
-    super.key,
-    required this.userId,
-    this.initialRoles = const [],
-  });
+  const EditUserScreen({super.key, required this.userId});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => UserEditCubit(
         playerRepository: ServiceLocator.playerRepository,
-      )..loadUser(userId, initialRoles),
+      )..loadUser(userId),
       child: Builder(
         builder: (context) => BlocListener<UserEditCubit, UserEditState>(
           listener: (context, state) {

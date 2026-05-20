@@ -97,7 +97,6 @@ class _TournamentResultsBody extends StatelessWidget {
                   InkWell(
                     onTap: () => context.push(
                       AppRoutes.playerDetails(player.id.toString()),
-                      extra: player,
                     ),
                     child: Text(
                       player.fullName,

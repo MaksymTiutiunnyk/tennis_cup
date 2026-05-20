@@ -54,7 +54,7 @@ void main() {
       wait: const Duration(milliseconds: 10),
       expect: () => [
         isA<InvitationsError>()
-            .having((s) => s.message, 'message', 'Failed to load invitations'),
+            .having((s) => s.message, 'message', 'network error'),
       ],
     );
   });
@@ -135,7 +135,7 @@ void main() {
       expect: () => [
         isA<InvitationsLoaded>(), // auto-init
         isA<InvitationsError>()
-            .having((s) => s.message, 'message', 'Failed to update invitation'),
+            .having((s) => s.message, 'message', 'server error'),
       ],
     );
 
@@ -197,7 +197,7 @@ void main() {
       expect: () => [
         isA<InvitationsLoaded>(), // auto-init
         isA<InvitationsError>()
-            .having((s) => s.message, 'message', 'Failed to update invitation'),
+            .having((s) => s.message, 'message', 'server error'),
       ],
     );
 

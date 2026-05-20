@@ -44,6 +44,7 @@ final _profileJson = <String, dynamic>{
   'rating': 1500.0,
   'avatarUrl': 'http://example.com/avatar.jpg',
   'status': 'ACTIVE',
+  'roles': ['PLAYER'],
 };
 
 final _searchResultJson = <String, dynamic>{
@@ -51,13 +52,31 @@ final _searchResultJson = <String, dynamic>{
   'firstName': 'Ivan',
   'lastName': 'Petrov',
   'avatarUrl': 'http://example.com/avatar.jpg',
+  'roles': ['PLAYER'],
 };
 
 final _ratingJson = <String, dynamic>{
+  'id': 100,
   'userId': 1,
   'firstName': 'Ivan',
   'lastName': 'Petrov',
   'ratingValue': 1500.0,
+  'gender': 'MALE',
+  'city': 'Kyiv',
+  'country': 'UA',
+  'birthDate': '1990-05-15',
+  'avatarUrl': 'http://example.com/avatar.jpg',
+};
+
+final _briefJson = <String, dynamic>{
+  'id': 1,
+  'firstName': 'Ivan',
+  'lastName': 'Petrov',
+  'avatarUrl': 'http://example.com/avatar.jpg',
+  'gender': 'MALE',
+  'city': 'Kyiv',
+  'country': 'UA',
+  'birthDate': '1990-05-15',
 };
 
 void main() {
@@ -72,49 +91,40 @@ void main() {
   });
 
   group('fetchPlayerById', () {
-    test('gets /api/v1/users/:id and parses profile JSON', () async {
+    test('gets /api/v1/users/:id and parses PlayerProfileDto', () async {
       when(() => mockDio.get<dynamic>(
             any(),
             queryParameters: any(named: 'queryParameters'),
           )).thenAnswer((_) async => _resp<dynamic>(_profileJson));
 
-      final player = await service.fetchPlayerById(1);
+      final dto = await service.fetchPlayerById(1);
 
-      expect(player.id, 1);
-      expect(player.firstName, 'Ivan');
-      expect(player.lastName, 'Petrov');
-      expect(player.city, 'Kyiv');
-      expect(player.country, 'UA');
-      expect(player.birthDate, '1990-05-15');
-      expect(player.patronymicName, 'Ivanovich');
-      expect(player.tournaments, 5);
-      expect(player.matches, 10);
-      expect(player.wins, 7);
-      expect(player.losses, 3);
-      expect(player.goldPlaces, 2);
-      expect(player.silverPlaces, 1);
-      expect(player.bronzePlaces, 0);
-      expect(player.rating, 1500.0);
-      expect(player.imageUrl, 'http://example.com/avatar.jpg');
-      expect(player.status, 'ACTIVE');
+      expect(dto.id, 1);
+      expect(dto.firstName, 'Ivan');
+      expect(dto.lastName, 'Petrov');
+      expect(dto.city, 'Kyiv');
+      expect(dto.country, 'UA');
+      expect(dto.birthDate, '1990-05-15');
+      expect(dto.patronymicName, 'Ivanovich');
+      expect(dto.gender, 'MALE');
+      expect(dto.rating, 1500.0);
+      expect(dto.avatarUrl, 'http://example.com/avatar.jpg');
+      expect(dto.status, 'ACTIVE');
+      expect(dto.statistics, isNotNull);
+      expect(dto.statistics!.totalFinishedTournaments, 5);
+      expect(dto.statistics!.totalMatches, 10);
+      expect(dto.statistics!.wins, 7);
+      expect(dto.statistics!.losses, 3);
+      expect(dto.statistics!.firstPlaceCount, 2);
+      expect(dto.statistics!.secondPlaceCount, 1);
+      expect(dto.statistics!.thirdPlaceCount, 0);
       verify(() => mockDio.get<dynamic>(
             '/api/v1/users/1',
             queryParameters: any(named: 'queryParameters'),
           )).called(1);
     });
 
-    test('maps gender MALE to Gender.male', () async {
-      when(() => mockDio.get<dynamic>(
-            any(),
-            queryParameters: any(named: 'queryParameters'),
-          )).thenAnswer((_) async => _resp<dynamic>(_profileJson));
-
-      final player = await service.fetchPlayerById(1);
-
-      expect(player.gender, Gender.male);
-    });
-
-    test('maps gender FEMALE to Gender.female', () async {
+    test('preserves gender FEMALE in DTO', () async {
       final femaleJson = Map<String, dynamic>.from(_profileJson)
         ..['gender'] = 'FEMALE';
       when(() => mockDio.get<dynamic>(
@@ -122,22 +132,9 @@ void main() {
             queryParameters: any(named: 'queryParameters'),
           )).thenAnswer((_) async => _resp<dynamic>(femaleJson));
 
-      final player = await service.fetchPlayerById(1);
+      final dto = await service.fetchPlayerById(1);
 
-      expect(player.gender, Gender.female);
-    });
-
-    test('maps unknown/empty gender to null', () async {
-      final noGenderJson = Map<String, dynamic>.from(_profileJson)
-        ..['gender'] = '';
-      when(() => mockDio.get<dynamic>(
-            any(),
-            queryParameters: any(named: 'queryParameters'),
-          )).thenAnswer((_) async => _resp<dynamic>(noGenderJson));
-
-      final player = await service.fetchPlayerById(1);
-
-      expect(player.gender, isNull);
+      expect(dto.gender, 'FEMALE');
     });
 
     test('propagates DioException on failure', () async {
@@ -160,12 +157,12 @@ void main() {
             'content': [_searchResultJson],
           }));
 
-      final players = await service.searchPlayersByName(query: 'Ivan');
+      final dtos = await service.searchPlayersByName(query: 'Ivan');
 
-      expect(players, hasLength(1));
-      expect(players.first.id, 1);
-      expect(players.first.firstName, 'Ivan');
-      expect(players.first.imageUrl, 'http://example.com/avatar.jpg');
+      expect(dtos, hasLength(1));
+      expect(dtos.first.userId, 1);
+      expect(dtos.first.firstName, 'Ivan');
+      expect(dtos.first.avatarUrl, 'http://example.com/avatar.jpg');
       verify(() => mockDio.get<Map<String, dynamic>>(
             '/api/v1/users/search',
             queryParameters: {
@@ -212,42 +209,17 @@ void main() {
 
       expect(capturedParams.single?.containsKey('gender'), isFalse);
     });
-
-    test('search result has zeroed stats', () async {
-      when(() => mockDio.get<Map<String, dynamic>>(
-            any(),
-            queryParameters: any(named: 'queryParameters'),
-          )).thenAnswer((_) async => _resp<Map<String, dynamic>>({
-            'content': [_searchResultJson],
-          }));
-
-      final players = await service.searchPlayersByName(query: 'Ivan');
-
-      final p = players.first;
-      expect(p.matches, 0);
-      expect(p.wins, 0);
-      expect(p.losses, 0);
-      expect(p.tournaments, 0);
-    });
   });
 
   group('fetchRankingPlayers', () {
-    test('gets /api/v1/ratings with page and sort params', () async {
-      // fetchRankingPlayers calls fetchPlayerById for each rating record,
-      // so we stub both endpoints.
+    test('gets /api/v1/ratings and parses RatingRecordDto items', () async {
       when(() => mockDio.get<dynamic>(
             any(),
             queryParameters: any(named: 'queryParameters'),
-          )).thenAnswer((inv) async {
-        final path = inv.positionalArguments.first as String;
-        if (path == '/api/v1/ratings') {
-          return _resp<dynamic>(<String, dynamic>{
+          )).thenAnswer((_) async => _resp<dynamic>(<String, dynamic>{
             'content': [_ratingJson],
             'totalPages': 1,
-          });
-        }
-        return _resp<dynamic>(_profileJson);
-      });
+          }));
 
       final result = await service.fetchRankingPlayers(
         page: const PageRequest(page: 0, size: 10),
@@ -255,24 +227,20 @@ void main() {
 
       expect(result.items, hasLength(1));
       expect(result.hasMore, isFalse);
-      // The enriched player should carry rating from the rating record
-      expect(result.items.first.rating, 1500.0);
+      expect(result.items.first.userId, 1);
+      expect(result.items.first.ratingValue, 1500.0);
+      expect(result.items.first.gender, 'MALE');
+      expect(result.items.first.avatarUrl, 'http://example.com/avatar.jpg');
     });
 
     test('adds gender=MALE param when genderFilter is Gender.male', () async {
       when(() => mockDio.get<dynamic>(
             any(),
             queryParameters: any(named: 'queryParameters'),
-          )).thenAnswer((inv) async {
-        final path = inv.positionalArguments.first as String;
-        if (path == '/api/v1/ratings') {
-          return _resp<dynamic>(<String, dynamic>{
+          )).thenAnswer((_) async => _resp<dynamic>(<String, dynamic>{
             'content': <dynamic>[],
             'totalPages': 1,
-          });
-        }
-        return _resp<dynamic>(_profileJson);
-      });
+          }));
 
       await service.fetchRankingPlayers(
         page: const PageRequest(page: 0, size: 10),
@@ -296,16 +264,10 @@ void main() {
       when(() => mockDio.get<dynamic>(
             any(),
             queryParameters: any(named: 'queryParameters'),
-          )).thenAnswer((inv) async {
-        final path = inv.positionalArguments.first as String;
-        if (path == '/api/v1/ratings') {
-          return _resp<dynamic>(<String, dynamic>{
+          )).thenAnswer((_) async => _resp<dynamic>(<String, dynamic>{
             'content': <dynamic>[],
             'totalPages': 1,
-          });
-        }
-        return _resp<dynamic>(_profileJson);
-      });
+          }));
 
       await service.fetchRankingPlayers(
         page: const PageRequest(page: 0, size: 10),
@@ -330,16 +292,12 @@ void main() {
             any(),
             queryParameters: any(named: 'queryParameters'),
           )).thenAnswer((inv) async {
-        final path = inv.positionalArguments.first as String;
-        if (path == '/api/v1/ratings') {
-          capturedParams.add(
-              inv.namedArguments[#queryParameters] as Map<String, dynamic>?);
-          return _resp<dynamic>(<String, dynamic>{
-            'content': <dynamic>[],
-            'totalPages': 1,
-          });
-        }
-        return _resp<dynamic>(_profileJson);
+        capturedParams.add(
+            inv.namedArguments[#queryParameters] as Map<String, dynamic>?);
+        return _resp<dynamic>(<String, dynamic>{
+          'content': <dynamic>[],
+          'totalPages': 1,
+        });
       });
 
       await service.fetchRankingPlayers(
@@ -363,6 +321,39 @@ void main() {
       );
 
       expect(result.hasMore, isTrue);
+    });
+  });
+
+  group('fetchUsersBatch', () {
+    test('returns empty list and skips request when userIds is empty',
+        () async {
+      final result = await service.fetchUsersBatch(const []);
+
+      expect(result, isEmpty);
+      verifyNever(() => mockDio.post<List<dynamic>>(
+            any(),
+            data: any(named: 'data'),
+          ));
+    });
+
+    test('posts /api/v1/users/batch with userIds body and parses UserBriefDto',
+        () async {
+      when(() => mockDio.post<List<dynamic>>(
+            any(),
+            data: any(named: 'data'),
+          )).thenAnswer((_) async => _resp<List<dynamic>>([_briefJson]));
+
+      final result = await service.fetchUsersBatch([1, 2, 3]);
+
+      expect(result, hasLength(1));
+      expect(result.first.id, 1);
+      expect(result.first.firstName, 'Ivan');
+      expect(result.first.avatarUrl, 'http://example.com/avatar.jpg');
+      expect(result.first.gender, 'MALE');
+      verify(() => mockDio.post<List<dynamic>>(
+            '/api/v1/users/batch',
+            data: {'userIds': [1, 2, 3]},
+          )).called(1);
     });
   });
 

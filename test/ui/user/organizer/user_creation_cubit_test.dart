@@ -54,7 +54,7 @@ void main() {
       expect: () => [
         isA<UserCreationLoading>(),
         isA<UserCreationSuccess>()
-            .having((s) => s.message, 'message', 'Player created successfully'),
+            .having((s) => s.message, 'message', 'Player created successfully.'),
       ],
     );
 
@@ -74,7 +74,7 @@ void main() {
         isA<UserCreationSuccess>().having(
           (s) => s.message,
           'message',
-          'Referee created successfully',
+          'Referee created successfully.',
         ),
       ],
     );
@@ -95,7 +95,7 @@ void main() {
         isA<UserCreationSuccess>().having(
           (s) => s.message,
           'message',
-          'Organizer created successfully',
+          'Organizer created successfully.',
         ),
       ],
     );
@@ -116,7 +116,7 @@ void main() {
         isA<UserCreationSuccess>().having(
           (s) => s.message,
           'message',
-          'Admin created successfully',
+          'Admin created successfully.',
         ),
       ],
     );
@@ -148,7 +148,7 @@ void main() {
       expect: () => [
         isA<UserCreationLoading>(),
         isA<UserCreationError>()
-            .having((s) => s.message, 'message', 'Failed to create user'),
+            .having((s) => s.message, 'message', 'network error'),
       ],
     );
   });

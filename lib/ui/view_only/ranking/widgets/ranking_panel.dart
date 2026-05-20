@@ -25,10 +25,7 @@ class RankingPanel extends StatelessWidget {
 
   void _showPlayerDetails(BuildContext context, User player) {
     Navigator.of(context).pop();
-    context.push(
-      AppRoutes.playerDetails(player.id.toString()),
-      extra: player,
-    );
+    context.push(AppRoutes.playerDetails(player.id.toString()));
   }
 
   void _showSearchField(BuildContext context) {

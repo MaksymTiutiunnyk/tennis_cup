@@ -56,12 +56,16 @@ class MatchRepository {
       userId2: playerId2,
       page: page,
     );
-    final p1Future = _playerRepository.fetchPlayerById(playerId1);
-    final p2Future = _playerRepository.fetchPlayerById(playerId2);
+    final playersFuture =
+        _playerRepository.fetchUsersBatch({playerId1, playerId2});
 
     final result = await resultFuture;
-    final player1 = await p1Future;
-    final player2 = await p2Future;
+    final players = await playersFuture;
+    final player1 = players[playerId1];
+    final player2 = players[playerId2];
+    if (player1 == null || player2 == null) {
+      throw Exception('fetchHeadToHead: missing players');
+    }
 
     final matches = result.items.map((dto) {
       // Determine match status from DTO fields
@@ -182,21 +186,8 @@ class MatchRepository {
         .cast<Match>();
   }
 
-  Future<Map<int, User>> _fetchPlayers(Set<int> ids) async {
-    if (ids.isEmpty) return const {};
-    final entries = await Future.wait(ids.map((id) async {
-      try {
-        final p = await _playerRepository.fetchPlayerById(id);
-        return MapEntry<int, User?>(id, p);
-      } catch (_) {
-        return MapEntry<int, User?>(id, null);
-      }
-    }));
-    return {
-      for (final e in entries)
-        if (e.value != null) e.key: e.value!,
-    };
-  }
+  Future<Map<int, User>> _fetchPlayers(Set<int> ids) =>
+      _playerRepository.fetchUsersBatch(ids);
 
   static Match? _toMatch(MatchDto dto, Map<int, User> players) {
     final blue = players[dto.bluePlayerId];

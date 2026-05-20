@@ -56,7 +56,6 @@ class _ScrollableBodyState extends State<ScrollableBody> {
     context.pushReplacement(
       AppRoutes.playersComparison(
           widget.player.id.toString(), player.id.toString()),
-      extra: (p1: widget.player, p2: player),
     );
   }
 

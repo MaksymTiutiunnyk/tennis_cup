@@ -328,21 +328,8 @@ class TournamentRepository {
     return Map.fromEntries(entries);
   }
 
-  Future<Map<int, User>> _fetchPlayers(Set<int> ids) async {
-    if (ids.isEmpty) return const {};
-    final entries = await Future.wait(ids.map((id) async {
-      try {
-        final p = await _playerRepository.fetchPlayerById(id);
-        return MapEntry<int, User?>(id, p);
-      } catch (_) {
-        return MapEntry<int, User?>(id, null);
-      }
-    }));
-    return {
-      for (final e in entries)
-        if (e.value != null) e.key: e.value!,
-    };
-  }
+  Future<Map<int, User>> _fetchPlayers(Set<int> ids) =>
+      _playerRepository.fetchUsersBatch(ids);
 
   static List<Match> _buildMatches(
     List<MatchDto> dtos,
