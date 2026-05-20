@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tennis_cup/data/models/tournament.dart';
+import 'package:tennis_cup/generated/l10n.dart';
 
 class TournamentStatusChip extends StatelessWidget {
   final TournamentStatus status;
@@ -8,10 +9,11 @@ class TournamentStatusChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
     final (label, color) = switch (status) {
-      TournamentStatus.active => ('Active', Colors.green),
-      TournamentStatus.finished => ('Finished', Colors.grey),
-      TournamentStatus.pending => ('Pending', Colors.orange),
+      TournamentStatus.active => (s.statusActive, Colors.green),
+      TournamentStatus.finished => (s.statusFinished, Colors.grey),
+      TournamentStatus.pending => (s.statusPending, Colors.orange),
     };
     return Chip(
       label: Text(label,

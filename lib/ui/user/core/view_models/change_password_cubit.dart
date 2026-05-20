@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tennis_cup/data/services/rest/rest_auth_service.dart';
+import 'package:tennis_cup/generated/l10n.dart';
 
 part 'change_password_state.dart';
 
@@ -28,7 +29,7 @@ class ChangePasswordCubit extends Cubit<ChangePasswordState> {
       emit(ChangePasswordFailure(_messageFromDio(e)));
     } catch (_) {
       if (isClosed) return;
-      emit(ChangePasswordFailure('Something went wrong. Please try again.'));
+      emit(ChangePasswordFailure(S.current.errorSomethingWentWrong));
     }
   }
 
@@ -36,10 +37,10 @@ class ChangePasswordCubit extends Cubit<ChangePasswordState> {
     final data = e.response?.data;
     if (data is Map && data['error'] is String) return data['error'] as String;
     return switch (e.response?.statusCode) {
-      400 => 'Current password is incorrect or new password is invalid.',
-      401 => 'Current password is incorrect.',
-      404 => 'User not found.',
-      _ => 'Failed to change password.',
+      400 => S.current.errorPasswordIncorrectOrInvalid,
+      401 => S.current.errorCurrentPasswordIncorrect,
+      404 => S.current.errorUserNotFound,
+      _ => S.current.errorChangePasswordFailed,
     };
   }
 }

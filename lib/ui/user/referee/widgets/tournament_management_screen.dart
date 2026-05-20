@@ -60,6 +60,7 @@ class _TournamentManagementScreenState
 
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
     final topInset = MediaQuery.paddingOf(context).top;
 
     return MultiBlocProvider(
@@ -85,7 +86,7 @@ class _TournamentManagementScreenState
                       ),
                       onPressed: () => Navigator.of(context).maybePop(),
                       icon: const Icon(Icons.arrow_back),
-                      tooltip: 'Back',
+                      tooltip: s.tooltipBack,
                     ),
                     const SizedBox(width: 8),
                     Expanded(
@@ -106,7 +107,7 @@ class _TournamentManagementScreenState
                       ),
                       onPressed: _matchesCubit.load,
                       icon: const Icon(Icons.refresh),
-                      tooltip: 'Refresh',
+                      tooltip: s.tooltipRefresh,
                     ),
                   ],
                 ),

@@ -1,5 +1,7 @@
+import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tennis_cup/core/utils/error_utils.dart';
+import 'package:tennis_cup/generated/l10n.dart';
 import 'package:tennis_cup/core/utils/jwt_utils.dart';
 import 'package:tennis_cup/data/auth/auth_token_store.dart';
 import 'package:tennis_cup/data/models/user_role.dart';
@@ -46,8 +48,15 @@ class AuthCubit extends Cubit<AuthState> {
       ));
     } catch (e) {
       if (isClosed) return;
-      emit(AuthError(errorMessage(e)));
+      emit(AuthError(_loginError(e)));
     }
+  }
+
+  String _loginError(Object e) {
+    if (e is DioException && e.response?.statusCode == 401) {
+      return S.current.errorInvalidCredentials;
+    }
+    return errorMessage(e);
   }
 
   Future<void> register({
@@ -77,9 +86,7 @@ class AuthCubit extends Cubit<AuthState> {
         city: city,
       );
       if (isClosed) return;
-      emit(AuthUnauthenticated(
-        message: 'Registration submitted. Waiting for admin approval.',
-      ));
+      emit(AuthUnauthenticated(message: S.current.registrationSubmitted));
     } catch (e) {
       if (isClosed) return;
       emit(AuthError(errorMessage(e)));

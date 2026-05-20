@@ -40,7 +40,7 @@ class UserRegistrationFormBody extends StatefulWidget {
   final List<String> availableRoles;
   final bool isLoading;
   final UserRegistrationSubmitCallback onSubmit;
-  final String submitLabel;
+  final String? submitLabel;
   final Widget? footer;
   final UserProfileInitialValues? initialValues;
   /// When non-null, shows a block/unblock button above Save.
@@ -52,7 +52,7 @@ class UserRegistrationFormBody extends StatefulWidget {
     this.availableRoles = const [],
     required this.isLoading,
     required this.onSubmit,
-    this.submitLabel = 'Create',
+    this.submitLabel,
     this.footer,
     this.initialValues,
     this.currentStatus,
@@ -337,7 +337,7 @@ class _UserRegistrationFormBodyState extends State<UserRegistrationFormBody> {
                       width: 20,
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
-                  : Text(widget.submitLabel),
+                  : Text(widget.submitLabel ?? S.of(context).create),
             ),
           ),
           if (widget.footer != null) ...[

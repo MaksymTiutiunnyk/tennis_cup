@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tennis_cup/generated/l10n.dart';
 import 'package:tennis_cup/ui/user/referee/view_models/referee_match_cubit.dart';
 import 'package:tennis_cup/ui/user/referee/widgets/center_panel.dart';
 import 'package:tennis_cup/ui/user/referee/widgets/player_side.dart';
@@ -16,6 +17,7 @@ class PendingMatchView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final s = S.of(context);
     final cubit = context.read<RefereeMatchCubit>();
     final blue = state.bluePlayer;
     final red = state.redPlayer;
@@ -25,7 +27,7 @@ class PendingMatchView extends StatelessWidget {
         // Red player
         Expanded(
             child: PlayerSide(
-                player: red, color: const Color(0xFFC62828), label: 'Red')),
+                player: red, color: const Color(0xFFC62828), label: s.teamRed)),
 
         // Center: server selection + start
         SizedBox(
@@ -42,7 +44,9 @@ class PendingMatchView extends StatelessWidget {
         // Blue player
         Expanded(
             child: PlayerSide(
-                player: blue, color: const Color(0xFF1565C0), label: 'Blue')),
+                player: blue,
+                color: const Color(0xFF1565C0),
+                label: s.teamBlue)),
       ],
     );
   }

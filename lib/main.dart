@@ -85,7 +85,7 @@ class _TennisCupState extends State<TennisCup> {
           content: Text(body.isNotEmpty ? '$title\n$body' : title),
           action: type == 'TOURNAMENT_INVITATION'
               ? SnackBarAction(
-                  label: 'View',
+                  label: S.of(ctx).notificationView,
                   onPressed: () => _router.go(AppRoutes.userInvitations),
                 )
               : null,

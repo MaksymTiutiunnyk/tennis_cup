@@ -1,5 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter/material.dart';
+import 'package:tennis_cup/generated/l10n.dart';
 
 class ConnectionMonitor extends StatefulWidget {
   final Widget child;
@@ -51,7 +52,7 @@ class _ConnectionMonitorState extends State<ConnectionMonitor> {
                     const Icon(Icons.wifi_off, size: 32, color: Colors.white),
                     const SizedBox(height: 8),
                     Text(
-                      'No Internet Connection',
+                      S.of(context).errorNoInternet,
                       style: Theme.of(context)
                           .textTheme
                           .bodyLarge!

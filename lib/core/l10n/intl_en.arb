@@ -269,6 +269,36 @@
   "menLabel": "Men",
   "womenLabel": "Women",
 
+  "errorSomethingWentWrong": "Something went wrong. Please try again.",
+  "errorInvalidCredentials": "Invalid login or password.",
+  "errorPasswordIncorrectOrInvalid": "Current password is incorrect or new password is invalid.",
+  "errorCurrentPasswordIncorrect": "Current password is incorrect.",
+  "errorUserNotFound": "User not found.",
+  "errorChangePasswordFailed": "Failed to change password.",
+  "userCreatedSuccessfully": "{role} created successfully.",
+  "@userCreatedSuccessfully": {
+    "placeholders": { "role": { "type": "String" } }
+  },
+  "errorInvalidRequest": "Invalid request. Please check your input.",
+  "errorSessionExpired": "Session expired. Please log in again.",
+  "errorNoPermission": "You don't have permission to perform this action.",
+  "errorNotFound": "The requested resource was not found.",
+  "errorConflict": "A conflict occurred — this resource may already exist.",
+  "errorInvalidData": "Invalid data provided. Please check your input.",
+  "errorServerError": "Server error. Please try again later.",
+  "errorServiceUnavailable": "Service unavailable. Please try again later.",
+  "errorConnectionTimeout": "Connection timed out. Check your internet connection.",
+  "errorNoInternet": "No internet connection.",
+
+  "statusActive": "Active",
+  "statusFinished": "Finished",
+  "statusPending": "Pending",
+  "teamRed": "Red",
+  "teamBlue": "Blue",
+  "tooltipBack": "Back",
+  "tooltipRefresh": "Refresh",
+  "notificationView": "View",
+
   "generalTimeoutLabel": "Timeout",
   "tapToDismiss": "Tap anywhere to dismiss",
 

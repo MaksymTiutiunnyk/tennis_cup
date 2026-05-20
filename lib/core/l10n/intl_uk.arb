@@ -257,6 +257,36 @@
   "menLabel": "Чоловіки",
   "womenLabel": "Жінки",
 
+  "errorSomethingWentWrong": "Щось пішло не так. Спробуйте ще раз.",
+  "errorInvalidCredentials": "Невірний логін або пароль.",
+  "errorPasswordIncorrectOrInvalid": "Поточний пароль невірний або новий пароль недійсний.",
+  "errorCurrentPasswordIncorrect": "Поточний пароль невірний.",
+  "errorUserNotFound": "Користувача не знайдено.",
+  "errorChangePasswordFailed": "Не вдалося змінити пароль.",
+  "userCreatedSuccessfully": "{role} успішно створено.",
+  "@userCreatedSuccessfully": {
+    "placeholders": { "role": { "type": "String" } }
+  },
+  "errorInvalidRequest": "Некоректний запит. Перевірте введені дані.",
+  "errorSessionExpired": "Сесія закінчилась. Будь ласка, увійдіть знову.",
+  "errorNoPermission": "У вас немає дозволу на цю дію.",
+  "errorNotFound": "Запитуваний ресурс не знайдено.",
+  "errorConflict": "Конфлікт — цей ресурс, можливо, вже існує.",
+  "errorInvalidData": "Невірні дані. Перевірте введені значення.",
+  "errorServerError": "Помилка сервера. Спробуйте пізніше.",
+  "errorServiceUnavailable": "Сервіс недоступний. Спробуйте пізніше.",
+  "errorConnectionTimeout": "Час очікування вичерпано. Перевірте інтернет-з'єднання.",
+  "errorNoInternet": "Немає підключення до інтернету.",
+
+  "statusActive": "Активний",
+  "statusFinished": "Завершений",
+  "statusPending": "Очікує",
+  "teamRed": "Червоні",
+  "teamBlue": "Сині",
+  "tooltipBack": "Назад",
+  "tooltipRefresh": "Оновити",
+  "notificationView": "Переглянути",
+
   "generalTimeoutLabel": "Тайм-аут",
   "tapToDismiss": "Торкніться будь-де, щоб закрити",
 
