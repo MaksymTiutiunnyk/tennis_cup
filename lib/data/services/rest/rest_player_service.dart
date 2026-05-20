@@ -7,6 +7,7 @@ import 'package:tennis_cup/data/models/gender.dart';
 import 'package:tennis_cup/data/models/user.dart';
 import 'package:tennis_cup/data/models/user_role.dart';
 import 'package:tennis_cup/data/services/abstract/i_player_service.dart';
+import 'package:tennis_cup/data/services/dto/rating_record_dto.dart';
 
 class RestPlayerService implements IPlayerService {
   final Dio _dio;
@@ -14,7 +15,7 @@ class RestPlayerService implements IPlayerService {
   const RestPlayerService(this._dio);
 
   @override
-  Future<PageResult<User>> fetchRankingPlayers({
+  Future<PageResult<RatingRecordDto>> fetchRankingPlayers({
     required PageRequest page,
     Gender? genderFilter,
   }) async {
@@ -31,43 +32,12 @@ class RestPlayerService implements IPlayerService {
     final content = body['content'] as List<dynamic>;
     final totalPages = body['totalPages'] as int? ?? 1;
 
-    final ratingRecords = content
-        .map((json) => _userFromRatingRecord(json as Map<String, dynamic>))
+    final items = content
+        .map((json) => RatingRecordDto.fromJson(json as Map<String, dynamic>))
         .toList();
 
-    final enriched = await Future.wait(
-      ratingRecords.map((r) async {
-        try {
-          final full = await fetchPlayerById(r.id);
-          return User(
-            id: full.id,
-            firstName: full.firstName,
-            lastName: full.lastName,
-            patronymicName: full.patronymicName,
-            gender: full.gender,
-            birthDate: full.birthDate,
-            city: full.city,
-            country: full.country,
-            imageUrl: full.imageUrl,
-            roles: full.roles,
-            status: full.status,
-            tournaments: full.tournaments,
-            matches: full.matches,
-            wins: full.wins,
-            losses: full.losses,
-            goldPlaces: full.goldPlaces,
-            silverPlaces: full.silverPlaces,
-            bronzePlaces: full.bronzePlaces,
-            rating: r.rating,
-          );
-        } catch (_) {
-          return r;
-        }
-      }),
-    );
-
     return PageResult(
-      items: enriched,
+      items: items,
       hasMore: page.page + 1 < totalPages,
     );
   }
@@ -123,15 +93,6 @@ class RestPlayerService implements IPlayerService {
   Future<void> removeAvatar(int id) async {
     final formData = FormData.fromMap({});
     await _dio.put<void>('/api/v1/users/$id/avatar', data: formData);
-  }
-
-  static User _userFromRatingRecord(Map<String, dynamic> json) {
-    return User(
-      id: (json['userId'] as num).toInt(),
-      firstName: json['firstName'] as String? ?? '',
-      lastName: json['lastName'] as String? ?? '',
-      rating: (json['ratingValue'] as num?)?.toDouble() ?? 0,
-    );
   }
 
   static User _userFromProfileJson(Map<String, dynamic> json) {

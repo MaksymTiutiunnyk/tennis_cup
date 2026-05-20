@@ -4,9 +4,10 @@ import 'package:tennis_cup/core/pagination/page_request.dart';
 import 'package:tennis_cup/core/pagination/page_result.dart';
 import 'package:tennis_cup/data/models/gender.dart';
 import 'package:tennis_cup/data/models/user.dart';
+import 'package:tennis_cup/data/services/dto/rating_record_dto.dart';
 
 abstract interface class IPlayerService {
-  Future<PageResult<User>> fetchRankingPlayers({
+  Future<PageResult<RatingRecordDto>> fetchRankingPlayers({
     required PageRequest page,
     Gender? genderFilter,
   });
