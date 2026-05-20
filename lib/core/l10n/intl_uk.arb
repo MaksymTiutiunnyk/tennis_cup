@@ -258,9 +258,9 @@
   "womenLabel": "Жінки",
 
   "errorSomethingWentWrong": "Щось пішло не так. Спробуйте ще раз.",
-  "errorInvalidCredentials": "Невірний логін або пароль.",
-  "errorPasswordIncorrectOrInvalid": "Поточний пароль невірний або новий пароль недійсний.",
-  "errorCurrentPasswordIncorrect": "Поточний пароль невірний.",
+  "errorInvalidCredentials": "Неправильний логін або пароль.",
+  "errorPasswordIncorrectOrInvalid": "Поточний пароль неправильний або новий пароль недійсний.",
+  "errorCurrentPasswordIncorrect": "Поточний пароль неправильний.",
   "errorUserNotFound": "Користувача не знайдено.",
   "errorChangePasswordFailed": "Не вдалося змінити пароль.",
   "userCreatedSuccessfully": "{role} успішно створено.",
