@@ -4,10 +4,9 @@ import 'package:dio/dio.dart';
 import 'package:tennis_cup/core/pagination/page_request.dart';
 import 'package:tennis_cup/core/pagination/page_result.dart';
 import 'package:tennis_cup/data/models/gender.dart';
-import 'package:tennis_cup/data/models/user.dart';
-import 'package:tennis_cup/data/models/user_role.dart';
 import 'package:tennis_cup/data/services/abstract/i_player_service.dart';
 import 'package:tennis_cup/data/services/dto/rating_record_dto.dart';
+import 'package:tennis_cup/data/services/dto/player_profile_dto.dart';
 import 'package:tennis_cup/data/services/dto/user_search_result_dto.dart';
 
 class RestPlayerService implements IPlayerService {
@@ -44,9 +43,9 @@ class RestPlayerService implements IPlayerService {
   }
 
   @override
-  Future<User> fetchPlayerById(int id) async {
+  Future<PlayerProfileDto> fetchPlayerById(int id) async {
     final response = await _dio.get('/api/v1/users/$id');
-    return _userFromProfileJson(response.data as Map<String, dynamic>);
+    return PlayerProfileDto.fromJson(response.data as Map<String, dynamic>);
   }
 
   @override
@@ -94,35 +93,5 @@ class RestPlayerService implements IPlayerService {
   Future<void> removeAvatar(int id) async {
     final formData = FormData.fromMap({});
     await _dio.put<void>('/api/v1/users/$id/avatar', data: formData);
-  }
-
-  static User _userFromProfileJson(Map<String, dynamic> json) {
-    final stats = json['statistics'] as Map<String, dynamic>?;
-    final roleStrings = json['roles'] as List<dynamic>? ?? const [];
-    final roles = roleStrings
-        .map((r) => userRoleFromString(r as String))
-        .whereType<UserRole>()
-        .toList();
-    return User(
-      id: (json['id'] as num).toInt(),
-      firstName: json['firstName'] as String? ?? '',
-      lastName: json['lastName'] as String? ?? '',
-      gender: genderFromString(json['gender'] as String?),
-      birthDate: json['birthDate'] as String?,
-      city: json['city'] as String? ?? '',
-      country: json['country'] as String? ?? '',
-      patronymicName: json['patronymicName'] as String? ?? '',
-      roles: roles,
-      tournaments: (stats?['totalFinishedTournaments'] as num?)?.toInt() ?? 0,
-      matches: (stats?['totalMatches'] as num?)?.toInt() ?? 0,
-      wins: (stats?['wins'] as num?)?.toInt() ?? 0,
-      losses: (stats?['losses'] as num?)?.toInt() ?? 0,
-      goldPlaces: (stats?['firstPlaceCount'] as num?)?.toInt() ?? 0,
-      silverPlaces: (stats?['secondPlaceCount'] as num?)?.toInt() ?? 0,
-      bronzePlaces: (stats?['thirdPlaceCount'] as num?)?.toInt() ?? 0,
-      rating: (json['rating'] as num?)?.toDouble() ?? 0,
-      imageUrl: json['avatarUrl'] as String? ?? '',
-      status: json['status'] as String? ?? 'ACTIVE',
-    );
   }
 }

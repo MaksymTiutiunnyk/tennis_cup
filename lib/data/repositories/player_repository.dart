@@ -6,6 +6,7 @@ import 'package:tennis_cup/data/models/gender.dart';
 import 'package:tennis_cup/data/models/user.dart';
 import 'package:tennis_cup/data/models/user_role.dart';
 import 'package:tennis_cup/data/services/abstract/i_player_service.dart';
+import 'package:tennis_cup/data/services/dto/player_profile_dto.dart';
 import 'package:tennis_cup/data/services/dto/rating_record_dto.dart';
 import 'package:tennis_cup/data/services/dto/user_search_result_dto.dart';
 
@@ -56,8 +57,34 @@ class PlayerRepository {
         imageUrl: dto.avatarUrl ?? '',
       );
 
-  Future<User> fetchPlayerById(int id) {
-    return _service.fetchPlayerById(id);
+  Future<User> fetchPlayerById(int id) async {
+    final dto = await _service.fetchPlayerById(id);
+    return _toUserFromProfile(dto);
+  }
+
+  static User _toUserFromProfile(PlayerProfileDto dto) {
+    final stats = dto.statistics;
+    return User(
+      id: dto.id,
+      firstName: dto.firstName,
+      lastName: dto.lastName,
+      patronymicName: dto.patronymicName ?? '',
+      gender: genderFromString(dto.gender),
+      birthDate: dto.birthDate,
+      city: dto.city ?? '',
+      country: dto.country ?? '',
+      imageUrl: dto.avatarUrl ?? '',
+      roles: dto.roles.map(userRoleFromString).whereType<UserRole>().toList(),
+      status: dto.status ?? 'ACTIVE',
+      tournaments: stats?.totalFinishedTournaments ?? 0,
+      matches: stats?.totalMatches ?? 0,
+      wins: stats?.wins ?? 0,
+      losses: stats?.losses ?? 0,
+      goldPlaces: stats?.firstPlaceCount ?? 0,
+      silverPlaces: stats?.secondPlaceCount ?? 0,
+      bronzePlaces: stats?.thirdPlaceCount ?? 0,
+      rating: dto.rating ?? 0,
+    );
   }
 
   Future<void> updateProfile(int id, Map<String, dynamic> fields) =>
