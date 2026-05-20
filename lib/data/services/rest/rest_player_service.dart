@@ -8,6 +8,7 @@ import 'package:tennis_cup/data/models/user.dart';
 import 'package:tennis_cup/data/models/user_role.dart';
 import 'package:tennis_cup/data/services/abstract/i_player_service.dart';
 import 'package:tennis_cup/data/services/dto/rating_record_dto.dart';
+import 'package:tennis_cup/data/services/dto/user_search_result_dto.dart';
 
 class RestPlayerService implements IPlayerService {
   final Dio _dio;
@@ -49,7 +50,7 @@ class RestPlayerService implements IPlayerService {
   }
 
   @override
-  Future<List<User>> searchPlayersByName({
+  Future<List<UserSearchResultDto>> searchPlayersByName({
     required String query,
     String? gender,
   }) async {
@@ -64,7 +65,7 @@ class RestPlayerService implements IPlayerService {
     );
     final content = (response.data!['content'] as List<dynamic>);
     return content
-        .map((e) => _userFromSearchResult(e as Map<String, dynamic>))
+        .map((e) => UserSearchResultDto.fromJson(e as Map<String, dynamic>))
         .toList();
   }
 
@@ -122,23 +123,6 @@ class RestPlayerService implements IPlayerService {
       rating: (json['rating'] as num?)?.toDouble() ?? 0,
       imageUrl: json['avatarUrl'] as String? ?? '',
       status: json['status'] as String? ?? 'ACTIVE',
-    );
-  }
-
-  static User _userFromSearchResult(Map<String, dynamic> json) {
-    final roleStrings = json['roles'] as List<dynamic>? ?? const [];
-    final roles = roleStrings
-        .map((r) => userRoleFromString(r as String))
-        .whereType<UserRole>()
-        .toList();
-    return User(
-      id: (json['userId'] as num).toInt(),
-      firstName: json['firstName'] as String? ?? '',
-      lastName: json['lastName'] as String? ?? '',
-      roles: roles,
-      city: json['city'] as String? ?? '',
-      country: json['country'] as String? ?? '',
-      imageUrl: json['avatarUrl'] as String? ?? '',
     );
   }
 }

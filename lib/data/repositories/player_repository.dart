@@ -4,8 +4,10 @@ import 'package:tennis_cup/core/pagination/page_request.dart';
 import 'package:tennis_cup/core/pagination/page_result.dart';
 import 'package:tennis_cup/data/models/gender.dart';
 import 'package:tennis_cup/data/models/user.dart';
+import 'package:tennis_cup/data/models/user_role.dart';
 import 'package:tennis_cup/data/services/abstract/i_player_service.dart';
 import 'package:tennis_cup/data/services/dto/rating_record_dto.dart';
+import 'package:tennis_cup/data/services/dto/user_search_result_dto.dart';
 
 class PlayerRepository {
   final IPlayerService _service;
@@ -38,9 +40,21 @@ class PlayerRepository {
   Future<List<User>> fetchPlayersBySubstring({
     required String query,
     String? gender,
-  }) {
-    return _service.searchPlayersByName(query: query, gender: gender);
+  }) async {
+    final dtos =
+        await _service.searchPlayersByName(query: query, gender: gender);
+    return dtos.map(_toUserFromSearch).toList();
   }
+
+  static User _toUserFromSearch(UserSearchResultDto dto) => User(
+        id: dto.userId,
+        firstName: dto.firstName,
+        lastName: dto.lastName,
+        roles: dto.roles.map(userRoleFromString).whereType<UserRole>().toList(),
+        city: dto.city ?? '',
+        country: dto.country ?? '',
+        imageUrl: dto.avatarUrl ?? '',
+      );
 
   Future<User> fetchPlayerById(int id) {
     return _service.fetchPlayerById(id);
