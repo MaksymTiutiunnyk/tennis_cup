@@ -1,3 +1,4 @@
+import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tennis_cup/core/pagination/page_request.dart';
 import 'package:tennis_cup/core/utils/error_utils.dart';
@@ -24,8 +25,8 @@ class RankingPlayersCubit extends Cubit<RankingPlayersState> {
         page: _currentPage,
         genderFilter: gender,
       );
-      if (result.hasMore) _currentPage = _currentPage.next;
       if (isClosed) return;
+      if (result.hasMore) _currentPage = _currentPage.next;
       emit(
           RankingPlayersLoaded(players: result.items, hasMore: result.hasMore));
     } catch (e) {
@@ -44,8 +45,8 @@ class RankingPlayersCubit extends Cubit<RankingPlayersState> {
         page: _currentPage,
         genderFilter: _currentGender,
       );
-      if (result.hasMore) _currentPage = _currentPage.next;
       if (isClosed) return;
+      if (result.hasMore) _currentPage = _currentPage.next;
       emit(RankingPlayersLoaded(
         players: [...current.players, ...result.items],
         hasMore: result.hasMore,
