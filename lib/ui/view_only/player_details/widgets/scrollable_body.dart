@@ -44,7 +44,7 @@ class _ScrollableBodyState extends State<ScrollableBody> {
 
   void _comparePlayers(BuildContext context, User player) {
     ScaffoldMessenger.of(context).clearSnackBars();
-    if (widget.player == player) {
+    if (widget.player.id == player.id) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           duration: const Duration(seconds: 2),
