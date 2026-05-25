@@ -81,25 +81,28 @@ class UserShell extends StatelessWidget {
       ),
     );
 
+    final tournamentsTab = (
+      branchIndex: 1,
+      item: BottomNavigationBarItem(
+        icon: const Icon(Icons.emoji_events_outlined),
+        label: s.tournaments,
+      ),
+    );
+
     return switch (role) {
       UserRole.player => [
+          tournamentsTab,
           (
             branchIndex: 0,
             item: BottomNavigationBarItem(
-              icon: const Icon(Icons.emoji_events_outlined),
-              label: s.tournaments,
+              icon: const Icon(Icons.mail_outline),
+              label: s.tabInvitations,
             ),
           ),
           settings,
         ],
       UserRole.referee => [
-          (
-            branchIndex: 1,
-            item: BottomNavigationBarItem(
-              icon: const Icon(Icons.sports_outlined),
-              label: s.tournaments,
-            ),
-          ),
+          tournamentsTab,
           (
             branchIndex: 7,
             item: BottomNavigationBarItem(

@@ -239,8 +239,8 @@ void main() {
     });
   });
 
-  group('fetchActiveTournamentsForReferee', () {
-    test('gets /api/v1/tournaments with refereeId and statuses=[ACTIVE]',
+  group('fetchRefereeTournaments', () {
+    test('gets /api/v1/tournaments with refereeId and given statuses',
         () async {
       when(() => mockDio.get<Map<String, dynamic>>(
             any(),
@@ -250,9 +250,10 @@ void main() {
             'totalPages': 1,
           }));
 
-      final result = await service.fetchActiveTournamentsForReferee(
-        const PageRequest(page: 0, size: 10),
-        'ref-5',
+      final result = await service.fetchRefereeTournaments(
+        page: const PageRequest(page: 0, size: 10),
+        refereeId: 'ref-5',
+        statuses: const ['PENDING', 'ACTIVE'],
       );
 
       expect(result.items, hasLength(1));
@@ -264,7 +265,7 @@ void main() {
               'page': 0,
               'size': 10,
               'refereeId': 'ref-5',
-              'statuses': ['ACTIVE'],
+              'statuses': ['PENDING', 'ACTIVE'],
             },
           )).called(1);
     });
@@ -278,9 +279,10 @@ void main() {
             'totalPages': 3,
           }));
 
-      final result = await service.fetchActiveTournamentsForReferee(
-        const PageRequest(page: 0, size: 10),
-        'ref-5',
+      final result = await service.fetchRefereeTournaments(
+        page: const PageRequest(page: 0, size: 10),
+        refereeId: 'ref-5',
+        statuses: const ['ACTIVE'],
       );
 
       expect(result.hasMore, isTrue);

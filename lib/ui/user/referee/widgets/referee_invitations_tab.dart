@@ -96,6 +96,8 @@ class _InvitationsListViewState extends State<_InvitationsListView> {
   }
 
   void _syncList(List<TournamentInvitation> newItems) {
+    newItems =
+        newItems.where((i) => i.role == InvitationRole.referee).toList();
     for (var i = _items.length - 1; i >= 0; i--) {
       if (!newItems.any((n) => n.id == _items[i].id)) {
         final removed = _items[i];

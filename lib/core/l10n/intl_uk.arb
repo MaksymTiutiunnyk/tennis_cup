@@ -178,7 +178,12 @@
   "redCard": "Червона (штраф)",
   "noActiveTournaments": "Активних турнірів немає",
   "noMatchesFound": "Матчів не знайдено",
+  "noMatchesScheduledYet": "Матчі ще не заплановано",
   "tournamentComplete": "Турнір завершено",
+  "tournamentStatusPending": "В очікуванні",
+  "tournamentStatusActive": "Активний",
+  "playersLabel": "Гравці",
+  "notDefined": "Не визначено",
   "revokeCard": "Скасувати картку",
   "undoPoint": "–1",
 

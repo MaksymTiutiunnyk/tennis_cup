@@ -156,6 +156,33 @@ class TournamentRepository {
     return PageResult(items: tournaments, hasMore: result.hasMore);
   }
 
+  Future<List<Tournament>> fetchMyTournamentsAsPlayer(String userId) async {
+    final myId = int.tryParse(userId) ?? -1;
+    final result = await _service.fetchPlayerTournaments(
+      userId: myId.toString(),
+      page: const PageRequest(page: 0, size: 100),
+      statuses: const ['PENDING', 'ACTIVE'],
+    );
+    final dtos = result.items
+        .where((dto) => dto.participants.any((p) =>
+            p.userId == myId &&
+            p.role == 'PLAYER' &&
+            p.invitationStatus == 'ACCEPTED'))
+        .toList();
+    return _buildTournaments(dtos, withMatches: false);
+  }
+
+  Future<List<Tournament>> fetchMyTournamentsAsReferee(String userId) async {
+    final myId = int.tryParse(userId) ?? -1;
+    final result = await _service.fetchRefereeTournaments(
+      page: const PageRequest(page: 0, size: 100),
+      refereeId: myId.toString(),
+      statuses: const ['PENDING', 'ACTIVE'],
+    );
+    final dtos = result.items.where((dto) => dto.refereeId == myId).toList();
+    return _buildTournaments(dtos, withMatches: false);
+  }
+
   Future<Tournament> fetchTournamentById({
     required String tournamentId,
     bool withUsers = true,
@@ -216,16 +243,6 @@ class TournamentRepository {
 
   Future<void> removePlayers(int tournamentId, List<int> playerIds) async {
     await _service.removePlayers(tournamentId, playerIds);
-  }
-
-  Future<List<TournamentDto>> fetchActiveTournamentsForReferee(
-      String userId) async {
-    final refereeId = int.tryParse(userId) ?? -1;
-    final result = await _service.fetchActiveTournamentsForReferee(
-      const PageRequest(page: 0, size: 100),
-      refereeId.toString(),
-    );
-    return result.items.where((dto) => dto.refereeId == refereeId).toList();
   }
 
   Future<void> startTournament(int id) async {

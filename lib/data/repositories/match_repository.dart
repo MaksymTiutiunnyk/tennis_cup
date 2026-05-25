@@ -2,6 +2,7 @@ import 'package:tennis_cup/core/pagination/page_request.dart';
 import 'package:tennis_cup/core/pagination/page_result.dart';
 import 'package:tennis_cup/core/utils/enum_utils.dart';
 import 'package:tennis_cup/data/models/match.dart';
+import 'package:tennis_cup/data/models/scheduled_match_preview.dart';
 import 'package:tennis_cup/data/models/user.dart';
 import 'package:tennis_cup/data/repositories/player_repository.dart';
 import 'package:tennis_cup/data/services/abstract/i_match_service.dart';
@@ -108,6 +109,25 @@ class MatchRepository {
     }).toList();
 
     return PageResult(items: matches, hasMore: result.hasMore);
+  }
+
+  Future<List<ScheduledMatchPreview>> fetchTournamentSchedulePreview(
+      int tournamentId) async {
+    final dtos = await _service.fetchTournamentMatches(tournamentId.toString());
+    final ids = <int>{};
+    for (final dto in dtos) {
+      if (dto.bluePlayerId != null) ids.add(dto.bluePlayerId!);
+      if (dto.redPlayerId != null) ids.add(dto.redPlayerId!);
+    }
+    final players = await _fetchPlayers(ids);
+    return dtos
+        .map((dto) => ScheduledMatchPreview(
+              id: dto.id,
+              scheduledStart: DateTime.parse(dto.scheduledStart),
+              bluePlayer: players[dto.bluePlayerId],
+              redPlayer: players[dto.redPlayerId],
+            ))
+        .toList();
   }
 
   Future<List<Match>> fetchMatchesForTournament(int tournamentId) async {

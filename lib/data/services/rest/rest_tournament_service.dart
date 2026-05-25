@@ -102,17 +102,18 @@ class RestTournamentService implements ITournamentService {
   }
 
   @override
-  Future<PageResult<TournamentDto>> fetchActiveTournamentsForReferee(
-    PageRequest page,
-    String refereeId,
-  ) async {
+  Future<PageResult<TournamentDto>> fetchRefereeTournaments({
+    required PageRequest page,
+    required String refereeId,
+    required List<String> statuses,
+  }) async {
     final response = await _dio.get<Map<String, dynamic>>(
       '/api/v1/tournaments',
       queryParameters: {
         'page': page.page,
         'size': page.size,
         'refereeId': refereeId,
-        'statuses': ['ACTIVE']
+        'statuses': statuses,
       },
     );
     final body = response.data!;
