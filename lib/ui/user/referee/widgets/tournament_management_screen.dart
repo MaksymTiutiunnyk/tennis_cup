@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tennis_cup/core/di/service_locator.dart';
 import 'package:tennis_cup/data/models/match.dart';
-import 'package:tennis_cup/data/services/dto/tournament_dto.dart';
 import 'package:tennis_cup/generated/l10n.dart';
 import 'package:tennis_cup/ui/user/referee/view_models/referee_match_cubit.dart';
 import 'package:tennis_cup/ui/user/referee/view_models/tournament_matches_cubit.dart';
@@ -11,11 +10,13 @@ import 'package:tennis_cup/ui/user/referee/widgets/match_management_screen.dart'
 import 'package:tennis_cup/ui/user/referee/widgets/pending_match_view.dart';
 
 class TournamentManagementScreen extends StatefulWidget {
-  final TournamentDto tournament;
+  final int tournamentId;
+  final String tournamentName;
 
   const TournamentManagementScreen({
     super.key,
-    required this.tournament,
+    required this.tournamentId,
+    required this.tournamentName,
   });
 
   @override
@@ -34,7 +35,7 @@ class _TournamentManagementScreenState
     _matchCubit = RefereeMatchCubit(repository: ServiceLocator.matchRepository);
     _matchesCubit = TournamentMatchesCubit(
       repository: ServiceLocator.matchRepository,
-      tournamentId: widget.tournament.id,
+      tournamentId: widget.tournamentId,
     );
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.landscapeLeft,
@@ -91,7 +92,7 @@ class _TournamentManagementScreenState
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
-                        widget.tournament.name,
+                        widget.tournamentName,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: Theme.of(context).textTheme.titleMedium,

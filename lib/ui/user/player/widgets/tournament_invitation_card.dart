@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:tennis_cup/data/models/gender.dart';
-import 'package:tennis_cup/data/models/tournament.dart';
 import 'package:tennis_cup/data/models/tournament_invitation.dart';
 import 'package:tennis_cup/generated/l10n.dart';
 import 'package:tennis_cup/ui/user/player/view_models/invitations_cubit.dart';
@@ -28,14 +27,6 @@ class TournamentInvitationCard extends StatelessWidget {
       ),
     );
   }
-
-  String _timeLabel(S s, Time t) => switch (t) {
-        Time.Morning => s.timeLabelMorning,
-        Time.Day => s.timeLabelDay,
-        Time.Evening => s.timeLabelEvening,
-        Time.Night => s.timeLabelNight,
-        Time.Midnight => s.timeLabelMidnight,
-      };
 
   Future<bool> _confirm(
       BuildContext context, String title, String action) async {
@@ -123,7 +114,10 @@ class TournamentInvitationCard extends StatelessWidget {
                       ? s.menLabel
                       : s.womenLabel),
             _buildRow(
-                context, s.tournamentType, _timeLabel(s, tournament.time)),
+              context,
+              s.playersLabel,
+              tournament.requiredPlayersCount?.toString() ?? '–',
+            ),
             const SizedBox(height: 12),
             Row(
               children: [

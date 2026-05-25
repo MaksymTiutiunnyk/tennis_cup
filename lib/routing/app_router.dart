@@ -10,9 +10,11 @@ import 'package:tennis_cup/ui/user/organizer/widgets/organizer_news_tab.dart';
 import 'package:tennis_cup/ui/user/organizer/widgets/organizer_tournaments_tab.dart';
 import 'package:tennis_cup/ui/user/organizer/widgets/organizer_users_tab.dart';
 import 'package:tennis_cup/ui/user/organizer/widgets/pending_users_tab.dart';
+import 'package:tennis_cup/ui/user/core/widgets/my_tournaments_tab.dart';
 import 'package:tennis_cup/ui/user/player/widgets/player_invitations_tab.dart';
+import 'package:tennis_cup/ui/user/player/widgets/tournament_schedule_preview_screen.dart';
 import 'package:tennis_cup/ui/user/referee/widgets/referee_invitations_tab.dart';
-import 'package:tennis_cup/ui/user/referee/widgets/referee_tournaments_tab.dart';
+import 'package:tennis_cup/ui/user/referee/widgets/tournament_management_screen.dart';
 import 'package:tennis_cup/ui/view_only/home/widgets/home.dart';
 import 'package:tennis_cup/ui/view_only/news/widgets/news.dart';
 import 'package:tennis_cup/ui/view_only/player_comparison/widgets/players_comparison_route.dart';
@@ -28,7 +30,7 @@ class AppRoutes {
 
   // User shell branches (index order matches branch list below)
   static const userInvitations = '/user/invitations';
-  static const refereeTournament = '/user/referee/tournament';
+  static const userTournaments = '/user/tournaments';
   static const refereeInvitations = '/user/referee/invitations';
   static const organizerTournaments = '/user/organizer/tournaments';
   static const organizerUsers = '/user/organizer/users';
@@ -42,6 +44,9 @@ class AppRoutes {
   static String playersComparison(String p1Id, String p2Id) =>
       '/comparison/$p1Id/$p2Id';
   static String editUser(String id) => '/organizer/edit-user/$id';
+  static String tournamentSchedulePreview(String id) =>
+      '/tournaments/$id/schedule-preview';
+  static String tournamentManage(String id) => '/tournaments/$id/manage';
 }
 
 GoRouter buildAppRouter({GlobalKey<NavigatorState>? navigatorKey}) {
@@ -105,12 +110,12 @@ GoRouter buildAppRouter({GlobalKey<NavigatorState>? navigatorKey}) {
             ],
           ),
 
-          // Branch 1 — Referee: active tournaments + match management
+          // Branch 1 — Player & Referee: my tournaments (accepted, PENDING/ACTIVE)
           StatefulShellBranch(
             routes: [
               GoRoute(
-                path: AppRoutes.refereeTournament,
-                builder: (context, state) => const RefereeTournamentsTab(),
+                path: AppRoutes.userTournaments,
+                builder: (context, state) => const MyTournamentsTab(),
               ),
             ],
           ),
@@ -199,6 +204,20 @@ GoRouter buildAppRouter({GlobalKey<NavigatorState>? navigatorKey}) {
         path: '/organizer/edit-user/:userId',
         builder: (context, state) => EditUserScreen(
           userId: int.parse(state.pathParameters['userId']!),
+        ),
+      ),
+      GoRoute(
+        path: '/tournaments/:id/schedule-preview',
+        builder: (context, state) => TournamentSchedulePreviewScreen(
+          tournamentId: int.parse(state.pathParameters['id']!),
+          tournamentName: state.extra as String? ?? '',
+        ),
+      ),
+      GoRoute(
+        path: '/tournaments/:id/manage',
+        builder: (context, state) => TournamentManagementScreen(
+          tournamentId: int.parse(state.pathParameters['id']!),
+          tournamentName: state.extra as String? ?? '',
         ),
       ),
     ],

@@ -70,6 +70,7 @@ class InvitationsRepository {
       time: timeFromString(tournamentDto?.type ?? ''),
       points: const [],
       places: const [],
+      requiredPlayersCount: tournamentDto?.requiredPlayersCount,
     );
     return TournamentInvitation(
       id: dto.invitationId.toString(),
