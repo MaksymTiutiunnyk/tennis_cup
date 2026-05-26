@@ -36,7 +36,7 @@ class TournamentRepository {
     required List<String> statuses,
   }) async {
     final dtos = await _service.fetchScheduledTournaments(
-      date: tournamentDate,
+      date: tournamentDate.toUtc(),
       arena: tournamentArena,
       time: tournamentTime,
       statuses: statuses,
@@ -116,7 +116,7 @@ class TournamentRepository {
       tournamentId: dto.tournament.id,
       tournamentGender: dto.tournament.gender,
       tournamentTime: timeFromString(dto.tournament.type),
-      scheduledStart: DateTime.parse(dto.tournament.start),
+      scheduledStart: DateTime.parse(dto.tournament.start).toLocal(),
       bluePlayer: bluePlayer,
       redPlayer: redPlayer,
       sets: sets,
@@ -131,7 +131,7 @@ class TournamentRepository {
         tournamentName: dto.tournament!.name,
         tournamentGender: dto.tournament!.gender,
         tournamentTime: timeFromString(dto.tournament!.type),
-        tournamentStart: DateTime.parse(dto.tournament!.start),
+        tournamentStart: DateTime.parse(dto.tournament!.start).toLocal(),
         winners: dto.winners!.map(_playerFromBrief).toList(),
       );
 
@@ -364,7 +364,7 @@ class TournamentRepository {
         bluePlayer: blue,
         redPlayer: red,
         tournamentId: dto.tournamentId,
-        scheduledStart: DateTime.parse(dto.scheduledStart),
+        scheduledStart: DateTime.parse(dto.scheduledStart).toLocal(),
         status:
             enumFromString(MatchStatus.values, dto.status, MatchStatus.pending),
         winnerId: dto.winnerId,
@@ -408,7 +408,7 @@ class TournamentRepository {
       gender: dto.gender,
       status: enumFromString(
           TournamentStatus.values, dto.status, TournamentStatus.pending),
-      date: DateTime.parse(dto.startTime),
+      date: DateTime.parse(dto.startTime).toLocal(),
       players: players,
       arena: Arena(
         id: arenaDto.id.toString(),

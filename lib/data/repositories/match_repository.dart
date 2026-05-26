@@ -101,7 +101,7 @@ class MatchRepository {
         bluePlayer: player1,
         redPlayer: player2,
         tournamentId: dto.tournamentId,
-        scheduledStart: dto.matchDate,
+        scheduledStart: dto.matchDate.toLocal(),
         status: matchStatus,
         winnerId: dto.winnerId,
         sets: sets,
@@ -123,7 +123,7 @@ class MatchRepository {
     return dtos
         .map((dto) => ScheduledMatchPreview(
               id: dto.id,
-              scheduledStart: DateTime.parse(dto.scheduledStart),
+              scheduledStart: DateTime.parse(dto.scheduledStart).toLocal(),
               bluePlayer: players[dto.bluePlayerId],
               redPlayer: players[dto.redPlayerId],
             ))
@@ -220,13 +220,16 @@ class MatchRepository {
       bluePlayer: blue,
       redPlayer: red,
       tournamentId: dto.tournamentId,
-      scheduledStart: DateTime.parse(dto.scheduledStart),
-      scheduledEnd:
-          dto.scheduledEnd.isEmpty ? null : DateTime.tryParse(dto.scheduledEnd),
-      actualStart:
-          dto.actualStart != null ? DateTime.tryParse(dto.actualStart!) : null,
-      actualEnd:
-          dto.actualEnd != null ? DateTime.tryParse(dto.actualEnd!) : null,
+      scheduledStart: DateTime.parse(dto.scheduledStart).toLocal(),
+      scheduledEnd: dto.scheduledEnd.isEmpty
+          ? null
+          : DateTime.tryParse(dto.scheduledEnd)?.toLocal(),
+      actualStart: dto.actualStart != null
+          ? DateTime.tryParse(dto.actualStart!)?.toLocal()
+          : null,
+      actualEnd: dto.actualEnd != null
+          ? DateTime.tryParse(dto.actualEnd!)?.toLocal()
+          : null,
       status:
           enumFromString(MatchStatus.values, dto.status, MatchStatus.pending),
       setsToWin: dto.setsToWin,
@@ -252,7 +255,7 @@ class MatchRepository {
                 matchId: c.matchId,
                 playerId: c.playerId,
                 cardType: c.cardType,
-                issuedAt: DateTime.parse(c.issuedAt),
+                issuedAt: DateTime.parse(c.issuedAt).toLocal(),
                 setNumber: c.setNumber,
               ))
           .toList(),

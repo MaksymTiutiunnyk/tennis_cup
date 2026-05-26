@@ -64,8 +64,8 @@ class InvitationsRepository {
       status: enumFromString(TournamentStatus.values, tournamentDto?.status, TournamentStatus.pending),
       players: const [],
       date: tournamentDto != null
-          ? DateTime.parse(tournamentDto.startTime)
-          : DateTime.parse(dto.startTime),
+          ? DateTime.parse(tournamentDto.startTime).toLocal()
+          : DateTime.parse(dto.startTime).toLocal(),
       arena: arena,
       time: timeFromString(tournamentDto?.type ?? ''),
       points: const [],

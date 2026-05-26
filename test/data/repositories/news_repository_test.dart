@@ -24,7 +24,8 @@ void main() {
       final end = DateTime(2024, 1, 31);
       final dto = aNewsDto(id: 1, title: 'Test', body: 'Body');
 
-      when(() => mockNewsService.fetchNewsWithinPeriod(start, end))
+      // Repository converts to UTC before calling the service.
+      when(() => mockNewsService.fetchNewsWithinPeriod(start.toUtc(), end.toUtc()))
           .thenAnswer((_) async => [dto]);
 
       final result = await repository.fetchNewsWithinPeriod(start, end);
@@ -32,14 +33,15 @@ void main() {
       expect(result, hasLength(1));
       expect(result.first.id, 1);
       expect(result.first.title, 'Test');
-      verify(() => mockNewsService.fetchNewsWithinPeriod(start, end)).called(1);
+      verify(() => mockNewsService.fetchNewsWithinPeriod(start.toUtc(), end.toUtc())).called(1);
     });
 
     test('returns empty list when service returns empty', () async {
       final start = DateTime(2024, 1, 1);
       final end = DateTime(2024, 1, 31);
 
-      when(() => mockNewsService.fetchNewsWithinPeriod(start, end))
+      // Repository converts to UTC before calling the service.
+      when(() => mockNewsService.fetchNewsWithinPeriod(start.toUtc(), end.toUtc()))
           .thenAnswer((_) async => []);
 
       final result = await repository.fetchNewsWithinPeriod(start, end);
@@ -74,10 +76,11 @@ void main() {
         importance: 'STANDARD',
       );
 
+      // Repository converts newsTimestamp to UTC before calling the service.
       when(() => mockNewsService.createNews(
             title: 'New Article',
             body: 'Content',
-            newsTimestamp: timestamp,
+            newsTimestamp: timestamp.toUtc(),
             importance: 'STANDARD',
             image: null,
           )).thenAnswer((_) async => dto);
@@ -95,7 +98,7 @@ void main() {
       verify(() => mockNewsService.createNews(
             title: 'New Article',
             body: 'Content',
-            newsTimestamp: timestamp,
+            newsTimestamp: timestamp.toUtc(),
             importance: 'STANDARD',
             image: null,
           )).called(1);
