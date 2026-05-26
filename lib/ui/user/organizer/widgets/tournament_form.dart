@@ -156,7 +156,9 @@ class _TournamentFormState extends State<TournamentForm> {
       if (mounted) {
         setState(() {
           _arenas = arenas;
-          _arenaId = int.tryParse(arenas.first.id) ?? 1;
+          if (!_isEdit) {
+            _arenaId = int.tryParse(arenas.first.id) ?? 1;
+          }
           _loadingArenas = false;
         });
       }
