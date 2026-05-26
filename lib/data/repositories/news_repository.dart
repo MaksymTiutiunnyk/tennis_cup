@@ -10,7 +10,7 @@ class NewsRepository {
   const NewsRepository(this._service);
 
   Future<List<News>> fetchNewsWithinPeriod(DateTime start, DateTime end) async {
-    final dtos = await _service.fetchNewsWithinPeriod(start, end);
+    final dtos = await _service.fetchNewsWithinPeriod(start.toUtc(), end.toUtc());
     return dtos.map(_toNews).toList();
   }
 
@@ -29,7 +29,7 @@ class NewsRepository {
     final dto = await _service.createNews(
       title: title,
       body: body,
-      newsTimestamp: newsTimestamp,
+      newsTimestamp: newsTimestamp.toUtc(),
       importance: importance,
       image: image,
     );
@@ -49,7 +49,7 @@ class NewsRepository {
       id,
       title: title,
       body: body,
-      newsTimestamp: newsTimestamp,
+      newsTimestamp: newsTimestamp?.toUtc(),
       importance: importance,
       removeImage: removeImage,
       image: image,
@@ -63,7 +63,7 @@ class NewsRepository {
         id: dto.id,
         title: dto.title,
         text: dto.body,
-        date: dto.newsTimestamp,
+        date: dto.newsTimestamp.toLocal(),
         isInteresting: dto.importance == 'INTERESTING',
         imageUrl: dto.imageUrl ?? '',
       );

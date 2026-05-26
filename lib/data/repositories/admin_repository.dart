@@ -97,7 +97,7 @@ class AdminRepository {
       id: dto.id,
       login: dto.login,
       roles: roles,
-      createdAt: DateTime.tryParse(dto.createdAt) ?? DateTime(0),
+      createdAt: DateTime.tryParse(dto.createdAt)?.toLocal() ?? DateTime(0),
     );
   }
 }
