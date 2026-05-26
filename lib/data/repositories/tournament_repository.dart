@@ -35,8 +35,14 @@ class TournamentRepository {
     required Time tournamentTime,
     required List<String> statuses,
   }) async {
+    // tournamentDate is a local calendar day from the date picker.
+    // Convert to UTC day boundaries so the backend (UTC date-time filter)
+    // returns exactly the tournaments the user sees as "today".
+    final dayStart = DateTime(tournamentDate.year, tournamentDate.month, tournamentDate.day);
+    final dayEnd = dayStart.add(const Duration(days: 1));
     final dtos = await _service.fetchScheduledTournaments(
-      date: tournamentDate.toUtc(),
+      startTime: dayStart.toUtc(),
+      endTime: dayEnd.toUtc(),
       arena: tournamentArena,
       time: tournamentTime,
       statuses: statuses,

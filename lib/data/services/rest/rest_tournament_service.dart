@@ -1,5 +1,4 @@
 import 'package:dio/dio.dart';
-import 'package:intl/intl.dart';
 import 'package:tennis_cup/core/pagination/page_request.dart';
 import 'package:tennis_cup/core/pagination/page_result.dart';
 import 'package:tennis_cup/data/models/arena.dart';
@@ -7,8 +6,6 @@ import 'package:tennis_cup/data/models/tournament.dart';
 import 'package:tennis_cup/data/services/abstract/i_tournament_service.dart';
 import 'package:tennis_cup/data/services/dto/dashboard_dto.dart';
 import 'package:tennis_cup/data/services/dto/tournament_dto.dart';
-
-final _dateFormat = DateFormat('yyyy-MM-dd');
 
 class RestTournamentService implements ITournamentService {
   final Dio _dio;
@@ -54,13 +51,15 @@ class RestTournamentService implements ITournamentService {
 
   @override
   Future<List<TournamentDto>> fetchScheduledTournaments({
-    required DateTime date,
+    required DateTime startTime,
+    required DateTime endTime,
     required Arena arena,
     required Time time,
     required List<String> statuses,
   }) async {
     final queryParams = <String, dynamic>{
-      'start': _dateFormat.format(date),
+      'start': startTime.toIso8601String(),
+      'end': endTime.toIso8601String(),
       'type': time.name.toUpperCase(),
       'statuses': statuses,
     };

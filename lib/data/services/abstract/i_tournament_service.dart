@@ -18,7 +18,8 @@ abstract interface class ITournamentService {
   Future<TournamentDto> fetchTournamentById(String id);
 
   Future<List<TournamentDto>> fetchScheduledTournaments({
-    required DateTime date,
+    required DateTime startTime,
+    required DateTime endTime,
     required Arena arena,
     required Time time,
     required List<String> statuses,
