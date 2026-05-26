@@ -20,12 +20,14 @@ class RestTournamentService implements ITournamentService {
     required String userId,
     required PageRequest page,
     required List<String> statuses,
+    required String sortDirection,
   }) async {
     final response = await _dio.get('/api/v1/tournaments', queryParameters: {
       'page': page.page,
       'size': page.size,
       'playerId': userId,
-      'statuses': statuses
+      'statuses': statuses,
+      'sortDirection': sortDirection,
     });
 
     final body = response.data as Map<String, dynamic>;

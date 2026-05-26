@@ -151,7 +151,10 @@ class TournamentRepository {
     required PageRequest page,
   }) async {
     final result = await _service.fetchPlayerTournaments(
-        userId: playerId, page: page, statuses: ['ACTIVE', 'FINISHED']);
+        userId: playerId,
+        page: page,
+        statuses: ['ACTIVE', 'FINISHED'],
+        sortDirection: 'DESC');
     final tournaments = await _buildTournaments(result.items);
     return PageResult(items: tournaments, hasMore: result.hasMore);
   }
@@ -159,10 +162,10 @@ class TournamentRepository {
   Future<List<Tournament>> fetchMyTournamentsAsPlayer(String userId) async {
     final myId = int.tryParse(userId) ?? -1;
     final result = await _service.fetchPlayerTournaments(
-      userId: myId.toString(),
-      page: const PageRequest(page: 0, size: 100),
-      statuses: const ['PENDING', 'ACTIVE'],
-    );
+        userId: myId.toString(),
+        page: const PageRequest(page: 0, size: 100),
+        statuses: const ['PENDING', 'ACTIVE'],
+        sortDirection: 'ASC');
     final dtos = result.items
         .where((dto) => dto.participants.any((p) =>
             p.userId == myId &&
