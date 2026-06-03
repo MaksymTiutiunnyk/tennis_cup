@@ -162,3 +162,7 @@ app.*.symbols
 
 # Files in this folder can be automatically generated
 lib/generated
+
+# SonarQube
+.scannerwork/
+sonar-project.properties
