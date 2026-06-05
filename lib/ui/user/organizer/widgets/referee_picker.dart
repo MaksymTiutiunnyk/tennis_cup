@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tennis_cup/generated/l10n.dart';
 import 'package:tennis_cup/ui/user/organizer/view_models/referee_search_cubit.dart';
+import 'package:tennis_cup/ui/user/organizer/widgets/participant_status_chip.dart';
 
 export 'package:tennis_cup/ui/user/organizer/view_models/referee_search_cubit.dart'
     show SelectedReferee;
@@ -47,16 +48,6 @@ class _RefereePickerState extends State<RefereePicker> {
     });
   }
 
-  Color? _chipColor(BuildContext context, String? status) {
-    return switch (status?.toUpperCase()) {
-      'ACCEPTED' => Colors.green[900],
-      'PENDING' => Colors.blue[900],
-      'DECLINED' => Colors.red[900],
-      'CANCELLED' => Colors.grey[700],
-      _ => null,
-    };
-  }
-
   @override
   Widget build(BuildContext context) {
     final s = S.of(context);
@@ -73,41 +64,39 @@ class _RefereePickerState extends State<RefereePicker> {
                 spacing: 8,
                 runSpacing: 4,
                 children: state.selected
-                    .map((r) => Chip(
-                          label: Text(r.name,
-                              style: const TextStyle(color: Colors.white)),
-                          backgroundColor: _chipColor(context, r.status),
+                    .map((r) => ParticipantStatusChip(
+                          label: r.name,
+                          status: r.status,
                           onDeleted: widget.readOnly
                               ? null
                               : () => _cubit.removeReferee(r.id),
-                          deleteIconColor: Colors.white,
                         ))
                     .toList(),
               ),
               const SizedBox(height: 8),
             ],
             if (!widget.readOnly)
-            TextField(
-              controller: _ctrl,
-              enabled: !searchDisabled,
-              decoration: InputDecoration(
-                labelText: s.addReferee,
-                hintText: searchDisabled
-                    ? s.refereeAlreadyAccepted
-                    : s.searchByNameHint,
-                suffixIcon: state.isLoading
-                    ? const Padding(
-                        padding: EdgeInsets.all(12),
-                        child: SizedBox(
-                          width: 16,
-                          height: 16,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        ),
-                      )
-                    : const Icon(Icons.person_search),
+              TextField(
+                controller: _ctrl,
+                enabled: !searchDisabled,
+                decoration: InputDecoration(
+                  labelText: s.addReferee,
+                  hintText: searchDisabled
+                      ? s.refereeAlreadyAccepted
+                      : s.searchByNameHint,
+                  suffixIcon: state.isLoading
+                      ? const Padding(
+                          padding: EdgeInsets.all(12),
+                          child: SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          ),
+                        )
+                      : const Icon(Icons.person_search),
+                ),
+                onChanged: _onChanged,
               ),
-              onChanged: _onChanged,
-            ),
             if (!widget.readOnly && state.searchResults.isNotEmpty)
               Card(
                 margin: const EdgeInsets.only(top: 2),
